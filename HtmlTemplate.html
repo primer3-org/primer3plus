@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+       "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+  <title>Primer3Plus</title>
+  <style type="text/css">
+	body {
+		color: black;
+		background-color: white;
+		font-size: 100.01%;
+		margin: 0;
+		padding: 1em 0;
+		text-align: center
+	}
+
+	div#primer3plus_task_bar {
+		width:900px;
+		border: 2px solid #ccccff;
+		margin: 4px 0px 0px 0px;
+		clear: left;
+		float: left;
+		background-color: rgb(255, 255, 230);
+		overflow:hidden;
+		padding: 0px;
+	}
+
+  	div#primer3plus_messages { 
+        width:900px;
+        border: 2px solid #ccccff;
+        margin: 4px 0px 0px 0px;
+        clear: left;
+        float: left;
+        background-color: rgb(255, 0, 0);
+        overflow:hidden;
+        padding: 0px;
+	}
+
+	div#primer3plus_no_javascript {
+        width:900px;
+        border: 2px solid #ccccff;
+        margin: 4px 0px 0px 0px;
+        clear: left;
+        float: left;
+        background-color: rgb(255, 0, 0);
+        overflow:hidden;
+        padding: 0px;	
+	}
+
+	div#primer3plus_results {
+		width:900px;
+		border: 2px solid #ccccff;
+		margin: 4px 0px 0px 0px;
+		clear: left;
+		float: left;
+		background-color: rgb(255, 255, 230);
+		overflow:hidden;
+		padding: 0px;
+	}
+
+	div#primer3plus_manager {
+		width:900px;
+		border: 2px solid #ccccff;
+		margin: 4px 0px 0px 0px;
+		clear: left;
+		float: left;
+		background-color: rgb(255, 255, 230);
+		overflow:hidden;
+		padding: 0px;
+	}
+
+	.primer3plus_tab_page {
+		width:900px;
+		border: 2px solid #ccccff;
+		clear: left;
+		float: left;
+		background-color: rgb(255, 255, 230);
+		overflow:hidden;
+		padding: 10px 0px 10px 0px;
+	}
+	
+	.primer3plus_tab_page_no_border {
+		width:900px;
+		clear: left;
+		float: left;
+		background-color: rgb(255, 255, 230);
+		overflow:hidden;
+	}	
+	
+	.primer3plus_submit {
+		width: 900px;
+		clear: left;
+		float: left;
+		background-color: rgb(255, 255, 230);
+		overflow:hidden;
+	}
+
+	div#menuBar { float: left; width:900px; padding: 0px; margin: 8px 0 0 8px; line-height:normal; text-align: left; }
+	div#menuBar ul { margin:0px; padding: 0px; list-style:none; }
+	div#menuBar li { float:left; margin:0; border: 2px solid #ccccff; border-bottom-width: 0; }
+	div#menuBar a { top: 2px; display:block; padding: 0.24em 1em; font-weight: bold; cursor: pointer; }
+
+  div#page { text-align: left;
+             margin: auto;
+             width: 1024px;
+        }
+
+  div#primer3plus_top_bar { width: 900px; padding: 0px; border: 2px solid #ccccff;}
+  div#primer3plus_footer { width: 900px; padding: 0px; clear: left;}
+  .primer3plus_background { background-color:#ccccff; }
+  .primer3plus_top_bar_table { border:0; width:100%; }
+  .primer3plus_top_bar_cell { border:0; padding:0.4em;background-color:#ccccff; }
+  .primer3plus_top_bar_explain_cell { border:0; font-style: italic; font-size: 0.9em; background: rgb(255, 255, 230);}
+  .primer3plus_top_bar_title { font-size: 2.2em; font-weight:700; }
+  .primer3plus_top_bar_explain { font-size: 1.0em; font-weight:500 }
+  .primer3plus_top_bar_link { font-weight:bold }
+  .primer3plus_task {font-size: 0.9em}
+  .primer3plus_table_no_border { border:0; width:100%; empty-cells:show; }
+  .primer3plus_cell_no_border { border:0; padding:0.15em; }
+  .primer3plus_cell_no_border_explain { border:0; font-style: italic; font-size: smaller;}
+  .primer3plus_cell_no_border_bg { border:0; padding:0.2em; background-color:#ccccff; }
+  .primer3plus_cell_no_border_uli_bd { border:0; padding:0.15em; font-weight:bold; text-decoration:underline; }
+  .primer3plus_cell_no_border_right { border:0; padding:0.15em; text-align:right;}
+  .primer3plus_table_with_border { border:1px solid #000; width:100%; empty-cells:show; border-collapse:collapse; }
+  .primer3plus_cell_with_border { border:1px solid #000; padding:0.2em; }
+  .primer3plus_table_penalties { border:0; width:100%; empty-cells:show; border-collapse:collapse; }
+  .primer3plus_cell_penalties { border:0; padding-top:0.15em; padding-bottom:0.15em; }
+  .primer3plus_table_primer_pair_box { border:0; width:100%; empty-cells:show; border-collapse:collapse; }
+  .primer3plus_cell_primer_pair_box { padding:0.2em; }
+  .primer3plus_action_button {font-size: 0.9em}
+
+  .primer3plus_note { background-color:rgb(255,120,60); padding:0px; }
+  .primer3plus_excluded_region { background-color:rgb(255,80,60); color:rgb(0,0,0); }
+  .primer3plus_target { background-color:rgb(160,250,130); color:rgb(0,0,0); }
+  .primer3plus_included_region { background-color:rgb(110,210,90); color:rgb(0,0,0); }
+  .primer3plus_left_primer { background-color:#ccccff; color:rgb(0,0,0); }
+  .primer3plus_internal_oligo { background-color:rgb(0,0,0); color:rgb(255,255,255); }
+  .primer3plus_right_primer { background-color:rgb(250,240,75); color:rgb(0,0,0); }
+  .primer3plus_left_right_primer { background-color:rgb(140,225,0); color:rgb(0,0,0); }
+  .primer3plus_warning { background-color:rgb(255,120,60); }
+  .primer3plus_primer_pair { background-color:rgb(255,255,230); color:rgb(0,0,0); }
+  .primer3plus_primer_pair_box { margin: 4px; border: 2px solid #ccccff; clear: left; float: left; width: 870px; }
+  .primer3plus_long_list {}
+  .primer3plus_long_list_table { text-align:left; width:100%; table-layout:fixed; border:0; border-collapse:collapse }
+  div#primer3plus_result_sequence { font-size:1.0em; font-family:Courier,monospace; }
+  .primer3plus_select_all { width: 100%; clear: left; float: left;background-color: rgb(255, 255, 230);}
+  .region_button { width: 25px; }
+  textarea#sequenceTextarea { font-family:Courier,monospace; }
+  a#SCRIPT_TASK_INPUT {font-weight:bold; font-size: 1.1em}
+  .primer3plus_section {margin: 4px; border: 1px dashed #ccccff;}
+
+  </style>
+</head>
+
+
+<body>
+
+<div id="page">
+
+
+
+<!-- Primer3plus will include code here -->
+
+</div>
+
+</body>
+</html>
