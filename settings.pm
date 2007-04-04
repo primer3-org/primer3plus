@@ -25,7 +25,7 @@ package settings;
 use strict;
 use CGI;
 use Carp;
-use CGI::Carp qw(fatalsToBrowser);
+#use CGI::Carp qw(fatalsToBrowser);
 use Exporter;
 our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
 @ISA = qw(Exporter);
@@ -51,8 +51,8 @@ my %machineSettings = (
   "MAINTAINER" =>"user&#host.com",
 
   # The location of the primer3_core executable.
-# "PRIMER_BIN" =>  "primer3.exe",     # for Windows
-  "PRIMER_BIN" =>  "./primer3_core",   # for Linux
+# "PRIMER_BIN" =>  "primer3_core.exe",     # for Windows
+  "PRIMER_BIN" =>  "./primer3_core",       # for Linux
 
   # Parameters which are handed in with the programm call.
   "PRIMER_RUNTIME" =>  " -strict_tags",     # for Windows
@@ -100,7 +100,7 @@ my %machineSettings = (
 
   # If you make any substantial modifications give this code a new
   # version designation.
-  "CGI_VERSION" => "(primer3_www_results.cgi v 0.5)"
+  "CGI_VERSION" => "(primer3plus v 1.1)"
 );
 
   # Add mispriming / mishybing libraries; 
@@ -156,17 +156,18 @@ my %defaultSettings = (
   "PRIMER_LEFT_INPUT"                        => "",
   "PRIMER_RIGHT_INPUT"                       => "",
   "PRIMER_START_CODON_POSITION"              => "", #"-1000000",
+  "PRIMER_LOWERCASE_MASKING"                 => "0",
 # Primer3 "Global" Input Tags
   "PRIMER_TASK"                              => "pick_pcr_primers",
-  "PRIMER_PICK_ANYWAY"	                    => "1",
+  "PRIMER_PICK_ANYWAY"	                     => "1",
   "PRIMER_EXPLAIN_FLAG"                      => "0",
   "PRIMER_FILE_FLAG"                         => "0",
   "PRIMER_MISPRIMING_LIBRARY"                => "NONE",
   "PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS"     => "1",
   "PRIMER_MAX_MISPRIMING"                    => "12.00",
-  "PRIMER_MAX_TEMPLATE_MISPRIMING"           => "-1.00",
+  "PRIMER_MAX_TEMPLATE_MISPRIMING"           => "12.00",
   "PRIMER_PAIR_MAX_MISPRIMING"               => "24.00",
-  "PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING"      => "-1.00",
+  "PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING"      => "24.00",
   "PRIMER_PRODUCT_MIN_TM"                    => "", #"-1000000.0",
   "PRIMER_PRODUCT_OPT_TM"                    => "",
   "PRIMER_PRODUCT_MAX_TM"                    => "", #"1000000.0",
@@ -184,6 +185,10 @@ my %defaultSettings = (
   "PRIMER_OPT_GC_PERCENT"                    => "",
   "PRIMER_MAX_GC"                            => "80.0",
   "PRIMER_SALT_CONC"                         => "50.0",
+  "PRIMER_DIVALENT_CONC"                     => "0.0",
+  "PRIMER_DNTP_CONC"                         => "0.0",
+  "PRIMER_SALT_CORRECTIONS"                  => "0",
+  "PRIMER_TM_SANTALUCIA"                     => "0",
   "PRIMER_DNA_CONC"                          => "50.0",
   "PRIMER_NUM_NS_ACCEPTED"                   => "0",
   "PRIMER_SELF_ANY"                          => "8.00",
@@ -213,7 +218,7 @@ my %defaultSettings = (
   "PRIMER_WT_END_QUAL"                       => "0.0",
   "PRIMER_WT_POS_PENALTY"                    => "0.0",
   "PRIMER_WT_END_STABILITY"                  => "0.0",
-  "PRIMER_WT_TEMPLATE_MISPRIMING"            => "",
+  "PRIMER_WT_TEMPLATE_MISPRIMING"            => "0.0",
   "PRIMER_PAIR_WT_PR_PENALTY"                => "1.0",
   "PRIMER_PAIR_WT_IO_PENALTY"                => "0.0",
   "PRIMER_PAIR_WT_DIFF_TM"                   => "0.0",
@@ -224,7 +229,7 @@ my %defaultSettings = (
   "PRIMER_PAIR_WT_PRODUCT_SIZE_GT"           => "0.0",
   "PRIMER_PAIR_WT_PRODUCT_SIZE_LT"           => "0.0",
   "PRIMER_PAIR_WT_REP_SIM"                   => "0.0",
-  "PRIMER_PAIR_WT_TEMPLATE_MISPRIMING"       => "",
+  "PRIMER_PAIR_WT_TEMPLATE_MISPRIMING"       => "0.0",
 # Primer3 Internal Oligo "Sequence" Input Tags
   "PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION"    => "",
   "PRIMER_INTERNAL_OLIGO_INPUT"              => "",
@@ -239,6 +244,8 @@ my %defaultSettings = (
   "PRIMER_INTERNAL_OLIGO_OPT_GC_PERCENT"     => "",
   "PRIMER_INTERNAL_OLIGO_MAX_GC"             => "80.0",
   "PRIMER_INTERNAL_OLIGO_SALT_CONC"          => "50.0",
+  "PRIMER_INTERNAL_OLIGO_DIVALENT_CONC"      => "0.0",
+  "PRIMER_INTERNAL_OLIGO_DNTP_CONC"          => "0.0",
   "PRIMER_INTERNAL_OLIGO_DNA_CONC"           => "50.0",
   "PRIMER_INTERNAL_OLIGO_SELF_ANY"           => "12.00",
   "PRIMER_INTERNAL_OLIGO_MAX_POLY_X"         => "5",
@@ -310,7 +317,8 @@ PRIMER_LEFT_INPUT
 PRIMER_RIGHT_INPUT
 PRIMER_START_CODON_POSITION
 PRIMER_INTERNAL_OLIGO_INPUT
-PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION);
+PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION
+PRIMER_LOWERCASE_MASKING);
 
 # All the parameters saved in a settings file
 my @settingsParametersToSaveInFile = qw(PRIMER_TASK
@@ -338,6 +346,10 @@ PRIMER_MIN_GC
 PRIMER_OPT_GC_PERCENT
 PRIMER_MAX_GC
 PRIMER_SALT_CONC
+PRIMER_DIVALENT_CONC
+PRIMER_DNTP_CONC
+PRIMER_SALT_CORRECTIONS
+PRIMER_TM_SANTALUCIA
 PRIMER_DNA_CONC
 PRIMER_NUM_NS_ACCEPTED
 PRIMER_SELF_ANY
@@ -389,6 +401,8 @@ PRIMER_INTERNAL_OLIGO_MIN_GC
 PRIMER_INTERNAL_OLIGO_OPT_GC_PERCENT
 PRIMER_INTERNAL_OLIGO_MAX_GC
 PRIMER_INTERNAL_OLIGO_SALT_CONC
+PRIMER_INTERNAL_OLIGO_DIVALENT_CONC
+PRIMER_INTERNAL_OLIGO_DNTP_CONC
 PRIMER_INTERNAL_OLIGO_DNA_CONC
 PRIMER_INTERNAL_OLIGO_SELF_ANY
 PRIMER_INTERNAL_OLIGO_MAX_POLY_X
@@ -440,6 +454,7 @@ PRIMER_SEQUENCE_QUALITY
 PRIMER_LEFT_INPUT
 PRIMER_RIGHT_INPUT
 PRIMER_START_CODON_POSITION
+PRIMER_LOWERCASE_MASKING
 PRIMER_TASK
 PRIMER_PICK_ANYWAY
 PRIMER_EXPLAIN_FLAG
@@ -467,6 +482,10 @@ PRIMER_MIN_GC
 PRIMER_OPT_GC_PERCENT
 PRIMER_MAX_GC
 PRIMER_SALT_CONC
+PRIMER_DIVALENT_CONC
+PRIMER_DNTP_CONC
+PRIMER_SALT_CORRECTIONS
+PRIMER_TM_SANTALUCIA
 PRIMER_DNA_CONC
 PRIMER_NUM_NS_ACCEPTED
 PRIMER_SELF_ANY
@@ -520,6 +539,8 @@ PRIMER_INTERNAL_OLIGO_MIN_GC
 PRIMER_INTERNAL_OLIGO_OPT_GC_PERCENT
 PRIMER_INTERNAL_OLIGO_MAX_GC
 PRIMER_INTERNAL_OLIGO_SALT_CONC
+PRIMER_INTERNAL_OLIGO_DIVALENT_CONC
+PRIMER_INTERNAL_OLIGO_DNTP_CONC
 PRIMER_INTERNAL_OLIGO_DNA_CONC
 PRIMER_INTERNAL_OLIGO_SELF_ANY
 PRIMER_INTERNAL_OLIGO_MAX_POLY_X
@@ -544,6 +565,7 @@ my @primer3PrimerCheckParameters =  qw(PRIMER_SEQUENCE_ID
 SEQUENCE
 PRIMER_SEQUENCE_QUALITY
 PRIMER_LEFT_INPUT
+PRIMER_LOWERCASE_MASKING
 PRIMER_TASK
 PRIMER_PICK_ANYWAY
 PRIMER_EXPLAIN_FLAG
@@ -563,6 +585,10 @@ PRIMER_MIN_GC
 PRIMER_OPT_GC_PERCENT
 PRIMER_MAX_GC
 PRIMER_SALT_CONC
+PRIMER_DIVALENT_CONC
+PRIMER_DNTP_CONC
+PRIMER_SALT_CORRECTIONS
+PRIMER_TM_SANTALUCIA
 PRIMER_DNA_CONC
 PRIMER_NUM_NS_ACCEPTED
 PRIMER_SELF_ANY

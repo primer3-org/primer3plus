@@ -42,6 +42,7 @@ if ( defined $parametersHTML{SCRIPT_SETTINGS_FILE_CONTENT} ) {
 if ( defined $parametersHTML{SCRIPT_SEQUENCE_FILE_CONTENT} ) {
 	loadFile( $parametersHTML{SCRIPT_SEQUENCE_FILE_CONTENT}, \%parametersHTML, "1" );
 }
+
 # Load the server-stored Settings-File in %parametersHTML
 if (    ( !defined $parametersHTML{SCRIPT_SETTINGS_FILE_CONTENT} )
 	and ( defined $parametersHTML{Activate_Settings} ) ) {
@@ -56,9 +57,6 @@ if (    ( !defined $parametersHTML{SCRIPT_SETTINGS_FILE_CONTENT} )
     	loadFile( $serverFile, \%parametersHTML, "0" );
 	}
 }
-
-
-
 
 # Add missing parameters from the defaultSettings
 %completeParameters = constructCombinedHash( %defaultSettings, %parametersHTML );
@@ -83,8 +81,16 @@ elsif (( defined $parametersHTML{Upload_File} )
 	if ( defined $parametersHTML{Activate_Settings} ) {
 		setMessage("Active Settings: $parametersHTML{SERVER_PARAMETER_FILE} ");
 	}
-	print "Content-type: text/html\n\n";
-	print mainStartUpHTML( \%completeParameters ), "\n";
+	if ( $parametersHTML{SCRIPT_SEQUENCE_COUNTER} > 1 ) {
+        setMessage("Multiple Sequences uploaded");
+        
+    	print "Content-type: text/html\n\n";
+	    print createSelectSequence( \%completeParameters ), "\n";
+	}
+	else {
+		print "Content-type: text/html\n\n";
+		print mainStartUpHTML( \%completeParameters ), "\n";
+	}
 }
 
 elsif ( defined $parametersHTML{Save_Sequence} ) {
@@ -99,10 +105,11 @@ elsif ( defined $parametersHTML{Save_Settings} ) {
 	print createSettingsFile( \%completeParameters );
 }
 
+
 elsif ( defined $parametersHTML{Pick_Primers} ) {
 	findAllPrimers( \%completeParameters, \%resultsHash );
 	print "Content-type: text/html\n\n";
-	print mainResultsHTML( \%resultsHash ), "\n";
+	print mainResultsHTML( \%completeParameters, \%resultsHash ), "\n";
 }
 
 else {

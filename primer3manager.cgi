@@ -24,7 +24,7 @@
 use strict;
 use CGI;
 use Carp;
-use CGI::Carp qw(fatalsToBrowser);
+#use CGI::Carp qw(fatalsToBrowser);
 use primer3plusFunctions;
 use settings;
 use HtmlFunctions;
@@ -45,7 +45,7 @@ getParametersForManager(\@sequencesHTML, \@namesHTML, \@toOrderHTML, \@dateHTML,
 
 ## Get the ID which is used as filename from the cookie or make a new one
 $cookieID = getCookie();
-if ($cookieID =~ /\d/) {
+if ($cookieID && $cookieID =~ /\d/) {
     $uniqueID = $cookieID;
 }
 else {
@@ -53,7 +53,10 @@ else {
 }
 
 ## Figure out how to add a the primers to the existing list
-if ($controlParameter{"Submit"} eq "Submit") {
+if (!$controlParameter{"Submit"}) {
+	$modus = "S";
+}
+elsif ($controlParameter{"Submit"} eq "Submit") {
     $modus = "S";
 }
 elsif ($controlParameter{"Submit"} eq "Refresh") {
@@ -75,7 +78,7 @@ else {
     $modus = "S";
 }
 
-if ($controlParameter{"SELECT_ALL_PRIMERS"} == 1) {
+if ($controlParameter{"SELECT_ALL_PRIMERS"} && $controlParameter{"SELECT_ALL_PRIMERS"} == 1) {
     $modus = "U";
 }
 
@@ -100,12 +103,12 @@ if (!(defined ($controlParameter{"HTML_MANAGER"}))) {
 $saveFile = createManagerFile(\@sequencesFinal, \@namesFinal, \@toOrderFinal, \@dateFinal);
 setCacheFile(\$uniqueID, \$saveFile);
 
-if ($controlParameter{"Submit"} eq "Save File") {
+if ($controlParameter{"Submit"} && $controlParameter{"Submit"} eq "Save File") {
     my $fileDate = getDate("Y","_");	
     print "Content-disposition: attachment; filename=Primers_$fileDate.fas\n\n";
     print $saveFile;
 }
-elsif ($controlParameter{"Submit"} eq "Order selected Primers") {
+elsif ($controlParameter{"Submit"} && $controlParameter{"Submit"} eq "Order selected Primers") {
     print "Content-type: text/html\n\n";
     print customPrimerOrder(\@sequencesFinal, \@namesFinal, \@toOrderFinal),"\n";
 

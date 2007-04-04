@@ -25,7 +25,7 @@ package primer3plusFunctions;
 use strict;
 use CGI;
 use Carp;
-use CGI::Carp qw(fatalsToBrowser);
+#use CGI::Carp qw(fatalsToBrowser);
 use CGI::Cookie;
 use FileHandle;
 use IPC::Open3;
@@ -115,7 +115,7 @@ sub getParametersForManager {
 	$File = $cgi->param("DATABASE_FILE");
 
 	# Load the file in a string to read it later
-	if ( $File ne "" ) {
+	if ( $File && $File ne "" ) {
 		binmode $File;
 		my $data;
 		while ( read $File, $data, 1024 ) {
@@ -205,7 +205,7 @@ sub getCacheFile {
 		close(TEMPLATEFILE);
 	}
 
-	if ( $fileContent =~ /\w/ ) {
+	if ($fileContent && $fileContent =~ /\w/ ) {
 		${$cacheContent} = $fileContent;
 	}
 	else {
@@ -297,8 +297,8 @@ sub extractSelectedPrimers {
 
 	for ( my $counter1 = 0 ; (($counter1 <= $#{$sequences1}) and ($counter1 <= $maxPrimers)) ; $counter1++ ) {
 		if (   ( ${$mode} eq "A" ) or ( ${$mode} eq "U" )
-			or ( ( $selected1->[$counter1] eq 1 ) and ( ${$mode} eq "S" ) )
-			or ( ( $selected1->[$counter1] ne 1 ) and ( ${$mode} eq "D" ) ) ) {
+			or ( ( $selected1->[$counter1] && $selected1->[$counter1] == 1 ) and ( ${$mode} eq "S" ) )
+			or ( ( !($selected1->[$counter1]) || $selected1->[$counter1] != 1 ) and ( ${$mode} eq "D" ) ) ) {
 			
 			$sequences2->[$counter2] = $sequences1->[$counter1];
 			$names2->[$counter2]     = $names1->[$counter1];
@@ -308,7 +308,7 @@ sub extractSelectedPrimers {
 			else {
 			    $selected2->[$counter2] = $selected1->[$counter1];
 			}
-			if ( $date1->[$counter1] =~ /\d/ ) {
+			if ( $date1->[$counter1] && $date1->[$counter1] =~ /\d/ ) {
 				$date2->[$counter2] = $date1->[$counter1];
 			}
 			else {
@@ -476,11 +476,15 @@ sub loadManagerFile {
 	my ( @fileContent, @nameLine );
 	my ( $select,      $arrayCounter );
 
+	if (!${$fileString}) {
+		return;
+	}
+
 	# solve the newline problem with other platforms
-	if ( ${$fileString} =~ /\r\n/ ) {
+	if (${$fileString} =~ /\r\n/ ) {
 		${$fileString} =~ s/\r\n/\n/g;
 	}
-	if ( ${$fileString} =~ /\r/ ) {
+	if (${$fileString} =~ /\r/ ) {
 		${$fileString} =~ s/\r/\n/g;
 	}
 
@@ -525,8 +529,9 @@ sub loadFile {
 	$dataTarget = shift;
 	$makeMessage = shift;
 	my @fileContent;
-	my ( $line, $lineKey, $lineValue, $fileType, $readable );
+	my ( $line, $lineKey, $lineValue, $fileType, $readable, $sequenceCounter, $multiName );
 
+    $sequenceCounter = 0;
 
 	# solve the newline problem with other platforms
 	if ( $fileString =~ /\r\n/ ) {
@@ -571,18 +576,32 @@ sub loadFile {
 	elsif ( $fileString =~ /^>/ ) {
 		my ( $name, $sequence, $temp );
 		@fileContent = split '\n', $fileString;
-		( $temp, $name ) = split ">", $fileContent[0];
-		for ( my $i = 1 ; $i <= $#fileContent ; $i++ ) {
-			if ( ( index( $fileContent[$i], ">" ) ) > -1 ) {
-				$i = $#fileContent;
+
+		for ( my $i = 0 ; $i <= $#fileContent ;  ) {
+			( $temp, $name ) = split ">", $fileContent[$i];
+			$i++;
+			for ( my $stop = 0; $i <= $#fileContent and $stop == 0 ;  ) {
+				if ( $fileContent[$i]=~ />/ ) {
+					$stop = 1;
+				}
+				else {
+					$sequence .= $fileContent[$i];
+					$i++;
+				}
+			}
+			if ($sequenceCounter == 0) {
+			    $dataTarget->{"PRIMER_SEQUENCE_ID"} = $name;
+			    $dataTarget->{"SEQUENCE"}           = $sequence;
 			}
 			else {
-				$sequence .= $fileContent[$i];
-
-			}
-		}
-		$dataTarget->{"PRIMER_SEQUENCE_ID"} = $name;
-		$dataTarget->{"SEQUENCE"}           = $sequence;
+		        $dataTarget->{"PRIMER_SEQUENCE_ID_$sequenceCounter"} = $name;
+		        $dataTarget->{"SEQUENCE_$sequenceCounter"} = $sequence;
+			}		
+			$sequenceCounter++;
+			$sequence="";
+		};
+		
+		$dataTarget->{"SCRIPT_SEQUENCE_COUNTER"} = $sequenceCounter;
 		setMessage("Primer3Plus loaded Fasta-File");
 	}
 
@@ -595,56 +614,133 @@ sub loadFile {
 	    setMessage("Primer3Plus loaded SeqEdit-File");
     }
 
-	# Read Fasta file format
-	elsif ( $fileString =~ /ORIGIN/ ) {
-		my ( $name, $sequence, $temp );
-		( $name,     $sequence ) = split "ORIGIN", $fileString;
-		( $sequence, $temp )     = split "//",     $sequence;
-		$sequence =~ s/\d//g;
+	# Read GeneBank file format old way
+#	elsif ( $fileString =~ /ORIGIN/ ) {
+#		my ( $name, $sequence, $temp );
+#		( $name,     $sequence ) = split "ORIGIN", $fileString;
+#		( $sequence, $temp )     = split "//",     $sequence;
+#		$sequence =~ s/\d//g;
+#
+#		( $temp, $name ) = split "DEFINITION", $name;
+#		( $name, $temp ) = split "\n",         $name;
+#		$name =~ s/^\s*//;
+#
+#		$dataTarget->{"PRIMER_SEQUENCE_ID"} = $name;
+#		$dataTarget->{"SEQUENCE"}           = $sequence;
+#		setMessage("Primer3Plus loaded GenBank-File");
+#	}
 
-		( $temp, $name ) = split "DEFINITION", $name;
-		( $name, $temp ) = split "\n",         $name;
-		$name =~ s/^\s*//;
-
-		$dataTarget->{"PRIMER_SEQUENCE_ID"} = $name;
-		$dataTarget->{"SEQUENCE"}           = $sequence;
-		setMessage("Primer3Plus loaded GenBank-File");
-	}
-
-	# Read EMBL file format
-	elsif ( ( $fileString =~ /Sequence/ ) and ( $fileString =~ /SQ/ ) ) {
-		my ( $name, $sequence, $temp, $inSeq );
+	# Read GenBank file format
+	elsif ( ( $fileString =~ /ORIGIN/ ) and ( $fileString =~ /LOCUS/ ) ) {
+		my ( $name, $sequence, $temp, $inSeq, $sequenceCounter );
 		@fileContent = split '\n', $fileString;
+		
+		$sequenceCounter = 0;
 		$inSeq = 0;
 		for ( my $i = 0 ; $i <= $#fileContent ; $i++ ) {
-			if ( $fileContent[$i] =~ /DE/ ) {
-				( $temp, $name ) = split "DE", $fileContent[$i];
+			if ( $fileContent[$i] =~ /^DEFINITION/ ) {
+				( $temp, $name ) = split "DEFINITION", $fileContent[$i];
 			}
-			if ( $fileContent[$i] =~ /\/\// ) {
+			if (( $fileContent[$i] =~ /\/\// )
+			     and ($inSeq == 1)) {
 				$inSeq = 0;
+
+	  	        $name     =~ s/^\s*//;
+		        $sequence =~ s/\d//g;
+		        $sequence =~ s/\W//g;
+
+				if ($sequenceCounter == 0) {
+				    $dataTarget->{"PRIMER_SEQUENCE_ID"} = $name;
+				    $dataTarget->{"SEQUENCE"}           = $sequence;
+				}
+				else {
+			        $dataTarget->{"PRIMER_SEQUENCE_ID_$sequenceCounter"} = $name;
+			        $dataTarget->{"SEQUENCE_$sequenceCounter"} = $sequence;
+				}		
+				$sequenceCounter++;
+				$sequence="";
+			}
+			if ( $inSeq == 1 ) {
+				$sequence .= $fileContent[$i];
+			}
+			if ( $fileContent[$i] =~ /^ORIGIN/ ) {
+				$inSeq = 1;
+			}
+		}
+		$dataTarget->{"SCRIPT_SEQUENCE_COUNTER"} = $sequenceCounter;
+		setMessage("Primer3Plus loaded GenBank-File");
+	}
+	# Read EMBL file format
+	elsif ( ( $fileString =~ /Sequence/ ) and ( $fileString =~ /SQ/ ) ) {
+		my ( $name, $sequence, $temp, $inSeq, $sequenceCounter );
+		@fileContent = split '\n', $fileString;
+		
+		$sequenceCounter = 0;
+		$inSeq = 0;
+		for ( my $i = 0 ; $i <= $#fileContent ; $i++ ) {
+			if ( $fileContent[$i] =~ /^KW/ ) {
+				( $temp, $name ) = split "KW", $fileContent[$i];
+			}
+			if (( $fileContent[$i] =~ /\/\// )
+			     and ($inSeq == 1)) {
+				$inSeq = 0;
+
+	  	        $name     =~ s/^\s*//;
+		        $sequence =~ s/\d//g;
+		        $sequence =~ s/\W//g;
+
+				if ($sequenceCounter == 0) {
+				    $dataTarget->{"PRIMER_SEQUENCE_ID"} = $name;
+				    $dataTarget->{"SEQUENCE"}           = $sequence;
+				}
+				else {
+			        $dataTarget->{"PRIMER_SEQUENCE_ID_$sequenceCounter"} = $name;
+			        $dataTarget->{"SEQUENCE_$sequenceCounter"} = $sequence;
+				}		
+				$sequenceCounter++;
+				$sequence="";
 			}
 			if ( $inSeq == 1 ) {
 				$sequence .= $fileContent[$i];
 			}
 			if (    ( $fileContent[$i] =~ /Sequence/ )
-				and ( $fileContent[$i] =~ /SQ/ ) )
-			{
+				and ( $fileContent[$i] =~ /SQ/ ) ) {
 				$inSeq = 1;
 			}
 		}
-		$name     =~ s/^\s*//;
-		$sequence =~ s/\d//g;
-
-		$dataTarget->{"PRIMER_SEQUENCE_ID"} = $name;
-		$dataTarget->{"SEQUENCE"}           = $sequence;
+		$dataTarget->{"SCRIPT_SEQUENCE_COUNTER"} = $sequenceCounter;
 		setMessage("Primer3Plus loaded EMBL-File");
-	}
+	}	
 	else {
-		setMessage("Error: Primer3Plus could not read File");
+		my $sequence;
+
+  	    $sequence = $fileString;
+
+  	    $sequence =~ s/^\s*//;
+        $sequence =~ s/\d//g;
+        $sequence =~ s/\W//g;
+		
+		$dataTarget->{"SEQUENCE"} = $sequence;
+		setMessage("Error: Primer3Plus could not identify File Format");
 	}
 
 	return;
 }
+
+#####################################################################
+# runSeqRet: Try to read the file with SeqRet and retun it as fasta #
+#####################################################################
+
+sub runSeqRet {
+	my ($inputFile, $returnFile);
+	$inputFile = shift;
+	$returnFile = $returnFile;
+	
+	$returnFile = $inputFile;
+	
+	return $returnFile;
+}
+
 
 ####################################################################
 # checkParameters: Checks the Parameter in Hash for wrong settings #
@@ -654,6 +750,15 @@ sub checkParameters (\%) {
 	$dataStorage = shift;
 	my %misLibrary      = getMisLibrary();
 	my ( $fixPrimerEnd, $libary );
+	
+	## Copy the selected sequence of a multiSequence file to the input
+	if ( defined( $dataStorage->{"SelectOneSequence"} ) ) {
+        my $choosenSequence = $dataStorage->{"SCRIPT_SELECTED_SEQUENCE"};
+        if ( $choosenSequence != 0 ) {
+            $dataStorage->{"SEQUENCE"} = $dataStorage->{"SEQUENCE_$choosenSequence"};
+            $dataStorage->{"PRIMER_SEQUENCE_ID"} = $dataStorage->{"PRIMER_SEQUENCE_ID_$choosenSequence"};
+        }
+	}
 
 	## Check from which end to cut a primer
 	$fixPrimerEnd = $dataStorage->{"SCRIPT_FIX_PRIMER_END"};
@@ -728,14 +833,14 @@ sub checkParameters (\%) {
 	my ( $m_target, $m_excluded_region, $m_included_region ) =
 	          read_sequence_markup( $realSequence, ( [ '[', ']' ], [ '<', '>' ], [ '{', '}' ] ) );
 	$realSequence =~ s/[\[\]\<\>\{\}]//g;
-	if (@$m_target) {
+	if ($m_target && @$m_target) {
 		if ($target) {
 			setMessage("WARNING Targets specified both as sequence".
 			           " markups and in Other Per-Sequence Inputs");
 		}
 		$target = add_start_len_list( $target, $m_target, $firstBaseIndex );
 	}
-	if (@$m_excluded_region) {
+	if ($m_excluded_region && @$m_excluded_region) {
 		if ($excludedRegion) {
 			setMessage("WARNING Excluded Regions specified both as sequence".
 			           " markups and in Other Per-Sequence Inputs");
@@ -743,7 +848,7 @@ sub checkParameters (\%) {
 		$excludedRegion =
 		  add_start_len_list( $excludedRegion, $m_excluded_region,	$firstBaseIndex );
 	}
-	if (@$m_included_region) {
+	if ($m_included_region && @$m_included_region) {
 		if ( scalar @$m_included_region > 1 ) {
 			setMessage("ERROR: Too many included regions");
 		}

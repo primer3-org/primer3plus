@@ -24,14 +24,14 @@
 use strict;
 package HtmlFunctions;
 use Carp;
-use CGI::Carp qw(fatalsToBrowser);
+#use CGI::Carp qw(fatalsToBrowser);
 use Exporter;
 use settings;
 our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
 
 @ISA = qw(Exporter);
 @EXPORT = qw(&mainStartUpHTML &createHelpHTML &createAboutHTML &mainResultsHTML
-			 &createManagerHTML &getWrapper);
+			 &createManagerHTML &getWrapper &createSelectSequence);
 $VERSION = "1.00";
 
 ##########################################################################
@@ -80,29 +80,30 @@ sub mainStartUpHTML {
 # mainResultsHTML: Will select the function to write a HTML-Form #
 ##################################################################
 sub mainResultsHTML {
-  my $settings; 
-  $settings = shift;
+  my ($completeParameters, $results); 
+  $completeParameters = shift;
+  $results = shift;
 
   my $returnString;
-  my $task = $settings->{"SCRIPT_TASK"};
+  my $task = $results->{"SCRIPT_TASK"};
 
   if ($task eq "Detection") {
-      $returnString = createResultsDetection($settings);
+      $returnString = createResultsDetection($completeParameters, $results);
   }
   elsif ($task eq "Primer_Check") {
-      $returnString = createResultsPrimerCheck($settings);
+      $returnString = createResultsPrimerCheck($completeParameters, $results);
   }
   elsif ($task eq "Cloning") {
-      $returnString = createResultsDetection($settings);
+      $returnString = createResultsDetection($completeParameters, $results);
   }
   elsif ($task eq "Primer_List") {
-      $returnString = createResultsPrimerList($settings, "1");
+      $returnString = createResultsPrimerList($completeParameters, $results, "1");
   }
   elsif ($task eq "Sequencing") {
-      $returnString = createResultsPrimerList($settings, "0");
+      $returnString = createResultsPrimerList($completeParameters, $results, "0");
   }
   else {
-      $returnString = createResultsList($settings);
+      $returnString = createResultsList($results);
   }
 
   return $returnString;
@@ -193,11 +194,11 @@ $formHTML .= qq{
 	return $formHTML;
 }
 
-##########################################################
-# divNoJavascript: 
-# Writes a message that is hidden by JavaScript, so only 
-# JavaScript disabled browser show it.
-##########################################################
+########################################################### 
+# divNoJavascript:                                        #
+# Writes a message that is hidden by JavaScript, so only  #
+# JavaScript disabled browser show it.                    #
+###########################################################
 sub divNoJavascript {
 	my $urlFormAction = getMachineSetting("URL_FORM_ACTION");
 	$urlFormAction .= "?SCRIPT_CONTAINS_JAVA_SCRIPT=0";
@@ -394,22 +395,22 @@ sub divActionButtons {
 	my $formHTML = qq{   
 	<table>
            <tr>
-                <td><input name="Pick_Primers" value="Pick Primers" type="submit"></td><td><input value="Reset Form" type="reset"></td>
-                <td><input name="Default_Settings" value="Default Settings" type="submit"></td>
+                <td><input name="Pick_Primers" value="Pick Primers" type="submit" style="background: #83db7b; "></td><td><input value="Reset Form" type="reset"></td>
+                <td><input name="Default_Settings" value="Reset Form" type="submit"></td>
            </tr>
         </table>
 };
 	return $formHTML;
 }
 
-##############################################
+#################################################
 # divPickPrimerButton: Writes the Action Button #    
-##############################################
+#################################################
 sub divPickPrimerButton {
 	my $formHTML = qq{   
 	<table><tr>
-	<td><input id="primer3plus_pick_primers_button" class="primer3plus_action_button" name="Pick_Primers" value="Pick Primers" type="submit"></td>
-	<td><input class="primer3plus_action_button" value="Reset Form" type="reset"></td>
+	<td><input id="primer3plus_pick_primers_button" class="primer3plus_action_button" name="Pick_Primers" value="Pick Primers" type="submit" style="background: #83db7b;"></td>
+	<td><input class="primer3plus_action_button" name="Default_Settings" value="Reset Form" type="submit"></td>
 	</tr></table>
 };
 	return $formHTML;
@@ -1065,7 +1066,7 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_PRODUCT_SIZE_INPUT" href="primer3_www_help.cgi#PRIMER_PRODUCT_SIZE">Product Size</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_PRODUCT_SIZE_INPUT" href="primer3plusHelp.cgi#PRIMER_PRODUCT_SIZE">Product Size</a>
        </td>
        <td class="primer3plus_cell_no_border_right">Min: 
          <input size="6" name="SCRIPT_DETECTION_PRODUCT_MIN_SIZE" 
@@ -1929,6 +1930,9 @@ initToolTips();
 function clearMarking() {
         var txtarea = document.mainForm.sequenceTextarea;
         txtarea.value = txtarea.value.replace(/[{}<>[\\]]/g,"");
+        document.getElementById("INCLUDED_REGION").value="";
+        document.getElementById("EXCLUDED_REGION").value="";
+        document.getElementById("TARGET").value="";                
 }
 
 function setRegion(tagOpen,tagClose) {
@@ -2044,7 +2048,7 @@ $formHTML .= qq{</div>
 		$formHTML .= qq{style="display: none;" };
 	} 	
 my $sequence = $settings{SEQUENCE};
-$sequence =~ s/(\w{80})/\1\n/g;
+$sequence =~ s/(\w{80})/$1\n/g;
 $formHTML .= qq{>
    <table class="primer3plus_table_no_border">
      <tr>
@@ -2113,7 +2117,7 @@ $formHTML .= qq{>
        </td>
        <td class="primer3plus_cell_no_border">&lt;
        </td>
-       <td class="primer3plus_cell_no_border"><input size="40" name="EXCLUDED_REGION" value="$settings{EXCLUDED_REGION}" type="text">&nbsp;&gt;
+       <td class="primer3plus_cell_no_border"><input size="40" id="EXCLUDED_REGION" name="EXCLUDED_REGION" value="$settings{EXCLUDED_REGION}" type="text">&nbsp;&gt;
        </td>
      </tr>
   </table>
@@ -2131,7 +2135,7 @@ $formHTML .= qq{>
        </td>
        <td class="primer3plus_cell_no_border">[
        </td>
-       <td class="primer3plus_cell_no_border"><input size="40" name="TARGET" value="$settings{TARGET}" type="text" />&nbsp;]
+       <td class="primer3plus_cell_no_border"><input size="40" id="TARGET" name="TARGET" value="$settings{TARGET}" type="text" />&nbsp;]
        </td>
      </tr>
   </table>
@@ -2144,12 +2148,12 @@ $formHTML .= qq{>
        <col width="78%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('A sub-region of the given sequence in which to pick primers. For example, often the first dozen or so bases of a sequence are vector, and should be excluded from consideration.<br>The value for this parameter has the form start,length.<br>E.g. 20,400: only pick primers in the &gt; &lt;400 base region starting at position 20.<br> Or use { and } in the source sequence to mark the beginning and end of the included<br> region: e.g. in ATC{TTC...TCT}AT the included region is TTC...TCT.');"
+       <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('A sub-region of the given sequence in which to pick primers. For example, often the first dozen or so bases of a sequence are vector, and should be excluded from consideration.<br>The value for this parameter has the form start,length.<br>E.g. 20,400: only pick primers in the 400 base region starting at position 20.<br> Or use { and } in the source sequence to mark the beginning and end of the included<br> region: e.g. in ATC{TTC...TCT}AT the included region is TTC...TCT.');"
          onmouseout="toolTip();"  name="INCLUDED_REGION_INPUT" href="$machineSettings{URL_HELP}#INCLUDED_REGION">Included Region:</a>
        </td>
        <td class="primer3plus_cell_no_border">{
        </td>
-       <td class="primer3plus_cell_no_border"><input size="40" name="INCLUDED_REGION" value="$settings{INCLUDED_REGION}" type="text">&nbsp;}
+       <td class="primer3plus_cell_no_border"><input size="40" id="INCLUDED_REGION" name="INCLUDED_REGION" value="$settings{INCLUDED_REGION}" type="text">&nbsp;}
        </td>
      </tr>
   </table>
@@ -2321,35 +2325,45 @@ $formHTML .= qq{</div>
        </td>
        <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_MAX_GC" value="$settings{PRIMER_MAX_GC}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">
-       </td>
-     </tr>
-   </table>
-   <table class="primer3plus_table_no_border">
-     <colgroup>
-       <col width="32%">
-       <col width="18%">
-       <col width="50%">
-     </colgroup>
-     <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_SALT_CONC_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SALT_CONC">Salt Concentration:</a>
-       </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SALT_CONC" value="$settings{PRIMER_SALT_CONC}" type="text">
-       </td>
-       <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Select which end of the primer is fixed and which end can be extended or shortened by Primer3Plus fo find optimal primers.');"
+       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;&nbsp;<a onmouseover="toolTip('Select which end of the primer is fixed and which end can be extended or shortened by Primer3Plus fo find optimal primers.');"
          onmouseout="toolTip();" name="SCRIPT_FIX_PRIMER_END_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_FIX_PRIMER_END">Fix the</a>
          <input size="2" name="SCRIPT_FIX_PRIMER_END" value="$settings{SCRIPT_FIX_PRIMER_END}" type="text">
          <a href="$machineSettings{URL_HELP}#SCRIPT_FIX_PRIMER_END"> prime end of the primer</a>
        </td>
      </tr>
+   </table>
+   <table class="primer3plus_table_no_border">
+     <colgroup>
+       <col width="30%">
+       <col width="10%">
+       <col width="25%">
+       <col width="10%">
+       <col width="25%">
+     </colgroup>
      <tr>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_SALT_CONC_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SALT_CONC">Concentration of monovalent cations:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SALT_CONC" value="$settings{PRIMER_SALT_CONC}" type="text">
+       </td>
        <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Not the concentration of oligos in the reaction mix<br>but of those annealing to template.');"
          onmouseout="toolTip();" name="PRIMER_DNA_CONC_INPUT" href="$machineSettings{URL_HELP}#PRIMER_DNA_CONC">
          Annealing Oligo Concentration:</a>
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_DNA_CONC" value="$settings{PRIMER_DNA_CONC}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">
+       <td class="primer3plus_cell_no_border">&nbsp;
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_DIVALENT_CONC_INPUT" href="$machineSettings{URL_HELP}#PRIMER_DIVALENT_CONC">Concentration of divalent cations:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_DIVALENT_CONC" value="$settings{PRIMER_DIVALENT_CONC}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_DNTP_CONC_INPUT" href="$machineSettings{URL_HELP}#PRIMER_DNTP_CONC_CONC">Concentration of dNTPs:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_DNTP_CONC" value="$settings{PRIMER_DNTP_CONC}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border">&nbsp;
        </td>
      </tr>
    </table>
@@ -2403,7 +2417,7 @@ $formHTML .= qq{
                 $formHTML .= "         <option$selectedStatus>$option</option>\n";
         }
 
-        $formHTML .= qq{         </select>
+        $formHTML .= qq{         </select>&nbsp;(use Activate Settings button to load the selected settings)
        </td>
      </tr>
      <tr>
@@ -2427,20 +2441,70 @@ $formHTML .= qq{</div>
 <div id="primer3plus_advanced_primer_picking" class="primer3plus_tab_page" style="display: none;">
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="30%">
+       <col width="25%">
        <col width="15%">
        <col width="30%">
-       <col width="25%">
+       <col width="35%">
      </colgroup>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_POLY_X_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_POLY_X">Max Poly-X:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MAX_POLY_X" value="$settings{PRIMER_MAX_POLY_X}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border">
+         <a name="PRIMER_TM_SANTALUCIA_INPUT" href="$machineSettings{URL_HELP}#PRIMER_TM_SANTALUCIA">
+         Table of thermodynamic parameters:</a>
+       </td>
+       <td class="primer3plus_cell_no_border">         
+         <select name="PRIMER_TM_SANTALUCIA">
+};
+		if ( $settings{PRIMER_TM_SANTALUCIA} == 1 ) {
+     		$formHTML .= qq{           <option value="0">Breslauer et al. 1986</option>
+           <option selected="selected" value="1">SantaLucia 1998</option>
+};
+		}
+		else {
+			$formHTML .= qq{           <option selected="selected" value="0">Breslauer et al. 1986</option>
+           <option value="1">SantaLucia 1998</option>
+};		
+		};
+
+        $formHTML .= qq{         </select>
+       </td>         
+     </tr>
      <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_NUM_NS_ACCEPTED_INPUT" href="$machineSettings{URL_HELP}#PRIMER_NUM_NS_ACCEPTED">Max #N's:</a>
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_NUM_NS_ACCEPTED" value="$settings{PRIMER_NUM_NS_ACCEPTED}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_POLY_X_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_POLY_X">Max Poly-X:</a>
+       <td class="primer3plus_cell_no_border">
+         <a name="PRIMER_SALT_CORRECTIONS" href="$machineSettings{URL_HELP}#PRIMER_SALT_CORRECTIONS">
+         Salt correction formula:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MAX_POLY_X" value="$settings{PRIMER_MAX_POLY_X}" type="text">
-       </td>
+       <td class="primer3plus_cell_no_border">         
+         <select name="PRIMER_SALT_CORRECTIONS">
+};
+		if ( $settings{PRIMER_SALT_CORRECTIONS} == 1 ) {
+     		$formHTML .= qq{                      <option value="0"> Schildkraut and Lifson 1965</option>
+           <option selected="selected" value="1">SantaLucia 1998</option>
+           <option value="2">Owczarzy et. 2004</option>
+};
+		}
+		elsif ( $settings{PRIMER_SALT_CORRECTIONS} == 2 ) {
+     		$formHTML .= qq{                      <option value="0"> Schildkraut and Lifson 1965</option>
+           <option value="1">SantaLucia 1998</option>
+           <option selected="selected" value="2">Owczarzy et. 2004</option>
+};
+		}
+		else {
+			$formHTML .= qq{                      <option selected="selected" value="0"> Schildkraut and Lifson 1965</option>
+           <option value="1">SantaLucia 1998</option>
+           <option value="2">Owczarzy et. 2004</option>
+};		
+		};
+
+        $formHTML .= qq{         </select>
+       </td>         
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_NUM_RETURN_INPUT" href="$machineSettings{URL_HELP}#PRIMER_NUM_RETURN">Number To Return:</a>
@@ -2472,14 +2536,25 @@ $formHTML .= qq{</div>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"> <a name="PRIMER_MAX_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_MISPRIMING">Max Mispriming:</a>
+       <td class="primer3plus_cell_no_border"> <a name="PRIMER_MAX_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_MISPRIMING">Max Repeat Mispriming:</a>
        </td>
        <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_MAX_MISPRIMING" value="$settings{PRIMER_MAX_MISPRIMING}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"> <a name="PRIMER_PAIR_MAX_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_MAX_MISPRIMING">
-       Pair Max Mispriming:</a>
+       Pair Max Repeat Mispriming:</a>
        </td>
        <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_PAIR_MAX_MISPRIMING" value="$settings{PRIMER_PAIR_MAX_MISPRIMING}" type="text">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"> <a name="PRIMER_MAX_TEMPLATE_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_TEMPLATE_MISPRIMING">Max Template Mispriming:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_MAX_TEMPLATE_MISPRIMING" value="$settings{PRIMER_MAX_TEMPLATE_MISPRIMING}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"> <a name="PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING">
+       Pair Max Template Mispriming:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING" value="$settings{PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING}" type="text">
        </td>
      </tr>
      <tr>
@@ -2555,7 +2630,7 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_no_border" colspan="2">Warning: slow and expensive!</td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_PRODUCT_SIZE_INPUT" href="primer3_www_help.cgi#PRIMER_PRODUCT_SIZE">Product Size</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_PRODUCT_SIZE_INPUT" href="primer3plusHelp.cgi#PRIMER_PRODUCT_SIZE">Product Size</a>
        </td>
        <td class="primer3plus_cell_no_border_right">Min: 
          <input size="6" name="SCRIPT_DETECTION_PRODUCT_MIN_SIZE" 
@@ -2587,8 +2662,14 @@ $formHTML .= qq{</div>
 	$formHTML .= ($settings{PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{type="checkbox">Do not treat ambiguity codes in libraries as consensus </td>
-	<td class="primer3plus_cell_no_border" valign="top">
-	<input name="SCRIPT_CONTAINS_JAVA_SCRIPT" value="1" type="hidden">
+       <td class="primer3plus_cell_no_border"><input name="PRIMER_LOWERCASE_MASKING" value="1" };
+
+	$formHTML .= ($settings{PRIMER_LOWERCASE_MASKING}) ? "checked=\"checked\" " : "";
+ 
+	$formHTML .= qq{type="checkbox">Use Lowercase Masking </td>
+	    <td class="primer3plus_cell_no_border" valign="top">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	    &nbsp;&nbsp;&nbsp;
+	      <input name="SCRIPT_CONTAINS_JAVA_SCRIPT" value="1" type="hidden">
        </td>
 
      </tr>
@@ -2734,7 +2815,7 @@ $formHTML .= qq{
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
-         Hyb Oligo Salt Concentration:</a>
+         Hyb Oligo Monovalent Cations Concentration:</a>
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_SALT_CONC"
          value="$settings{PRIMER_INTERNAL_OLIGO_SALT_CONC}" type="text">
@@ -2744,6 +2825,20 @@ $formHTML .= qq{
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_DNA_CONC"
          value="$settings{PRIMER_INTERNAL_OLIGO_DNA_CONC}" type="text">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
+         Hyb Oligo Divalent Cations Concentration:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_DIVALENT_CONC"
+         value="$settings{PRIMER_INTERNAL_OLIGO_DIVALENT_CONC}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
+         Hyb Oligo [dNTP] Concentration:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_DNTP_CONC"
+         value="$settings{PRIMER_INTERNAL_OLIGO_DNTP_CONC}" type="text">
        </td>
      </tr>
      <tr>
@@ -2993,7 +3088,7 @@ $formHTML .= qq{</div>
          value="$settings{PRIMER_WT_COMPL_ANY}" type="text">
        </td>
        <td class="primer3plus_cell_penalties"><a name="PAIR_WT_COMPL_ANY_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">
-         Self Complementarity</a>
+         Any Complementarity</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_COMPL_ANY"
          value="$settings{PRIMER_PAIR_WT_COMPL_ANY}" type="text">
@@ -3006,15 +3101,31 @@ $formHTML .= qq{</div>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_penalties"><a name="WT_COMPL_END_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">3' Complementarity</a>
+       <td class="primer3plus_cell_penalties"><a name="WT_COMPL_END_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">3' Self Complementarity</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_COMPL_END"
          value="$settings{PRIMER_WT_COMPL_END}" type="text">
        </td>
-       <td class="primer3plus_cell_penalties"><a name="PAIR_WT_COMPL_END_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">3' Complementarity</a>
+       <td class="primer3plus_cell_penalties"><a name="PAIR_WT_COMPL_END_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">3' Self Complementarity</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_COMPL_END"
          value="$settings{PRIMER_PAIR_WT_COMPL_END}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_penalties"><a name="PRIMER_WT_TEMPLATE_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Template Mispriming</a>
+       </td>
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_TEMPLATE_MISPRIMING"
+         value="$settings{PRIMER_WT_TEMPLATE_MISPRIMING}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties"><a name="PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Template Mispriming</a>
+       </td>
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_TEMPLATE_MISPRIMING"
+         value="$settings{PRIMER_PAIR_WT_TEMPLATE_MISPRIMING}" type="text">
        </td>
        <td class="primer3plus_cell_penalties">
        </td>
@@ -3172,6 +3283,115 @@ initTabs();
 
   return $returnString;
 }
+
+################################################################################
+# createSelectSequence: Will write an HTML-Form containing sequences to select #
+################################################################################
+
+sub createSelectSequence {
+  my %settings; 
+  %settings = %{(shift)};
+
+  my $sequenceCounter = $settings{SCRIPT_SEQUENCE_COUNTER};
+  
+  my $templateText = getWrapper();
+
+  my $formHTML = qq{
+<div id="primer3plus_complete">
+
+<form action="$machineSettings{URL_FORM_ACTION}" method="post" enctype="multipart/form-data">
+};
+
+$formHTML .= divTopBar("Basic");
+
+$formHTML .= divMessages();
+
+$formHTML .= qq{
+<div id="primer3plus_select_sequence">
+
+<h2>Please select one of the sequences</h2>
+
+<input id="primer3plus_select_sequence_button" class="primer3plus_action_button"
+ name="SelectOneSequence" value="Select Sequence" type="submit"><br>
+<br>
+<div id="primer3plus_result_sequence_id">
+ <table class="primer3plus_table_no_border">
+     <colgroup>
+       <col width="13%" style="text-align: right;">
+       <col width="87%">
+     </colgroup>
+     <tr>
+       <td><input type="radio" name="SCRIPT_SELECTED_SEQUENCE" value="0" checked="checked">
+         &nbsp;&nbsp;&nbsp;</td>
+       <td>$settings{PRIMER_SEQUENCE_ID}
+         </td>
+     </tr>
+ </table>
+ </div>
+};
+
+$formHTML .= divHTMLformatSequence($settings{SEQUENCE}, 1);
+
+$formHTML .= qq{<br>
+<br>
+};
+
+for ( my $i = 1 ; $i < $sequenceCounter ; $i++ ) {
+    $formHTML .= qq{<br>
+<div id="primer3plus_result_sequence_id">
+ <table class="primer3plus_table_no_border">
+     <colgroup>
+       <col width="13%" style="text-align: right;">
+       <col width="87%">
+     </colgroup>
+     <tr>
+       <td><input type="radio" name="SCRIPT_SELECTED_SEQUENCE" value="$i">
+         &nbsp;&nbsp;&nbsp;</td>
+       <td>$settings{"PRIMER_SEQUENCE_ID_$i"}
+         </td>
+     </tr>
+ </table>
+ </div>
+ };
+
+	$formHTML .= divHTMLformatSequence($settings{"SEQUENCE_$i"}, 1);
+	
+	$formHTML .= qq{<br>
+<br>};
+};
+
+my $HashKeys;
+foreach $HashKeys (sort(keys(%settings))){
+	if ($HashKeys eq "Pick_Primers") {
+	}
+	elsif ($HashKeys eq "SCRIPT_SEQUENCE_FILE_CONTENT") {
+	}
+	elsif ($HashKeys eq "SCRIPT_SEQUENCE_FILE") {
+	}
+	elsif ($HashKeys eq "SCRIPT_SETTINGS_FILE") {
+	}
+	elsif ($HashKeys eq "Upload_File") {
+	}
+    else {
+    	$formHTML .= qq{
+    <input type="hidden" name="$HashKeys" value="$settings{$HashKeys}">};
+	}
+};
+
+	$formHTML .= qq{ <input id="primer3plus_select_sequence_button" class="primer3plus_action_button"
+   name="SelectOneSequence" value="Select Sequence" type="submit"><br>
+ <br>
+ </from>
+</div>
+	};
+
+  my $returnString = $templateText;
+
+  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
+
+  return $returnString;
+}
+
 
 ###########################################################
 # createHelpHTML: Will write an HTML-Form containing Help #
@@ -3378,21 +3598,37 @@ $formHTML .= qq{
   </p>
   
 <h3><a name="PRIMER_MAX_END_STABILITY">Max 3' Stability</a></h3>
-  <p>The maximum stability for the five 3' bases of a left or right primer.  Bigger numbers mean more stable 3' ends.  The
-    value is the maximum delta G for duplex disruption for the five 3' bases as calculated using the nearest neighbor
-    parameters published in Breslauer, Frank, Bloeker and Marky, Proc. Natl. Acad. Sci. USA, vol 83, pp 3746-3750.
-    Rychlik recommends a maximum value of 9 (Wojciech Rychlik, &quot;Selection of Primers for Polymerase Chain 
-    Reaction&quot; in BA White, Ed., &quot;Methods in Molecular Biology, Vol. 15: PCR Protocols: Current Methods and
-    Applications&quot;, 1993, pp 31-40, Humana Press, Totowa NJ).
+  <p>The maximum stability for the last five 3' bases of a left or right primer.  Bigger numbers mean more stable 
+    3' ends.  The value is the maximum delta G (kcal/mol) for duplex disruption for the five 3' bases as calculated
+    using the Nearest-Neighbor parameter values specified by the option of <a href="#PRIMER_TM_SANTALUCIA">'Table of
+    thermodynamic parameters'</a>. For example if the table of thermodynamic parameters suggested by 
+    <a href="http://dx.doi.org/10.1073/pnas.95.4.1460" target="_blank">SantaLucia 1998, DOI:10.1073/pnas.95.4.1460</a>
+    is used the deltaG values for the most stable and for the most labile 5mer duplex are 6.86 kcal/mol (GCGCG)
+    and 0.86 kcal/mol (TATAT) respectively. If the table of thermodynamic parameters suggested by 
+    <a href="http://dx.doi.org/10.1073/pnas.83.11.3746" target="_blank">Breslauer et al. 1986, 10.1073/pnas.83.11.3746</a>
+    is used the deltaG values for the most stable and for the most labile 5mer are 13.4 kcal/mol (GCGCG) and
+    4.6 kcal/mol (TATAC) respectively.
   </p>
   
 <h3><a name="PRIMER_MAX_MISPRIMING">Max Mispriming</a></h3>
   <p>The maximum allowed weighted similarity with any sequence in Mispriming Library. Default is 12.
   </p>
   
+<h3><a name="PRIMER_MAX_TEMPLATE_MISPRIMING">Max Template Mispriming</a></h3>
+  <p>The maximum allowed similarity to ectopic sites in the sequence from which you are designing the primers.
+    The scoring system is the same as used for Max Mispriming, except that an ambiguity code is never treated as
+    a consensus.
+  </p>
+  
 <h3><a name="PRIMER_PAIR_MAX_MISPRIMING">Pair Max Mispriming</a></h3>
   <p>The maximum allowed sum of similarities of a primer pair (one similarity for each primer) with any single sequence
     in Mispriming Library. Default is 24. Library sequence weights are not used in computing the sum of similarities.
+  </p>
+  
+<h3><a name="PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING"><strong>Pair Max Template Mispriming</a></h3>
+  <p>The maximum allowed summed similarity of both primers to ectopic sites in the sequence from which you are
+    designing the primers.  The scoring system is the same as used for Max Mispriming, except that an ambiguity code
+    is never treated as a consensus.
   </p>
   
 <h3><a name="PRIMER_SIZE">Primer Size</a></h3>
@@ -3407,13 +3643,32 @@ $formHTML .= qq{
     temperatures smaller than Min or larger than Max, and with default conditions will try to pick primers with melting
     temperatures close to Opt.<br>
     <br>
-    Primer3 uses the oligo melting temperature formula given in Rychlik, Spencer and Rhoads, Nucleic Acids Research,
-    vol 18, num 21, pp 6409-6412 and Breslauer, Frank, Bloeker and Marky, Proc. Natl. Acad. Sci. USA, vol 83, pp 3746-3750.
-    Please refer to the former paper for background discussion.
+    By default Primer3 uses the oligo melting temperature formula and the table of thermodynamic parameters given in
+    <a href="http://dx.doi.org/10.1073/pnas.83.11.3746" target="_blank"> Breslauer et al. 1986,
+    DOI:10.1073/pnas.83.11.3746</a>~For more information see caption <a href="#PRIMER_TM_SANTALUCIA">
+    Table of thermodynamic parameters</a>
   </p>
 
 <h3><a name="PRIMER_MAX_DIFF_TM">Maximum T<sub>m</sub> Difference</a></h3>
   <p>Maximum acceptable (unsigned) difference between the melting temperatures of the left and right primers.
+  </p>
+
+<h3><a name="PRIMER_TM_SANTALUCIA">Table of thermodynamic parameters</a></h3>
+  <p>Option for the table of Nearest-Neighbor thermodynamic parameters and for the method of melting temperature 
+    calculation. Two different tables of thermodynamic parameters are available:
+    <ol>
+    <li><a href="http://dx.doi.org/10.1073/pnas.83.11.3746" target="_blank"> Breslauer et al. 1986, DOI:10.1073/
+            pnas.83.11.3746</a> In that case the formula for melting temperature calculation suggested by
+        <a href="http://www.pubmedcentral.nih.gov/articlerender.fcgi?tool=pubmed&pubmedid=2243783" target="_blank">
+            Rychlik et al. 1990</a> is used (this is used until Primer3 version 1.0.1). This is the default value
+            of Primer3 (for backward compatibility).
+   </li>
+   <li><a href="http://dx.doi.org/10.1073/pnas.95.4.1460" target="_blank">
+            SantaLucia 1998, DOI:10.1073/pnas.95.4.1460</a> This is the <i>recommended</i> value.
+   </li>
+   </ol>
+   For specifying the salt correction method for melting temperature calculation see
+   <a href="#PRIMER_SALT_CORRECTIONS">Salt correction formula</a>
   </p>
 
 <h3><a name="PRIMER_PRODUCT_TM">Product T<sub>m</sub></a></h3>
@@ -3559,9 +3814,38 @@ $formHTML .= qq{
     parameter has no effect on the hybridization oligo if one is requested.)
   </p>
 
-<h3><a name="PRIMER_SALT_CONC">Salt Concentration</a></h3>
+<h3><a name="PRIMER_SALT_CONC">Concentration of monovalent cations</a></h3>
   <p>The millimolar concentration of salt (usually KCl) in the PCR. Primer3 uses this argument to calculate oligo
     melting temperatures.
+  </p>
+
+<h3><a name="PRIMER_DIVALENT_CONC">Concentration of divalent cations</a></h3>
+  <p>The millimolar concentration of divalent salt cations (usually MgCl<sup>2+</sup> in the PCR). Primer3 converts
+    concentration of divalent cations to concentration of monovalent cations using formula suggested in the paper 
+    <a href="http://www.clinchem.org/cgi/content/full/47/11/1956" target="blank"> Ahsen et al., 2001</a>
+    <br>
+    <pre>                     [Monovalent cations] = [Monovalent cations] + 120*(&#8730;([divalent cations] - [dNTP])) </pre>
+
+    According to the formula concentration of desoxynucleotide triphosphate [dNTP] must be smaller than concentration
+    of divalent cations. The concentration of dNTPs is included to the formula beacause of some magnesium is bound by
+    the dNTP. Attained concentration of monovalent cations is used to calculate oligo/primer melting temperature. See
+    <a href="#PRIMER_DNTP_CONC"> Concentration of dNTPs</a> to specify the concentration of dNTPs.
+  </p>
+
+<h3><a name="PRIMER_DNTP_CONC">Concentration of dNTPs</a></h3>
+  <p>The millimolar concentration of deoxyribonucleotide triphosphate. This argument is considered only if
+    <a href="#PRIMER_DIVALENT_CONC">Concentration of divalent cations</a> is specified.
+  </p>
+
+<h3><a name="PRIMER_SALT_CORRECTIONS">Salt correction formula</a></h3>
+  <p>Option for specifying the salt correction formula for the melting temperature calculation. <br><br>
+    <ol>There are three different options available:
+    <li><a href="http://dx.doi.org/10.1002/bip.360030207" target="_blank"> Schildkraut and Lifson 1965, DOI:10.1002/bip.360030207</a>
+        (this is used until the version 1.0.1 of Primer3).The default value of Primer3 version 1.1.0 (for backward compatibility)</li>
+    <li><a href="http://dx.doi.org/10.1073/pnas.95.4.1460" target="_blank">SantaLucia 1998, DOI:10.1073/pnas.95.4.1460</a> 
+        This is the <i>recommended</i> value.</li>
+    <li><a href="http://dx.doi.org/10.1021/bi034621r" target="_blank">Owczarzy et al. 2004, DOI:10.1021/bi034621r</a></li>
+    </ol>
   </p>
 
 <h3><a name="PRIMER_DNA_CONC">Annealing Oligo Concentration</a></h3>
@@ -3612,6 +3896,14 @@ $formHTML .= qq{
 
 <h3><a name=SHOW_DEBUGGING>Show Debuging Info</a></h3>
   <p>Include the input to primer3_core as part of the output.
+  </p>
+  
+<h3><a name="PRIMER_LOWERCASE_MASKING">Lowercase masking</a></h3>
+  <p>If checked candidate primers having lowercase letter exactly at 3' end are rejected. This option allows to
+    design primers overlapping lowercase-masked regions. This property relies on the assumption that masked 
+    features (e.g. repeats) can partly overlap primer, but they cannot overlap the 3'-end of the primer. In other
+    words, the lowercase letters in other positions are accepted, assuming that the masked features do not influence
+    the primer performance if they do not overlap the 3'-end of primer.
   </p>
 
 <h2><a name=SEQUENCE_QUALITY>Sequence Quality</a></h2>
@@ -3741,7 +4033,7 @@ $formHTML .= qq{
 <h1>Primer3Plus is a web-interface for primer3</h1>
 
 <h2>Primer3Plus</h2>
-<h3>Primer3Plus - Download Primer3Plus Programm and Source Code</h3>
+<h3>Primer3Plus - Download Primer3Plus Program and Source Code</h3>
 <p>
 <a href="http://sourceforge.net/projects/primer3/">
 Source code is available at http://sourceforge.net/projects/primer3/.
@@ -3778,11 +4070,15 @@ We work on that...
 <p>
 We thank Gerben Bijl for extensive beta-testing.
 </p>
-<br>
 
 <h2>Primer3</h2>
 
-<h3>Primer3 - Download Primer3 Programm and Source Code</h3>
+<h3>Primer3 - Alternative Web Interface</h3>
+<p>
+<a href="http://primer3.sourceforge.net/webif.php">http://primer3.sourceforge.net/webif.php</a>
+</p>
+
+<h3>Primer3 - Download Primer3 Program and Source Code</h3>
 <p>
 <a href="http://sourceforge.net/projects/primer3/">
 Source code available at http://sourceforge.net/projects/primer3/.
@@ -3886,9 +4182,10 @@ primer design.
 ####################################################################################
 # createResultsDetection: Will write an HTML-Form based for the detection Function #
 ####################################################################################
-
 sub createResultsDetection {
-  my (%settings) ; 
+  my $completeParameters; 
+  my %settings;
+  $completeParameters = shift; 
   %settings = %{(shift)};
 
   my $HashKeys;
@@ -3904,8 +4201,6 @@ sub createResultsDetection {
 
   my $formHTML = qq{
 <div id="primer3plus_complete">
-
-<form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
 };
 $formHTML .= divTopBar("Default");
 
@@ -3913,6 +4208,13 @@ $formHTML .= divMessages();
 
 $formHTML .= qq{
 <div id="primer3plus_results">
+};
+
+$formHTML .= divReturnToInput($completeParameters);
+
+$formHTML .= qq{
+<form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data" target="primer3manager">
+
 };
 
 $formHTML .= divPrimerBox(\%settings,"0","1");
@@ -3970,7 +4272,9 @@ More about <a href="$machineSettings{URL_ABOUT}">Primer3Plus</a>...
 ###################################################################################
 
 sub createResultsPrimerCheck {
-  my %settings; 
+  my $completeParameters; 
+  my %settings;
+  $completeParameters = shift; 
   %settings = %{(shift)};
 
   my $results = \%settings;
@@ -3985,18 +4289,24 @@ sub createResultsPrimerCheck {
   if (defined ($settings{PRIMER_WARNING}) and (($settings{PRIMER_WARNING}) ne "")) {
       setMessage("$settings{PRIMER_WARNING}");
   }
-
+  
   my $formHTML = qq{
 <div id="primer3plus_complete">
-
-<form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
 };
+
 $formHTML .= divTopBar("Default");
 
 $formHTML .= divMessages();
 
 $formHTML .= qq{
 <div id="primer3plus_results">
+};
+
+$formHTML .= divReturnToInput($completeParameters);
+
+$formHTML .= qq{
+<form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
+
 };
 
   my $primerStart;
@@ -4075,7 +4385,7 @@ $formHTML .= qq{  </table>
 
 $formHTML .= qq{<div class="primer3plus_submit">
 <br>
-<input name="Submit" value="Submit" type="submit"> <input value="Reset Form" type="reset">
+<input name="Submit" value="Send to Primer3Manager" type="submit"> <input value="Reset Form" type="reset">
 </div>
 };
 
@@ -4095,6 +4405,37 @@ $formHTML .= qq{<br>
   return $returnString;
 }
 
+############################################################
+# divReturnToInput: Create a return to Input screen Button #
+############################################################
+sub divReturnToInput {
+  my %settings; 
+  %settings = %{(shift)};
+
+  my $HashKeys;
+
+  my $formHTML = qq{
+<div id="primer3plus_return_to_input_button">
+<form action="$machineSettings{URL_FORM_ACTION}" method="post" enctype="multipart/form-data">
+};
+
+foreach $HashKeys (sort(keys(%settings))){
+	if ($HashKeys ne "Pick_Primers") {
+    	$formHTML .= qq{
+    <input type="hidden" name="$HashKeys" value="$settings{$HashKeys}">};
+
+	};
+};
+
+$formHTML .= qq{
+<input id="primer3plus_return_to_pick_primers_button" class="primer3plus_action_button" name="Return_To_Pick_Primers" value="< Back" type="submit">
+</form>
+
+</div>	
+};
+
+  return $formHTML;
+}
 
 ####################################################################################
 # createResultsList: Will write an HTML-Form for the Parameters in the Result Hash #
@@ -4172,7 +4513,8 @@ More about <a href="$machineSettings{URL_ABOUT}">Primer3Plus</a>...
 # createResultsPrimerList: Will write an Tabels all Primers in the Result Hash #
 ################################################################################
 sub createResultsPrimerList {
-  my (%settings, $sortedInput) ; 
+  my ($completeParameters, %settings, $sortedInput) ; 
+  $completeParameters = shift; 
   %settings = %{(shift)};
   $sortedInput = shift;
 
@@ -4187,14 +4529,18 @@ sub createResultsPrimerList {
 
   my $formHTML = qq{
 <div id="primer3plus_complete">
-
-<form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
 };
 $formHTML .= divTopBar("Default");
 
 $formHTML .= divMessages();
 
 $formHTML .= qq{<div id="primer3plus_results">
+};
+
+$formHTML .= divReturnToInput($completeParameters);
+
+$formHTML .= qq{
+<form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data" target="primer3manager">
 };
 
 if ($sortedInput == 0){
@@ -4788,6 +5134,63 @@ sub addRegion {
   return $formatString;
 }
 
+sub divHTMLformatSequence {
+  my ($sequence, $firstPair, $firstBase, $seqLength);
+  my ($base, $count, $preCount, $postCount, $printBase) ;
+  my (@targets, $region, $run, $counter);
+  my $formHTML;
+   
+  $sequence = shift;
+  $firstPair = shift;
+
+  $seqLength = length ($sequence);
+  
+  $formHTML = qq{  <div id="primer3plus_result_sequence" class="primer3plus_tab_page_no_border">
+  <table class="primer3plus_table_no_border">
+     <colgroup>
+       <col width="13%" style="text-align: right;">
+       <col width="87%">
+     </colgroup>
+};
+  for (my $i=0; $i<$seqLength; $i++) {
+     $count = $i;
+     $preCount = $i - 1;
+     $postCount = $i + 1;
+     $base = substr($sequence,$i,1);
+
+     if (($count % 50) eq 0) {
+         $printBase = $i + $firstBase;
+         $formHTML .= qq{     <tr>
+       <td>$printBase&nbsp;&nbsp;</td>
+       <td>};
+     }
+
+     if ((($count % 10) eq 0) and !(($count % 50) eq 0)) {
+         $formHTML .= qq{&nbsp;&nbsp;};
+     }
+
+     $formHTML .= qq{$base};
+
+     if (($postCount % 50) eq 0) {
+         $formHTML .= qq{</a></td>
+     </tr>
+};
+     }
+  }
+
+  if (($postCount % 50) ne 0) {
+      $formHTML .= qq{</a></td>
+     </tr>
+};
+  }
+
+  $formHTML .= qq{  </table>
+  </div>
+};
+
+  return $formHTML;
+}
+
 #####################
 # Form Manager HTML #
 #####################
@@ -4861,7 +5264,6 @@ for (my $counter=0 ; $counter <= $#sequences ; $counter++) {
 $primerNumber = getPrimerNumber();
 $cgiName = $names[$counter];
 $cgiName =~ tr/ /+/;
-# HARM: here we need to include the Hexadecimal conversion
 #QUERY=&amp;
 $blastLinkUse = $blastLink;
 $blastLinkUse =~ s/;QUERY=/;QUERY=$sequences[$counter]/;
@@ -4890,6 +5292,7 @@ $formHTML .= qq{   </table>
    <input name="Submit" value="Delete selected Primers" type="submit">
    <br>
    <br>
+ </div>
 </form>
 </div>
 };
