@@ -1675,7 +1675,7 @@ sub makeProductSize ($) {
 			  $resultsHash->{"PRIMER_LEFT\_$counter"};
 			( $rightPosition, $temp ) = split ",",
 			  $resultsHash->{"PRIMER_RIGHT\_$counter"};
-			$temp = $rightPosition - $leftPosition;
+			$temp = $rightPosition - $leftPosition + 1;
 			$resultsHash->{"PRIMER_PRODUCT_SIZE\_$counter"} = $temp;
 		}
 	}
