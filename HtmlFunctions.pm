@@ -4063,7 +4063,8 @@ Fifth Floor, Boston, MA  02110-1301  USA<br>
 
 <h3>Citing Primer3Plus</h3>
 <p>
-We work on that...
+Andreas Untergasser, Harm Nijveen, Xiangyu Rao, Ton Bisseling, Ren&eacute; Geurts, and Jack A.M. Leunissen: 
+<b>Primer3Plus, an enhanced web interface to Primer3</b> Nucleic Acids Research 2007 35: W71-W74; doi:10.1093/nar/gkm306
 </p>
 
 <h3>Acknowledgments of Primer3Plus</h3>
