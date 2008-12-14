@@ -571,8 +571,8 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border">
-         <a name="PRIMER_SEQUENCE_ID_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SEQUENCE_ID">Sequence Id:</a>
-         <input name="PRIMER_SEQUENCE_ID" value="$settings{PRIMER_SEQUENCE_ID}" type="text">
+         <a name="SEQUENCE_ID_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_ID">Sequence Id:</a>
+         <input name="SEQUENCE_ID" value="$settings{SEQUENCE_ID}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">
          <a name="PRIMER_MISPRIMING_LIBRARY_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MISPRIMING_LIBRARY">
@@ -616,11 +616,11 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border">
-         <a name="SEQUENCE_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE">Paste source sequence below:</a>
+         <a name="SEQUENCE_TEMPLATE_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_TEMPLATE">Paste source sequence below:</a>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"> <textarea name="SEQUENCE" rows="6" cols="80">$settings{SEQUENCE}</textarea>
+       <td class="primer3plus_cell_no_border"> <textarea name="SEQUENCE_TEMPLATE" rows="6" cols="80">$settings{SEQUENCE_TEMPLATE}</textarea>
        </td>
      </tr>
      <tr>
@@ -663,12 +663,12 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" name="PRIMER_LEFT_INPUT" value="$settings{PRIMER_LEFT_INPUT}" type="text">
+       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" name="SEQUENCE_PRIMER" value="$settings{SEQUENCE_PRIMER}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" name="PRIMER_INTERNAL_OLIGO_INPUT" value="$settings{PRIMER_INTERNAL_OLIGO_INPUT}"
+       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" name="SEQUENCE_INTERNAL_OLIGO" value="$settings{SEQUENCE_INTERNAL_OLIGO}"
          type="text">
        </td>
-       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" name="PRIMER_RIGHT_INPUT" value="$settings{PRIMER_RIGHT_INPUT}" type="text">
+       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" name="SEQUENCE_PRIMER_REVCOMP" value="$settings{SEQUENCE_PRIMER_REVCOMP}" type="text">
        </td>
      </tr>
   </table>
@@ -680,9 +680,9 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border">
-         <a name="EXCLUDED_REGION_INPUT" href="$machineSettings{URL_HELP}#EXCLUDED_REGION">Excluded Regions:</a>
+         <a name="SEQUENCE_EXCLUDED_REGION_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_EXCLUDED_REGION">Excluded Regions:</a>
        </td>
-       <td class="primer3plus_cell_no_border">&lt;&nbsp;<input size="40" name="EXCLUDED_REGION" value="$settings{EXCLUDED_REGION}" type="text">&nbsp;&gt;
+       <td class="primer3plus_cell_no_border">&lt;&nbsp;<input size="40" name="SEQUENCE_EXCLUDED_REGION" value="$settings{SEQUENCE_EXCLUDED_REGION}" type="text">&nbsp;&gt;
        </td>
        </tr>
      <tr>
@@ -691,9 +691,9 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="TARGET_INPUT" href="$machineSettings{URL_HELP}#TARGET">Targets:</a>
+       <td class="primer3plus_cell_no_border"><a name="SEQUENCE_TARGET_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_TARGET">Targets:</a>
        </td>
-       <td class="primer3plus_cell_no_border">[&nbsp;<input size="40" name="TARGET" value="$settings{TARGET}" type="text" />&nbsp;]
+       <td class="primer3plus_cell_no_border">[&nbsp;<input size="40" name="SEQUENCE_TARGET" value="$settings{SEQUENCE_TARGET}" type="text" />&nbsp;]
        </td>
      </tr>
      <tr>
@@ -702,9 +702,9 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="INCLUDED_REGION_INPUT" href="$machineSettings{URL_HELP}#INCLUDED_REGION">Included Region:</a>
+       <td class="primer3plus_cell_no_border"><a name="SEQUENCE_INCLUDED_REGION_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_INCLUDED_REGION">Included Region:</a>
        </td>
-       <td class="primer3plus_cell_no_border">{&nbsp;<input size="40" name="INCLUDED_REGION" value="$settings{INCLUDED_REGION}" type="text">&nbsp;}
+       <td class="primer3plus_cell_no_border">{&nbsp;<input size="40" name="SEQUENCE_INCLUDED_REGION" value="$settings{SEQUENCE_INCLUDED_REGION}" type="text">&nbsp;}
        </td>
      </tr>
      <tr>
@@ -797,9 +797,9 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
        <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_MAX_TM" value="$settings{PRIMER_MAX_TM}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;&nbsp;
-         <a name="PRIMER_MAX_DIFF_TM_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_DIFF_TM">
-         Max Tm Difference:</a> <input size="4" name="PRIMER_MAX_DIFF_TM"
-         value="$settings{PRIMER_MAX_DIFF_TM}" type="text">
+         <a name="PRIMER_PAIR_MAX_DIFF_TM_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_MAX_DIFF_TM">
+         Max Tm Difference:</a> <input size="4" name="PRIMER_PAIR_MAX_DIFF_TM"
+         value="$settings{PRIMER_PAIR_MAX_DIFF_TM}" type="text">
        </td>
      </tr>
      <tr>
@@ -822,9 +822,9 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
        <col width="50%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_SALT_CONC_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SALT_CONC">Salt Concentration:</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_SALT_MONOVALENT_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SALT_MONOVALENT">Salt Concentration:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SALT_CONC" value="$settings{PRIMER_SALT_CONC}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SALT_MONOVALENT" value="$settings{PRIMER_SALT_MONOVALENT}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a name="SCRIPT_FIX_PRIMER_END_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_FIX_PRIMER_END">Fix the</a>
          <input size="2" name="SCRIPT_FIX_PRIMER_END" value="$settings{SCRIPT_FIX_PRIMER_END}" type="text">
@@ -940,9 +940,9 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
        <col width="25%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_NUM_NS_ACCEPTED_INPUT" href="$machineSettings{URL_HELP}#PRIMER_NUM_NS_ACCEPTED">Max #N's:</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_NS_ACCEPTED_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_NS_ACCEPTED">Max #N's:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_NUM_NS_ACCEPTED" value="$settings{PRIMER_NUM_NS_ACCEPTED}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MAX_NS_ACCEPTED" value="$settings{PRIMER_MAX_NS_ACCEPTED}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_POLY_X_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_POLY_X">Max Poly-X:</a>
        </td>
@@ -960,13 +960,13 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
        </td>
     </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_SELF_ANY_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SELF_ANY">Max Self Complementarity:</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_SELF_ANY_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_SELF_ANY">Max Self Complementarity:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SELF_ANY" value="$settings{PRIMER_SELF_ANY}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MAX_SELF_ANY" value="$settings{PRIMER_MAX_SELF_ANY}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_SELF_END_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SELF_END">Max 3' Self Complementarity:</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_SELF_END_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_SELF_END">Max 3' Self Complementarity:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SELF_END" value="$settings{PRIMER_SELF_END}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MAX_SELF_END" value="$settings{PRIMER_MAX_SELF_END}" type="text">
        </td>
      </tr>
      <tr>
@@ -979,14 +979,14 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"> <a name="PRIMER_MAX_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_MISPRIMING">Max Mispriming:</a>
+       <td class="primer3plus_cell_no_border"> <a name="PRIMER_MAX_LIBRARY_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_LIBRARY_MISPRIMING">Max Mispriming:</a>
        </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_MAX_MISPRIMING" value="$settings{PRIMER_MAX_MISPRIMING}" type="text">
+       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_MAX_LIBRARY_MISPRIMING" value="$settings{PRIMER_MAX_LIBRARY_MISPRIMING}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"> <a name="PRIMER_PAIR_MAX_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_MAX_MISPRIMING">
+       <td class="primer3plus_cell_no_border"> <a name="PRIMER_PAIR_MAX_LIBRARY_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_MAX_LIBRARY_MISPRIMING">
        Pair Max Mispriming:</a>
        </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_PAIR_MAX_MISPRIMING" value="$settings{PRIMER_PAIR_MAX_MISPRIMING}" type="text">
+       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_PAIR_MAX_LIBRARY_MISPRIMING" value="$settings{PRIMER_PAIR_MAX_LIBRARY_MISPRIMING}" type="text">
        </td>
      </tr>
      <tr>
@@ -1129,14 +1129,14 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
      <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_INTERNAL_OLIGO_SIZE_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SIZE">Hyb Oligo Size:</a>
        </td>
-       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_INTERNAL_OLIGO_MIN_SIZE"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MIN_SIZE}" type="text">
+       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_INTERNAL_MIN_SIZE"
+         value="$settings{PRIMER_INTERNAL_MIN_SIZE}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_INTERNAL_OLIGO_OPT_SIZE"
-         value="$settings{PRIMER_INTERNAL_OLIGO_OPT_SIZE}" type="text">
+       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_INTERNAL_OPT_SIZE"
+         value="$settings{PRIMER_INTERNAL_OPT_SIZE}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_INTERNAL_OLIGO_MAX_SIZE"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MAX_SIZE}" type="text">
+       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_INTERNAL_MAX_SIZE"
+         value="$settings{PRIMER_INTERNAL_MAX_SIZE}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">
        </td>
@@ -1144,14 +1144,14 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
      <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_OPT_TM_INPUT" href="$machineSettings{URL_HELP}#PRIMER_TM">Hyb Oligo Tm:</a> 
        </td>
-       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_INTERNAL_OLIGO_MIN_TM"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MIN_TM}" type="text">
+       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_INTERNAL_MIN_TM"
+         value="$settings{PRIMER_INTERNAL_MIN_TM}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_INTERNAL_OLIGO_OPT_TM"
-         value="$settings{PRIMER_INTERNAL_OLIGO_OPT_TM}" type="text"> 
+       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_INTERNAL_OPT_TM"
+         value="$settings{PRIMER_INTERNAL_OPT_TM}" type="text"> 
        </td>
-       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_INTERNAL_OLIGO_MAX_TM"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MAX_TM}" type="text">
+       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_INTERNAL_MAX_TM"
+         value="$settings{PRIMER_INTERNAL_MAX_TM}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">
        </td>
@@ -1159,14 +1159,14 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
      <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_INTERNAL_OLIGO_GC_INPUT" href="$machineSettings{URL_HELP}#PRIMER_GC">Hyb Oligo GC%</a>
        </td>
-       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_INTERNAL_OLIGO_MIN_GC"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MIN_GC}" type="text">
+       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_INTERNAL_MIN_GC"
+         value="$settings{PRIMER_INTERNAL_MIN_GC}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_INTERNAL_OLIGO_OPT_GC_PERCENT"
-         value="$settings{PRIMER_INTERNAL_OLIGO_OPT_GC_PERCENT}" type="text">
+       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_INTERNAL_OPT_GC_PERCENT"
+         value="$settings{PRIMER_INTERNAL_OPT_GC_PERCENT}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_INTERNAL_OLIGO_MAX_GC"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MAX_GC}" type="text">
+       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_INTERNAL_MAX_GC"
+         value="$settings{PRIMER_INTERNAL_MAX_GC}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">
        </td>
@@ -1184,56 +1184,56 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo Salt Concentration:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_SALT_CONC"
-         value="$settings{PRIMER_INTERNAL_OLIGO_SALT_CONC}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_SALT_MONOVALENT"
+         value="$settings{PRIMER_INTERNAL_SALT_MONOVALENT}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo DNA Concentration:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_DNA_CONC"
-         value="$settings{PRIMER_INTERNAL_OLIGO_DNA_CONC}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_DNA_CONC"
+         value="$settings{PRIMER_INTERNAL_DNA_CONC}" type="text">
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_INTERNAL_OLIGO_NUM_NS_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_INTERNAL_MAX_NS_ACCEPTED_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Max #Ns:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_NUM_NS"
-         value="$settings{PRIMER_INTERNAL_OLIGO_NUM_NS}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_MAX_NS_ACCEPTED"
+         value="$settings{PRIMER_INTERNAL_MAX_NS_ACCEPTED}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo Max Poly-X:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_MAX_POLY_X"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MAX_POLY_X}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_MAX_POLY_X"
+         value="$settings{PRIMER_INTERNAL_MAX_POLY_X}" type="text">
        </td>
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo Self Complementarity:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_SELF_ANY"
-         value="$settings{PRIMER_INTERNAL_OLIGO_SELF_ANY}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_MAX_SELF_ANY"
+         value="$settings{PRIMER_INTERNAL_MAX_SELF_ANY}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo Max 3' Self Complementarity:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_SELF_END"
-         value="$settings{PRIMER_INTERNAL_OLIGO_SELF_END}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_MAX_SELF_END"
+         value="$settings{PRIMER_INTERNAL_MAX_SELF_END}" type="text">
        </td>
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo Max Mishyb:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_MAX_MISHYB"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MAX_MISHYB}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_MAX_LIBRARY_MISHYB"
+         value="$settings{PRIMER_INTERNAL_MAX_LIBRARY_MISHYB}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo Min Sequence Quality:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_MIN_QUALITY"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MIN_QUALITY}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_MIN_QUALITY"
+         value="$settings{PRIMER_INTERNAL_MIN_QUALITY}" type="text">
        </td>
      </tr>
      <tr>
@@ -1241,12 +1241,12 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
          Hyb Oligo Mishyb Library:</a>
        </td>
        <td class="primer3plus_cell_no_border" colspan="3">
-         <select name="PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY">
+         <select name="PRIMER_INTERNAL_MISHYB_LIBRARY">
 };
 
 foreach $mishyb1 (@libraryList) {
 	my $selectedStatus = "";
-	if ($mishyb1 eq $settings{PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY} ) {$selectedStatus = " selected=\"selected\"" };
+	if ($mishyb1 eq $settings{PRIMER_INTERNAL_MISHYB_LIBRARY} ) {$selectedStatus = " selected=\"selected\"" };
 	$formHTML .= "         <option$selectedStatus>$mishyb1</option>\n";
 } 	
 
@@ -1276,8 +1276,8 @@ $formHTML .= qq{         </select>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo Excluded Region:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input name="PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION"
-         value="$settings{PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION}" type="text">
+       <td class="primer3plus_cell_no_border"><input name="SEQUENCE_INTERNAL_EXCLUDED_REGION"
+         value="$settings{SEQUENCE_INTERNAL_EXCLUDED_REGION}" type="text">
        </td>
      </tr>
    </table>
@@ -1292,19 +1292,19 @@ $formHTML .= qq{         </select>
        <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_FIRST_BASE_INDEX"
          value="$settings{PRIMER_FIRST_BASE_INDEX}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"> <a name="PRIMER_SEQUENCE_QUALITY_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SEQUENCE_QUALITY">
+       <td class="primer3plus_cell_no_border"> <a name="SEQUENCE_QUALITY_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_QUALITY">
          Sequence Quality:</a>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_START_CODON_POSITION_INPUT" href="$machineSettings{URL_HELP}#PRIMER_START_CODON_POSITION">
+       <td class="primer3plus_cell_no_border"><a name="SEQUENCE_START_CODON_POSITION_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_START_CODON_POSITION">
          Start Codon Position:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_START_CODON_POSITION"
-         value="$settings{PRIMER_START_CODON_POSITION}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="SEQUENCE_START_CODON_POSITION"
+         value="$settings{SEQUENCE_START_CODON_POSITION}" type="text">
        </td>
        <td class="primer3plus_cell_no_border" rowspan="5">
-         <textarea rows="8" cols="40" name="PRIMER_SEQUENCE_QUALITY">$settings{PRIMER_SEQUENCE_QUALITY}</textarea>
+         <textarea rows="8" cols="40" name="SEQUENCE_QUALITY">$settings{SEQUENCE_QUALITY}</textarea>
        </td>
      </tr>
      <tr>
@@ -1417,13 +1417,13 @@ $formHTML .= qq{         </select>
        </td>
        <td class="primer3plus_cell_penalties">Lt:
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_TM_LT"
-         value="$settings{PRIMER_IO_WT_TM_LT}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_TM_LT"
+         value="$settings{PRIMER_INTERNAL_WT_TM_LT}" type="text">
        </td>
        <td class="primer3plus_cell_penalties">Gt: 
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_TM_GT"
-         value="$settings{PRIMER_IO_WT_TM_GT}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_TM_GT"
+         value="$settings{PRIMER_INTERNAL_WT_TM_GT}" type="text">
        </td>
      </tr>
      <tr>
@@ -1455,13 +1455,13 @@ $formHTML .= qq{         </select>
        </td>
        <td class="primer3plus_cell_penalties">Lt:
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_SIZE_LT"
-         value="$settings{PRIMER_IO_WT_SIZE_LT}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_SIZE_LT"
+         value="$settings{PRIMER_INTERNAL_WT_SIZE_LT}" type="text">
        </td>
        <td class="primer3plus_cell_penalties">Gt: 
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_SIZE_GT"
-         value="$settings{PRIMER_IO_WT_SIZE_GT}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_SIZE_GT"
+         value="$settings{PRIMER_INTERNAL_WT_SIZE_GT}" type="text">
        </td>
      </tr>
      <tr>
@@ -1491,13 +1491,13 @@ $formHTML .= qq{         </select>
        </td>
        <td class="primer3plus_cell_penalties">Lt:
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_GC_PERCENT_LT"
-         value="$settings{PRIMER_IO_WT_GC_PERCENT_LT}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_GC_PERCENT_LT"
+         value="$settings{PRIMER_INTERNAL_WT_GC_PERCENT_LT}" type="text">
        </td>
        <td class="primer3plus_cell_penalties">Gt: 
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_GC_PERCENT_GT"
-         value="$settings{PRIMER_IO_WT_GC_PERCENT_GT}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_GC_PERCENT_GT"
+         value="$settings{PRIMER_INTERNAL_WT_GC_PERCENT_GT}" type="text">
        </td>
      </tr>
    </table>
@@ -1513,25 +1513,25 @@ $formHTML .= qq{         </select>
      <tr>
        <td class="primer3plus_cell_penalties"><a name="WT_REP_SIM_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Mispriming</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_REP_SIM"
-         value="$settings{PRIMER_WT_REP_SIM}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_LIBRARY_MISPRIMING"
+         value="$settings{PRIMER_PAIR_WT_LIBRARY_MISPRIMING}" type="text">
        </td>
        <td class="primer3plus_cell_penalties"><a name="PAIR_WT_REP_SIM_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Pair Mispriming</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_REP_SIM"
-         value="$settings{PRIMER_PAIR_WT_REP_SIM}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_LIBRARY_MISPRIMING"
+         value="$settings{PRIMER_PAIR_WT_LIBRARY_MISPRIMING}" type="text">
        </td>
        <td class="primer3plus_cell_penalties"><a name="IO_WT_REP_SIM_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Hyb Oligo Mishybing</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_REP_SIM"
-         value="$settings{PRIMER_IO_WT_REP_SIM}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_LIBRARY_MISHYB"
+         value="$settings{PRIMER_INTERNAL_WT_LIBRARY_MISHYB}" type="text">
        </td>
      </tr>
      <tr>
        <td class="primer3plus_cell_penalties"><a name="WT_COMPL_ANY_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Self Complementarity</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_COMPL_ANY"
-         value="$settings{PRIMER_WT_COMPL_ANY}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_SELF_ANY"
+         value="$settings{PRIMER_WT_SELF_ANY}" type="text">
        </td>
        <td class="primer3plus_cell_penalties"><a name="PAIR_WT_COMPL_ANY_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">
          Self Complementarity</a>
@@ -1542,15 +1542,15 @@ $formHTML .= qq{         </select>
        <td class="primer3plus_cell_penalties"><a name="IO_WT_COMPL_ANY_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">
          Self Complementarity</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_COMPL_ANY"
-         value="$settings{PRIMER_IO_WT_COMPL_ANY}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_SELF_ANY"
+         value="$settings{PRIMER_INTERNAL_WT_SELF_ANY}" type="text">
        </td>
      </tr>
      <tr>
        <td class="primer3plus_cell_penalties"><a name="WT_COMPL_END_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">3' Complementarity</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_COMPL_END"
-         value="$settings{PRIMER_WT_COMPL_END}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_SELF_END"
+         value="$settings{PRIMER_WT_SELF_END}" type="text">
        </td>
        <td class="primer3plus_cell_penalties"><a name="PAIR_WT_COMPL_END_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">3' Complementarity</a>
        </td>
@@ -1574,8 +1574,8 @@ $formHTML .= qq{         </select>
        </td>
        <td class="primer3plus_cell_penalties"><a name="IO_WT_NUM_NS_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Hyb Oligo #N's</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_NUM_NS"
-         value="$settings{PRIMER_IO_WT_NUM_NS}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_NUM_NS"
+         value="$settings{PRIMER_INTERNAL_WT_NUM_NS}" type="text">
        </td>
      </tr>
      <tr>
@@ -1590,8 +1590,8 @@ $formHTML .= qq{         </select>
        </td>
        <td class="primer3plus_cell_penalties"><a name="IO_WT_SEQ_QUAL_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Sequence Quality</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_SEQ_QUAL"
-         value="$settings{PRIMER_IO_WT_SEQ_QUAL}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_SEQ_QUAL"
+         value="$settings{PRIMER_INTERNAL_WT_SEQ_QUAL}" type="text">
        </td>
      </tr>
      <tr>
@@ -1821,11 +1821,11 @@ function selectSequencing() {
 }
 
 function updateSequence() {
-    document.getElementById("PRIMER_LEFT_INPUT").value = document.getElementById("PRIMER_LEFT_INPUT_SCRIPT").value;  
+    document.getElementById("SEQUENCE_PRIMER").value = document.getElementById("SEQUENCE_PRIMER_SCRIPT").value;  
 }
 
 function updatePrimer() {
-    document.getElementById("PRIMER_LEFT_INPUT_SCRIPT").value = document.getElementById("PRIMER_LEFT_INPUT").value;  
+    document.getElementById("SEQUENCE_PRIMER_SCRIPT").value = document.getElementById("SEQUENCE_PRIMER").value;  
 }
 };
 
@@ -1930,9 +1930,9 @@ initToolTips();
 function clearMarking() {
         var txtarea = document.mainForm.sequenceTextarea;
         txtarea.value = txtarea.value.replace(/[{}<>[\\]]/g,"");
-        document.getElementById("INCLUDED_REGION").value="";
-        document.getElementById("EXCLUDED_REGION").value="";
-        document.getElementById("TARGET").value="";                
+        document.getElementById("SEQUENCE_INCLUDED_REGION").value="";
+        document.getElementById("SEQUENCE_EXCLUDED_REGION").value="";
+        document.getElementById("SEQUENCE_TARGET").value="";                
 }
 
 function setRegion(tagOpen,tagClose) {
@@ -2010,8 +2010,8 @@ $formHTML .= divMessages();
      <tr>
        <td class="primer3plus_cell_no_border">
          <a onmouseover="toolTip('A name to identify your output.');" onmouseout="toolTip();" 
-         name="PRIMER_SEQUENCE_ID_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SEQUENCE_ID">Sequence Id:</a>
-         <input name="PRIMER_SEQUENCE_ID" value="$settings{PRIMER_SEQUENCE_ID}" type="text">
+         name="SEQUENCE_ID_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_ID">Sequence Id:</a>
+         <input name="SEQUENCE_ID" value="$settings{SEQUENCE_ID}" type="text">
        </td>
      </tr>
    </table>
@@ -2033,8 +2033,8 @@ $formHTML .= qq{>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" id="PRIMER_LEFT_INPUT_SCRIPT" name="PRIMER_LEFT_INPUT_SCRIPT" 
-          value="$settings{PRIMER_LEFT_INPUT}" type="text" onblur="updateSequence();" onchange="updateSequence();" onkeyup="updateSequence();">
+       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" id="SEQUENCE_PRIMER_SCRIPT" name="SEQUENCE_PRIMER_SCRIPT" 
+          value="$settings{SEQUENCE_PRIMER}" type="text" onblur="updateSequence();" onchange="updateSequence();" onkeyup="updateSequence();">
        </td>
      </tr>
   </table>
@@ -2047,14 +2047,14 @@ $formHTML .= qq{</div>
 	if ($settings{SCRIPT_TASK} eq "Primer_Check")  {
 		$formHTML .= qq{style="display: none;" };
 	} 	
-my $sequence = $settings{SEQUENCE};
+my $sequence = $settings{SEQUENCE_TEMPLATE};
 $sequence =~ s/(\w{80})/$1\n/g;
 $formHTML .= qq{>
    <table class="primer3plus_table_no_border">
      <tr>
        <td class="primer3plus_cell_no_border" valign="bottom">
          <a onmouseover="toolTip('5 -&gt;3 , as ACGTNacgtn -- other letters treated as N -- numbers and blanks ignored FASTA format ok.');"
-         onmouseout="toolTip();" name="SEQUENCE_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE">Paste source sequence below</a>
+         onmouseout="toolTip();" name="SEQUENCE_TEMPLATE_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_TEMPLATE">Paste source sequence below</a>
        </td>
        <td class="primer3plus_cell_no_border" valign="bottom">
          <a name="SCRIPT_SEQUENCE_FILE_INPUT">Or upload sequence file:</a>
@@ -2063,7 +2063,7 @@ $formHTML .= qq{>
        </td>
      </tr>
      <tr>
-       <td colspan=2 class="primer3plus_cell_no_border"> <textarea name="SEQUENCE" id="sequenceTextarea" rows="12" cols="90">$sequence</textarea>
+       <td colspan=2 class="primer3plus_cell_no_border"> <textarea name="SEQUENCE_TEMPLATE" id="sequenceTextarea" rows="12" cols="90">$sequence</textarea>
        </td>
 	</tr>
    </table>
@@ -2113,11 +2113,11 @@ $formHTML .= qq{>
      <tr>
        <td class="primer3plus_cell_no_border">
          <a onmouseover="toolTip('Primer oligos may not overlap any region specified in this tag. The associated value must be a space-separated list of start,length.<br>E.g. 401,7 68,3 forbids selection of primers in the 7 bases starting at 401 and the 3 bases at 68.<br> Or mark the source sequence with &lt; and &gt;:<br> e.g. ...ATCT&amp;lt;CCCC&amp;gt;TCAT.. forbids primers in the central CCCC.');"
-         onmouseout="toolTip();" name="EXCLUDED_REGION_INPUT" href="$machineSettings{URL_HELP}#EXCLUDED_REGION">Excluded Regions:</a>
+         onmouseout="toolTip();" name="SEQUENCE_EXCLUDED_REGION_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_EXCLUDED_REGION">Excluded Regions:</a>
        </td>
        <td class="primer3plus_cell_no_border">&lt;
        </td>
-       <td class="primer3plus_cell_no_border"><input size="40" id="EXCLUDED_REGION" name="EXCLUDED_REGION" value="$settings{EXCLUDED_REGION}" type="text">&nbsp;&gt;
+       <td class="primer3plus_cell_no_border"><input size="40" id="SEQUENCE_EXCLUDED_REGION" name="SEQUENCE_EXCLUDED_REGION" value="$settings{SEQUENCE_EXCLUDED_REGION}" type="text">&nbsp;&gt;
        </td>
      </tr>
   </table>
@@ -2131,11 +2131,11 @@ $formHTML .= qq{>
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('If one or more Targets is specified then a legal primer pair must flank at least one of them. The value should be a space-separated list of start,length pairs.<br>E.g. 50,2 requires primers to surround the 2 bases at positions 50 and 51.<br> Or mark the source sequence with [ and ]: e.g. ...ATCT[CCCC]TCAT..<br> means that primers must flank the central CCCC.');"
-         onmouseout="toolTip();" name="TARGET_INPUT" href="$machineSettings{URL_HELP}#TARGET">Targets:</a>
+         onmouseout="toolTip();" name="SEQUENCE_TARGET_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_TARGET">Targets:</a>
        </td>
        <td class="primer3plus_cell_no_border">[
        </td>
-       <td class="primer3plus_cell_no_border"><input size="40" id="TARGET" name="TARGET" value="$settings{TARGET}" type="text" />&nbsp;]
+       <td class="primer3plus_cell_no_border"><input size="40" id="SEQUENCE_TARGET" name="SEQUENCE_TARGET" value="$settings{SEQUENCE_TARGET}" type="text" />&nbsp;]
        </td>
      </tr>
   </table>
@@ -2149,11 +2149,11 @@ $formHTML .= qq{>
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('A sub-region of the given sequence in which to pick primers. For example, often the first dozen or so bases of a sequence are vector, and should be excluded from consideration.<br>The value for this parameter has the form start,length.<br>E.g. 20,400: only pick primers in the 400 base region starting at position 20.<br> Or use { and } in the source sequence to mark the beginning and end of the included<br> region: e.g. in ATC{TTC...TCT}AT the included region is TTC...TCT.');"
-         onmouseout="toolTip();"  name="INCLUDED_REGION_INPUT" href="$machineSettings{URL_HELP}#INCLUDED_REGION">Included Region:</a>
+         onmouseout="toolTip();"  name="SEQUENCE_INCLUDED_REGION_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_INCLUDED_REGION">Included Region:</a>
        </td>
        <td class="primer3plus_cell_no_border">{
        </td>
-       <td class="primer3plus_cell_no_border"><input size="40" id="INCLUDED_REGION" name="INCLUDED_REGION" value="$settings{INCLUDED_REGION}" type="text">&nbsp;}
+       <td class="primer3plus_cell_no_border"><input size="40" id="SEQUENCE_INCLUDED_REGION" name="SEQUENCE_INCLUDED_REGION" value="$settings{SEQUENCE_INCLUDED_REGION}" type="text">&nbsp;}
        </td>
      </tr>
   </table>
@@ -2194,12 +2194,12 @@ $formHTML .= qq{>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" id="PRIMER_LEFT_INPUT" name="PRIMER_LEFT_INPUT" value="$settings{PRIMER_LEFT_INPUT}" type="text" onchange="updatePrimer();" onkeyup="updatePrimer();">
+       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" id="SEQUENCE_PRIMER" name="SEQUENCE_PRIMER" value="$settings{SEQUENCE_PRIMER}" type="text" onchange="updatePrimer();" onkeyup="updatePrimer();">
        </td>
-       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" id="PRIMER_INTERNAL_OLIGO_INPUT" name="PRIMER_INTERNAL_OLIGO_INPUT" value="$settings{PRIMER_INTERNAL_OLIGO_INPUT}"
+       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" id="SEQUENCE_INTERNAL_OLIGO" name="SEQUENCE_INTERNAL_OLIGO" value="$settings{SEQUENCE_INTERNAL_OLIGO}"
          type="text">
        </td>
-       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" id="PRIMER_RIGHT_INPUT" name="PRIMER_RIGHT_INPUT" value="$settings{PRIMER_RIGHT_INPUT}" type="text">
+       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" id="SEQUENCE_PRIMER_REVCOMP" name="SEQUENCE_PRIMER_REVCOMP" value="$settings{SEQUENCE_PRIMER_REVCOMP}" type="text">
        </td>
      </tr>
   </table>
@@ -2217,19 +2217,19 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_FIRST_BASE_INDEX"
          value="$settings{PRIMER_FIRST_BASE_INDEX}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"> <a name="PRIMER_SEQUENCE_QUALITY_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SEQUENCE_QUALITY">
+       <td class="primer3plus_cell_no_border"> <a name="SEQUENCE_QUALITY_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_QUALITY">
          Sequence Quality:</a>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_START_CODON_POSITION_INPUT" href="$machineSettings{URL_HELP}#PRIMER_START_CODON_POSITION">
+       <td class="primer3plus_cell_no_border"><a name="SEQUENCE_START_CODON_POSITION_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_START_CODON_POSITION">
          Start Codon Position:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_START_CODON_POSITION"
-         value="$settings{PRIMER_START_CODON_POSITION}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="SEQUENCE_START_CODON_POSITION"
+         value="$settings{SEQUENCE_START_CODON_POSITION}" type="text">
        </td>
        <td class="primer3plus_cell_no_border" rowspan="5">
-         <textarea rows="8" cols="40" name="PRIMER_SEQUENCE_QUALITY">$settings{PRIMER_SEQUENCE_QUALITY}</textarea>
+         <textarea rows="8" cols="40" name="SEQUENCE_QUALITY">$settings{SEQUENCE_QUALITY}</textarea>
        </td>
      </tr>
      <tr>
@@ -2311,9 +2311,9 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_MAX_TM" value="$settings{PRIMER_MAX_TM}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;&nbsp;
-         <a name="PRIMER_MAX_DIFF_TM_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_DIFF_TM">
-         Max Tm Difference:</a> <input size="4" name="PRIMER_MAX_DIFF_TM"
-         value="$settings{PRIMER_MAX_DIFF_TM}" type="text">
+         <a name="PRIMER_PAIR_MAX_DIFF_TM_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_MAX_DIFF_TM">
+         Max Tm Difference:</a> <input size="4" name="PRIMER_PAIR_MAX_DIFF_TM"
+         value="$settings{PRIMER_PAIR_MAX_DIFF_TM}" type="text">
        </td>
      </tr>
      <tr>
@@ -2341,9 +2341,9 @@ $formHTML .= qq{</div>
        <col width="25%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_SALT_CONC_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SALT_CONC">Concentration of monovalent cations:</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_SALT_MONOVALENT_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SALT_MONOVALENT">Concentration of monovalent cations:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SALT_CONC" value="$settings{PRIMER_SALT_CONC}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SALT_MONOVALENT" value="$settings{PRIMER_SALT_MONOVALENT}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Not the concentration of oligos in the reaction mix<br>but of those annealing to template.');"
          onmouseout="toolTip();" name="PRIMER_DNA_CONC_INPUT" href="$machineSettings{URL_HELP}#PRIMER_DNA_CONC">
@@ -2355,9 +2355,9 @@ $formHTML .= qq{</div>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_DIVALENT_CONC_INPUT" href="$machineSettings{URL_HELP}#PRIMER_DIVALENT_CONC">Concentration of divalent cations:</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_SALT_DIVALENT_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SALT_DIVALENT">Concentration of divalent cations:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_DIVALENT_CONC" value="$settings{PRIMER_DIVALENT_CONC}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SALT_DIVALENT" value="$settings{PRIMER_SALT_DIVALENT}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_DNTP_CONC_INPUT" href="$machineSettings{URL_HELP}#PRIMER_DNTP_CONC_CONC">Concentration of dNTPs:</a>
        </td>
@@ -2452,13 +2452,13 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MAX_POLY_X" value="$settings{PRIMER_MAX_POLY_X}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">
-         <a name="PRIMER_TM_SANTALUCIA_INPUT" href="$machineSettings{URL_HELP}#PRIMER_TM_SANTALUCIA">
+         <a name="PRIMER_TM_FORMULA_INPUT" href="$machineSettings{URL_HELP}#PRIMER_TM_FORMULA">
          Table of thermodynamic parameters:</a>
        </td>
        <td class="primer3plus_cell_no_border">         
-         <select name="PRIMER_TM_SANTALUCIA">
+         <select name="PRIMER_TM_FORMULA">
 };
-		if ( $settings{PRIMER_TM_SANTALUCIA} == 1 ) {
+		if ( $settings{PRIMER_TM_FORMULA} == 1 ) {
      		$formHTML .= qq{           <option value="0">Breslauer et al. 1986</option>
            <option selected="selected" value="1">SantaLucia 1998</option>
 };
@@ -2473,9 +2473,9 @@ $formHTML .= qq{</div>
        </td>         
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_NUM_NS_ACCEPTED_INPUT" href="$machineSettings{URL_HELP}#PRIMER_NUM_NS_ACCEPTED">Max #N's:</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_NS_ACCEPTED_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_NS_ACCEPTED">Max #N's:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_NUM_NS_ACCEPTED" value="$settings{PRIMER_NUM_NS_ACCEPTED}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MAX_NS_ACCEPTED" value="$settings{PRIMER_MAX_NS_ACCEPTED}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">
          <a name="PRIMER_SALT_CORRECTIONS" href="$machineSettings{URL_HELP}#PRIMER_SALT_CORRECTIONS">
@@ -2517,13 +2517,13 @@ $formHTML .= qq{</div>
        </td>
     </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_SELF_ANY_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SELF_ANY">Max Self Complementarity:</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_SELF_ANY_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_SELF_ANY">Max Self Complementarity:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SELF_ANY" value="$settings{PRIMER_SELF_ANY}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MAX_SELF_ANY" value="$settings{PRIMER_MAX_SELF_ANY}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_SELF_END_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SELF_END">Max 3' Self Complementarity:</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_SELF_END_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_SELF_END">Max 3' Self Complementarity:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SELF_END" value="$settings{PRIMER_SELF_END}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MAX_SELF_END" value="$settings{PRIMER_MAX_SELF_END}" type="text">
        </td>
      </tr>
      <tr>
@@ -2536,14 +2536,14 @@ $formHTML .= qq{</div>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"> <a name="PRIMER_MAX_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_MISPRIMING">Max Repeat Mispriming:</a>
+       <td class="primer3plus_cell_no_border"> <a name="PRIMER_MAX_LIBRARY_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_LIBRARY_MISPRIMING">Max Repeat Mispriming:</a>
        </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_MAX_MISPRIMING" value="$settings{PRIMER_MAX_MISPRIMING}" type="text">
+       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_MAX_LIBRARY_MISPRIMING" value="$settings{PRIMER_MAX_LIBRARY_MISPRIMING}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"> <a name="PRIMER_PAIR_MAX_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_MAX_MISPRIMING">
+       <td class="primer3plus_cell_no_border"> <a name="PRIMER_PAIR_MAX_LIBRARY_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_MAX_LIBRARY_MISPRIMING">
        Pair Max Repeat Mispriming:</a>
        </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_PAIR_MAX_MISPRIMING" value="$settings{PRIMER_PAIR_MAX_MISPRIMING}" type="text">
+       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_PAIR_MAX_LIBRARY_MISPRIMING" value="$settings{PRIMER_PAIR_MAX_LIBRARY_MISPRIMING}" type="text">
        </td>
      </tr>
      <tr>
@@ -2744,8 +2744,8 @@ $formHTML .= qq{
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo Excluded Region:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input id="PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION" name="PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION"
-         value="$settings{PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION}" type="text">
+       <td class="primer3plus_cell_no_border"><input id="SEQUENCE_INTERNAL_EXCLUDED_REGION" name="SEQUENCE_INTERNAL_EXCLUDED_REGION"
+         value="$settings{SEQUENCE_INTERNAL_EXCLUDED_REGION}" type="text">
        </td>
      </tr>
    </table>
@@ -2762,14 +2762,14 @@ $formHTML .= qq{
      <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_INTERNAL_OLIGO_SIZE_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SIZE">Hyb Oligo Size:</a>
        </td>
-       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_INTERNAL_OLIGO_MIN_SIZE"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MIN_SIZE}" type="text">
+       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_INTERNAL_MIN_SIZE"
+         value="$settings{PRIMER_INTERNAL_MIN_SIZE}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_INTERNAL_OLIGO_OPT_SIZE"
-         value="$settings{PRIMER_INTERNAL_OLIGO_OPT_SIZE}" type="text">
+       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_INTERNAL_OPT_SIZE"
+         value="$settings{PRIMER_INTERNAL_OPT_SIZE}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_INTERNAL_OLIGO_MAX_SIZE"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MAX_SIZE}" type="text">
+       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_INTERNAL_MAX_SIZE"
+         value="$settings{PRIMER_INTERNAL_MAX_SIZE}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">
        </td>
@@ -2777,14 +2777,14 @@ $formHTML .= qq{
      <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_OPT_TM_INPUT" href="$machineSettings{URL_HELP}#PRIMER_TM">Hyb Oligo Tm:</a> 
        </td>
-       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_INTERNAL_OLIGO_MIN_TM"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MIN_TM}" type="text">
+       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_INTERNAL_MIN_TM"
+         value="$settings{PRIMER_INTERNAL_MIN_TM}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_INTERNAL_OLIGO_OPT_TM"
-         value="$settings{PRIMER_INTERNAL_OLIGO_OPT_TM}" type="text"> 
+       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_INTERNAL_OPT_TM"
+         value="$settings{PRIMER_INTERNAL_OPT_TM}" type="text"> 
        </td>
-       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_INTERNAL_OLIGO_MAX_TM"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MAX_TM}" type="text">
+       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_INTERNAL_MAX_TM"
+         value="$settings{PRIMER_INTERNAL_MAX_TM}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">
        </td>
@@ -2792,14 +2792,14 @@ $formHTML .= qq{
      <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_INTERNAL_OLIGO_GC_INPUT" href="$machineSettings{URL_HELP}#PRIMER_GC">Hyb Oligo GC%</a>
        </td>
-       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_INTERNAL_OLIGO_MIN_GC"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MIN_GC}" type="text">
+       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_INTERNAL_MIN_GC"
+         value="$settings{PRIMER_INTERNAL_MIN_GC}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_INTERNAL_OLIGO_OPT_GC_PERCENT"
-         value="$settings{PRIMER_INTERNAL_OLIGO_OPT_GC_PERCENT}" type="text">
+       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_INTERNAL_OPT_GC_PERCENT"
+         value="$settings{PRIMER_INTERNAL_OPT_GC_PERCENT}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_INTERNAL_OLIGO_MAX_GC"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MAX_GC}" type="text">
+       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_INTERNAL_MAX_GC"
+         value="$settings{PRIMER_INTERNAL_MAX_GC}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">
        </td>
@@ -2817,70 +2817,70 @@ $formHTML .= qq{
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo Monovalent Cations Concentration:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_SALT_CONC"
-         value="$settings{PRIMER_INTERNAL_OLIGO_SALT_CONC}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_SALT_MONOVALENT"
+         value="$settings{PRIMER_INTERNAL_SALT_MONOVALENT}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo DNA Concentration:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_DNA_CONC"
-         value="$settings{PRIMER_INTERNAL_OLIGO_DNA_CONC}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_DNA_CONC"
+         value="$settings{PRIMER_INTERNAL_DNA_CONC}" type="text">
        </td>
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo Divalent Cations Concentration:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_DIVALENT_CONC"
-         value="$settings{PRIMER_INTERNAL_OLIGO_DIVALENT_CONC}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_SALT_DIVALENT"
+         value="$settings{PRIMER_INTERNAL_SALT_DIVALENT}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo [dNTP] Concentration:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_DNTP_CONC"
-         value="$settings{PRIMER_INTERNAL_OLIGO_DNTP_CONC}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_DNTP_CONC"
+         value="$settings{PRIMER_INTERNAL_DNTP_CONC}" type="text">
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_INTERNAL_OLIGO_NUM_NS_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_INTERNAL_MAX_NS_ACCEPTED_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Max #Ns:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_NUM_NS"
-         value="$settings{PRIMER_INTERNAL_OLIGO_NUM_NS}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_MAX_NS_ACCEPTED"
+         value="$settings{PRIMER_INTERNAL_MAX_NS_ACCEPTED}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo Max Poly-X:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_MAX_POLY_X"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MAX_POLY_X}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_MAX_POLY_X"
+         value="$settings{PRIMER_INTERNAL_MAX_POLY_X}" type="text">
        </td>
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo Self Complementarity:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_SELF_ANY"
-         value="$settings{PRIMER_INTERNAL_OLIGO_SELF_ANY}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_MAX_SELF_ANY"
+         value="$settings{PRIMER_INTERNAL_MAX_SELF_ANY}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo Max 3' Self Complementarity:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_SELF_END"
-         value="$settings{PRIMER_INTERNAL_OLIGO_SELF_END}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_MAX_SELF_END"
+         value="$settings{PRIMER_INTERNAL_MAX_SELF_END}" type="text">
        </td>
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo Max Mishyb:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_MAX_MISHYB"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MAX_MISHYB}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_MAX_LIBRARY_MISHYB"
+         value="$settings{PRIMER_INTERNAL_MAX_LIBRARY_MISHYB}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
          Hyb Oligo Min Sequence Quality:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_OLIGO_MIN_QUALITY"
-         value="$settings{PRIMER_INTERNAL_OLIGO_MIN_QUALITY}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_MIN_QUALITY"
+         value="$settings{PRIMER_INTERNAL_MIN_QUALITY}" type="text">
        </td>
      </tr>
      <tr>
@@ -2888,12 +2888,12 @@ $formHTML .= qq{
          Hyb Oligo Mishyb Library:</a>
        </td>
        <td class="primer3plus_cell_no_border" colspan="3">
-         <select name="PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY">
+         <select name="PRIMER_INTERNAL_MISHYB_LIBRARY">
 };
 
 foreach $mishyb1 (@libraryList) {
 	my $selectedStatus = "";
-	if ($mishyb1 eq $settings{PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY} ) {$selectedStatus = " selected=\"selected\"" };
+	if ($mishyb1 eq $settings{PRIMER_INTERNAL_MISHYB_LIBRARY} ) {$selectedStatus = " selected=\"selected\"" };
 	$formHTML .= "         <option$selectedStatus>$mishyb1</option>\n";
 } 	
 
@@ -2971,13 +2971,13 @@ $formHTML .= qq{</div>
        </td>
        <td class="primer3plus_cell_penalties">Lt:
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_TM_LT"
-         value="$settings{PRIMER_IO_WT_TM_LT}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_TM_LT"
+         value="$settings{PRIMER_INTERNAL_WT_TM_LT}" type="text">
        </td>
        <td class="primer3plus_cell_penalties">Gt: 
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_TM_GT"
-         value="$settings{PRIMER_IO_WT_TM_GT}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_TM_GT"
+         value="$settings{PRIMER_INTERNAL_WT_TM_GT}" type="text">
        </td>
      </tr>
      <tr>
@@ -3009,13 +3009,13 @@ $formHTML .= qq{</div>
        </td>
        <td class="primer3plus_cell_penalties">Lt:
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_SIZE_LT"
-         value="$settings{PRIMER_IO_WT_SIZE_LT}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_SIZE_LT"
+         value="$settings{PRIMER_INTERNAL_WT_SIZE_LT}" type="text">
        </td>
        <td class="primer3plus_cell_penalties">Gt: 
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_SIZE_GT"
-         value="$settings{PRIMER_IO_WT_SIZE_GT}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_SIZE_GT"
+         value="$settings{PRIMER_INTERNAL_WT_SIZE_GT}" type="text">
        </td>
      </tr>
      <tr>
@@ -3045,13 +3045,13 @@ $formHTML .= qq{</div>
        </td>
        <td class="primer3plus_cell_penalties">Lt:
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_GC_PERCENT_LT"
-         value="$settings{PRIMER_IO_WT_GC_PERCENT_LT}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_GC_PERCENT_LT"
+         value="$settings{PRIMER_INTERNAL_WT_GC_PERCENT_LT}" type="text">
        </td>
        <td class="primer3plus_cell_penalties">Gt: 
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_GC_PERCENT_GT"
-         value="$settings{PRIMER_IO_WT_GC_PERCENT_GT}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_GC_PERCENT_GT"
+         value="$settings{PRIMER_INTERNAL_WT_GC_PERCENT_GT}" type="text">
        </td>
      </tr>
    </table>
@@ -3067,25 +3067,25 @@ $formHTML .= qq{</div>
      <tr>
        <td class="primer3plus_cell_penalties"><a name="WT_REP_SIM_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Mispriming</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_REP_SIM"
-         value="$settings{PRIMER_WT_REP_SIM}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_LIBRARY_MISPRIMING"
+         value="$settings{PRIMER_PAIR_WT_LIBRARY_MISPRIMING}" type="text">
        </td>
        <td class="primer3plus_cell_penalties"><a name="PAIR_WT_REP_SIM_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Pair Mispriming</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_REP_SIM"
-         value="$settings{PRIMER_PAIR_WT_REP_SIM}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_LIBRARY_MISPRIMING"
+         value="$settings{PRIMER_PAIR_WT_LIBRARY_MISPRIMING}" type="text">
        </td>
        <td class="primer3plus_cell_penalties"><a name="IO_WT_REP_SIM_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Hyb Oligo Mishybing</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_REP_SIM"
-         value="$settings{PRIMER_IO_WT_REP_SIM}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_LIBRARY_MISHYB"
+         value="$settings{PRIMER_INTERNAL_WT_LIBRARY_MISHYB}" type="text">
        </td>
      </tr>
      <tr>
        <td class="primer3plus_cell_penalties"><a name="WT_COMPL_ANY_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Self Complementarity</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_COMPL_ANY"
-         value="$settings{PRIMER_WT_COMPL_ANY}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_SELF_ANY"
+         value="$settings{PRIMER_WT_SELF_ANY}" type="text">
        </td>
        <td class="primer3plus_cell_penalties"><a name="PAIR_WT_COMPL_ANY_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">
          Any Complementarity</a>
@@ -3096,15 +3096,15 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_penalties"><a name="IO_WT_COMPL_ANY_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">
          Self Complementarity</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_COMPL_ANY"
-         value="$settings{PRIMER_IO_WT_COMPL_ANY}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_SELF_ANY"
+         value="$settings{PRIMER_INTERNAL_WT_SELF_ANY}" type="text">
        </td>
      </tr>
      <tr>
        <td class="primer3plus_cell_penalties"><a name="WT_COMPL_END_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">3' Self Complementarity</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_COMPL_END"
-         value="$settings{PRIMER_WT_COMPL_END}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_SELF_END"
+         value="$settings{PRIMER_WT_SELF_END}" type="text">
        </td>
        <td class="primer3plus_cell_penalties"><a name="PAIR_WT_COMPL_END_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">3' Self Complementarity</a>
        </td>
@@ -3144,8 +3144,8 @@ $formHTML .= qq{</div>
        </td>
        <td class="primer3plus_cell_penalties"><a name="IO_WT_NUM_NS_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Hyb Oligo #N's</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_NUM_NS"
-         value="$settings{PRIMER_IO_WT_NUM_NS}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_NUM_NS"
+         value="$settings{PRIMER_INTERNAL_WT_NUM_NS}" type="text">
        </td>
      </tr>
      <tr>
@@ -3160,8 +3160,8 @@ $formHTML .= qq{</div>
        </td>
        <td class="primer3plus_cell_penalties"><a name="IO_WT_SEQ_QUAL_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Sequence Quality</a>
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_IO_WT_SEQ_QUAL"
-         value="$settings{PRIMER_IO_WT_SEQ_QUAL}" type="text">
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_SEQ_QUAL"
+         value="$settings{PRIMER_INTERNAL_WT_SEQ_QUAL}" type="text">
        </td>
      </tr>
      <tr>
@@ -3323,7 +3323,7 @@ $formHTML .= qq{
      <tr>
        <td><input type="radio" name="SCRIPT_SELECTED_SEQUENCE" value="0" checked="checked">
          &nbsp;&nbsp;&nbsp;</td>
-       <td>$settings{PRIMER_SEQUENCE_ID}
+       <td>$settings{SEQUENCE_ID}
          </td>
      </tr>
  </table>
@@ -3347,7 +3347,7 @@ for ( my $i = 1 ; $i < $sequenceCounter ; $i++ ) {
      <tr>
        <td><input type="radio" name="SCRIPT_SELECTED_SEQUENCE" value="$i">
          &nbsp;&nbsp;&nbsp;</td>
-       <td>$settings{"PRIMER_SEQUENCE_ID_$i"}
+       <td>$settings{"SEQUENCE_ID_$i"}
          </td>
      </tr>
  </table>
@@ -3552,13 +3552,13 @@ $formHTML .= qq{
 
 <h2><a name="INPUT_PARAMETERS">Input Parameters</a></h2>
 
-<h3><a name="SEQUENCE">Source Sequence</a></h3>
+<h3><a name="SEQUENCE_TEMPLATE">Source Sequence</a></h3>
   <p>The sequence from which to select primers or hybridization oligos.</p>
 
-<h3><a name="PRIMER_SEQUENCE_ID">Sequence Id</a></h3>
+<h3><a name="SEQUENCE_ID">Sequence Id</a></h3>
   <p>An identifier that is reproduced in the output to enable you to identify the chosen primers.</p>
 
-<h3><a name="TARGET">Targets</a></h3>
+<h3><a name="SEQUENCE_TARGET">Targets</a></h3>
   <p>If one or more Targets is specified then a legal primer pair must flank at least one of them.  A Target might
     be a simple sequence repeat site (for example a CA repeat) or a single-base-pair polymorphism.  The value should
     be a space-separated list of<br>
@@ -3567,7 +3567,7 @@ $formHTML .= qq{
     length.
   </p>
 
-<h3><a name="EXCLUDED_REGION">Excluded Regions</a></h3>
+<h3><a name="SEQUENCE_EXCLUDED_REGION">Excluded Regions</a></h3>
   <p>Primer oligos may not overlap any region specified in this tag. The associated value must be a space-separated list of
     <br>
     <pre><tt><i>start</i></tt>,<tt><i>length</i></tt></pre>
@@ -3600,7 +3600,7 @@ $formHTML .= qq{
 <h3><a name="PRIMER_MAX_END_STABILITY">Max 3' Stability</a></h3>
   <p>The maximum stability for the last five 3' bases of a left or right primer.  Bigger numbers mean more stable 
     3' ends.  The value is the maximum delta G (kcal/mol) for duplex disruption for the five 3' bases as calculated
-    using the Nearest-Neighbor parameter values specified by the option of <a href="#PRIMER_TM_SANTALUCIA">'Table of
+    using the Nearest-Neighbor parameter values specified by the option of <a href="#PRIMER_TM_FORMULA">'Table of
     thermodynamic parameters'</a>. For example if the table of thermodynamic parameters suggested by 
     <a href="http://dx.doi.org/10.1073/pnas.95.4.1460" target="_blank">SantaLucia 1998, DOI:10.1073/pnas.95.4.1460</a>
     is used the deltaG values for the most stable and for the most labile 5mer duplex are 6.86 kcal/mol (GCGCG)
@@ -3610,7 +3610,7 @@ $formHTML .= qq{
     4.6 kcal/mol (TATAC) respectively.
   </p>
   
-<h3><a name="PRIMER_MAX_MISPRIMING">Max Mispriming</a></h3>
+<h3><a name="PRIMER_MAX_LIBRARY_MISPRIMING">Max Mispriming</a></h3>
   <p>The maximum allowed weighted similarity with any sequence in Mispriming Library. Default is 12.
   </p>
   
@@ -3620,7 +3620,7 @@ $formHTML .= qq{
     a consensus.
   </p>
   
-<h3><a name="PRIMER_PAIR_MAX_MISPRIMING">Pair Max Mispriming</a></h3>
+<h3><a name="PRIMER_PAIR_MAX_LIBRARY_MISPRIMING">Pair Max Mispriming</a></h3>
   <p>The maximum allowed sum of similarities of a primer pair (one similarity for each primer) with any single sequence
     in Mispriming Library. Default is 24. Library sequence weights are not used in computing the sum of similarities.
   </p>
@@ -3645,15 +3645,15 @@ $formHTML .= qq{
     <br>
     By default Primer3 uses the oligo melting temperature formula and the table of thermodynamic parameters given in
     <a href="http://dx.doi.org/10.1073/pnas.83.11.3746" target="_blank"> Breslauer et al. 1986,
-    DOI:10.1073/pnas.83.11.3746</a>~For more information see caption <a href="#PRIMER_TM_SANTALUCIA">
+    DOI:10.1073/pnas.83.11.3746</a>~For more information see caption <a href="#PRIMER_TM_FORMULA">
     Table of thermodynamic parameters</a>
   </p>
 
-<h3><a name="PRIMER_MAX_DIFF_TM">Maximum T<sub>m</sub> Difference</a></h3>
+<h3><a name="PRIMER_PAIR_MAX_DIFF_TM">Maximum T<sub>m</sub> Difference</a></h3>
   <p>Maximum acceptable (unsigned) difference between the melting temperatures of the left and right primers.
   </p>
 
-<h3><a name="PRIMER_TM_SANTALUCIA">Table of thermodynamic parameters</a></h3>
+<h3><a name="PRIMER_TM_FORMULA">Table of thermodynamic parameters</a></h3>
   <p>Option for the table of Nearest-Neighbor thermodynamic parameters and for the method of melting temperature 
     calculation. Two different tables of thermodynamic parameters are available:
     <ol>
@@ -3699,7 +3699,7 @@ $formHTML .= qq{
   <p>Minimum, Optimum, and Maximum percentage of Gs and Cs in any primer.
   </p>
   
-<h3><a name="PRIMER_SELF_ANY">Max Complementarity</a></h3>
+<h3><a name="PRIMER_MAX_SELF_ANY">Max Complementarity</a></h3>
   <p>The maximum allowable local alignment score when testing a single primer for (local) self-complementarity and the
     maximum allowable local alignment score when testing for complementarity between left and right primers.  Local
     self-complementarity is taken to predict the tendency of primers to anneal to each other without necessarily causing
@@ -3721,7 +3721,7 @@ $formHTML .= qq{
     alignment between two oligos.
   </p>
   
-<h3><a name="PRIMER_SELF_END">Max 3' Complementarity</a></h3>
+<h3><a name="PRIMER_MAX_SELF_END">Max 3' Complementarity</a></h3>
   <p>The maximum allowable 3'-anchored global alignment score when testing a single primer for self-complementarity, and
     the maximum allowable 3'-anchored global alignment score when testing for complementarity between left and right
     primers.  The 3'-anchored global alignment score is taken to predict the likelihood of PCR-priming primer-dimers, for
@@ -3749,7 +3749,7 @@ $formHTML .= qq{
   <p>The maximum allowable length of a mononucleotide repeat, for example AAAAAA.
   </p>
   
-<h3><a name="INCLUDED_REGION">Included Region</a></h3>
+<h3><a name="SEQUENCE_INCLUDED_REGION">Included Region</a></h3>
   <p>A sub-region of the given sequence in which to pick primers.  For example, often the first dozen or so bases of a
     sequence are vector, and should be excluded from consideration. The value for this parameter has the form<br>
     <pre><tt><i>start</i></tt>,<tt><i>length</i></tt></pre>
@@ -3757,7 +3757,7 @@ $formHTML .= qq{
     of subsequent bases in the primer-picking region.
   </p>
   
-<h3><a name="PRIMER_START_CODON_POSITION">Start Codon Position</a></h3>
+<h3><a name="SEQUENCE_START_CODON_POSITION">Start Codon Position</a></h3>
   <p>This parameter should be considered EXPERIMENTAL at this point. Please check the output carefully; some erroneous
     inputs might cause an error in Primer3. Index of the first base of a start codon.  This parameter allows Primer3
     to select primer pairs to create in-frame amplicons e.g. to create a template for a fusion protein.  Primer3 will
@@ -3814,12 +3814,12 @@ $formHTML .= qq{
     parameter has no effect on the hybridization oligo if one is requested.)
   </p>
 
-<h3><a name="PRIMER_SALT_CONC">Concentration of monovalent cations</a></h3>
+<h3><a name="PRIMER_SALT_MONOVALENT">Concentration of monovalent cations</a></h3>
   <p>The millimolar concentration of salt (usually KCl) in the PCR. Primer3 uses this argument to calculate oligo
     melting temperatures.
   </p>
 
-<h3><a name="PRIMER_DIVALENT_CONC">Concentration of divalent cations</a></h3>
+<h3><a name="PRIMER_SALT_DIVALENT">Concentration of divalent cations</a></h3>
   <p>The millimolar concentration of divalent salt cations (usually MgCl<sup>2+</sup> in the PCR). Primer3 converts
     concentration of divalent cations to concentration of monovalent cations using formula suggested in the paper 
     <a href="http://www.clinchem.org/cgi/content/full/47/11/1956" target="blank"> Ahsen et al., 2001</a>
@@ -3834,7 +3834,7 @@ $formHTML .= qq{
 
 <h3><a name="PRIMER_DNTP_CONC">Concentration of dNTPs</a></h3>
   <p>The millimolar concentration of deoxyribonucleotide triphosphate. This argument is considered only if
-    <a href="#PRIMER_DIVALENT_CONC">Concentration of divalent cations</a> is specified.
+    <a href="#PRIMER_SALT_DIVALENT">Concentration of divalent cations</a> is specified.
   </p>
 
 <h3><a name="PRIMER_SALT_CORRECTIONS">Salt correction formula</a></h3>
@@ -3862,14 +3862,14 @@ $formHTML .= qq{
     oligo melting temperatures.
   </p>
 
-<h3><a name="PRIMER_NUM_NS_ACCEPTED">Max Ns Accepted</a></h3>
+<h3><a name="PRIMER_MAX_NS_ACCEPTED">Max Ns Accepted</a></h3>
   <p>Maximum number of unknown bases (N) allowable in any primer.
   </p>
 
 <h3><a name="PRIMER_LIBERAL_BASE">Liberal Base</a></h3>
   <p>This parameter provides a quick-and-dirty way to get Primer3 to accept IUB / IUPAC codes for ambiguous bases (i.e.
     by changing all unrecognized bases to N).  If you wish to include an ambiguous base in an oligo, you must set
-    <a href=#PRIMER_NUM_NS_ACCEPTED>Max Ns Accepted</a> to a non-0 value. Perhaps '-' and '* ' should be squeezed
+    <a href=#PRIMER_MAX_NS_ACCEPTED>Max Ns Accepted</a> to a non-0 value. Perhaps '-' and '* ' should be squeezed
     out rather than changed to 'N', but currently they simply get converted to N's.  The authors invite user comments.
   </p>
 
@@ -3908,7 +3908,7 @@ $formHTML .= qq{
 
 <h2><a name=SEQUENCE_QUALITY>Sequence Quality</a></h2>
 
-<h3><a name="PRIMER_SEQUENCE_QUALITY">Sequence Quality</a></h3>
+<h3><a name="SEQUENCE_QUALITY">Sequence Quality</a></h3>
   <p>A list of space separated integers. There must be exactly one integer for each base in the Source Sequence if this
     argument is non-empty. High numbers indicate high confidence in the base call at that position and low numbers
     indicate low confidence in the base call at that position.
@@ -4945,29 +4945,29 @@ sub divHTMLsequence {
   $results = shift;
   $firstPair = shift;
 
-  $sequence = $results->{"SEQUENCE"};
+  $sequence = $results->{"SEQUENCE_TEMPLATE"};
   $format = $sequence;
   $format =~ s/\w/N/g;
 
   $seqLength = length ($sequence);
   $firstBase = $results->{"PRIMER_FIRST_BASE_INDEX"};
   
-  if ((defined $results->{"SEQUENCE"})and ($results->{"SEQUENCE"} ne "")) {
+  if ((defined $results->{"SEQUENCE_TEMPLATE"})and ($results->{"SEQUENCE_TEMPLATE"} ne "")) {
 
-  if (defined ($results->{"EXCLUDED_REGION"}) and (($results->{"EXCLUDED_REGION"}) ne "")) {
-      @targets = split ' ', $results->{"EXCLUDED_REGION"};
+  if (defined ($results->{"SEQUENCE_EXCLUDED_REGION"}) and (($results->{"SEQUENCE_EXCLUDED_REGION"}) ne "")) {
+      @targets = split ' ', $results->{"SEQUENCE_EXCLUDED_REGION"};
       foreach $region (@targets) {
           $format = addRegion($format,$region,$firstBase,"E");
       }
   }
-  if (defined ($results->{"TARGET"}) and (($results->{"TARGET"}) ne "")) {
-      @targets = split ' ', $results->{"TARGET"};
+  if (defined ($results->{"SEQUENCE_TARGET"}) and (($results->{"SEQUENCE_TARGET"}) ne "")) {
+      @targets = split ' ', $results->{"SEQUENCE_TARGET"};
       foreach $region (@targets) {
           $format = addRegion($format,$region,$firstBase,"T");
       }
   }
-  if (defined ($results->{"INCLUDED_REGION"}) and (($results->{"INCLUDED_REGION"}) ne "")) {
-      $format = addRegion($format,$results->{"INCLUDED_REGION"},$firstBase,"I");
+  if (defined ($results->{"SEQUENCE_INCLUDED_REGION"}) and (($results->{"SEQUENCE_INCLUDED_REGION"}) ne "")) {
+      $format = addRegion($format,$results->{"SEQUENCE_INCLUDED_REGION"},$firstBase,"I");
   }
   
   if ($firstPair eq 1) {
@@ -5278,7 +5278,7 @@ $formHTML .= qq{type="checkbox"></td>
        <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_NAME" name="PRIMER_$primerNumber\_NAME" value="$names[$counter]" size="20"></td>
        <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_SEQUENCE" name="PRIMER_$primerNumber\_SEQUENCE" value="$sequences[$counter]" size="44"></td>
        <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_DATE" name="PRIMER_$primerNumber\_DATE" value="$date[$counter]" size="9"></td>
-       <td class="primer3plus_cell_no_border">&nbsp;<a href="$machineSettings{URL_FORM_ACTION}?PRIMER_SEQUENCE_ID=$cgiName&PRIMER_LEFT_INPUT=$sequences[$counter]&SCRIPT_TASK=Primer_Check">Check!</a></td>
+       <td class="primer3plus_cell_no_border">&nbsp;<a href="$machineSettings{URL_FORM_ACTION}?SEQUENCE_ID=$cgiName&SEQUENCE_PRIMER=$sequences[$counter]&SCRIPT_TASK=Primer_Check">Check!</a></td>
        <td class="primer3plus_cell_no_border">&nbsp;$blastLinkUse</td>
      </tr>
 };

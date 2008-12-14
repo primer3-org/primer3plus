@@ -69,8 +69,8 @@ checkParameters(%completeParameters);
 if ( defined $parametersHTML{Default_Settings} ) {
 	print "Content-type: text/html\n\n";
 	# Required for the hidden example sequence
-    $defaultSettings{"SEQUENCE"} = $completeParameters{"SEQUENCE"};
-    $defaultSettings{"PRIMER_SEQUENCE_ID"} = $completeParameters{"PRIMER_SEQUENCE_ID"};
+    $defaultSettings{"SEQUENCE_TEMPLATE"} = $completeParameters{"SEQUENCE_TEMPLATE"};
+    $defaultSettings{"SEQUENCE_ID"} = $completeParameters{"SEQUENCE_ID"};
 	print mainStartUpHTML( \%defaultSettings ), "\n";
 }
 
@@ -97,8 +97,8 @@ elsif (( defined $parametersHTML{Upload_File} )
 }
 
 elsif ( defined $parametersHTML{Save_Sequence} ) {
-	my $fName = ( length( $completeParameters{PRIMER_SEQUENCE_ID} ) > 2 ) ?
-	           $completeParameters{PRIMER_SEQUENCE_ID} : "Sequence";
+	my $fName = ( length( $completeParameters{SEQUENCE_ID} ) > 2 ) ?
+	           $completeParameters{SEQUENCE_ID} : "Sequence";
 	print "Content-disposition: attachment; filename=$fName.txt\n\n";
 	print createSequenceFile( \%completeParameters );
 }

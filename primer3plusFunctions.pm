@@ -590,12 +590,12 @@ sub loadFile {
 				}
 			}
 			if ($sequenceCounter == 0) {
-			    $dataTarget->{"PRIMER_SEQUENCE_ID"} = $name;
-			    $dataTarget->{"SEQUENCE"}           = $sequence;
+			    $dataTarget->{"SEQUENCE_ID"} = $name;
+			    $dataTarget->{"SEQUENCE_TEMPLATE"} = $sequence;
 			}
 			else {
-		        $dataTarget->{"PRIMER_SEQUENCE_ID_$sequenceCounter"} = $name;
-		        $dataTarget->{"SEQUENCE_$sequenceCounter"} = $sequence;
+		        $dataTarget->{"SEQUENCE_ID_$sequenceCounter"} = $name;
+		        $dataTarget->{"SEQUENCE_TEMPLATE_$sequenceCounter"} = $sequence;
 			}		
 			$sequenceCounter++;
 			$sequence="";
@@ -610,7 +610,7 @@ sub loadFile {
 	    my $sequence;
 	    $fileString=~ s/\n//g ;
 	    $fileString=~ /\^\^(\w+)/ ;
-        $dataTarget->{"SEQUENCE"} = $1; 
+        $dataTarget->{"SEQUENCE_TEMPLATE"} = $1; 
 	    setMessage("Primer3Plus loaded SeqEdit-File");
     }
 
@@ -625,8 +625,8 @@ sub loadFile {
 #		( $name, $temp ) = split "\n",         $name;
 #		$name =~ s/^\s*//;
 #
-#		$dataTarget->{"PRIMER_SEQUENCE_ID"} = $name;
-#		$dataTarget->{"SEQUENCE"}           = $sequence;
+#		$dataTarget->{"SEQUENCE_ID"} = $name;
+#		$dataTarget->{"SEQUENCE_TEMPLATE"} = $sequence;
 #		setMessage("Primer3Plus loaded GenBank-File");
 #	}
 
@@ -650,12 +650,12 @@ sub loadFile {
 		        $sequence =~ s/\W//g;
 
 				if ($sequenceCounter == 0) {
-				    $dataTarget->{"PRIMER_SEQUENCE_ID"} = $name;
-				    $dataTarget->{"SEQUENCE"}           = $sequence;
+				    $dataTarget->{"SEQUENCE_ID"} = $name;
+				    $dataTarget->{"SEQUENCE_TEMPLATE"}           = $sequence;
 				}
 				else {
-			        $dataTarget->{"PRIMER_SEQUENCE_ID_$sequenceCounter"} = $name;
-			        $dataTarget->{"SEQUENCE_$sequenceCounter"} = $sequence;
+			        $dataTarget->{"SEQUENCE_ID_$sequenceCounter"} = $name;
+			        $dataTarget->{"SEQUENCE_TEMPLATE_$sequenceCounter"} = $sequence;
 				}		
 				$sequenceCounter++;
 				$sequence="";
@@ -690,12 +690,12 @@ sub loadFile {
 		        $sequence =~ s/\W//g;
 
 				if ($sequenceCounter == 0) {
-				    $dataTarget->{"PRIMER_SEQUENCE_ID"} = $name;
-				    $dataTarget->{"SEQUENCE"}           = $sequence;
+				    $dataTarget->{"SEQUENCE_ID"} = $name;
+				    $dataTarget->{"SEQUENCE_TEMPLATE"}           = $sequence;
 				}
 				else {
-			        $dataTarget->{"PRIMER_SEQUENCE_ID_$sequenceCounter"} = $name;
-			        $dataTarget->{"SEQUENCE_$sequenceCounter"} = $sequence;
+			        $dataTarget->{"SEQUENCE_ID_$sequenceCounter"} = $name;
+			        $dataTarget->{"SEQUENCE_TEMPLATE_$sequenceCounter"} = $sequence;
 				}		
 				$sequenceCounter++;
 				$sequence="";
@@ -720,7 +720,7 @@ sub loadFile {
         $sequence =~ s/\d//g;
         $sequence =~ s/\W//g;
 		
-		$dataTarget->{"SEQUENCE"} = $sequence;
+		$dataTarget->{"SEQUENCE_TEMPLATE"} = $sequence;
 		setMessage("Error: Primer3Plus could not identify File Format");
 	}
 
@@ -753,13 +753,13 @@ sub checkParameters (\%) {
 	
     ## A hidden way to obtain a example sequence for demonstration
     if ( defined( $dataStorage->{"Default_Settings"} ) ) {
-        my $choosenSequence = $dataStorage->{"SEQUENCE"};
+        my $choosenSequence = $dataStorage->{"SEQUENCE_TEMPLATE"};
         if ( $choosenSequence eq "example" ) {
-            $dataStorage->{"SEQUENCE"} = getLyk3Sequence();
-            $dataStorage->{"PRIMER_SEQUENCE_ID"} = "Medicago NSP2";
+            $dataStorage->{"SEQUENCE_TEMPLATE"} = getLyk3Sequence();
+            $dataStorage->{"SEQUENCE_ID"} = "Medicago NSP2";
         } else {
-            $dataStorage->{"SEQUENCE"} = "";
-            $dataStorage->{"PRIMER_SEQUENCE_ID"} = "";
+            $dataStorage->{"SEQUENCE_TEMPLATE"} = "";
+            $dataStorage->{"SEQUENCE_ID"} = "";
         }
     }
 
@@ -767,8 +767,8 @@ sub checkParameters (\%) {
     if ( defined( $dataStorage->{"SelectOneSequence"} ) ) {
         my $choosenSequence = $dataStorage->{"SCRIPT_SELECTED_SEQUENCE"};
         if ( $choosenSequence != 0 ) {
-            $dataStorage->{"SEQUENCE"} = $dataStorage->{"SEQUENCE_$choosenSequence"};
-            $dataStorage->{"PRIMER_SEQUENCE_ID"} = $dataStorage->{"PRIMER_SEQUENCE_ID_$choosenSequence"};
+            $dataStorage->{"SEQUENCE_TEMPLATE"} = $dataStorage->{"SEQUENCE_TEMPLATE_$choosenSequence"};
+            $dataStorage->{"SEQUENCE_ID"} = $dataStorage->{"SEQUENCE_ID_$choosenSequence"};
         }
     }
 
@@ -794,18 +794,18 @@ sub checkParameters (\%) {
 		$dataStorage->{"PRIMER_MISPRIMING_LIBRARY"} = $libary;
 	}
 	
-	$libary = $dataStorage->{"PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY"};
+	$libary = $dataStorage->{"PRIMER_INTERNAL_MISHYB_LIBRARY"};
 	if ( !defined( $misLibrary{$libary} ) ) {
 		setMessage("Error: Oligo Mispriming Library $libary does not exist on this server!");
 		setMessage("Oligo Mispriming Library was changed to: NONE");
 		$libary = "NONE";
-		$dataStorage->{"PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY"} = $libary;
+		$dataStorage->{"PRIMER_INTERNAL_MISHYB_LIBRARY"} = $libary;
 	}
 	if ( ( $libary ne "NONE" ) and !( -r $misLibrary{$libary} ) ) {
 		setMessage("Error: Oligo Mispriming Library $libary can not be read!");
 		setMessage("Oligo Mispriming Library was changed to: NONE");
 		$libary = "NONE";
-		$dataStorage->{"PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY"} = $libary;
+		$dataStorage->{"PRIMER_INTERNAL_MISHYB_LIBRARY"} = $libary;
 	}
 
 	## Check first base index
@@ -815,11 +815,11 @@ sub checkParameters (\%) {
 
 	## Read fasta-sequence and the regions
 	my $firstBaseIndex   = $dataStorage->{"PRIMER_FIRST_BASE_INDEX"};
-	my $sequenceID       = $dataStorage->{"PRIMER_SEQUENCE_ID"};
-	my $realSequence     = $dataStorage->{"SEQUENCE"};
-	my $excludedRegion   = $dataStorage->{"EXCLUDED_REGION"};
-	my $target           = $dataStorage->{"TARGET"};
-	my $includedRegion   = $dataStorage->{"INCLUDED_REGION"};
+	my $sequenceID       = $dataStorage->{"SEQUENCE_ID"};
+	my $realSequence     = $dataStorage->{"SEQUENCE_TEMPLATE"};
+	my $excludedRegion   = $dataStorage->{"SEQUENCE_EXCLUDED_REGION"};
+	my $target           = $dataStorage->{"SEQUENCE_TARGET"};
+	my $includedRegion   = $dataStorage->{"SEQUENCE_INCLUDED_REGION"};
 
 	if ( $realSequence =~ /^\s*>([^\n]*)/ ) {
 
@@ -870,22 +870,22 @@ sub checkParameters (\%) {
 		}
 		$includedRegion =  add_start_len_list( $includedRegion, $m_included_region, $firstBaseIndex );
 	}
-	$dataStorage->{"PRIMER_SEQUENCE_ID"} = $sequenceID;
-	$dataStorage->{"SEQUENCE"}           = $realSequence;
-	$dataStorage->{"EXCLUDED_REGION"}    = $excludedRegion;
-	$dataStorage->{"TARGET"}             = $target;
-	$dataStorage->{"INCLUDED_REGION"}    = $includedRegion;
+	$dataStorage->{"SEQUENCE_ID"} = $sequenceID;
+	$dataStorage->{"SEQUENCE_TEMPLATE"}           = $realSequence;
+	$dataStorage->{"SEQUENCE_EXCLUDED_REGION"}    = $excludedRegion;
+	$dataStorage->{"SEQUENCE_TARGET"}             = $target;
+	$dataStorage->{"SEQUENCE_INCLUDED_REGION"}    = $includedRegion;
 
 	## Remove Commas in Product size ranges
 	$dataStorage->{"PRIMER_PRODUCT_SIZE_RANGE"} =~ s/,/ /g;
 
 	## If sequence quality contains newlines (or other non-space whitespace) change them to space.
-	$dataStorage->{"PRIMER_SEQUENCE_QUALITY"} =~ s/\s/ /sg;
+	$dataStorage->{"SEQUENCE_QUALITY"} =~ s/\s/ /sg;
 
 	## Cut primers and internal oligo to max size primer3 can handle
-	my $primerLeft    = $dataStorage->{"PRIMER_LEFT_INPUT"};
-	my $internalOligo = $dataStorage->{"PRIMER_INTERNAL_OLIGO_INPUT"};
-	my $primerRight   = $dataStorage->{"PRIMER_RIGHT_INPUT"};
+	my $primerLeft    = $dataStorage->{"SEQUENCE_PRIMER"};
+	my $internalOligo = $dataStorage->{"SEQUENCE_INTERNAL_OLIGO"};
+	my $primerRight   = $dataStorage->{"SEQUENCE_PRIMER_REVCOMP"};
 	my $maxPrimerSize  = getMachineSetting("MAX_PRIMER_SIZE");
 	my $cutPosition;
 	my $cutLeft  = "";
@@ -904,7 +904,7 @@ sub checkParameters (\%) {
 			setMessage("ERROR: Left Primer longer than $maxPrimerSize ".
 			           "bp. Additional bases were removed on the 5' end");
 		}
-		$dataStorage->{"PRIMER_LEFT_INPUT"} = $cutLeft;
+		$dataStorage->{"SEQUENCE_PRIMER"} = $cutLeft;
 	}
 	if ( ( length $internalOligo ) > $maxPrimerSize ) {
 		if ( $fixPrimerEnd eq "5" ) {
@@ -918,7 +918,7 @@ sub checkParameters (\%) {
 			setMessage("ERROR: Internal Oligo longer than $maxPrimerSize ".
 			           "bp. Additional bases were removed on the 5' end");
 		}
-		$dataStorage->{"PRIMER_INTERNAL_OLIGO_INPUT"} = $cutOligo;
+		$dataStorage->{"SEQUENCE_INTERNAL_OLIGO"} = $cutOligo;
 	}
 	if ( ( length $primerRight ) > $maxPrimerSize ) {
 		if ( $fixPrimerEnd eq "5" ) {
@@ -932,7 +932,7 @@ sub checkParameters (\%) {
 			setMessage("ERROR: Right Primer longer than $maxPrimerSize ".
 			           "bp. Additional bases were removed on the 5' end");
 		}
-		$dataStorage->{"PRIMER_RIGHT_INPUT"} = $cutRight;
+		$dataStorage->{"SEQUENCE_PRIMER_REVCOMP"} = $cutRight;
 	}
 
 	return;
@@ -1039,9 +1039,9 @@ sub prepareForPrimer3 ($) {
 		$libary = $p3cInput->{"PRIMER_MISPRIMING_LIBRARY"};
 		$p3cInput->{"PRIMER_MISPRIMING_LIBRARY"} = $misLibrary{$libary};
 	}
-	if ( defined $p3cInput->{"PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY"} ) {
-		$libary = $p3cInput->{"PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY"};
-		$p3cInput->{"PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY"} = $misLibrary{$libary};
+	if ( defined $p3cInput->{"PRIMER_INTERNAL_MISHYB_LIBRARY"} ) {
+		$libary = $p3cInput->{"PRIMER_INTERNAL_MISHYB_LIBRARY"};
+		$p3cInput->{"PRIMER_INTERNAL_MISHYB_LIBRARY"} = $misLibrary{$libary};
 	}
 
 	return;
@@ -1122,13 +1122,13 @@ sub detection ($$$$) {
 	my $pick_hyb   = $completeHash->{"SCRIPT_DETECTION_PICK_HYB_PROBE"};
 	my $pick_right = $completeHash->{"SCRIPT_DETECTION_PICK_RIGHT"};
 
-	if ( ( $completeHash->{"PRIMER_LEFT_INPUT"} ) ne "" ) {
+	if ( ( $completeHash->{"SEQUENCE_PRIMER"} ) ne "" ) {
 		$pick_left = "1";
 	}
-	if ( ( $completeHash->{"PRIMER_INTERNAL_OLIGO_INPUT"} ) ne "" ) {
+	if ( ( $completeHash->{"SEQUENCE_INTERNAL_OLIGO"} ) ne "" ) {
 		$pick_hyb = "1";
 	}
-	if ( ( $completeHash->{"PRIMER_RIGHT_INPUT"} ) ne "" ) {
+	if ( ( $completeHash->{"SEQUENCE_PRIMER_REVCOMP"} ) ne "" ) {
 		$pick_right = "1";
 	}
 	my $task;
@@ -1167,15 +1167,15 @@ sub detection ($$$$) {
 
 	## Copy the oligos to sequence if no sequence is given
 	my $inferred_sequence = "";
-	if ( ( $completeHash->{"SEQUENCE"} ) eq "" ) {
-		if ( ( $completeHash->{"PRIMER_LEFT_INPUT"} ) ne "" ) {
-			$inferred_sequence .= $completeHash->{"PRIMER_LEFT_INPUT"};
+	if ( ( $completeHash->{"SEQUENCE_TEMPLATE"} ) eq "" ) {
+		if ( ( $completeHash->{"SEQUENCE_PRIMER"} ) ne "" ) {
+			$inferred_sequence .= $completeHash->{"SEQUENCE_PRIMER"};
 		}
-		if ( ( $completeHash->{"PRIMER_INTERNAL_OLIGO_INPUT"} ) ne "" ) {
-			$inferred_sequence .= $completeHash->{"PRIMER_INTERNAL_OLIGO_INPUT"};
+		if ( ( $completeHash->{"SEQUENCE_INTERNAL_OLIGO"} ) ne "" ) {
+			$inferred_sequence .= $completeHash->{"SEQUENCE_INTERNAL_OLIGO"};
 		}
-		if ( ( $completeHash->{"PRIMER_RIGHT_INPUT"} ) ne "" ) {
-			my $tmpRevSeq = reverseSequence( $completeHash->{"PRIMER_RIGHT_INPUT"} );
+		if ( ( $completeHash->{"SEQUENCE_PRIMER_REVCOMP"} ) ne "" ) {
+			my $tmpRevSeq = reverseSequence( $completeHash->{"SEQUENCE_PRIMER_REVCOMP"} );
 			$inferred_sequence .= $tmpRevSeq;
 		}
 		if ( $inferred_sequence eq "" ) {
@@ -1183,7 +1183,7 @@ sub detection ($$$$) {
 			           "primers/oligos to evaluate");
 			setDoNotPick("1");
 		}
-		$completeHash->{"SEQUENCE"} = $inferred_sequence;
+		$completeHash->{"SEQUENCE_TEMPLATE"} = $inferred_sequence;
 	}
 
 	# Copy all necessary parmeters
@@ -1193,28 +1193,28 @@ sub detection ($$$$) {
     
     # The Seuencing function uses the Targets in a different way
 	if ( $Sequencing eq "1" ) {
-		$p3cInput{INCLUDED_REGION} = "";
-		$p3cInput{TARGET}          = "";
-		$p3cInput{EXCLUDED_REGION} = "";
+		$p3cInput{SEQUENCE_INCLUDED_REGION} = "";
+		$p3cInput{SEQUENCE_TARGET}          = "";
+		$p3cInput{SEQUENCE_EXCLUDED_REGION} = "";
 	}
 
 	# Set some parameters to enable primer3 to work
 	$p3cInput{PRIMER_PICK_ANYWAY}  = "1";
-	$p3cInput{PRIMER_FILE_FLAG}    = $makeList;
+	$p3cInput{P3_FILE_FLAG}    = $makeList;
 	$p3cInput{PRIMER_EXPLAIN_FLAG} = "1";
 
 	my $uniID;
-	my $sequenceID = $p3cInput{PRIMER_SEQUENCE_ID};
+	my $sequenceID = $p3cInput{SEQUENCE_ID};
 
 	# Save Sequence ID for later and add UniID for file name
 	# to avoid confusion on the harddisk
 	if ( $makeList eq "1" ) {
 		$uniID = makeUniqueID();
-		$p3cInput{PRIMER_SEQUENCE_ID} = $uniID;
+		$p3cInput{SEQUENCE_ID} = $uniID;
 
 		# File Lists with Mispriming Librarys just take to long to compute
 		$p3cInput{"PRIMER_MISPRIMING_LIBRARY"}            = "NONE";
-		$p3cInput{"PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY"} = "NONE";
+		$p3cInput{"PRIMER_INTERNAL_MISHYB_LIBRARY"} = "NONE";
 		if ( $Sequencing eq "1" ) {
 			$completeHash->{"PRIMER_TASK"} = "pick_pcr_primers";
 		}
@@ -1229,8 +1229,8 @@ sub detection ($$$$) {
 	if ( $makeList eq "1" ) {
 
 		# Put the Sequence ID back and read the files
-		$resultsHash->{"PRIMER_SEQUENCE_ID"} = $sequenceID;
-		$resultsHash->{"SEQUENCE"} = $completeHash->{"SEQUENCE"};
+		$resultsHash->{"SEQUENCE_ID"} = $sequenceID;
+		$resultsHash->{"SEQUENCE_TEMPLATE"} = $completeHash->{"SEQUENCE_TEMPLATE"};
 		$resultsHash->{"PRIMER_FIRST_BASE_INDEX"} = $completeHash->{"PRIMER_FIRST_BASE_INDEX"};
 
 		if ( $pick_right eq "1" ) {
@@ -1285,7 +1285,7 @@ sub readPrimerFile ($$$) {
 		$primerInitial = "??";
     }
    	my $acronymSpace = $completeHash->{"PRIMER_NAME_ACRONYM_SPACER"};
-	my $sequenceName = $resultsHash->{"PRIMER_SEQUENCE_ID"};
+	my $sequenceName = $resultsHash->{"SEQUENCE_ID"};
 
 	if ( ( length($fileName) > 5 ) ) {
 		open TEMPLATEFILE, "<$fileName"
@@ -1373,8 +1373,8 @@ sub checkPrimer ($$) {
 	my ( $p3cOutputKeys,$checkParameterKey, $primerName );
 
 	# Check if a primer sequence was provided and the length meet the limits
-	my $leftPrimerLength = length( $completeHash->{"PRIMER_LEFT_INPUT"} );
-	if ( $completeHash->{"PRIMER_LEFT_INPUT"} eq "" ) {
+	my $leftPrimerLength = length( $completeHash->{"SEQUENCE_PRIMER"} );
+	if ( $completeHash->{"SEQUENCE_PRIMER"} eq "" ) {
 		setDoNotPick("1");
 		setMessage("Error: Primer3Plus can not calculate".
 		           " primer parameters without a primer sequence");
@@ -1396,12 +1396,12 @@ sub checkPrimer ($$) {
 	# Set some parameters to enable primer3 to work
 	$p3cInput{PRIMER_TASK}         = "pick_left_only";
 	$p3cInput{PRIMER_PICK_ANYWAY}  = "1";
-	$p3cInput{PRIMER_FILE_FLAG}    = "0";
+	$p3cInput{P3_FILE_FLAG}    = "0";
 	$p3cInput{PRIMER_EXPLAIN_FLAG} = "0";
 	$p3cInput{PRIMER_MIN_SIZE}     = "1";
 	$p3cInput{PRIMER_MAX_SIZE}     = getMachineSetting("MAX_PRIMER_SIZE");
 	$p3cInput{PRIMER_NUM_RETURN}   = "1";
-	$p3cInput{SEQUENCE}            = $p3cInput{PRIMER_LEFT_INPUT};
+	$p3cInput{SEQUENCE}            = $p3cInput{SEQUENCE_PRIMER};
 
 	# prepare parameters for primer3
 	prepareForPrimer3( \%p3cInput );
@@ -1413,8 +1413,8 @@ sub checkPrimer ($$) {
 		$resultsHash->{"$p3cOutputKeys"} = $p3cOutput{"$p3cOutputKeys"};
 	}
 
-	if ( ( length( $p3cInput{"PRIMER_SEQUENCE_ID"} ) ) > 2 ) {
-		$primerName = qq{$p3cInput{"PRIMER_SEQUENCE_ID"}};
+	if ( ( length( $p3cInput{"SEQUENCE_ID"} ) ) > 2 ) {
+		$primerName = qq{$p3cInput{"SEQUENCE_ID"}};
 	}
 	else {
 		$primerName = "Primer";
@@ -1447,41 +1447,41 @@ sub cloning ($$) {
 	$fixPrimerEnd  = $completeHash->{"SCRIPT_FIX_PRIMER_END"};
 
 	# Check if a sequence an included region was provided
-	if ( $completeHash->{"SEQUENCE"} eq "" ) {
+	if ( $completeHash->{"SEQUENCE_TEMPLATE"} eq "" ) {
 		setDoNotPick("1");
 		setMessage("Error: Primer3Plus can not pick".
 		           " primers without a  sequence");
 	}
-	if ( $completeHash->{"INCLUDED_REGION"} eq "" ) {
+	if ( $completeHash->{"SEQUENCE_INCLUDED_REGION"} eq "" ) {
 		setDoNotPick("1");
 		setMessage("Error: Primer3Plus can not pick cloning".
 		           " primes without given included region");
 	}
 
 	# Copy all necessary parmeters
-	$resultsHash->{"SEQUENCE"}        = $completeHash->{"SEQUENCE"};
-	$resultsHash->{"INCLUDED_REGION"} = $completeHash->{"INCLUDED_REGION"};
+	$resultsHash->{"SEQUENCE_TEMPLATE"}        = $completeHash->{"SEQUENCE_TEMPLATE"};
+	$resultsHash->{"SEQUENCE_INCLUDED_REGION"} = $completeHash->{"SEQUENCE_INCLUDED_REGION"};
 	$resultsHash->{"PRIMER_FIRST_BASE_INDEX"} = $completeHash->{"PRIMER_FIRST_BASE_INDEX"};
 	$resultsHash->{"PRIMER_NUM_RETURN"}  = $completeHash->{"PRIMER_NUM_RETURN"};
-	$resultsHash->{"PRIMER_SEQUENCE_ID"} = $completeHash->{"PRIMER_SEQUENCE_ID"};
+	$resultsHash->{"SEQUENCE_ID"} = $completeHash->{"SEQUENCE_ID"};
 
 	foreach $checkParametersKey (@primerCheckParameters) {
 		$p3cInput{"$checkParametersKey"} = $completeHash->{"$checkParametersKey"};
 	}
 
 	# Set some parameters to enable primer3 to work
-	$p3cInput{PRIMER_LEFT_INPUT} = "";
+	$p3cInput{SEQUENCE_PRIMER} = "";
 	
 	# Get starting parameters for the left primer
-	( $regionStart, $regionLength ) = split ",", $completeHash->{"INCLUDED_REGION"};
+	( $regionStart, $regionLength ) = split ",", $completeHash->{"SEQUENCE_INCLUDED_REGION"};
 	$regionStart = $regionStart - $completeHash->{"PRIMER_FIRST_BASE_INDEX"};
 	$bigestPrimer = $maxPrimerSize;
 
     # Figue out if there is enough sequence to pick the primers from
 	if ( $fixPrimerEnd eq "5" ) {
-		if ( ( length( $completeHash->{"SEQUENCE"} ) ) 
+		if ( ( length( $completeHash->{"SEQUENCE_TEMPLATE"} ) ) 
 		         < ( $regionStart + $maxPrimerSize ) ) {
-			$bigestPrimer = ( length( $completeHash->{"SEQUENCE"} ) ) - $regionStart;
+			$bigestPrimer = ( length( $completeHash->{"SEQUENCE_TEMPLATE"} ) ) - $regionStart;
 		}
 	}
 	else {
@@ -1494,13 +1494,13 @@ sub cloning ($$) {
 		my %p3cOutput;
 		if ( $fixPrimerEnd eq "5" ) {
 			$primerStart = $regionStart;
-			$p3cInput{PRIMER_LEFT_INPUT} =
-			  substr( $completeHash->{"SEQUENCE"}, $primerStart, $counter );
+			$p3cInput{SEQUENCE_PRIMER} =
+			  substr( $completeHash->{"SEQUENCE_TEMPLATE"}, $primerStart, $counter );
 		}
 		else {
 			$primerStart = $regionStart - $counter + 1;
-			$p3cInput{PRIMER_LEFT_INPUT} =
-			  substr( $completeHash->{"SEQUENCE"}, $primerStart, $counter );
+			$p3cInput{SEQUENCE_PRIMER} =
+			  substr( $completeHash->{"SEQUENCE_TEMPLATE"}, $primerStart, $counter );
 		}
 
 		checkPrimer( \%p3cInput, \%p3cOutput );
@@ -1527,7 +1527,7 @@ sub cloning ($$) {
 	# Now the same for the right primer
 	# Set some parameters to enable primer3 to work
 	( $regionStart, $regionLength ) = split ",",
-	  $completeHash->{"INCLUDED_REGION"};
+	  $completeHash->{"SEQUENCE_INCLUDED_REGION"};
 	$regionStart = $regionStart + $regionLength -
 	 				 $completeHash->{"PRIMER_FIRST_BASE_INDEX"} - 1;
 
@@ -1535,10 +1535,10 @@ sub cloning ($$) {
 
 	# Get starting parameters for the left primer - include check left
 	if ( $fixPrimerEnd eq "3" ) {
-		if ( ( length( $completeHash->{"SEQUENCE"} ) ) <
+		if ( ( length( $completeHash->{"SEQUENCE_TEMPLATE"} ) ) <
 			 ( $regionStart + $maxPrimerSize ) ) {
 			$bigestPrimer =
-			  ( length( $completeHash->{"SEQUENCE"} ) ) - $regionStart;
+			  ( length( $completeHash->{"SEQUENCE_TEMPLATE"} ) ) - $regionStart;
 		}
 	}
 	else {
@@ -1552,14 +1552,14 @@ sub cloning ($$) {
 		if ( $fixPrimerEnd eq "3" ) {
 			$primerStart      = $regionStart;
 			$complementPrimer =
-			  substr( $completeHash->{"SEQUENCE"}, $primerStart, $counter );
+			  substr( $completeHash->{"SEQUENCE_TEMPLATE"}, $primerStart, $counter );
 		}
 		else {
 			$primerStart      = $regionStart - $counter + 1;
 			$complementPrimer =
-			  substr( $completeHash->{"SEQUENCE"}, $primerStart, $counter );
+			  substr( $completeHash->{"SEQUENCE_TEMPLATE"}, $primerStart, $counter );
 		}
-		$p3cInput{PRIMER_LEFT_INPUT} = reverseSequence($complementPrimer);
+		$p3cInput{SEQUENCE_PRIMER} = reverseSequence($complementPrimer);
 
 		checkPrimer( \%p3cInput, \%p3cOutput );
 		
@@ -1600,7 +1600,7 @@ sub extractPrimerParameters ($$$$) {
 	
 	# Get the names and rules for names
 	my ( $counter, $resultArrayLine, $primerAcro, $spacer );
-	my $seqID = $resultsHash->{"PRIMER_SEQUENCE_ID"};
+	my $seqID = $resultsHash->{"SEQUENCE_ID"};
 	if ( ( length $seqID ) < 3 ) {
 		$seqID = "Primer";
 	}
@@ -1712,23 +1712,23 @@ sub sortSequencing ($$$) {
 	my $reverse        = $completeHash->{"SCRIPT_SEQUENCING_REVERSE"};
 	my $interval       = $completeHash->{"SCRIPT_SEQUENCING_INTERVAL"};
 	my $accuracy       = $completeHash->{"SCRIPT_SEQUENCING_ACCURACY"};
-	my $sequenceLength = length( $completeHash->{"SEQUENCE"} );
+	my $sequenceLength = length( $completeHash->{"SEQUENCE_TEMPLATE"} );
 	my $firstBase 	   = $completeHash->{"PRIMER_FIRST_BASE_INDEX"};
 
 	# Copy some elementary parameters to the results
-	$resultsHash->{"SEQUENCE"} = $completeHash->{"SEQUENCE"};
-	$resultsHash->{"TARGET"}   = $completeHash->{"TARGET"};
+	$resultsHash->{"SEQUENCE_TEMPLATE"} = $completeHash->{"SEQUENCE_TEMPLATE"};
+	$resultsHash->{"SEQUENCE_TARGET"}   = $completeHash->{"SEQUENCE_TARGET"};
 	$resultsHash->{"PRIMER_FIRST_BASE_INDEX"} 
 	                           = $completeHash->{"PRIMER_FIRST_BASE_INDEX"};
 
 	# Read the Targets into a array or select the whole sequence
-	if ( $completeHash->{"TARGET"} eq "" ) {
+	if ( $completeHash->{"SEQUENCE_TARGET"} eq "" ) {
 		$targetStart  = $firstBase;
 		$targetLength = $sequenceLength + $firstBase;
 		push @targets, "$targetStart,$targetLength";
 	}
 	else {
-		@targets = split ' ', $completeHash->{"TARGET"};
+		@targets = split ' ', $completeHash->{"SEQUENCE_TARGET"};
 	}
 
 	# Calculate the primer positions for each target
@@ -2004,7 +2004,7 @@ sub runPrimer3 ($$$) {
 		my $acronymRight = $completeHash->{"PRIMER_NAME_ACRONYM_RIGHT"};
 		my $acronymOligo = $completeHash->{"PRIMER_NAME_ACRONYM_INTERNAL_OLIGO"};
 		my $acronymSpace = $completeHash->{"PRIMER_NAME_ACRONYM_SPACER"};
-		my $sequenceName = $completeHash->{"PRIMER_SEQUENCE_ID"};
+		my $sequenceName = $completeHash->{"SEQUENCE_ID"};
 
 		foreach $readLine (@readTheLine) {
 			( $lineKey, $lineValue ) = split "=", $readLine;

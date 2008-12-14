@@ -45,8 +45,8 @@ $resultsHash = {};
 #	$inputHash->{$param} = "";
 #}
 
-#$inputHash->{"PRIMER_LEFT_INPUT"} = "AAAAAAAAAAAAAAAAAAAAAAA";
-$inputHash->{"PRIMER_LEFT_INPUT"} = "TATGCTCACGCACATCACTATC";
+#$inputHash->{"SEQUENCE_PRIMER"} = "AAAAAAAAAAAAAAAAAAAAAAA";
+$inputHash->{"SEQUENCE_PRIMER"} = "TATGCTCACGCACATCACTATC";
 
 @outarray = Primer3Functions::checkPrimer( $inputHash, $resultsHash );
 
