@@ -147,26 +147,26 @@ my @serverParameterFilesList = (
 my %defaultSettings = (
 # Begin Primer3 Input Parameters
 # Primer3 "Sequence" Input Tags
-  "SEQUENCE_ID"                       => "",
-  "SEQUENCE_TEMPLATE"                                 => "", 
-  "SEQUENCE_INCLUDED_REGION"                          => "",
-  "SEQUENCE_TARGET"                                   => "",
-  "SEQUENCE_EXCLUDED_REGION"                          => "",
-  "SEQUENCE_QUALITY"                  => "",
-  "SEQUENCE_PRIMER"                        => "",
-  "SEQUENCE_PRIMER_REVCOMP"                       => "",
-  "SEQUENCE_START_CODON_POSITION"              => "", #"-1000000",
+  "SEQUENCE_ID"                              => "",
+  "SEQUENCE_TEMPLATE"                        => "", 
+  "SEQUENCE_INCLUDED_REGION"                 => "",
+  "SEQUENCE_TARGET"                          => "",
+  "SEQUENCE_EXCLUDED_REGION"                 => "",
+  "SEQUENCE_QUALITY"                         => "",
+  "SEQUENCE_PRIMER"                          => "",
+  "SEQUENCE_PRIMER_REVCOMP"                  => "",
+  "SEQUENCE_START_CODON_POSITION"            => "", #"-1000000",
   "PRIMER_LOWERCASE_MASKING"                 => "0",
 # Primer3 "Global" Input Tags
   "PRIMER_TASK"                              => "pick_pcr_primers",
   "PRIMER_PICK_ANYWAY"	                     => "1",
   "PRIMER_EXPLAIN_FLAG"                      => "0",
-  "P3_FILE_FLAG"                         => "0",
+  "P3_FILE_FLAG"                             => "0",
   "PRIMER_MISPRIMING_LIBRARY"                => "NONE",
   "PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS"     => "1",
-  "PRIMER_MAX_LIBRARY_MISPRIMING"                    => "12.00",
+  "PRIMER_MAX_LIBRARY_MISPRIMING"            => "12.00",
   "PRIMER_MAX_TEMPLATE_MISPRIMING"           => "12.00",
-  "PRIMER_PAIR_MAX_LIBRARY_MISPRIMING"               => "24.00",
+  "PRIMER_PAIR_MAX_LIBRARY_MISPRIMING"       => "24.00",
   "PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING"      => "24.00",
   "PRIMER_PRODUCT_MIN_TM"                    => "", #"-1000000.0",
   "PRIMER_PRODUCT_OPT_TM"                    => "",
@@ -180,19 +180,19 @@ my %defaultSettings = (
   "PRIMER_OPT_TM"                            => "60.0",
   "PRIMER_MIN_TM"                            => "57.0",
   "PRIMER_MAX_TM"                            => "63.0",
-  "PRIMER_PAIR_MAX_DIFF_TM"                       => "100.0",
+  "PRIMER_PAIR_MAX_DIFF_TM"                  => "100.0",
   "PRIMER_MIN_GC"                            => "20.0",
   "PRIMER_OPT_GC_PERCENT"                    => "",
   "PRIMER_MAX_GC"                            => "80.0",
-  "PRIMER_SALT_MONOVALENT"                         => "50.0",
+  "PRIMER_SALT_MONOVALENT"                   => "50.0",
   "PRIMER_SALT_DIVALENT"                     => "0.0",
   "PRIMER_DNTP_CONC"                         => "0.0",
   "PRIMER_SALT_CORRECTIONS"                  => "0",
-  "PRIMER_TM_FORMULA"                     => "0",
+  "PRIMER_TM_FORMULA"                        => "0",
   "PRIMER_DNA_CONC"                          => "50.0",
   "PRIMER_MAX_NS_ACCEPTED"                   => "0",
-  "PRIMER_MAX_SELF_ANY"                          => "8.00",
-  "PRIMER_MAX_SELF_END"                          => "3.00",
+  "PRIMER_MAX_SELF_ANY"                      => "8.00",
+  "PRIMER_MAX_SELF_END"                      => "3.00",
   "PRIMER_MAX_POLY_X"                        => "5",
   "PRIMER_LIBERAL_BASE"                      => "1",
   "PRIMER_NUM_RETURN"                        => "5",
@@ -210,10 +210,10 @@ my %defaultSettings = (
   "PRIMER_WT_SIZE_GT"                        => "1.0",
   "PRIMER_WT_GC_PERCENT_LT"                  => "0.0",
   "PRIMER_WT_GC_PERCENT_GT"                  => "0.0",
-  "PRIMER_WT_SELF_ANY"                      => "0.0",
-  "PRIMER_WT_SELF_END"                      => "0.0",
+  "PRIMER_WT_SELF_ANY"                       => "0.0",
+  "PRIMER_WT_SELF_END"                       => "0.0",
   "PRIMER_WT_NUM_NS"                         => "0.0",
-  "PRIMER_PAIR_WT_LIBRARY_MISPRIMING"                        => "0.0",
+  "PRIMER_PAIR_WT_LIBRARY_MISPRIMING"        => "0.0",
   "PRIMER_WT_SEQ_QUAL"                       => "0.0",
   "PRIMER_WT_END_QUAL"                       => "0.0",
   "PRIMER_WT_POS_PENALTY"                    => "0.0",
@@ -228,42 +228,42 @@ my %defaultSettings = (
   "PRIMER_PAIR_WT_PRODUCT_TM_GT"             => "0.0",
   "PRIMER_PAIR_WT_PRODUCT_SIZE_GT"           => "0.0",
   "PRIMER_PAIR_WT_PRODUCT_SIZE_LT"           => "0.0",
-  "PRIMER_PAIR_WT_LIBRARY_MISPRIMING"                   => "0.0",
+  "PRIMER_PAIR_WT_LIBRARY_MISPRIMING"        => "0.0",
   "PRIMER_PAIR_WT_TEMPLATE_MISPRIMING"       => "0.0",
 # Primer3 Internal Oligo "Sequence" Input Tags
-  "SEQUENCE_INTERNAL_EXCLUDED_REGION"    => "",
-  "SEQUENCE_INTERNAL_OLIGO"              => "",
+  "SEQUENCE_INTERNAL_EXCLUDED_REGION"        => "",
+  "SEQUENCE_INTERNAL_OLIGO"                  => "",
 # Primer3 Internal Oligo "Global" Input Tags
-  "PRIMER_INTERNAL_OPT_SIZE"           => "20",
-  "PRIMER_INTERNAL_MIN_SIZE"           => "18",
-  "PRIMER_INTERNAL_MAX_SIZE"           => "27",
-  "PRIMER_INTERNAL_OPT_TM"             => "60.0",
-  "PRIMER_INTERNAL_MIN_TM"             => "57.0",
-  "PRIMER_INTERNAL_MAX_TM"             => "63.0",
-  "PRIMER_INTERNAL_MIN_GC"             => "20.0",
-  "PRIMER_INTERNAL_OPT_GC_PERCENT"     => "",
-  "PRIMER_INTERNAL_MAX_GC"             => "80.0",
+  "PRIMER_INTERNAL_OPT_SIZE"                 => "20",
+  "PRIMER_INTERNAL_MIN_SIZE"                 => "18",
+  "PRIMER_INTERNAL_MAX_SIZE"                 => "27",
+  "PRIMER_INTERNAL_OPT_TM"                   => "60.0",
+  "PRIMER_INTERNAL_MIN_TM"                   => "57.0",
+  "PRIMER_INTERNAL_MAX_TM"                   => "63.0",
+  "PRIMER_INTERNAL_MIN_GC"                   => "20.0",
+  "PRIMER_INTERNAL_OPT_GC_PERCENT"           => "",
+  "PRIMER_INTERNAL_MAX_GC"                   => "80.0",
   "PRIMER_INTERNAL_SALT_MONOVALENT"          => "50.0",
-  "PRIMER_INTERNAL_SALT_DIVALENT"      => "0.0",
-  "PRIMER_INTERNAL_DNTP_CONC"          => "0.0",
-  "PRIMER_INTERNAL_DNA_CONC"           => "50.0",
-  "PRIMER_INTERNAL_MAX_SELF_ANY"           => "12.00",
-  "PRIMER_INTERNAL_MAX_POLY_X"         => "5",
-  "PRIMER_INTERNAL_MAX_SELF_END"           => "12.00",
-  "PRIMER_INTERNAL_MISHYB_LIBRARY"     => "NONE",   
-  "PRIMER_INTERNAL_MAX_LIBRARY_MISHYB"         => "12.00",
-  "PRIMER_INTERNAL_MIN_QUALITY"        => "0",
-  "PRIMER_INTERNAL_MAX_NS_ACCEPTED"             => "0",
-  "PRIMER_INTERNAL_WT_TM_GT"                       => "1.0",
-  "PRIMER_INTERNAL_WT_TM_LT"                       => "1.0",
-  "PRIMER_INTERNAL_WT_SIZE_LT"                     => "1.0",
-  "PRIMER_INTERNAL_WT_SIZE_GT"                     => "1.0", 
-  "PRIMER_INTERNAL_WT_GC_PERCENT_LT"               => "0.0",
-  "PRIMER_INTERNAL_WT_GC_PERCENT_GT"               => "0.0",
-  "PRIMER_INTERNAL_WT_SELF_ANY"                   => "0.0",
-  "PRIMER_INTERNAL_WT_NUM_NS"                      => "0.0",
-  "PRIMER_INTERNAL_WT_LIBRARY_MISHYB"                     => "0.0",
-  "PRIMER_INTERNAL_WT_SEQ_QUAL"                    => "0.0",
+  "PRIMER_INTERNAL_SALT_DIVALENT"            => "0.0",
+  "PRIMER_INTERNAL_DNTP_CONC"                => "0.0",
+  "PRIMER_INTERNAL_DNA_CONC"                 => "50.0",
+  "PRIMER_INTERNAL_MAX_SELF_ANY"             => "12.00",
+  "PRIMER_INTERNAL_MAX_POLY_X"               => "5",
+  "PRIMER_INTERNAL_MAX_SELF_END"             => "12.00",
+  "PRIMER_INTERNAL_MISHYB_LIBRARY"           => "NONE",   
+  "PRIMER_INTERNAL_MAX_LIBRARY_MISHYB"       => "12.00",
+  "PRIMER_INTERNAL_MIN_QUALITY"              => "0",
+  "PRIMER_INTERNAL_MAX_NS_ACCEPTED"          => "0",
+  "PRIMER_INTERNAL_WT_TM_GT"                 => "1.0",
+  "PRIMER_INTERNAL_WT_TM_LT"                 => "1.0",
+  "PRIMER_INTERNAL_WT_SIZE_LT"               => "1.0",
+  "PRIMER_INTERNAL_WT_SIZE_GT"               => "1.0", 
+  "PRIMER_INTERNAL_WT_GC_PERCENT_LT"         => "0.0",
+  "PRIMER_INTERNAL_WT_GC_PERCENT_GT"         => "0.0",
+  "PRIMER_INTERNAL_WT_SELF_ANY"              => "0.0",
+  "PRIMER_INTERNAL_WT_NUM_NS"                => "0.0",
+  "PRIMER_INTERNAL_WT_LIBRARY_MISHYB"        => "0.0",
+  "PRIMER_INTERNAL_WT_SEQ_QUAL"              => "0.0",
                             
 # End of Primer3 Input Parameters
 
@@ -290,10 +290,10 @@ my %defaultSettings = (
   
   "SERVER_PARAMETER_FILE"                    => "DEFAULT",
 
-  "PRIMER_NAME_ACRONYM_LEFT"                 => "F",
-  "PRIMER_NAME_ACRONYM_INTERNAL_OLIGO"       => "IN",
-  "PRIMER_NAME_ACRONYM_RIGHT"                => "R",
-  "PRIMER_NAME_ACRONYM_SPACER"               => "_"
+  "P3P_PRIMER_NAME_ACRONYM_LEFT"             => "F",
+  "P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO"   => "IN",
+  "P3P_PRIMER_NAME_ACRONYM_RIGHT"            => "R",
+  "P3P_PRIMER_NAME_ACRONYM_SPACER"           => "_"
 # if you ad parameters here also add them to the respective save array
 );
 
@@ -438,10 +438,10 @@ SCRIPT_DETECTION_PRODUCT_MIN_SIZE
 SCRIPT_DETECTION_PRODUCT_OPT_SIZE
 SCRIPT_DETECTION_PRODUCT_MAX_SIZE
 SERVER_PARAMETER_FILE
-PRIMER_NAME_ACRONYM_LEFT
-PRIMER_NAME_ACRONYM_INTERNAL_OLIGO
-PRIMER_NAME_ACRONYM_RIGHT
-PRIMER_NAME_ACRONYM_SPACER);
+P3P_PRIMER_NAME_ACRONYM_LEFT
+P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO
+P3P_PRIMER_NAME_ACRONYM_RIGHT
+P3P_PRIMER_NAME_ACRONYM_SPACER);
 
 
 # All the parameters primer3 can handle

@@ -314,7 +314,7 @@ sub divTaskBar {
 	<tr>
 	<td class="primer3plus_cell_no_border">
 	
-<input name="HTML_RADIO_BUTTONS" id="HTML_RADIO_BUTTONS" value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_PICK_HYB_PROBE,SCRIPT_DETECTION_PICK_RIGHT,SCRIPT_SEQUENCING_REVERSE,SCRIPT_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,SCRIPT_PRINT_INPUT,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" type="hidden">
+<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_PICK_HYB_PROBE,SCRIPT_DETECTION_PICK_RIGHT,SCRIPT_SEQUENCING_REVERSE,SCRIPT_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,SCRIPT_PRINT_INPUT,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" type="hidden">
 
          <a id="SCRIPT_TASK_INPUT" name="SCRIPT_TASK_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_TASK">
          Task:</a>&nbsp;
@@ -503,7 +503,7 @@ $formHTML .= divMessages();
 
 $formHTML .= qq{
 <div id="primer3plus_task" class="primer3plus_tab_page">
-<input type="hidden" id="HTML_RADIO_BUTTONS" name="HTML_RADIO_BUTTONS"
+<input type="hidden" id="SCRIPT_RADIO_BUTTONS_FIX" name="SCRIPT_RADIO_BUTTONS_FIX"
 value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_PICK_HYB_PROBE,SCRIPT_DETECTION_PICK_RIGHT,SCRIPT_SEQUENCING_REVERSE,SCRIPT_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,SCRIPT_PRINT_INPUT,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS">
    <table class="primer3plus_table_no_border">
      <colgroup>
@@ -990,27 +990,27 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"> <a name="PRIMER_NAME_ACRONYM_LEFT_INPUT" href="$machineSettings{URL_HELP}#PRIMER_NAME_ACRONYM_LEFT">
+       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_LEFT_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_LEFT">
        Left Primer Acronym:</a>
        </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_NAME_ACRONYM_LEFT" value="$settings{PRIMER_NAME_ACRONYM_LEFT}" type="text">
+       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_LEFT" value="$settings{P3P_PRIMER_NAME_ACRONYM_LEFT}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"> <a name="PRIMER_NAME_ACRONYM_INTERNAL_OLIGO_INPUT" href="$machineSettings{URL_HELP}#PRIMER_NAME_ACRONYM_INTERNAL_OLIGO">
+       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO">
        Internal Oligo Acronym:</a>
        </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_NAME_ACRONYM_INTERNAL_OLIGO" value="$settings{PRIMER_NAME_ACRONYM_INTERNAL_OLIGO}" type="text">
+       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO" value="$settings{P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO}" type="text">
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"> <a name="PRIMER_NAME_ACRONYM_RIGHT_INPUT" href="$machineSettings{URL_HELP}#PRIMER_NAME_ACRONYM_RIGHT">
+       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_RIGHT_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_RIGHT">
        Right Primer Acronym:</a>
        </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_NAME_ACRONYM_RIGHT" value="$settings{PRIMER_NAME_ACRONYM_RIGHT}" type="text">
+       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_RIGHT" value="$settings{P3P_PRIMER_NAME_ACRONYM_RIGHT}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"> <a name="PRIMER_NAME_ACRONYM_SPACER_INPUT" href="$machineSettings{URL_HELP}#PRIMER_NAME_ACRONYM_SPACER">
+       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_SPACER_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_SPACER">
        Primer Name Spacer:</a>
        </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_NAME_ACRONYM_SPACER" value="$settings{PRIMER_NAME_ACRONYM_SPACER}" type="text">
+       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_SPACER" value="$settings{P3P_PRIMER_NAME_ACRONYM_SPACER}" type="text">
        </td>
      </tr>
    </table>
@@ -2558,27 +2558,27 @@ $formHTML .= qq{</div>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"> <a name="PRIMER_NAME_ACRONYM_LEFT_INPUT" href="$machineSettings{URL_HELP}#PRIMER_NAME_ACRONYM_LEFT">
+       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_LEFT_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_LEFT">
        Left Primer Acronym:</a>
        </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_NAME_ACRONYM_LEFT" value="$settings{PRIMER_NAME_ACRONYM_LEFT}" type="text">
+       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_LEFT" value="$settings{P3P_PRIMER_NAME_ACRONYM_LEFT}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"> <a name="PRIMER_NAME_ACRONYM_INTERNAL_OLIGO_INPUT" href="$machineSettings{URL_HELP}#PRIMER_NAME_ACRONYM_INTERNAL_OLIGO">
+       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO">
        Internal Oligo Acronym:</a>
        </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_NAME_ACRONYM_INTERNAL_OLIGO" value="$settings{PRIMER_NAME_ACRONYM_INTERNAL_OLIGO}" type="text">
+       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO" value="$settings{P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO}" type="text">
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"> <a name="PRIMER_NAME_ACRONYM_RIGHT_INPUT" href="$machineSettings{URL_HELP}#PRIMER_NAME_ACRONYM_RIGHT">
+       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_RIGHT_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_RIGHT">
        Right Primer Acronym:</a>
        </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_NAME_ACRONYM_RIGHT" value="$settings{PRIMER_NAME_ACRONYM_RIGHT}" type="text">
+       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_RIGHT" value="$settings{P3P_PRIMER_NAME_ACRONYM_RIGHT}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"> <a name="PRIMER_NAME_ACRONYM_SPACER_INPUT" href="$machineSettings{URL_HELP}#PRIMER_NAME_ACRONYM_SPACER">
+       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_SPACER_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_SPACER">
        Primer Name Spacer:</a>
        </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_NAME_ACRONYM_SPACER" value="$settings{PRIMER_NAME_ACRONYM_SPACER}" type="text">
+       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_SPACER" value="$settings{P3P_PRIMER_NAME_ACRONYM_SPACER}" type="text">
        </td>
      </tr>
    </table>
@@ -3533,19 +3533,19 @@ $formHTML .= qq{
   primer number and the primer acronym.
   </p>
 
-<h3><a name="PRIMER_NAME_ACRONYM_LEFT">Left Primer Acronym</a></h3>
+<h3><a name="P3P_PRIMER_NAME_ACRONYM_LEFT">Left Primer Acronym</a></h3>
   <p>Acronym for the left primer, by default F
   </p>
 
-<h3><a name="PRIMER_NAME_ACRONYM_INTERNAL_OLIGO">Internal Oligo Acronym</a></h3>
+<h3><a name="P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO">Internal Oligo Acronym</a></h3>
   <p>Acronym for the internal oligo, by default IN
   </p>
 
-<h3><a name="PRIMER_NAME_ACRONYM_RIGHT">Right Primer Acronym</a></h3>
+<h3><a name="P3P_PRIMER_NAME_ACRONYM_RIGHT">Right Primer Acronym</a></h3>
   <p>Acronym for the right primer, by default R
   </p>
 
-<h3><a name="PRIMER_NAME_ACRONYM_SPACER">Primer Name Spacer</a></h3>
+<h3><a name="P3P_PRIMER_NAME_ACRONYM_SPACER">Primer Name Spacer</a></h3>
   <p>Spacer primer3plus uses between name, number and acronym, by default _
   </p>
 

@@ -55,7 +55,7 @@ sub getParametersHTML {
 
 	$seqFile      = $cgi->param("SCRIPT_SEQUENCE_FILE");
 	$settFile     = $cgi->param("SCRIPT_SETTINGS_FILE");
-	$radioButtons = $cgi->param("HTML_RADIO_BUTTONS");
+	$radioButtons = $cgi->param("SCRIPT_RADIO_BUTTONS_FIX");
 
     # unselected radiobuttons dont appear - this is a workaround
     # it loads a 0 to all radiobuttons and overwrites later
@@ -1273,18 +1273,18 @@ sub readPrimerFile ($$$) {
          $primerPenalty, $lastBase, $primerInitial );
 
     if ($primerType eq "LEFT"){
-    	$primerInitial  = $completeHash->{"PRIMER_NAME_ACRONYM_LEFT"};
+    	$primerInitial  = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_LEFT"};
     }
     elsif ($primerType eq "RIGHT"){
-		$primerInitial = $completeHash->{"PRIMER_NAME_ACRONYM_RIGHT"};
+		$primerInitial = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
     }
     elsif ($primerType eq "INTERNAL_OLIGO"){
-		$primerInitial = $completeHash->{"PRIMER_NAME_ACRONYM_INTERNAL_OLIGO"};
+		$primerInitial = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO"};
     }
     else {
 		$primerInitial = "??";
     }
-   	my $acronymSpace = $completeHash->{"PRIMER_NAME_ACRONYM_SPACER"};
+   	my $acronymSpace = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"};
 	my $sequenceName = $resultsHash->{"SEQUENCE_ID"};
 
 	if ( ( length($fileName) > 5 ) ) {
@@ -1604,12 +1604,12 @@ sub extractPrimerParameters ($$$$) {
 	if ( ( length $seqID ) < 3 ) {
 		$seqID = "Primer";
 	}
-	$spacer = $completeHash->{"PRIMER_NAME_ACRONYM_SPACER"};
+	$spacer = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"};
 	if ( $primerType eq "LEFT" ) {
-		$primerAcro = $completeHash->{"PRIMER_NAME_ACRONYM_LEFT"};
+		$primerAcro = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_LEFT"};
 	}
 	if ( $primerType eq "RIGHT" ) {
-		$primerAcro = $completeHash->{"PRIMER_NAME_ACRONYM_RIGHT"};
+		$primerAcro = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
 	}
 
 	foreach $resultArrayLine ( sort sortByPenalty @$resultArray ) {
@@ -2000,10 +2000,10 @@ sub runPrimer3 ($$$) {
 		my @nameKeyComplete = "";
 		my ( $namePrimerType, $nameNumber, $nameKeyName, $nameKeyValue );
 		
-		my $acronymLeft  = $completeHash->{"PRIMER_NAME_ACRONYM_LEFT"};
-		my $acronymRight = $completeHash->{"PRIMER_NAME_ACRONYM_RIGHT"};
-		my $acronymOligo = $completeHash->{"PRIMER_NAME_ACRONYM_INTERNAL_OLIGO"};
-		my $acronymSpace = $completeHash->{"PRIMER_NAME_ACRONYM_SPACER"};
+		my $acronymLeft  = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_LEFT"};
+		my $acronymRight = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
+		my $acronymOligo = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO"};
+		my $acronymSpace = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"};
 		my $sequenceName = $completeHash->{"SEQUENCE_ID"};
 
 		foreach $readLine (@readTheLine) {
