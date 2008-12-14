@@ -110,7 +110,7 @@ elsif ( defined $parametersHTML{Save_Settings} ) {
 
 
 elsif ( defined $parametersHTML{Pick_Primers} ) {
-	findAllPrimers( \%completeParameters, \%resultsHash );
+	findAllPrimers( \%completeParameters, \%defaultSettings, \%resultsHash );
 	print "Content-type: text/html\n\n";
 	print mainResultsHTML( \%completeParameters, \%resultsHash ), "\n";
 }

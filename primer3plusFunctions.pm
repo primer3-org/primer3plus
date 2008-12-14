@@ -1051,9 +1051,11 @@ sub prepareForPrimer3 ($) {
 # findAllPrimers: selects between the tasks and returns the results #
 #####################################################################
 sub findAllPrimers {
-	my ( $completeHash, $resultsHash );
-	$completeHash = shift;
-	$resultsHash  = shift;
+    my ( $completeHash, $defaultHash, $resultsHash );
+    $completeHash = shift;
+    $defaultHash = shift;
+    $resultsHash  = shift;
+
 	my %tempResults;
 	my ( $HashKeys, $task );
 
@@ -1066,7 +1068,7 @@ sub findAllPrimers {
          || ($task eq "pick_sequencing_primers")
          || ($task eq "pick_primer_list")
          || ($task eq "check_primers")) {
-        new_try_run( $completeHash, $resultsHash, "0", "0" );
+        new_try_run( $completeHash, $defaultHash, $resultsHash );
         
     }
 	elsif ( $task eq "Detection" ) {
@@ -1098,30 +1100,30 @@ sub findAllPrimers {
 ######################################################################
 # new_try_run: functionality equivalent to the old primer3 interface #
 ######################################################################
-sub new_try_run ($$$$) {
-    my ( $completeHash, $resultsHash, $makeList, $Sequencing );
+sub new_try_run ($$$) {
+    my ( $completeHash, $defaultHash, $resultsHash );
     $completeHash = shift;
+    $defaultHash = shift;
     $resultsHash  = shift;
-    $makeList     = shift;
-    $Sequencing   = shift;
-    if ( $Sequencing ne "1" ) {
-        $Sequencing = 0;
-    }
-    
-    # p3c stands for primer3core and relays to parameters for the primer3 programm
+
     my @p3cParameters;
-    @p3cParameters = keys(%$completeHash);
     my ( %p3cInput, %p3cOutput );
     my ( $p3cOutputKeys, $p3cParametersKey );
+    my $outputLine;
+    my $p3cInputKeys;
+    my ( $readLine, $lineKey, $lineValue );
+    my @nameKeyComplete;
+    my ( $namePrimerType, $nameNumber, $nameKeyName, $nameKeyValue );
+        
+    my $primer3BIN = getMachineSetting("PRIMER_BIN");
+    my $callPrimer3 = $primer3BIN . getMachineSetting("PRIMER_RUNTIME");
+    my $acronymLeft  = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_LEFT"};
+    my $acronymRight = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
+    my $acronymOligo = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO"};
+    my $acronymSpace = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"};
+    my $sequenceName = $completeHash->{"SEQUENCE_ID"};
 
-    ## Set the parameters to use optimal Product size input
-    if ( ( $completeHash->{"SCRIPT_DETECTION_USE_PRODUCT_SIZE"} ) ne "0" ) {
-        my $minSize = $completeHash->{"SCRIPT_DETECTION_PRODUCT_MIN_SIZE"};
-        $completeHash->{"PRIMER_PRODUCT_OPT_SIZE"} =
-             $completeHash->{"SCRIPT_DETECTION_PRODUCT_OPT_SIZE"};
-        my $maxSize = $completeHash->{"SCRIPT_DETECTION_PRODUCT_MAX_SIZE"};
-        $completeHash->{"PRIMER_PRODUCT_SIZE_RANGE"}      = "$minSize-$maxSize";
-    }
+###### First check if it makes sense to run primer3
 
     ## Do not run if there is not any sequence information
     if (  (( $completeHash->{"SEQUENCE_TEMPLATE"} ) eq "" )
@@ -1133,12 +1135,9 @@ sub new_try_run ($$$$) {
         setDoNotPick("1");
     }
     
-    # Be sure to get all sequencing primers
-    if (($completeHash->{"SCRIPT_TASK"}) eq "pick_sequencing_primers") {
-        $completeHash->{"PRIMER_NUM_RETURN"} = 1000;
-    }
-
-    # Copy all necessary parmeters
+    # We copy over only the keys from the default hash to be save
+    # from broken tags provided by the user
+    @p3cParameters = keys(%{$defaultHash});
     foreach $p3cParametersKey (@p3cParameters) {
         if (($p3cParametersKey =~ /^PRIMER_/)
              || ($p3cParametersKey =~ /^SEQUENCE_/)) {
@@ -1146,6 +1145,25 @@ sub new_try_run ($$$$) {
         }
     }
     $p3cInput{"PRIMER_TASK"} = $completeHash->{"SCRIPT_TASK"};
+
+
+###### Set all the tags to special values for the run
+
+    ## Set the parameters to use optimal Product size input
+    if ( ( $completeHash->{"SCRIPT_DETECTION_USE_PRODUCT_SIZE"} ) ne "0" ) {
+        my $minSize = $completeHash->{"SCRIPT_DETECTION_PRODUCT_MIN_SIZE"};
+        $p3cInput{"PRIMER_PRODUCT_OPT_SIZE"} =
+             $completeHash->{"SCRIPT_DETECTION_PRODUCT_OPT_SIZE"};
+        my $maxSize = $completeHash->{"SCRIPT_DETECTION_PRODUCT_MAX_SIZE"};
+        $p3cInput{"PRIMER_PRODUCT_SIZE_RANGE"} = "$minSize-$maxSize";
+    }
+
+    # Be sure to get all sequencing primers
+    if (($completeHash->{"SCRIPT_TASK"}) eq "pick_sequencing_primers") {
+        $p3cInput{"PRIMER_NUM_RETURN"} = 1000;
+    }
+
+    # Copy all necessary parmeters
     
     # Set some parameters to enable primer3 to work
     $p3cInput{PRIMER_PICK_ANYWAY}  = "1";
@@ -1163,9 +1181,103 @@ sub new_try_run ($$$$) {
         $libary = $p3cInput{"PRIMER_INTERNAL_MISHYB_LIBRARY"};
         $p3cInput{"PRIMER_INTERNAL_MISHYB_LIBRARY"} = $misLibrary{$libary};
     }
-    
-    # Execute primer3
-    runPrimer3( \%p3cInput, $resultsHash, $completeHash );
+
+    ## Check if Primer3 can be run
+    if ( !( -e $primer3BIN ) ) {
+        setMessage("Configuration Error: $primer3BIN ".
+                   "can not be found!");
+        setDoNotPick("1");
+    }
+    if ( !( -x $primer3BIN ) ) {
+        setMessage("Configuration Error: $primer3BIN ".
+                   "is not executable!");
+        setDoNotPick("1");
+    }
+
+    if ( getDoNotPick() == 0 ) {
+        my $value;
+        
+        my $inputFile = getMachineSetting("USER_CACHE_FILES_PATH");
+        $inputFile .= "Input_";
+        $inputFile .= makeUniqueID();
+        $inputFile .= ".txt";
+        open( FILE, ">$inputFile" ) or 
+            setMessage("cannot write $inputFile");
+        foreach $p3cInputKeys ( keys( %p3cInput ) ) {
+            $value = $p3cInput{"$p3cInputKeys"};
+            if ( $value ne "" ) {
+                print FILE qq{$p3cInputKeys=$p3cInput{"$p3cInputKeys"}\n};
+            }
+        }
+        print FILE qq{=\n};
+        close(FILE);
+
+        my @readTheLine;
+        open PRIMER3OUTPUT, "$callPrimer3 < $inputFile 2>&1 |"
+          or setMessage("could not start primer3");
+        while (<PRIMER3OUTPUT>) {
+            push @readTheLine, $_;
+        }
+        close PRIMER3OUTPUT;
+#       unlink $inputFile;
+
+
+        foreach $readLine (@readTheLine) {
+            ( $lineKey, $lineValue ) = split "=", $readLine;
+            $lineKey   =~ s/\s//g;
+            $lineValue =~ s/\n//g;
+
+            #Write everything in the Output Hash
+            $resultsHash->{"$lineKey"} = $lineValue;
+
+            # Make a Name for each primer
+            if ( $lineKey =~ /_SEQUENCE$/ ) {
+                @nameKeyComplete = split "_", $lineKey;
+                $namePrimerType = $nameKeyComplete[1];
+                $nameNumber = $nameKeyComplete[2];
+                $nameKeyName = $lineKey;
+                $nameKeyName =~ s/SEQUENCE/NAME/;
+                $nameKeyValue = "";
+
+                # Use the Name or Primer for the ID
+                if ( ( length $sequenceName ) > 2 )
+                {
+                    $nameKeyValue .= $sequenceName;
+                }
+                else {
+                    $nameKeyValue .= "Primer";
+                }
+                # Add a Number
+                if ( $nameNumber eq "0" ) {
+                    $nameKeyValue .= $acronymSpace;
+                }
+                else {
+                    $nameKeyValue .= $acronymSpace.$nameNumber.$acronymSpace;
+                }
+                
+                # Add a Type
+                if ( $namePrimerType eq "RIGHT" ) {
+                    $nameKeyValue .= $acronymRight;
+                }
+                elsif ( $namePrimerType eq "INTERNAL" ) {
+                    $nameKeyValue .= $acronymOligo;
+                }
+                elsif ( $namePrimerType eq "LEFT" ) {
+                    $nameKeyValue .= $acronymLeft;
+                }
+                else {
+                    $nameKeyValue .= "??";
+                }
+                $resultsHash->{"$nameKeyName"} = $nameKeyValue;
+                @nameKeyComplete = "";
+            }
+        }
+    } else {
+         setMessage("Primer3 did not run due to an internal conflict.");
+    }
+
+
+
     
     return;
 }
@@ -2144,7 +2256,7 @@ sub runPrimer3 ($$$) {
 			}
 		}
 	} else {
-		 setMessage("Primer3 was not run due to an internal conflict.");
+		 setMessage("Primer3 did not run due to an internal conflict.");
 	}
 	return;
 }
