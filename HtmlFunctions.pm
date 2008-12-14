@@ -86,8 +86,35 @@ sub mainResultsHTML {
 
   my $returnString;
   my $task = $results->{"SCRIPT_TASK"};
+  my $pair_count = 0;
+  my $primer_count = 0;
 
-  if ($task eq "Detection") {
+  # To be sure primer3 run well and provided results  
+  if (defined $results->{"PRIMER_PAIR_NUM_RETURNED"}){
+      $pair_count = $results->{"PRIMER_PAIR_NUM_RETURNED"};
+      $primer_count = $results->{"PRIMER_LEFT_NUM_RETURNED"};
+      $primer_count += $results->{"PRIMER_INTERNAL_NUM_RETURNED"};
+      $primer_count += $results->{"PRIMER_RIGHT_NUM_RETURNED"};
+  } else {
+      $returnString = createResultsNoPrimers($completeParameters, $results);       
+  }
+
+
+  if (($task eq "pick_detection_primers") 
+       || ($task eq "pick_cloning_primers")
+       || ($task eq "pick_discriminative_primers")
+       || ($task eq "pick_sequencing_primers")
+       || ($task eq "pick_primer_list")
+       || ($task eq "check_primers")) {
+      if ($pair_count != 0) {
+          $returnString = createResultsDetection($completeParameters, $results);
+      } elsif ($task eq "pick_sequencing_primers") {
+          $returnString = createResultsPrimerList($completeParameters, $results, "0");
+      } else {
+          $returnString = createResultsPrimerList($completeParameters, $results, "1");
+      }
+  }
+  elsif ($task eq "Detection") {
       $returnString = createResultsDetection($completeParameters, $results);
   }
   elsif ($task eq "Primer_Check") {
@@ -314,7 +341,7 @@ sub divTaskBar {
 	<tr>
 	<td class="primer3plus_cell_no_border">
 	
-<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_PICK_HYB_PROBE,SCRIPT_DETECTION_PICK_RIGHT,SCRIPT_SEQUENCING_REVERSE,SCRIPT_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,SCRIPT_PRINT_INPUT,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" type="hidden">
+<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="SCRIPT_CONTAINS_JAVA_SCRIPT,PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,SCRIPT_SEQUENCING_REVERSE,SCRIPT_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,SCRIPT_PRINT_INPUT,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" type="hidden">
 
          <a id="SCRIPT_TASK_INPUT" name="SCRIPT_TASK_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_TASK">
          Task:</a>&nbsp;
@@ -504,7 +531,7 @@ $formHTML .= divMessages();
 $formHTML .= qq{
 <div id="primer3plus_task" class="primer3plus_tab_page">
 <input type="hidden" id="SCRIPT_RADIO_BUTTONS_FIX" name="SCRIPT_RADIO_BUTTONS_FIX"
-value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_PICK_HYB_PROBE,SCRIPT_DETECTION_PICK_RIGHT,SCRIPT_SEQUENCING_REVERSE,SCRIPT_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,SCRIPT_PRINT_INPUT,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS">
+value="SCRIPT_CONTAINS_JAVA_SCRIPT,PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,SCRIPT_SEQUENCING_REVERSE,SCRIPT_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,SCRIPT_PRINT_INPUT,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS">
    <table class="primer3plus_table_no_border">
      <colgroup>
        <col width="65%">
@@ -637,25 +664,25 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,SCRIPT_DETECTION_PICK_LEFT,SCRIPT_DETECTION_P
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border_bg" valign="top">
-         <input name="SCRIPT_DETECTION_PICK_LEFT" value="1" };
+         <input name="PRIMER_PICK_LEFT_PRIMER" value="1" };
 
-	$formHTML .= ($settings{SCRIPT_DETECTION_PICK_LEFT}) ? "checked=\"checked\" " : "";
+	$formHTML .= ($settings{PRIMER_PICK_LEFT_PRIMER}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{ type="checkbox"> Pick left primer<br>
          or use left primer below.
        </td>
        <td class="primer3plus_cell_no_border_bg" valign="top">
-         <input name="SCRIPT_DETECTION_PICK_HYB_PROBE" value="1" };
+         <input name="PRIMER_PICK_INTERNAL_OLIGO" value="1" };
 
-	$formHTML .= ($settings{SCRIPT_DETECTION_PICK_HYB_PROBE}) ? "checked=\"checked\" " : "";
+	$formHTML .= ($settings{PRIMER_PICK_INTERNAL_OLIGO}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{type="checkbox">Pick hybridization probe<br>
          (internal oligo) or use oligo below.
        </td>
        <td class="primer3plus_cell_no_border_bg" valign="top">
-         <input name="SCRIPT_DETECTION_PICK_RIGHT" value="1" };
+         <input name="PRIMER_PICK_RIGHT_PRIMER" value="1" };
 
-	$formHTML .= ($settings{SCRIPT_DETECTION_PICK_RIGHT}) ? "checked=\"checked\" " : "";
+	$formHTML .= ($settings{PRIMER_PICK_RIGHT_PRIMER}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{ type="checkbox">Pick right primer
          or use right primer<br>
@@ -2168,25 +2195,25 @@ $formHTML .= qq{>
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border_bg" valign="top">
-         <input id="SCRIPT_DETECTION_PICK_LEFT" name="SCRIPT_DETECTION_PICK_LEFT" value="1" };
+         <input id="PRIMER_PICK_LEFT_PRIMER" name="PRIMER_PICK_LEFT_PRIMER" value="1" };
 
-	$formHTML .= ($settings{SCRIPT_DETECTION_PICK_LEFT}) ? "checked=\"checked\" " : "";
+	$formHTML .= ($settings{PRIMER_PICK_LEFT_PRIMER}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{ type="checkbox">Pick left primer<br>
          or use left primer below.
        </td>
        <td class="primer3plus_cell_no_border_bg" valign="top">
-         <input id="SCRIPT_DETECTION_PICK_HYB_PROBE" name="SCRIPT_DETECTION_PICK_HYB_PROBE" value="1" };
+         <input id="PRIMER_PICK_INTERNAL_OLIGO" name="PRIMER_PICK_INTERNAL_OLIGO" value="1" };
 
-	$formHTML .= ($settings{SCRIPT_DETECTION_PICK_HYB_PROBE}) ? "checked=\"checked\" " : "";
+	$formHTML .= ($settings{PRIMER_PICK_INTERNAL_OLIGO}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{type="checkbox">Pick hybridization probe<br>
          (internal oligo) or use oligo below.
        </td>
        <td class="primer3plus_cell_no_border_bg" valign="top">
-         <input id="SCRIPT_DETECTION_PICK_RIGHT" name="SCRIPT_DETECTION_PICK_RIGHT" value="1" };
+         <input id="PRIMER_PICK_RIGHT_PRIMER" name="PRIMER_PICK_RIGHT_PRIMER" value="1" };
 
-	$formHTML .= ($settings{SCRIPT_DETECTION_PICK_RIGHT}) ? "checked=\"checked\" " : "";
+	$formHTML .= ($settings{PRIMER_PICK_RIGHT_PRIMER}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{ type="checkbox">Pick right primer
          or use right primer<br>
@@ -4180,6 +4207,60 @@ primer design.
 }
 
 
+##################################################################################
+# createResultsNoPrimers: Will write an HTML-Form based if no primers were found #
+##################################################################################
+sub createResultsNoPrimers {
+  my $completeParameters; 
+  my %settings;
+  $completeParameters = shift; 
+  %settings = %{(shift)};
+
+  my $HashKeys;
+
+  my $templateText = getWrapper();
+
+  if (defined ($settings{PRIMER_ERROR}) and (($settings{PRIMER_ERROR}) ne "")) {
+      setMessage("$settings{PRIMER_ERROR}");
+  }
+  if (defined ($settings{PRIMER_WARNING}) and (($settings{PRIMER_WARNING}) ne "")) {
+      setMessage("$settings{PRIMER_WARNING}");
+  }
+
+  my $formHTML = qq{
+<div id="primer3plus_complete">
+};
+$formHTML .= divTopBar("Default");
+
+$formHTML .= divMessages();
+
+$formHTML .= qq{
+<div id="primer3plus_results">
+};
+
+$formHTML .= divReturnToInput($completeParameters);
+
+$formHTML .= divStatistics(\%settings);
+
+$formHTML .= qq{<div id="primer3plus_footer">
+<br>
+
+More about <a href="$machineSettings{URL_ABOUT}">Primer3Plus</a>...
+
+</div>
+
+</form>
+
+</div>  
+};
+
+  my $returnString = $templateText;
+
+  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
+
+  return $returnString;
+}
+
 ####################################################################################
 # createResultsDetection: Will write an HTML-Form based for the detection Function #
 ####################################################################################
@@ -4258,7 +4339,7 @@ More about <a href="$machineSettings{URL_ABOUT}">Primer3Plus</a>...
 
 </form>
 
-</div>	
+</div>  
 };
 
   my $returnString = $templateText;

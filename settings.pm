@@ -33,7 +33,7 @@ our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
              &getMachineSettings &getScriptTask &getLibraryList &getSaveSequenceParameters
              &getSaveSettingsParameters &getPrimer3CompleteParameters &getZeroReplacements
              &getPrimerCheckParameters &getServerParameterFiles &getServerParameterFilesList 
-             &setMessage &getMessages);
+             &setMessage &getMessages &getTaskList);
 
 $VERSION = "1.00";
 
@@ -122,6 +122,14 @@ my @misLibraryList = (
   # Put more repeat libraries here. Add them also to the hash.
 );
 
+my @taskList = (
+  "pick_detection_primers",
+  "pick_cloning_primers",
+  "pick_discriminative_primers",
+  "pick_sequencing_primers",
+  "pick_primer_list",
+  "check_primers");
+
   # Add sever stored Setting Files here: 
 my %serverParameterFiles = (
   "Default"               => "",
@@ -158,7 +166,7 @@ my %defaultSettings = (
   "SEQUENCE_START_CODON_POSITION"            => "", #"-1000000",
   "PRIMER_LOWERCASE_MASKING"                 => "0",
 # Primer3 "Global" Input Tags
-  "PRIMER_TASK"                              => "pick_pcr_primers",
+  "PRIMER_TASK"                              => "pick_detection_primers",
   "PRIMER_PICK_ANYWAY"	                     => "1",
   "PRIMER_EXPLAIN_FLAG"                      => "0",
   "P3_FILE_FLAG"                             => "0",
@@ -280,9 +288,9 @@ my %defaultSettings = (
   "SCRIPT_SEQUENCING_INTERVAL"               => "250",
   "SCRIPT_SEQUENCING_ACCURACY"               => "20",
 
-  "SCRIPT_DETECTION_PICK_LEFT"               => "1",
-  "SCRIPT_DETECTION_PICK_HYB_PROBE"          => "0",
-  "SCRIPT_DETECTION_PICK_RIGHT"              => "1",
+  "PRIMER_PICK_LEFT_PRIMER"                  => "1",
+  "PRIMER_PICK_INTERNAL_OLIGO"               => "0",
+  "PRIMER_PICK_RIGHT_PRIMER"                 => "1",
   "SCRIPT_DETECTION_USE_PRODUCT_SIZE"        => "0",
   "SCRIPT_DETECTION_PRODUCT_MIN_SIZE"        => "100",
   "SCRIPT_DETECTION_PRODUCT_OPT_SIZE"        => "200",
@@ -303,8 +311,13 @@ my @scriptTasks = (
   "Cloning",
   "Sequencing",
   "Primer_List",
-  "Primer_Check"
-);
+  "Primer_Check",
+  "pick_detection_primers",
+  "pick_cloning_primers",
+  "pick_discriminative_primers",
+  "pick_sequencing_primers",
+  "pick_primer_list",
+  "check_primers");
 
 # All the parameters saved as a sequence file
 my @sequenceParametersToSaveInFile =  qw(SEQUENCE_ID
@@ -317,8 +330,7 @@ SEQUENCE_PRIMER
 SEQUENCE_PRIMER_REVCOMP
 SEQUENCE_START_CODON_POSITION
 SEQUENCE_INTERNAL_OLIGO
-SEQUENCE_INTERNAL_EXCLUDED_REGION
-PRIMER_LOWERCASE_MASKING);
+SEQUENCE_INTERNAL_EXCLUDED_REGION);
 
 # All the parameters saved in a settings file
 my @settingsParametersToSaveInFile = qw(PRIMER_TASK
@@ -430,9 +442,9 @@ SCRIPT_SEQUENCING_SPACING
 SCRIPT_SEQUENCING_REVERSE
 SCRIPT_SEQUENCING_INTERVAL
 SCRIPT_SEQUENCING_ACCURACY
-SCRIPT_DETECTION_PICK_LEFT
-SCRIPT_DETECTION_PICK_HYB_PROBE
-SCRIPT_DETECTION_PICK_RIGHT
+PRIMER_PICK_LEFT_PRIMER
+PRIMER_PICK_INTERNAL_OLIGO
+PRIMER_PICK_RIGHT_PRIMER
 SCRIPT_DETECTION_USE_PRODUCT_SIZE
 SCRIPT_DETECTION_PRODUCT_MIN_SIZE
 SCRIPT_DETECTION_PRODUCT_OPT_SIZE
@@ -441,7 +453,8 @@ SERVER_PARAMETER_FILE
 P3P_PRIMER_NAME_ACRONYM_LEFT
 P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO
 P3P_PRIMER_NAME_ACRONYM_RIGHT
-P3P_PRIMER_NAME_ACRONYM_SPACER);
+P3P_PRIMER_NAME_ACRONYM_SPACER
+PRIMER_LOWERCASE_MASKING);
 
 
 # All the parameters primer3 can handle
@@ -689,6 +702,10 @@ sub getMisLibrary {
 
 sub getLibraryList {
   return @misLibraryList;
+}
+
+sub getTaskList {
+  return @taskList;
 }
 
 sub getServerParameterFiles {

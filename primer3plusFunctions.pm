@@ -399,7 +399,7 @@ sub createSequenceFile {
 	$settings = shift;
 	my @saveSequenceKeys = getSaveSequenceParameters();
 
-	$returnString = "Primer3Plus File - Do not Edit\r\n";
+	$returnString  = "Primer3Plus File - Do not Edit\r\n";
 	$returnString .= "Type: Sequence\r\n";
 	$returnString .= "\r\n";
 
@@ -420,7 +420,7 @@ sub createSettingsFile {
 	$settings = shift;
 	my (@saveSettingsKeys) = getSaveSettingsParameters();
 
-	$returnString = "Primer3Plus File - Do not Edit\r\n";
+	$returnString  = "Primer3Plus File - Do not Edit\r\n";
 	$returnString .= "Type: Settings\r\n";
 	$returnString .= "\r\n";
 
@@ -1059,8 +1059,17 @@ sub findAllPrimers {
 
 	$task = $completeHash->{"SCRIPT_TASK"};
 	$resultsHash->{"SCRIPT_TASK"} = $completeHash->{"SCRIPT_TASK"};
-
-	if ( $task eq "Detection" ) {
+	
+	if (($task eq "pick_detection_primers") 
+         || ($task eq "pick_cloning_primers")
+         || ($task eq "pick_discriminative_primers")
+         || ($task eq "pick_sequencing_primers")
+         || ($task eq "pick_primer_list")
+         || ($task eq "check_primers")) {
+        new_try_run( $completeHash, $resultsHash, "0", "0" );
+        
+    }
+	elsif ( $task eq "Detection" ) {
 		detection( $completeHash, $resultsHash, "0", "0" );
 	}
 	elsif ( $task eq "Primer_List" ) {
@@ -1086,173 +1095,249 @@ sub findAllPrimers {
 	return;
 }
 
+######################################################################
+# new_try_run: functionality equivalent to the old primer3 interface #
+######################################################################
+sub new_try_run ($$$$) {
+    my ( $completeHash, $resultsHash, $makeList, $Sequencing );
+    $completeHash = shift;
+    $resultsHash  = shift;
+    $makeList     = shift;
+    $Sequencing   = shift;
+    if ( $Sequencing ne "1" ) {
+        $Sequencing = 0;
+    }
+    
+    # p3c stands for primer3core and relays to parameters for the primer3 programm
+    my @p3cParameters;
+    @p3cParameters = getPrimer3CompleteParameters();
+    my ( %p3cInput, %p3cOutput );
+    my ( $p3cOutputKeys, $p3cParametersKey );
+
+    ## Set the parameters to use optimal Product size input
+    if ( ( $completeHash->{"SCRIPT_DETECTION_USE_PRODUCT_SIZE"} ) ne "0" ) {
+        my $minSize = $completeHash->{"SCRIPT_DETECTION_PRODUCT_MIN_SIZE"};
+        $completeHash->{"PRIMER_PRODUCT_OPT_SIZE"} =
+             $completeHash->{"SCRIPT_DETECTION_PRODUCT_OPT_SIZE"};
+        my $maxSize = $completeHash->{"SCRIPT_DETECTION_PRODUCT_MAX_SIZE"};
+        $completeHash->{"PRIMER_PRODUCT_SIZE_RANGE"}      = "$minSize-$maxSize";
+    }
+
+    ## Do not run if there is not any sequence information
+    if (  (( $completeHash->{"SEQUENCE_TEMPLATE"} ) eq "" )
+          && (( $completeHash->{"SEQUENCE_PRIMER"} ) eq "" )
+          && (( $completeHash->{"SEQUENCE_INTERNAL_OLIGO"} ) eq "" )
+          && (( $completeHash->{"SEQUENCE_PRIMER_REVCOMP"} ) eq "" )) {
+        setMessage("ERROR: you must supply a source sequence or".
+                   "primers/oligos to evaluate");
+        setDoNotPick("1");
+    }
+    
+    # Be sure to get all sequencing primers
+    if (($completeHash->{"SCRIPT_TASK"}) eq "pick_sequencing_primers") {
+        $completeHash->{"PRIMER_NUM_RETURN"} = 1000;
+    }
+
+    # Copy all necessary parmeters
+    foreach $p3cParametersKey (@p3cParameters) {
+        $p3cInput{"$p3cParametersKey"} = $completeHash->{"$p3cParametersKey"};
+    }
+    $p3cInput{"PRIMER_TASK"} = $completeHash->{"SCRIPT_TASK"};
+    
+    # Set some parameters to enable primer3 to work
+    $p3cInput{PRIMER_PICK_ANYWAY}  = "1";
+    $p3cInput{P3_FILE_FLAG}        = "0";
+    $p3cInput{PRIMER_EXPLAIN_FLAG} = "1";
+
+    # prepare parameters for primer3
+    my %misLibrary = getMisLibrary();
+    my $libary;
+    if ( defined $p3cInput{"PRIMER_MISPRIMING_LIBRARY"} ) {
+        $libary = $p3cInput{"PRIMER_MISPRIMING_LIBRARY"};
+        $p3cInput{"PRIMER_MISPRIMING_LIBRARY"} = $misLibrary{$libary};
+    }
+    if ( defined $p3cInput{"PRIMER_INTERNAL_MISHYB_LIBRARY"} ) {
+        $libary = $p3cInput{"PRIMER_INTERNAL_MISHYB_LIBRARY"};
+        $p3cInput{"PRIMER_INTERNAL_MISHYB_LIBRARY"} = $misLibrary{$libary};
+    }
+    
+    # Execute primer3
+    runPrimer3( \%p3cInput, \%p3cOutput, $completeHash );
+    
+    foreach $p3cOutputKeys ( keys(%p3cOutput) ) {
+        $resultsHash->{"$p3cOutputKeys"} = $p3cOutput{"$p3cOutputKeys"};
+    }
+
+    return;
+}
+
 ####################################################################
 # detection: functionality equivalent to the old primer3 interface #
 ####################################################################
 sub detection ($$$$) {
-	my ( $completeHash, $resultsHash, $makeList, $Sequencing );
-	$completeHash = shift;
-	$resultsHash  = shift;
-	$makeList     = shift;
-	$Sequencing   = shift;
-	if ( $makeList ne "1" ) {
-		$makeList = 0;
-	}
-	if ( $Sequencing ne "1" ) {
-		$Sequencing = 0;
-	}
-	
-	# p3c stands for primer3core and relays to parameters for the primer3 programm
-	my @p3cParameters;
-	@p3cParameters = getPrimer3CompleteParameters();
-	my ( %p3cInput, %p3cOutput );
-	my ( $p3cOutputKeys, $p3cParametersKey );
+    my ( $completeHash, $resultsHash, $makeList, $Sequencing );
+    $completeHash = shift;
+    $resultsHash  = shift;
+    $makeList     = shift;
+    $Sequencing   = shift;
+    if ( $makeList ne "1" ) {
+        $makeList = 0;
+    }
+    if ( $Sequencing ne "1" ) {
+        $Sequencing = 0;
+    }
+    
+    # p3c stands for primer3core and relays to parameters for the primer3 programm
+    my @p3cParameters;
+    @p3cParameters = getPrimer3CompleteParameters();
+    my ( %p3cInput, %p3cOutput );
+    my ( $p3cOutputKeys, $p3cParametersKey );
 
-	## Set the parameters to use optimal Product size input
-	if ( ( $completeHash->{"SCRIPT_DETECTION_USE_PRODUCT_SIZE"} ) ne "0" ) {
-		my $minSize = $completeHash->{"SCRIPT_DETECTION_PRODUCT_MIN_SIZE"};
-		$completeHash->{"PRIMER_PRODUCT_OPT_SIZE"} =
-		     $completeHash->{"SCRIPT_DETECTION_PRODUCT_OPT_SIZE"};
-		my $maxSize = $completeHash->{"SCRIPT_DETECTION_PRODUCT_MAX_SIZE"};
-		$completeHash->{"PRIMER_PRODUCT_SIZE_RANGE"}      = "$minSize-$maxSize";
-	}
+    ## Set the parameters to use optimal Product size input
+    if ( ( $completeHash->{"SCRIPT_DETECTION_USE_PRODUCT_SIZE"} ) ne "0" ) {
+        my $minSize = $completeHash->{"SCRIPT_DETECTION_PRODUCT_MIN_SIZE"};
+        $completeHash->{"PRIMER_PRODUCT_OPT_SIZE"} =
+             $completeHash->{"SCRIPT_DETECTION_PRODUCT_OPT_SIZE"};
+        my $maxSize = $completeHash->{"SCRIPT_DETECTION_PRODUCT_MAX_SIZE"};
+        $completeHash->{"PRIMER_PRODUCT_SIZE_RANGE"}      = "$minSize-$maxSize";
+    }
 
-	## Figure out the Task for primer3
-	my $pick_left  = $completeHash->{"SCRIPT_DETECTION_PICK_LEFT"};
-	my $pick_hyb   = $completeHash->{"SCRIPT_DETECTION_PICK_HYB_PROBE"};
-	my $pick_right = $completeHash->{"SCRIPT_DETECTION_PICK_RIGHT"};
+    ## Figure out the Task for primer3
+    my $pick_left  = $completeHash->{"PRIMER_PICK_LEFT_PRIMER"};
+    my $pick_hyb   = $completeHash->{"PRIMER_PICK_INTERNAL_OLIGO"};
+    my $pick_right = $completeHash->{"PRIMER_PICK_RIGHT_PRIMER"};
 
-	if ( ( $completeHash->{"SEQUENCE_PRIMER"} ) ne "" ) {
-		$pick_left = "1";
-	}
-	if ( ( $completeHash->{"SEQUENCE_INTERNAL_OLIGO"} ) ne "" ) {
-		$pick_hyb = "1";
-	}
-	if ( ( $completeHash->{"SEQUENCE_PRIMER_REVCOMP"} ) ne "" ) {
-		$pick_right = "1";
-	}
-	my $task;
-	if ( $pick_hyb eq "1" ) {
-		if ( ( $pick_right eq "1" ) || ( $pick_left eq "1" ) ) {
-			$task = "pick_pcr_primers_and_hyb_probe";
-			if ( !( $pick_right eq "1" ) ) {
-				setMessage("WARNING: Assuming you want to pick a right primer because you".
-				           " are picking a left primer and internal oligo" );
-			}
-			if ( !( $pick_left eq "1" ) ) {
-				setMessage("WARNING: Assuming you want to pick a left primer because you".
+    if ( ( $completeHash->{"SEQUENCE_PRIMER"} ) ne "" ) {
+        $pick_left = "1";
+    }
+    if ( ( $completeHash->{"SEQUENCE_INTERNAL_OLIGO"} ) ne "" ) {
+        $pick_hyb = "1";
+    }
+    if ( ( $completeHash->{"SEQUENCE_PRIMER_REVCOMP"} ) ne "" ) {
+        $pick_right = "1";
+    }
+    my $task;
+    if ( $pick_hyb eq "1" ) {
+        if ( ( $pick_right eq "1" ) || ( $pick_left eq "1" ) ) {
+            $task = "pick_pcr_primers_and_hyb_probe";
+            if ( !( $pick_right eq "1" ) ) {
+                setMessage("WARNING: Assuming you want to pick a right primer because you".
+                           " are picking a left primer and internal oligo" );
+            }
+            if ( !( $pick_left eq "1" ) ) {
+                setMessage("WARNING: Assuming you want to pick a left primer because you".
                            " are picking a right primer and internal oligo" );
-			}
-		}
-		else {
-			$task = "pick_hyb_probe_only";
-		}
-	}
-	else {
-		if ( ( $pick_right eq "1" ) && ( $pick_left eq "1" ) ) {
-			$task = "pick_pcr_primers";
-		}
-		elsif ( $pick_right eq "1" ) {
-			$task = "pick_right_only";
-		}
-		elsif ( $pick_left eq "1" ) {
-			$task = "pick_left_only";
-		}
-		else {
-			setMessage("WARNING: assuming you want to pick PCR primers");
-			$task = "pick_pcr_primers";
-		}
-	}
-	$completeHash->{"PRIMER_TASK"} = $task;
+            }
+        }
+        else {
+            $task = "pick_hyb_probe_only";
+        }
+    }
+    else {
+        if ( ( $pick_right eq "1" ) && ( $pick_left eq "1" ) ) {
+            $task = "pick_pcr_primers";
+        }
+        elsif ( $pick_right eq "1" ) {
+            $task = "pick_right_only";
+        }
+        elsif ( $pick_left eq "1" ) {
+            $task = "pick_left_only";
+        }
+        else {
+            setMessage("WARNING: assuming you want to pick PCR primers");
+            $task = "pick_pcr_primers";
+        }
+    }
+    $completeHash->{"PRIMER_TASK"} = $task;
 
-	## Copy the oligos to sequence if no sequence is given
-	my $inferred_sequence = "";
-	if ( ( $completeHash->{"SEQUENCE_TEMPLATE"} ) eq "" ) {
-		if ( ( $completeHash->{"SEQUENCE_PRIMER"} ) ne "" ) {
-			$inferred_sequence .= $completeHash->{"SEQUENCE_PRIMER"};
-		}
-		if ( ( $completeHash->{"SEQUENCE_INTERNAL_OLIGO"} ) ne "" ) {
-			$inferred_sequence .= $completeHash->{"SEQUENCE_INTERNAL_OLIGO"};
-		}
-		if ( ( $completeHash->{"SEQUENCE_PRIMER_REVCOMP"} ) ne "" ) {
-			my $tmpRevSeq = reverseSequence( $completeHash->{"SEQUENCE_PRIMER_REVCOMP"} );
-			$inferred_sequence .= $tmpRevSeq;
-		}
-		if ( $inferred_sequence eq "" ) {
-			setMessage("ERROR: you must supply a source sequence or".
-			           "primers/oligos to evaluate");
-			setDoNotPick("1");
-		}
-		$completeHash->{"SEQUENCE_TEMPLATE"} = $inferred_sequence;
-	}
+    ## Copy the oligos to sequence if no sequence is given
+    my $inferred_sequence = "";
+    if ( ( $completeHash->{"SEQUENCE_TEMPLATE"} ) eq "" ) {
+        if ( ( $completeHash->{"SEQUENCE_PRIMER"} ) ne "" ) {
+            $inferred_sequence .= $completeHash->{"SEQUENCE_PRIMER"};
+        }
+        if ( ( $completeHash->{"SEQUENCE_INTERNAL_OLIGO"} ) ne "" ) {
+            $inferred_sequence .= $completeHash->{"SEQUENCE_INTERNAL_OLIGO"};
+        }
+        if ( ( $completeHash->{"SEQUENCE_PRIMER_REVCOMP"} ) ne "" ) {
+            my $tmpRevSeq = reverseSequence( $completeHash->{"SEQUENCE_PRIMER_REVCOMP"} );
+            $inferred_sequence .= $tmpRevSeq;
+        }
+        if ( $inferred_sequence eq "" ) {
+            setMessage("ERROR: you must supply a source sequence or".
+                       "primers/oligos to evaluate");
+            setDoNotPick("1");
+        }
+        $completeHash->{"SEQUENCE_TEMPLATE"} = $inferred_sequence;
+    }
 
-	# Copy all necessary parmeters
-	foreach $p3cParametersKey (@p3cParameters) {
-		$p3cInput{"$p3cParametersKey"} = $completeHash->{"$p3cParametersKey"};
-	}
+    # Copy all necessary parmeters
+    foreach $p3cParametersKey (@p3cParameters) {
+        $p3cInput{"$p3cParametersKey"} = $completeHash->{"$p3cParametersKey"};
+    }
     
     # The Seuencing function uses the Targets in a different way
-	if ( $Sequencing eq "1" ) {
-		$p3cInput{SEQUENCE_INCLUDED_REGION} = "";
-		$p3cInput{SEQUENCE_TARGET}          = "";
-		$p3cInput{SEQUENCE_EXCLUDED_REGION} = "";
-	}
+    if ( $Sequencing eq "1" ) {
+        $p3cInput{SEQUENCE_INCLUDED_REGION} = "";
+        $p3cInput{SEQUENCE_TARGET}          = "";
+        $p3cInput{SEQUENCE_EXCLUDED_REGION} = "";
+    }
 
-	# Set some parameters to enable primer3 to work
-	$p3cInput{PRIMER_PICK_ANYWAY}  = "1";
-	$p3cInput{P3_FILE_FLAG}    = $makeList;
-	$p3cInput{PRIMER_EXPLAIN_FLAG} = "1";
+    # Set some parameters to enable primer3 to work
+    $p3cInput{PRIMER_PICK_ANYWAY}  = "1";
+    $p3cInput{P3_FILE_FLAG}    = $makeList;
+    $p3cInput{PRIMER_EXPLAIN_FLAG} = "1";
 
-	my $uniID;
-	my $sequenceID = $p3cInput{SEQUENCE_ID};
+    my $uniID;
+    my $sequenceID = $p3cInput{SEQUENCE_ID};
 
-	# Save Sequence ID for later and add UniID for file name
-	# to avoid confusion on the harddisk
-	if ( $makeList eq "1" ) {
-		$uniID = makeUniqueID();
-		$p3cInput{SEQUENCE_ID} = $uniID;
+    # Save Sequence ID for later and add UniID for file name
+    # to avoid confusion on the harddisk
+    if ( $makeList eq "1" ) {
+        $uniID = makeUniqueID();
+        $p3cInput{SEQUENCE_ID} = $uniID;
 
-		# File Lists with Mispriming Librarys just take to long to compute
-		$p3cInput{"PRIMER_MISPRIMING_LIBRARY"}            = "NONE";
-		$p3cInput{"PRIMER_INTERNAL_MISHYB_LIBRARY"} = "NONE";
-		if ( $Sequencing eq "1" ) {
-			$completeHash->{"PRIMER_TASK"} = "pick_pcr_primers";
-		}
-	}
+        # File Lists with Mispriming Librarys just take to long to compute
+        $p3cInput{"PRIMER_MISPRIMING_LIBRARY"}            = "NONE";
+        $p3cInput{"PRIMER_INTERNAL_MISHYB_LIBRARY"} = "NONE";
+        if ( $Sequencing eq "1" ) {
+            $completeHash->{"PRIMER_TASK"} = "pick_pcr_primers";
+        }
+    }
 
-	# prepare parameters for primer3
-	prepareForPrimer3( \%p3cInput );
-	
-	# Execute primer3
-	runPrimer3( \%p3cInput, \%p3cOutput, $completeHash );
-	
-	if ( $makeList eq "1" ) {
+    # prepare parameters for primer3
+    prepareForPrimer3( \%p3cInput );
+    
+    # Execute primer3
+    runPrimer3( \%p3cInput, \%p3cOutput, $completeHash );
+    
+    if ( $makeList eq "1" ) {
 
-		# Put the Sequence ID back and read the files
-		$resultsHash->{"SEQUENCE_ID"} = $sequenceID;
-		$resultsHash->{"SEQUENCE_TEMPLATE"} = $completeHash->{"SEQUENCE_TEMPLATE"};
-		$resultsHash->{"PRIMER_FIRST_BASE_INDEX"} = $completeHash->{"PRIMER_FIRST_BASE_INDEX"};
+        # Put the Sequence ID back and read the files
+        $resultsHash->{"SEQUENCE_ID"} = $sequenceID;
+        $resultsHash->{"SEQUENCE_TEMPLATE"} = $completeHash->{"SEQUENCE_TEMPLATE"};
+        $resultsHash->{"PRIMER_FIRST_BASE_INDEX"} = $completeHash->{"PRIMER_FIRST_BASE_INDEX"};
 
-		if ( $pick_right eq "1" ) {
-			readPrimerFile( $resultsHash, $completeHash,
-							"$uniID.rev", "RIGHT", $Sequencing );
-		}
-		if ( $pick_hyb eq "1" ) {
-			readPrimerFile( $resultsHash, $completeHash,
-							"$uniID.int", "INTERNAL_OLIGO", $Sequencing );
-		}
-		if ( $pick_left eq "1" ) {
-			readPrimerFile( $resultsHash, $completeHash,
-							"$uniID.for", "LEFT", $Sequencing );
-		}
-	}
-	else {
-		foreach $p3cOutputKeys ( keys(%p3cOutput) ) {
-			$resultsHash->{"$p3cOutputKeys"} = $p3cOutput{"$p3cOutputKeys"};
-		}
-	}
+        if ( $pick_right eq "1" ) {
+            readPrimerFile( $resultsHash, $completeHash,
+                            "$uniID.rev", "RIGHT", $Sequencing );
+        }
+        if ( $pick_hyb eq "1" ) {
+            readPrimerFile( $resultsHash, $completeHash,
+                            "$uniID.int", "INTERNAL_OLIGO", $Sequencing );
+        }
+        if ( $pick_left eq "1" ) {
+            readPrimerFile( $resultsHash, $completeHash,
+                            "$uniID.for", "LEFT", $Sequencing );
+        }
+    }
+    else {
+        foreach $p3cOutputKeys ( keys(%p3cOutput) ) {
+            $resultsHash->{"$p3cOutputKeys"} = $p3cOutput{"$p3cOutputKeys"};
+        }
+    }
 
-	return;
+    return;
 }
 
 ######################################################
@@ -1975,7 +2060,10 @@ sub runPrimer3 ($$$) {
 	if ( getDoNotPick() == 0 ) {
 		my $value;
 		
-		my $inputFile = getMachineSetting("USER_CACHE_FILES_PATH")."Input_$$.txt";
+		my $inputFile = getMachineSetting("USER_CACHE_FILES_PATH");
+		$inputFile .= "Input_";
+		$inputFile .= makeUniqueID();
+        $inputFile .= ".txt";
 		open( FILE, ">$inputFile" ) or 
 			setMessage("cannot write $inputFile");
 		foreach $p3cInputKeys ( keys( %{$p3cInput} ) ) {
@@ -1994,7 +2082,7 @@ sub runPrimer3 ($$$) {
 			push @readTheLine, $_;
 		}
 		close PRIMER3OUTPUT;
-		unlink $inputFile;
+#		unlink $inputFile;
 		
 		my ( $readLine, $lineKey, $lineValue );
 		my @nameKeyComplete = "";
@@ -2068,6 +2156,8 @@ sub runPrimer3 ($$$) {
 				@nameKeyComplete = "";
 			}
 		}
+	} else {
+		 setMessage("Primer3 was not run due to an internal conflict.");
 	}
 	return;
 }
@@ -2106,7 +2196,7 @@ sub makeUniqueID {
 			$i++;
 		}
 	}
-	$time = sprintf "%4d%02d%02d%02d%02d%02d", 
+	$time = sprintf "%4d%02d%02d_%02d%02d%02d_", 
 	        $year, $month, $dayOfMonth, $hour, $minute, $second;
 	$UID = $time . $randomNumber;
 
