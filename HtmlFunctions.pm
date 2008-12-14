@@ -4834,7 +4834,7 @@ sub divPrimerBox {
 
 $formHTML .= partPrimerData( $results, $counter, "LEFT", $checked);
 
-$formHTML .= partPrimerData( $results, $counter, "INTERNAL_OLIGO", $checked);
+$formHTML .= partPrimerData( $results, $counter, "INTERNAL", $checked);
 
 $formHTML .= partPrimerData( $results, $counter, "RIGHT", $checked);
 
@@ -4919,7 +4919,7 @@ sub partPrimerData {
 		$cssName = "left_primer";
 		$writeName = "Left Primer";
   }
-  elsif ($type eq "INTERNAL_OLIGO") {
+  elsif ($type eq "INTERNAL") {
 		$cssName = "internal_oligo";
 		$writeName = "Internal Oligo";
   }
@@ -5055,8 +5055,8 @@ sub divHTMLsequence {
       if (defined ($results->{"PRIMER_LEFT_0"}) and (($results->{"PRIMER_LEFT_0"}) ne "")) {
            $format = addRegion($format,$results->{"PRIMER_LEFT_0"},$firstBase,"F");
       }
-      if (defined ($results->{"PRIMER_INTERNAL_OLIGO_0"}) and (($results->{"PRIMER_INTERNAL_OLIGO_0"}) ne "")) {
-     	   $format = addRegion($format,$results->{"PRIMER_INTERNAL_OLIGO_0"},$firstBase,"O");
+      if (defined ($results->{"PRIMER_INTERNAL_0"}) and (($results->{"PRIMER_INTERNAL_0"}) ne "")) {
+     	   $format = addRegion($format,$results->{"PRIMER_INTERNAL_0"},$firstBase,"O");
       }
       if (defined ($results->{"PRIMER_RIGHT_0"}) and (($results->{"PRIMER_RIGHT_0"}) ne "")) {
            $format = addRegion($format,$results->{"PRIMER_RIGHT_0"},$firstBase,"R");

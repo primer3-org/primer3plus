@@ -1110,7 +1110,7 @@ sub new_try_run ($$$$) {
     
     # p3c stands for primer3core and relays to parameters for the primer3 programm
     my @p3cParameters;
-    @p3cParameters = getPrimer3CompleteParameters();
+    @p3cParameters = keys(%$completeHash);
     my ( %p3cInput, %p3cOutput );
     my ( $p3cOutputKeys, $p3cParametersKey );
 
@@ -1128,7 +1128,7 @@ sub new_try_run ($$$$) {
           && (( $completeHash->{"SEQUENCE_PRIMER"} ) eq "" )
           && (( $completeHash->{"SEQUENCE_INTERNAL_OLIGO"} ) eq "" )
           && (( $completeHash->{"SEQUENCE_PRIMER_REVCOMP"} ) eq "" )) {
-        setMessage("ERROR: you must supply a source sequence or".
+        setMessage("ERROR: you must supply a source sequence or ".
                    "primers/oligos to evaluate");
         setDoNotPick("1");
     }
@@ -1140,7 +1140,10 @@ sub new_try_run ($$$$) {
 
     # Copy all necessary parmeters
     foreach $p3cParametersKey (@p3cParameters) {
-        $p3cInput{"$p3cParametersKey"} = $completeHash->{"$p3cParametersKey"};
+        if (($p3cParametersKey =~ /^PRIMER_/)
+             || ($p3cParametersKey =~ /^SEQUENCE_/)) {
+            $p3cInput{"$p3cParametersKey"} = $completeHash->{"$p3cParametersKey"};
+        }
     }
     $p3cInput{"PRIMER_TASK"} = $completeHash->{"SCRIPT_TASK"};
     
@@ -1162,12 +1165,8 @@ sub new_try_run ($$$$) {
     }
     
     # Execute primer3
-    runPrimer3( \%p3cInput, \%p3cOutput, $completeHash );
+    runPrimer3( \%p3cInput, $resultsHash, $completeHash );
     
-    foreach $p3cOutputKeys ( keys(%p3cOutput) ) {
-        $resultsHash->{"$p3cOutputKeys"} = $p3cOutput{"$p3cOutputKeys"};
-    }
-
     return;
 }
 
@@ -2099,10 +2098,6 @@ sub runPrimer3 ($$$) {
 			$lineKey   =~ s/\s//g;
 			$lineValue =~ s/\n//g;
 
-            # Make the name replacement for the primer_0 parameters:
-            if (defined $zeroReplacements{$lineKey}) {
-            	$lineKey = $zeroReplacements{$lineKey};            
-            }
             #Write everything in the Output Hash
 			$p3cOutput->{"$lineKey"} = $lineValue;
 
@@ -2110,15 +2105,7 @@ sub runPrimer3 ($$$) {
 			if ( $lineKey =~ /_SEQUENCE$/ ) {
 				@nameKeyComplete = split "_", $lineKey;
 				$namePrimerType = $nameKeyComplete[1];
-				
-				# INTERNAL_OLIGO has one "_" more thats why:
-				if ( $namePrimerType eq "INTERNAL" ) {
-					$nameNumber = $nameKeyComplete[3];
-				}
-				else {
-					$nameNumber = $nameKeyComplete[2];
-				}
-				
+			    $nameNumber = $nameKeyComplete[2];
 				$nameKeyName = $lineKey;
 				$nameKeyName =~ s/SEQUENCE/NAME/;
 				$nameKeyValue = "";
