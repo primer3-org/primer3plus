@@ -1106,13 +1106,10 @@ sub new_try_run ($$$) {
     $defaultHash = shift;
     $resultsHash  = shift;
 
-    my @p3cParameters;
-    my ( %p3cInput, %p3cOutput );
-    my ( $p3cOutputKeys, $p3cParametersKey );
-    my $outputLine;
-    my $p3cInputKeys;
-    my ( $readLine, $lineKey, $lineValue );
-    my @nameKeyComplete;
+    my ($p3cOutputKeys, $p3cParametersKey, $readLine, $lineKey, $lineValue);
+    my ($outputLine, $p3cInputKeys, $value);
+    my (@p3cParameters, @nameKeyComplete, @readTheLine);
+    my (%p3cInput, %p3cOutput );
     my ( $namePrimerType, $nameNumber, $nameKeyName, $nameKeyValue );
         
     my $primer3BIN = getMachineSetting("PRIMER_BIN");
@@ -1122,6 +1119,10 @@ sub new_try_run ($$$) {
     my $acronymOligo = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO"};
     my $acronymSpace = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"};
     my $sequenceName = $completeHash->{"SEQUENCE_ID"};
+    my $inputFile = getMachineSetting("USER_CACHE_FILES_PATH");
+    $inputFile .= "Input_";
+    $inputFile .= makeUniqueID();
+    $inputFile .= ".txt";
 
 ###### First check if it makes sense to run primer3
 
@@ -1194,91 +1195,80 @@ sub new_try_run ($$$) {
         setDoNotPick("1");
     }
 
-    if ( getDoNotPick() == 0 ) {
-        my $value;
-        
-        my $inputFile = getMachineSetting("USER_CACHE_FILES_PATH");
-        $inputFile .= "Input_";
-        $inputFile .= makeUniqueID();
-        $inputFile .= ".txt";
-        open( FILE, ">$inputFile" ) or 
-            setMessage("cannot write $inputFile");
-        foreach $p3cInputKeys ( keys( %p3cInput ) ) {
-            $value = $p3cInput{"$p3cInputKeys"};
-            if ( $value ne "" ) {
-                print FILE qq{$p3cInputKeys=$p3cInput{"$p3cInputKeys"}\n};
-            }
-        }
-        print FILE qq{=\n};
-        close(FILE);
-
-        my @readTheLine;
-        open PRIMER3OUTPUT, "$callPrimer3 < $inputFile 2>&1 |"
-          or setMessage("could not start primer3");
-        while (<PRIMER3OUTPUT>) {
-            push @readTheLine, $_;
-        }
-        close PRIMER3OUTPUT;
-#       unlink $inputFile;
-
-
-        foreach $readLine (@readTheLine) {
-            ( $lineKey, $lineValue ) = split "=", $readLine;
-            $lineKey   =~ s/\s//g;
-            $lineValue =~ s/\n//g;
-
-            #Write everything in the Output Hash
-            $resultsHash->{"$lineKey"} = $lineValue;
-
-            # Make a Name for each primer
-            if ( $lineKey =~ /_SEQUENCE$/ ) {
-                @nameKeyComplete = split "_", $lineKey;
-                $namePrimerType = $nameKeyComplete[1];
-                $nameNumber = $nameKeyComplete[2];
-                $nameKeyName = $lineKey;
-                $nameKeyName =~ s/SEQUENCE/NAME/;
-                $nameKeyValue = "";
-
-                # Use the Name or Primer for the ID
-                if ( ( length $sequenceName ) > 2 )
-                {
-                    $nameKeyValue .= $sequenceName;
-                }
-                else {
-                    $nameKeyValue .= "Primer";
-                }
-                # Add a Number
-                if ( $nameNumber eq "0" ) {
-                    $nameKeyValue .= $acronymSpace;
-                }
-                else {
-                    $nameKeyValue .= $acronymSpace.$nameNumber.$acronymSpace;
-                }
-                
-                # Add a Type
-                if ( $namePrimerType eq "RIGHT" ) {
-                    $nameKeyValue .= $acronymRight;
-                }
-                elsif ( $namePrimerType eq "INTERNAL" ) {
-                    $nameKeyValue .= $acronymOligo;
-                }
-                elsif ( $namePrimerType eq "LEFT" ) {
-                    $nameKeyValue .= $acronymLeft;
-                }
-                else {
-                    $nameKeyValue .= "??";
-                }
-                $resultsHash->{"$nameKeyName"} = $nameKeyValue;
-                @nameKeyComplete = "";
-            }
-        }
-    } else {
+    if ( getDoNotPick() != 0 ) {
          setMessage("Primer3 did not run due to an internal conflict.");
+         return;
     }
 
+    open( FILE, ">$inputFile" ) or 
+        setMessage("cannot write $inputFile");
+    foreach $p3cInputKeys ( keys( %p3cInput ) ) {
+        $value = $p3cInput{"$p3cInputKeys"};
+        if ( $value ne "" ) {
+            print FILE qq{$p3cInputKeys=$p3cInput{"$p3cInputKeys"}\n};
+        }
+    }
+    print FILE qq{=\n};
+    close(FILE);
+
+    open PRIMER3OUTPUT, "$callPrimer3 < $inputFile 2>&1 |"
+        or setMessage("could not start primer3");
+    while (<PRIMER3OUTPUT>) {
+        push @readTheLine, $_;
+    }
+    close PRIMER3OUTPUT;
+#   unlink $inputFile;
 
 
-    
+    foreach $readLine (@readTheLine) {
+        ( $lineKey, $lineValue ) = split "=", $readLine;
+        $lineKey   =~ s/\s//g;
+        $lineValue =~ s/\n//g;
+        #Write everything in the Output Hash
+        $resultsHash->{"$lineKey"} = $lineValue;
+
+        # Make a Name for each primer
+        if ( $lineKey =~ /_SEQUENCE$/ ) {
+            @nameKeyComplete = split "_", $lineKey;
+            $namePrimerType = $nameKeyComplete[1];
+            $nameNumber = $nameKeyComplete[2];
+            $nameKeyName = $lineKey;
+            $nameKeyName =~ s/SEQUENCE/NAME/;
+            $nameKeyValue = "";
+
+            # Use the Name or Primer for the ID
+            if ( ( length $sequenceName ) > 2 ) {
+                $nameKeyValue .= $sequenceName;
+            }
+            else {
+                $nameKeyValue .= "Primer";
+            }
+            # Add a Number
+            if ( $nameNumber eq "0" ) {
+                $nameKeyValue .= $acronymSpace;
+            }
+            else {
+                $nameKeyValue .= $acronymSpace.$nameNumber.$acronymSpace;
+            }
+        
+            # Add a Type
+            if ( $namePrimerType eq "RIGHT" ) {
+                $nameKeyValue .= $acronymRight;
+            }
+            elsif ( $namePrimerType eq "INTERNAL" ) {
+                $nameKeyValue .= $acronymOligo;
+            }
+            elsif ( $namePrimerType eq "LEFT" ) {
+                $nameKeyValue .= $acronymLeft;
+            }
+            else {
+                $nameKeyValue .= "??";
+            }
+            $resultsHash->{"$nameKeyName"} = $nameKeyValue;
+            @nameKeyComplete = "";
+        }
+    }
+  
     return;
 }
 
