@@ -751,14 +751,26 @@ sub checkParameters (\%) {
 	my %misLibrary      = getMisLibrary();
 	my ( $fixPrimerEnd, $libary );
 	
-	## Copy the selected sequence of a multiSequence file to the input
-	if ( defined( $dataStorage->{"SelectOneSequence"} ) ) {
+    ## A hidden way to obtain a example sequence for demonstration
+    if ( defined( $dataStorage->{"Default_Settings"} ) ) {
+        my $choosenSequence = $dataStorage->{"SEQUENCE"};
+        if ( $choosenSequence eq "example" ) {
+            $dataStorage->{"SEQUENCE"} = getLyk3Sequence();
+            $dataStorage->{"PRIMER_SEQUENCE_ID"} = "Medicago NSP2";
+        } else {
+            $dataStorage->{"SEQUENCE"} = "";
+            $dataStorage->{"PRIMER_SEQUENCE_ID"} = "";
+        }
+    }
+
+    ## Copy the selected sequence of a multiSequence file to the input
+    if ( defined( $dataStorage->{"SelectOneSequence"} ) ) {
         my $choosenSequence = $dataStorage->{"SCRIPT_SELECTED_SEQUENCE"};
         if ( $choosenSequence != 0 ) {
             $dataStorage->{"SEQUENCE"} = $dataStorage->{"SEQUENCE_$choosenSequence"};
             $dataStorage->{"PRIMER_SEQUENCE_ID"} = $dataStorage->{"PRIMER_SEQUENCE_ID_$choosenSequence"};
         }
-	}
+    }
 
 	## Check from which end to cut a primer
 	$fixPrimerEnd = $dataStorage->{"SCRIPT_FIX_PRIMER_END"};
@@ -2124,6 +2136,79 @@ sub getDate {
 	}
 
 	return $date;
+}
+
+############################################################################
+# getLyk3Sequence: Returns an example sequence for demonstration purpurses #
+############################################################################
+sub getLyk3Sequence {
+    my $sequence = qq {acaatattgtattggtgagatcatataagatttgatgtcaacatcttcgtaaaggtctcagatt
+        cgattctccccggtatcaatttaagtgagctaatttagcttcttaaaaaataaaatcaaacaacttttacataaactca
+        gtgaaaacttggatataaagtatccttatactactctttagtcttgattagtctctgcaaagatatttatatgtacttt
+        gtattatcataagaacattcattgacattttaagttaatgaattactaacatgtcaactcttattctagccaacagtta
+        ctttgttccctccacattctctttgaaatagtcaaacgtatccaatcatgcatgtctgttctgatcataacagcaaaag
+        catgtgtatagaaaattgatagttgaattagagtcattttccataaaaaaatattcaataagtgtgacattatttttcg
+        tatgaattaatccattttttgctgatttgagattctttctttctttgcttcttgctttccttcatcagccatttttttt
+        gttttctctttctctctctcttcttgattcaatgaatctcaaaaatggattactattgttcattctgtttctggattgt
+        gtttttttcaaagttgaatccaaatgtgtaaaagggtgtgatgtagctttagcttcctactatattataccatcaattc
+        aactcagaaatatatcaaactttatgcaatcaaagattgttcttaccaattcctttgatgttataatgagctacaatag
+        agacgtagtattcgataaatctggtcttatttcctatactagaatcaacgttccgttcccatgtgaatgtattggaggt
+        gaatttctaggacatgtgtttgaatatacaacaaaagaaggagacgattatgatttaattgcaaatacttattacgcaa
+        gtttgacaactgttgagttattgaaaaagttcaacagctatgatccaaatcatatacctgttaaggctaagattaatgt
+        cactgtaatttgttcatgtgggaatagccagatttcaaaagattatggcttgtttgttacctatccactcaggtctgat
+        gatactcttgcgaaaattgcgaccaaagctggtcttgatgaagggttgatacaaaatttcaatcaagatgccaatttca
+        gcataggaagtgggatagtgttcattccaggaagaggtatgtattttctcattttctgccaactgtggttggcacagat
+        ggtttgaacttctgtcacatccgttgtaactttgataagtctgaaattccgcagtttgtagattactggtaaattccat
+        tataaatgtttaatgtgatttggtgattcttatcaaaagtacttgtataagtatgcgagttagataaaaaaaattatga
+        ccatcttgttctcgtggaaatggactctgataattcataaagtctagccagtgattgtaacaaccaggctttgaacttg
+        gtacttccaatcaacttgaccttcaccagacctcattgaccacttgagtcgaaccctttaatttcagttagagtatatt
+        taaatgctaagttactctattatttttcaaagtatatacatggtataaattttgaagttttatgtagttattgtttact
+        ttgcagatcaaaatggacatttttttcctttgtattctaggtaagtaacattgattatctcaattttcatttttgaatg
+        atttatagaagaagtaaatattgcttcatataatttggttatatttttctaactttcattttctttttatttttccatt
+        cttgcagaacaggtttgtcttttgctattaagatgattatttgttagcttgttcacaaaaatatgagaatggacaaaag
+        gtcaatgcttcctgtgagcttaaatttggttcaatataagcaggtattgctaagggttcagctgttggtatagctatgg
+        caggaatatttggacttctattatttgttatctatatatatgccaaatacttccaaaagaaggaagaagagaaaactaa
+        acttccacaaacttctagggcattttcaactcaagatggtaatatttttaaacattcatattctaagttcttattaaaa
+        atatttcttttaacctatcttatgatataagtatttatttcagtatttgagagagcttgcgaaaatagcttataacatg
+        tttgtttcattaaactgtatttatttcattaaatagtttatacttgctgatttttgtttatgttattggtgaagcctca
+        ggtagtgcagaatatgaaacttcaggatccagtgggcatgctactggtagtgctgccggccttacaggcattatggtgg
+        caaagtcgacagagtttacgtatcaagaattagccaaggcgacaaataatttcagcttggataataaaattggtcaagg
+        tggatttggagctgtctattatgcagaacttagaggcgaggtacgaaactacatgaatttgtttaatagagtgtacttt
+        gattttagttttgaacaagttctataaaatattttcaaaaaacttttattttttgtcataacttggaaagaaagtaaag
+        ccatttttttttccttcacgttttcattgatttcctctcatgcaacttattgtatgcagaaaacagcaattaagaagat
+        ggatgtacaagcatcgtccgaatttctctgtgagttgaaggtcttaacacatgttcatcacttgaatctggtataccat
+        ccttttaaaaatcttaagccatatataatatatttaggagatataatcatttatttttatatatggtttgaagaatcat
+        cgtttaactacaaagcaaataaccagtgttagttttgagaacataagaactctataactatcaagcaaaacataatctg
+        tagtagctgtttacaattatctgtcctacacagttagcgaataatttgaaacacactgcagaacattatttgtatgtac
+        ttcttgattttgtacatgtttgtatactttttgtataatcagttttgtatttgttctagatattactctgaatttgcct
+        aaattttatgaacaatgtaggtgcggttgattggatattgcgttgaagggtcacttttcctcgtatatgaacatattga
+        caatggaaacttgggtcaatatttacatggtataggtaagattaacaaaaatgtgctaatatttttatgtgattttaca
+        atattgtcaaacagtcattaatgatggttagatgatttcaggtacagaaccattaccatggtctagtagagtgcagatt
+        gctctagattcagccagaggcctagaatacattcatgaacacactgtgcctgtttatatccatcgcgacgtaaaatcag
+        caaatatattgatagacaaaaatttgcgtggaaaggttgcaatttgaccaatcttaatgatctatattataaattttaa
+        tttatcacttcttcttttacattaattaactctatgaatggttttgaattcaggttgctgattttggcttgaccaaact
+        tattgaagttggaaactcgacacttcacactcgtcttgtgggaacatttggatacatgccaccagagtatgattcgttt
+        gtattaaattttgagtttaatattagtacaaaaagtacaacaaaaattcagtgattcattcacatttcacaatacatat
+        gtcactttgttatattataaaatgggatatgaccagatgattgtacaattttttttataacaaatgatatttgtataac
+        ccttttagtatgtccatggattataaactatcttcaactttcttaattgtagaaaacatgtttgtttattagctgtttt
+        ttttctctgttgcagatatgctcaatatggcgatgtttctccaaaaatagatgtatatgcttttggcgttgttctttat
+        gaacttattactgcaaagaatgctgtcctgaagacaggtgaatctgttgcagaatcaaagggtcttgtacaattggtag
+        gtctagataccatatttattaagaaaacactcatttcatgtatatttttagtaaaatatttttaagttagtaattatgt
+        acattttaaattcagtaaactgaatgcattcacttaaaccagaacaaaagttatccttgattattttgtattgcagttt
+        gaagaagcacttcatcgaatggatcctttagaaggtcttcgaaaattggtggatcctaggcttaaagaaaactatccca
+        ttgattctgttctcaaggtgggaagcattttttcttagcaaaaaattgaatgttatttctttttcttctcaatttgcat
+        tatataccaacaaaaaaaaaatgcatatttatgtggtatagcctttcaaatcattgtagtacataagcaaagttcatgt
+        tattaaaatataattaaatgtatgcaaaagtgtatagtttgtaaagttactaaactcatttgttttagcactagatttt
+        gtcattgaacataacttaagatatgtgaatatttgaattgcagatggctcaacttgggagagcatgtacgagagacaat
+        ccgctactacgcccaagcatgagatctatagttgttgctcttatgacactttcatcaccaactgaagattgtgatgatg
+        actcttcatatgaaaatcaatctctcataaatctgttgtcaactagatgaagattttgtgtgacaaattgaattgtgtt
+        tgttaaaacatgtagaaagcatacaacaaatggtttgtactttacttgtatatgaaatattgcagttggagagttttta
+        cttttcttacctcaattatccatcttgaacattgttttgtatgtggcaagagttcaaacactggtgtactcattgaaaa
+        gttatggtgagaaaatcactgatcagatgattcttgagaaagataatgagaactctgtcacc};
+        
+    $sequence =~ s/\W//g;
+
+    return $sequence;
 }
 
 1;

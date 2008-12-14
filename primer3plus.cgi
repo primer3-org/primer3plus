@@ -68,6 +68,9 @@ checkParameters(%completeParameters);
 # do the selected job
 if ( defined $parametersHTML{Default_Settings} ) {
 	print "Content-type: text/html\n\n";
+	# Required for the hidden example sequence
+    $defaultSettings{"SEQUENCE"} = $completeParameters{"SEQUENCE"};
+    $defaultSettings{"PRIMER_SEQUENCE_ID"} = $completeParameters{"PRIMER_SEQUENCE_ID"};
 	print mainStartUpHTML( \%defaultSettings ), "\n";
 }
 
