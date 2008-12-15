@@ -1059,8 +1059,7 @@ sub findAllPrimers {
 	my %tempResults;
 	my ( $HashKeys, $task );
 
-	$task = $completeHash->{"SCRIPT_TASK"};
-	$resultsHash->{"SCRIPT_TASK"} = $completeHash->{"SCRIPT_TASK"};
+	$task = $completeHash->{"PRIMER_TASK"};
 	
 	if (($task eq "pick_detection_primers") 
          || ($task eq "pick_cloning_primers")
@@ -1094,6 +1093,8 @@ sub findAllPrimers {
 			$resultsHash->{"$HashKeys"} = $completeHash->{"$HashKeys"};
 		}
 	}
+	$resultsHash->{"PRIMER_TASK"} = $completeHash->{"PRIMER_TASK"};
+	
 	return;
 }
 
@@ -1141,7 +1142,6 @@ sub new_try_run ($$$) {
             $p3cInput{"$p3cParametersKey"} = $completeHash->{"$p3cParametersKey"};
         }
     }
-    $p3cInput{"PRIMER_TASK"} = $completeHash->{"SCRIPT_TASK"};
     $p3cInput{PRIMER_PICK_ANYWAY}  = "1";
     $p3cInput{P3_FILE_FLAG}        = "0";
     $p3cInput{PRIMER_EXPLAIN_FLAG} = "1";
@@ -1149,11 +1149,11 @@ sub new_try_run ($$$) {
 ###### Set all the tags to special values for the run
 
     ## Set the parameters to use optimal Product size input
-    if ( ( $completeHash->{"SCRIPT_DETECTION_USE_PRODUCT_SIZE"} ) ne "0" ) {
-        my $minSize = $completeHash->{"SCRIPT_DETECTION_PRODUCT_MIN_SIZE"};
+    if ( ( $completeHash->{"P3P_DETECTION_USE_PRODUCT_SIZE"} ) ne "0" ) {
+        my $minSize = $completeHash->{"P3P_DETECTION_PRODUCT_MIN_SIZE"};
         $p3cInput{"PRIMER_PRODUCT_OPT_SIZE"} =
-             $completeHash->{"SCRIPT_DETECTION_PRODUCT_OPT_SIZE"};
-        my $maxSize = $completeHash->{"SCRIPT_DETECTION_PRODUCT_MAX_SIZE"};
+             $completeHash->{"P3P_DETECTION_PRODUCT_OPT_SIZE"};
+        my $maxSize = $completeHash->{"P3P_DETECTION_PRODUCT_MAX_SIZE"};
         $p3cInput{"PRIMER_PRODUCT_SIZE_RANGE"} = "$minSize-$maxSize";
     }
 
@@ -1170,7 +1170,7 @@ sub new_try_run ($$$) {
     }
 
     # Be sure to get all sequencing primers
-    if (($completeHash->{"SCRIPT_TASK"}) eq "pick_sequencing_primers") {
+    if (($completeHash->{"PRIMER_TASK"}) eq "pick_sequencing_primers") {
         $p3cInput{"PRIMER_NUM_RETURN"} = 1000;
     }
 
@@ -1313,6 +1313,8 @@ sub detection ($$$$) {
         $Sequencing = 0;
     }
     
+    my $tempTask;
+    
     # p3c stands for primer3core and relays to parameters for the primer3 programm
     my @p3cParameters;
     @p3cParameters = getPrimer3CompleteParameters();
@@ -1320,11 +1322,11 @@ sub detection ($$$$) {
     my ( $p3cOutputKeys, $p3cParametersKey );
 
     ## Set the parameters to use optimal Product size input
-    if ( ( $completeHash->{"SCRIPT_DETECTION_USE_PRODUCT_SIZE"} ) ne "0" ) {
-        my $minSize = $completeHash->{"SCRIPT_DETECTION_PRODUCT_MIN_SIZE"};
+    if ( ( $completeHash->{"P3P_DETECTION_USE_PRODUCT_SIZE"} ) ne "0" ) {
+        my $minSize = $completeHash->{"P3P_DETECTION_PRODUCT_MIN_SIZE"};
         $completeHash->{"PRIMER_PRODUCT_OPT_SIZE"} =
-             $completeHash->{"SCRIPT_DETECTION_PRODUCT_OPT_SIZE"};
-        my $maxSize = $completeHash->{"SCRIPT_DETECTION_PRODUCT_MAX_SIZE"};
+             $completeHash->{"P3P_DETECTION_PRODUCT_OPT_SIZE"};
+        my $maxSize = $completeHash->{"P3P_DETECTION_PRODUCT_MAX_SIZE"};
         $completeHash->{"PRIMER_PRODUCT_SIZE_RANGE"}      = "$minSize-$maxSize";
     }
 
@@ -1374,6 +1376,7 @@ sub detection ($$$$) {
             $task = "pick_pcr_primers";
         }
     }
+    $tempTask = $completeHash->{"PRIMER_TASK"};
     $completeHash->{"PRIMER_TASK"} = $task;
 
     ## Copy the oligos to sequence if no sequence is given
@@ -1462,6 +1465,10 @@ sub detection ($$$$) {
             $resultsHash->{"$p3cOutputKeys"} = $p3cOutput{"$p3cOutputKeys"};
         }
     }
+
+    $completeHash->{"PRIMER_TASK"} = $tempTask;
+    $resultsHash->{"PRIMER_TASK"} = $tempTask;
+
 
     return;
 }
@@ -1918,11 +1925,11 @@ sub sortSequencing ($$$) {
 		 $temp, $extraSequence, $primerPosition, $primerCounter );
 		 
 	# Get some parameters for calculations
-	my $lead           = $completeHash->{"SCRIPT_SEQUENCING_LEAD"};
-	my $spacing        = $completeHash->{"SCRIPT_SEQUENCING_SPACING"};
+	my $lead           = $completeHash->{"PRIMER_SEQUENCING_LEAD"};
+	my $spacing        = $completeHash->{"PRIMER_SEQUENCING_SPACING"};
 	my $reverse        = $completeHash->{"SCRIPT_SEQUENCING_REVERSE"};
-	my $interval       = $completeHash->{"SCRIPT_SEQUENCING_INTERVAL"};
-	my $accuracy       = $completeHash->{"SCRIPT_SEQUENCING_ACCURACY"};
+	my $interval       = $completeHash->{"PRIMER_SEQUENCING_INTERVAL"};
+	my $accuracy       = $completeHash->{"PRIMER_SEQUENCING_ACCURACY"};
 	my $sequenceLength = length( $completeHash->{"SEQUENCE_TEMPLATE"} );
 	my $firstBase 	   = $completeHash->{"PRIMER_FIRST_BASE_INDEX"};
 

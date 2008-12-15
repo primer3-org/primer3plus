@@ -85,7 +85,7 @@ sub mainResultsHTML {
   $results = shift;
 
   my $returnString;
-  my $task = $results->{"SCRIPT_TASK"};
+  my $task = $results->{"PRIMER_TASK"};
   my $pair_count = 0;
   my $primer_count = 0;
 
@@ -341,17 +341,17 @@ sub divTaskBar {
 	<tr>
 	<td class="primer3plus_cell_no_border">
 	
-<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="SCRIPT_CONTAINS_JAVA_SCRIPT,PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,SCRIPT_SEQUENCING_REVERSE,SCRIPT_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,SCRIPT_PRINT_INPUT,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" type="hidden">
+<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="SCRIPT_CONTAINS_JAVA_SCRIPT,PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,SCRIPT_SEQUENCING_REVERSE,P3P_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,SCRIPT_PRINT_INPUT,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" type="hidden">
 
-         <a id="SCRIPT_TASK_INPUT" name="SCRIPT_TASK_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_TASK">
+         <a id="PRIMER_TASK_INPUT" name="PRIMER_TASK_INPUT" href="$machineSettings{URL_HELP}#PRIMER_TASK">
          Task:</a>&nbsp;
-        <select id="SCRIPT_TASK" name="SCRIPT_TASK" class="primer3plus_task" onchange="showSelection(this);" onkeyup="showSelection(this)">
+        <select id="PRIMER_TASK" name="PRIMER_TASK" class="primer3plus_task" onchange="showSelection(this);" onkeyup="showSelection(this)">
 };
 
         my $option;
         foreach $option (@scriptTask) {
                 my $selectedStatus = "";
-                if ($option eq $settings{SCRIPT_TASK} ) {$selectedStatus = " selected=\"selected\"" };
+                if ($option eq $settings{PRIMER_TASK} ) {$selectedStatus = " selected=\"selected\"" };
                 $formHTML .= "         <option class=\"primer3plus_task\"$selectedStatus>$option</option>\n";
         }
 
@@ -363,7 +363,7 @@ sub divTaskBar {
    <div id="primer3plus_explain_Detection"
         };
 
-        if ($settings{SCRIPT_TASK} ne "Detection")  {
+        if ($settings{PRIMER_TASK} ne "Detection")  {
                 $formHTML .= qq{style="display: none;" };
         }
 $formHTML .= qq{>
@@ -371,7 +371,7 @@ $formHTML .= qq{>
    </div>
    <div id="primer3plus_explain_Cloning" };
 
-        if ($settings{SCRIPT_TASK} ne "Cloning")  {
+        if ($settings{PRIMER_TASK} ne "Cloning")  {
                 $formHTML .= qq{style="display: none;" };
         }
 $formHTML .= qq{>
@@ -379,7 +379,7 @@ $formHTML .= qq{>
    </div>
    <div id="primer3plus_explain_Sequencing" };
 
-        if ($settings{SCRIPT_TASK} ne "Sequencing")  {
+        if ($settings{PRIMER_TASK} ne "Sequencing")  {
                 $formHTML .= qq{style="display: none;" };
         }
 $formHTML .= qq{>
@@ -387,7 +387,7 @@ $formHTML .= qq{>
    </div>
    <div id="primer3plus_explain_Primer_List" };
 
-        if ($settings{SCRIPT_TASK} ne "Primer_List")  {
+        if ($settings{PRIMER_TASK} ne "Primer_List")  {
                 $formHTML .= qq{style="display: none;" };
         }
 $formHTML .= qq{>
@@ -395,7 +395,7 @@ $formHTML .= qq{>
    </div>
    <div id="primer3plus_explain_Primer_Check" };
 
-        if ($settings{SCRIPT_TASK} ne "Primer_Check")  {
+        if ($settings{PRIMER_TASK} ne "Primer_Check")  {
                 $formHTML .= qq{style="display: none;" };
         }
 $formHTML .= qq{>
@@ -531,7 +531,7 @@ $formHTML .= divMessages();
 $formHTML .= qq{
 <div id="primer3plus_task" class="primer3plus_tab_page">
 <input type="hidden" id="SCRIPT_RADIO_BUTTONS_FIX" name="SCRIPT_RADIO_BUTTONS_FIX"
-value="SCRIPT_CONTAINS_JAVA_SCRIPT,PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,SCRIPT_SEQUENCING_REVERSE,SCRIPT_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,SCRIPT_PRINT_INPUT,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS">
+value="SCRIPT_CONTAINS_JAVA_SCRIPT,PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,SCRIPT_SEQUENCING_REVERSE,P3P_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,SCRIPT_PRINT_INPUT,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS">
    <table class="primer3plus_table_no_border">
      <colgroup>
        <col width="65%">
@@ -539,15 +539,15 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border" valign="top">
-         <a name="SCRIPT_TASK_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_TASK">
+         <a name="PRIMER_TASK_INPUT" href="$machineSettings{URL_HELP}#PRIMER_TASK">
          Please select the Task here:</a>&nbsp;&nbsp;        
-         <select name="SCRIPT_TASK">
+         <select name="PRIMER_TASK">
 };
 
 	my $option;
 	foreach $option (@scriptTask) {
 		my $selectedStatus = "";
-		if ($option eq $settings{SCRIPT_TASK} ) {$selectedStatus = " selected=\"selected\"" };
+		if ($option eq $settings{PRIMER_TASK} ) {$selectedStatus = " selected=\"selected\"" };
 		$formHTML .= "         <option$selectedStatus>$option</option>\n";
 	} 	
 
@@ -895,32 +895,32 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_
        <col width="74%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="SCRIPT_SEQUENCING_LEAD_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_SEQUENCING_LEAD">Lead</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_SEQUENCING_LEAD_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SEQUENCING_LEAD">Lead</a>
        </td>
        <td class="primer3plus_cell_no_border">Bp:
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="SCRIPT_SEQUENCING_LEAD" value="$settings{SCRIPT_SEQUENCING_LEAD}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SEQUENCING_LEAD" value="$settings{PRIMER_SEQUENCING_LEAD}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">Space between primer binding site and the start of readable sequencing
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="SCRIPT_SEQUENCING_SPACING_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_SEQUENCING_SPACING">
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_SEQUENCING_SPACING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SEQUENCING_SPACING">
          Spacing</a>
        </td>
        <td class="primer3plus_cell_no_border">Bp: </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="SCRIPT_SEQUENCING_SPACING" value="$settings{SCRIPT_SEQUENCING_SPACING}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SEQUENCING_SPACING" value="$settings{PRIMER_SEQUENCING_SPACING}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">Space between the primers on one DNA strand
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="SCRIPT_SEQUENCING_ACCURACY_INPUT"
-         href="$machineSettings{URL_HELP}#SCRIPT_SEQUENCING_ACCURACY">Accuracy</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_SEQUENCING_ACCURACY_INPUT"
+         href="$machineSettings{URL_HELP}#PRIMER_SEQUENCING_ACCURACY">Accuracy</a>
        </td>
        <td class="primer3plus_cell_no_border">Bp:
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="SCRIPT_SEQUENCING_ACCURACY" value="$settings{SCRIPT_SEQUENCING_ACCURACY}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SEQUENCING_ACCURACY" value="$settings{PRIMER_SEQUENCING_ACCURACY}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">Space in which Primer3Plus picks the optimal primer
        </td>
@@ -936,12 +936,12 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_
        <td class="primer3plus_cell_no_border">Pick also primers on the reverse DNA strand</td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="SCRIPT_SEQUENCING_INTERVAL_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_SEQUENCING_INTERVAL">
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_SEQUENCING_INTERVAL_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SEQUENCING_INTERVAL">
          Interval</a>
        </td>
        <td class="primer3plus_cell_no_border">Bp:
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="SCRIPT_SEQUENCING_INTERVAL" value="$settings{SCRIPT_SEQUENCING_INTERVAL}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SEQUENCING_INTERVAL" value="$settings{PRIMER_SEQUENCING_INTERVAL}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">Space between primers on the forward and the reverse strand
        </td>
@@ -1077,12 +1077,12 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border" colspan="3">
-         <input name="SCRIPT_DETECTION_USE_PRODUCT_SIZE"  value="1" };
+         <input name="P3P_DETECTION_USE_PRODUCT_SIZE"  value="1" };
 
-	$formHTML .= ($settings{SCRIPT_DETECTION_USE_PRODUCT_SIZE}) ? "checked=\"checked\" " : "";
+	$formHTML .= ($settings{P3P_DETECTION_USE_PRODUCT_SIZE}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{type="checkbox">
-         <a name="SCRIPT_DETECTION_USE_PRODUCT_SIZE_INPUT" href="$machineSettings{URL_HELP}#REVERSE">
+         <a name="P3P_DETECTION_USE_PRODUCT_SIZE_INPUT" href="$machineSettings{URL_HELP}#REVERSE">
          Use Product Size Input and ignore Product Size Range</a>
        </td>
        <td class="primer3plus_cell_no_border" colspan="2">Warning: slow and expensive!</td>
@@ -1096,16 +1096,16 @@ value="SCRIPT_CONTAINS_JAVA_SCRIPT,PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_
        <td class="primer3plus_cell_no_border"><a name="PRIMER_PRODUCT_SIZE_INPUT" href="primer3plusHelp.cgi#PRIMER_PRODUCT_SIZE">Product Size</a>
        </td>
        <td class="primer3plus_cell_no_border_right">Min: 
-         <input size="6" name="SCRIPT_DETECTION_PRODUCT_MIN_SIZE" 
-         value="$settings{SCRIPT_DETECTION_PRODUCT_MIN_SIZE}" type="text">
+         <input size="6" name="P3P_DETECTION_PRODUCT_MIN_SIZE" 
+         value="$settings{P3P_DETECTION_PRODUCT_MIN_SIZE}" type="text">
        </td>
        <td class="primer3plus_cell_no_border_right">Opt: 
-         <input size="6" name="SCRIPT_DETECTION_PRODUCT_OPT_SIZE" 
-         value="$settings{SCRIPT_DETECTION_PRODUCT_OPT_SIZE}" type="text">
+         <input size="6" name="P3P_DETECTION_PRODUCT_OPT_SIZE" 
+         value="$settings{P3P_DETECTION_PRODUCT_OPT_SIZE}" type="text">
        </td>
        <td class="primer3plus_cell_no_border_right">Max: 
-         <input size="6" name="SCRIPT_DETECTION_PRODUCT_MAX_SIZE" 
-         value="$settings{SCRIPT_DETECTION_PRODUCT_MAX_SIZE}" type="text">
+         <input size="6" name="P3P_DETECTION_PRODUCT_MAX_SIZE" 
+         value="$settings{P3P_DETECTION_PRODUCT_MAX_SIZE}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">
        </td>
@@ -1835,15 +1835,15 @@ function setSelection(primer_only_state,sequenceState,excludedState,targetState,
 
 function selectSequencing() {
         var seqId = -1;
-        var selector = document.getElementById('SCRIPT_TASK');
+        var selector = document.getElementById('PRIMER_TASK');
         for (var i = 0; i < selector.length; i++) {
                 if (selector.options[i].text == 'Sequencing') {
                         seqId = i;
                 }
         }
         if (seqId > -1) {
-                document.getElementById('SCRIPT_TASK').options[seqId].selected='true';
-                showSelection(document.getElementById('SCRIPT_TASK'));
+                document.getElementById('PRIMER_TASK').options[seqId].selected='true';
+                showSelection(document.getElementById('PRIMER_TASK'));
         }
 }
 
@@ -1858,7 +1858,7 @@ function updatePrimer() {
 
 my $primerSelected = 1;
 
-if ( $settings{SCRIPT_TASK} eq "Primer_Check" ) {
+if ( $settings{PRIMER_TASK} eq "Primer_Check" ) {
     $primerSelected = 0;
 }
 
@@ -2046,7 +2046,7 @@ $formHTML .= divMessages();
 
 <div id="primer3plus_primer_only" };
 
-	if ($settings{SCRIPT_TASK} ne "Primer_Check")  {
+	if ($settings{PRIMER_TASK} ne "Primer_Check")  {
 		$formHTML .= qq{style="display: none;" };
 	} 	
 $formHTML .= qq{>
@@ -2071,7 +2071,7 @@ $formHTML .= qq{</div>
 
 <div id="primer3plus_sequence" };
 
-	if ($settings{SCRIPT_TASK} eq "Primer_Check")  {
+	if ($settings{PRIMER_TASK} eq "Primer_Check")  {
 		$formHTML .= qq{style="display: none;" };
 	} 	
 my $sequence = $settings{SEQUENCE_TEMPLATE};
@@ -2646,12 +2646,12 @@ $formHTML .= qq{</div>
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border" colspan="3">
-         <input name="SCRIPT_DETECTION_USE_PRODUCT_SIZE"  value="1" };
+         <input name="P3P_DETECTION_USE_PRODUCT_SIZE"  value="1" };
 
-	$formHTML .= ($settings{SCRIPT_DETECTION_USE_PRODUCT_SIZE}) ? "checked=\"checked\" " : "";
+	$formHTML .= ($settings{P3P_DETECTION_USE_PRODUCT_SIZE}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{type="checkbox">
-         <a onmouseover="toolTip('Select box to specify the min, opt, and max product sizes only if you absolutely must!<br>Using them is too slow (and too computationally intensive for our server).');" onmouseout="toolTip();" name="SCRIPT_DETECTION_USE_PRODUCT_SIZE_INPUT" href="$machineSettings{URL_HELP}#REVERSE">
+         <a onmouseover="toolTip('Select box to specify the min, opt, and max product sizes only if you absolutely must!<br>Using them is too slow (and too computationally intensive for our server).');" onmouseout="toolTip();" name="P3P_DETECTION_USE_PRODUCT_SIZE_INPUT" href="$machineSettings{URL_HELP}#REVERSE">
          Use Product Size Input and ignore Product Size Range</a>
        </td>
        <td class="primer3plus_cell_no_border" colspan="2">Warning: slow and expensive!</td>
@@ -2660,16 +2660,16 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_PRODUCT_SIZE_INPUT" href="primer3plusHelp.cgi#PRIMER_PRODUCT_SIZE">Product Size</a>
        </td>
        <td class="primer3plus_cell_no_border_right">Min: 
-         <input size="6" name="SCRIPT_DETECTION_PRODUCT_MIN_SIZE" 
-         value="$settings{SCRIPT_DETECTION_PRODUCT_MIN_SIZE}" type="text">
+         <input size="6" name="P3P_DETECTION_PRODUCT_MIN_SIZE" 
+         value="$settings{P3P_DETECTION_PRODUCT_MIN_SIZE}" type="text">
        </td>
        <td class="primer3plus_cell_no_border_right">Opt: 
-         <input size="6" name="SCRIPT_DETECTION_PRODUCT_OPT_SIZE" 
-         value="$settings{SCRIPT_DETECTION_PRODUCT_OPT_SIZE}" type="text">
+         <input size="6" name="P3P_DETECTION_PRODUCT_OPT_SIZE" 
+         value="$settings{P3P_DETECTION_PRODUCT_OPT_SIZE}" type="text">
        </td>
        <td class="primer3plus_cell_no_border_right">Max: 
-         <input size="6" name="SCRIPT_DETECTION_PRODUCT_MAX_SIZE" 
-         value="$settings{SCRIPT_DETECTION_PRODUCT_MAX_SIZE}" type="text">
+         <input size="6" name="P3P_DETECTION_PRODUCT_MAX_SIZE" 
+         value="$settings{P3P_DETECTION_PRODUCT_MAX_SIZE}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">
        </td>
@@ -2714,33 +2714,33 @@ $formHTML .= qq{</div>
        <col width="10%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Space between primer binding site and the start of readable sequencing');" onmouseout="toolTip();" name="SCRIPT_SEQUENCING_LEAD_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_SEQUENCING_LEAD">Lead</a>
+       <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Space between primer binding site and the start of readable sequencing');" onmouseout="toolTip();" name="PRIMER_SEQUENCING_LEAD_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SEQUENCING_LEAD">Lead</a>
        </td>
        <td class="primer3plus_cell_no_border">Bp:
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="SCRIPT_SEQUENCING_LEAD" value="$settings{SCRIPT_SEQUENCING_LEAD}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SEQUENCING_LEAD" value="$settings{PRIMER_SEQUENCING_LEAD}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Space between the primers on one DNA strand');" onmouseout="toolTip();" name="SCRIPT_SEQUENCING_SPACING_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_SEQUENCING_SPACING">
+       <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Space between the primers on one DNA strand');" onmouseout="toolTip();" name="PRIMER_SEQUENCING_SPACING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SEQUENCING_SPACING">
          Spacing</a>
        </td>
        <td class="primer3plus_cell_no_border">Bp: </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="SCRIPT_SEQUENCING_SPACING" value="$settings{SCRIPT_SEQUENCING_SPACING}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SEQUENCING_SPACING" value="$settings{PRIMER_SEQUENCING_SPACING}" type="text">
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Space in which Primer3Plus picks the optimal primer');" onmouseout="toolTip();" name="SCRIPT_SEQUENCING_ACCURACY_INPUT"
-         href="$machineSettings{URL_HELP}#SCRIPT_SEQUENCING_ACCURACY">Accuracy</a>
+       <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Space in which Primer3Plus picks the optimal primer');" onmouseout="toolTip();" name="PRIMER_SEQUENCING_ACCURACY_INPUT"
+         href="$machineSettings{URL_HELP}#PRIMER_SEQUENCING_ACCURACY">Accuracy</a>
        </td>
        <td class="primer3plus_cell_no_border">Bp:
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="SCRIPT_SEQUENCING_ACCURACY" value="$settings{SCRIPT_SEQUENCING_ACCURACY}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SEQUENCING_ACCURACY" value="$settings{PRIMER_SEQUENCING_ACCURACY}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Space between primers on the forward and the reverse strand');" onmouseout="toolTip();" name="SCRIPT_SEQUENCING_INTERVAL_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_SEQUENCING_INTERVAL">
+       <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Space between primers on the forward and the reverse strand');" onmouseout="toolTip();" name="PRIMER_SEQUENCING_INTERVAL_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SEQUENCING_INTERVAL">
          Interval</a>
        </td>
        <td class="primer3plus_cell_no_border">Bp:
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="SCRIPT_SEQUENCING_INTERVAL" value="$settings{SCRIPT_SEQUENCING_INTERVAL}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SEQUENCING_INTERVAL" value="$settings{PRIMER_SEQUENCING_INTERVAL}" type="text">
        </td>
      </tr> 
      <tr>
@@ -3289,7 +3289,7 @@ $formHTML .= qq{</div>
    </table>
 };
 
-my $task = "primer3plus_explain_".$settings{SCRIPT_TASK};
+my $task = "primer3plus_explain_".$settings{PRIMER_TASK};
 $formHTML .= qq{</div>
 
 </form>
@@ -3463,7 +3463,7 @@ $formHTML .= qq{
 
 <h2><a name="SCRIPT_INPUT_PARAMETERS">Script Input Parameters</a></h2>
 
-<h3><a name="SCRIPT_TASK">Task</a></h3>
+<h3><a name="PRIMER_TASK">Task</a></h3>
   <p>
   <a href="#SCRIPT_DETECTION">Detection</a><br>
   <a href="#SCRIPT_CLONING">Cloning</a><br>
@@ -3515,22 +3515,22 @@ $formHTML .= qq{
   can be modified on the Advanced settings tab:
   </p>
 
-<h3><a name="SCRIPT_SEQUENCING_LEAD">Lead</a></h3>
+<h3><a name="PRIMER_SEQUENCING_LEAD">Lead</a></h3>
   <p>Defines the space from the start of the primer to the point were the trace signals are readable 
   (default 50 bp).
   </p>
 
-<h3><a name="SCRIPT_SEQUENCING_SPACING">Spacing</a></h3>
+<h3><a name="PRIMER_SEQUENCING_SPACING">Spacing</a></h3>
   <p>Defines the space from the start of the primer to the start of the next primer on the same 
   strand (default 500 bp).
   </p>
 
-<h3><a name="SCRIPT_SEQUENCING_INTERVAL">Interval</a></h3>
+<h3><a name="PRIMER_SEQUENCING_INTERVAL">Interval</a></h3>
   <p>Defines the space from the start of the primer to the start of the next primer on the opposite 
   strand (default 250 bp).
   </p>
 
-<h3><a name="SCRIPT_SEQUENCING_ACCURACY">Accuracy</a></h3>
+<h3><a name="PRIMER_SEQUENCING_ACCURACY">Accuracy</a></h3>
   <p>Defines the size of the area in which primer3plus searches for the best primer (default 20 bp).
   </p>
 
@@ -5359,7 +5359,7 @@ $formHTML .= qq{type="checkbox"></td>
        <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_NAME" name="PRIMER_$primerNumber\_NAME" value="$names[$counter]" size="20"></td>
        <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_SEQUENCE" name="PRIMER_$primerNumber\_SEQUENCE" value="$sequences[$counter]" size="44"></td>
        <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_DATE" name="PRIMER_$primerNumber\_DATE" value="$date[$counter]" size="9"></td>
-       <td class="primer3plus_cell_no_border">&nbsp;<a href="$machineSettings{URL_FORM_ACTION}?SEQUENCE_ID=$cgiName&SEQUENCE_PRIMER=$sequences[$counter]&SCRIPT_TASK=Primer_Check">Check!</a></td>
+       <td class="primer3plus_cell_no_border">&nbsp;<a href="$machineSettings{URL_FORM_ACTION}?SEQUENCE_ID=$cgiName&SEQUENCE_PRIMER=$sequences[$counter]&PRIMER_TASK=Primer_Check">Check!</a></td>
        <td class="primer3plus_cell_no_border">&nbsp;$blastLinkUse</td>
      </tr>
 };

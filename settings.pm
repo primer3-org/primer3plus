@@ -35,7 +35,7 @@ our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
              &getPrimerCheckParameters &getServerParameterFiles &getServerParameterFilesList 
              &setMessage &getMessages &getTaskList);
 
-$VERSION = "1.00";
+$VERSION = "2.0.0";
 
 # Here it stores all the messages from within the functions
 my @messages;
@@ -113,6 +113,7 @@ my %misLibrary = (
   # Put more repeat libraries here. Add them also to the array.
 );
 
+  #To keep the order like that:
 my @misLibraryList = (
   "NONE",
   "HUMAN",
@@ -139,6 +140,7 @@ my %serverParameterFiles = (
   # Put more Setting Files here. Add them also to the array.
 );
 
+  #To keep the order like that:
 my @serverParameterFilesList = (
   "Default",
   "qPCR",
@@ -276,25 +278,25 @@ my %defaultSettings = (
 # End of Primer3 Input Parameters
 
 # Script Parameters
-  "SCRIPT_TASK"                              => "Detection",
+  "PRIMER_TASK"                              => "Detection",
   "SCRIPT_PRINT_INPUT"                       => "0",
   "SCRIPT_FIX_PRIMER_END"                    => "5",
   
   "SCRIPT_CONTAINS_JAVA_SCRIPT"              => "1",
 
-  "SCRIPT_SEQUENCING_LEAD"                   => "50",
-  "SCRIPT_SEQUENCING_SPACING"                => "500",
+  "PRIMER_SEQUENCING_LEAD"                   => "50",
+  "PRIMER_SEQUENCING_SPACING"                => "500",
   "SCRIPT_SEQUENCING_REVERSE"                => "1",
-  "SCRIPT_SEQUENCING_INTERVAL"               => "250",
-  "SCRIPT_SEQUENCING_ACCURACY"               => "20",
+  "PRIMER_SEQUENCING_INTERVAL"               => "250",
+  "PRIMER_SEQUENCING_ACCURACY"               => "20",
 
   "PRIMER_PICK_LEFT_PRIMER"                  => "1",
   "PRIMER_PICK_INTERNAL_OLIGO"               => "0",
   "PRIMER_PICK_RIGHT_PRIMER"                 => "1",
-  "SCRIPT_DETECTION_USE_PRODUCT_SIZE"        => "0",
-  "SCRIPT_DETECTION_PRODUCT_MIN_SIZE"        => "100",
-  "SCRIPT_DETECTION_PRODUCT_OPT_SIZE"        => "200",
-  "SCRIPT_DETECTION_PRODUCT_MAX_SIZE"        => "1000",
+  "P3P_DETECTION_USE_PRODUCT_SIZE"        => "0",
+  "P3P_DETECTION_PRODUCT_MIN_SIZE"        => "100",
+  "P3P_DETECTION_PRODUCT_OPT_SIZE"        => "200",
+  "P3P_DETECTION_PRODUCT_MAX_SIZE"        => "1000",
   
   "SERVER_PARAMETER_FILE"                    => "DEFAULT",
 
@@ -433,28 +435,28 @@ PRIMER_INTERNAL_WT_SELF_ANY
 PRIMER_INTERNAL_WT_NUM_NS
 PRIMER_INTERNAL_WT_LIBRARY_MISHYB
 PRIMER_INTERNAL_WT_SEQ_QUAL
-SCRIPT_TASK
-SCRIPT_PRINT_INPUT
-SCRIPT_FIX_PRIMER_END
-SCRIPT_CONTAINS_JAVA_SCRIPT
-SCRIPT_SEQUENCING_LEAD
-SCRIPT_SEQUENCING_SPACING
-SCRIPT_SEQUENCING_REVERSE
-SCRIPT_SEQUENCING_INTERVAL
-SCRIPT_SEQUENCING_ACCURACY
+PRIMER_TASK
 PRIMER_PICK_LEFT_PRIMER
 PRIMER_PICK_INTERNAL_OLIGO
 PRIMER_PICK_RIGHT_PRIMER
-SCRIPT_DETECTION_USE_PRODUCT_SIZE
-SCRIPT_DETECTION_PRODUCT_MIN_SIZE
-SCRIPT_DETECTION_PRODUCT_OPT_SIZE
-SCRIPT_DETECTION_PRODUCT_MAX_SIZE
+PRIMER_LOWERCASE_MASKING
+PRIMER_SEQUENCING_LEAD
+PRIMER_SEQUENCING_SPACING
+PRIMER_SEQUENCING_INTERVAL
+PRIMER_SEQUENCING_ACCURACY
+SCRIPT_PRINT_INPUT
+SCRIPT_FIX_PRIMER_END
+SCRIPT_CONTAINS_JAVA_SCRIPT
+P3P_DETECTION_USE_PRODUCT_SIZE
+P3P_DETECTION_PRODUCT_MIN_SIZE
+P3P_DETECTION_PRODUCT_OPT_SIZE
+P3P_DETECTION_PRODUCT_MAX_SIZE
 SERVER_PARAMETER_FILE
+SCRIPT_SEQUENCING_REVERSE
 P3P_PRIMER_NAME_ACRONYM_LEFT
 P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO
 P3P_PRIMER_NAME_ACRONYM_RIGHT
-P3P_PRIMER_NAME_ACRONYM_SPACER
-PRIMER_LOWERCASE_MASKING);
+P3P_PRIMER_NAME_ACRONYM_SPACER);
 
 
 # All the parameters primer3 can handle
