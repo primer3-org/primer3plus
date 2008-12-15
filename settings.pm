@@ -33,7 +33,7 @@ our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
              &getMachineSettings &getScriptTask &getLibraryList &getSaveSequenceParameters
              &getSaveSettingsParameters &getPrimer3CompleteParameters &getZeroReplacements
              &getPrimerCheckParameters &getServerParameterFiles &getServerParameterFilesList 
-             &setMessage &getMessages &getTaskList);
+             &setMessage &getMessages);
 
 $VERSION = "2.0.0";
 
@@ -123,14 +123,6 @@ my @misLibraryList = (
   # Put more repeat libraries here. Add them also to the hash.
 );
 
-my @taskList = (
-  "pick_detection_primers",
-  "pick_cloning_primers",
-  "pick_discriminative_primers",
-  "pick_sequencing_primers",
-  "pick_primer_list",
-  "check_primers");
-
   # Add sever stored Setting Files here: 
 my %serverParameterFiles = (
   "Default"               => "",
@@ -166,12 +158,14 @@ my %defaultSettings = (
   "SEQUENCE_PRIMER"                          => "",
   "SEQUENCE_PRIMER_REVCOMP"                  => "",
   "SEQUENCE_START_CODON_POSITION"            => "", #"-1000000",
-  "PRIMER_LOWERCASE_MASKING"                 => "0",
 # Primer3 "Global" Input Tags
   "PRIMER_TASK"                              => "pick_detection_primers",
+  "PRIMER_PICK_LEFT_PRIMER"                  => "1",
+  "PRIMER_PICK_INTERNAL_OLIGO"               => "0",
+  "PRIMER_PICK_RIGHT_PRIMER"                 => "1",
   "PRIMER_PICK_ANYWAY"	                     => "1",
   "PRIMER_EXPLAIN_FLAG"                      => "0",
-  "P3_FILE_FLAG"                             => "0",
+  "PRIMER_LOWERCASE_MASKING"                 => "0",
   "PRIMER_MISPRIMING_LIBRARY"                => "NONE",
   "PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS"     => "1",
   "PRIMER_MAX_LIBRARY_MISPRIMING"            => "12.00",
@@ -240,6 +234,11 @@ my %defaultSettings = (
   "PRIMER_PAIR_WT_PRODUCT_SIZE_LT"           => "0.0",
   "PRIMER_PAIR_WT_LIBRARY_MISPRIMING"        => "0.0",
   "PRIMER_PAIR_WT_TEMPLATE_MISPRIMING"       => "0.0",
+  "PRIMER_SEQUENCING_LEAD"                   => "50",
+  "PRIMER_SEQUENCING_SPACING"                => "500",
+  "SCRIPT_SEQUENCING_REVERSE"                => "1",
+  "PRIMER_SEQUENCING_INTERVAL"               => "250",
+  "PRIMER_SEQUENCING_ACCURACY"               => "20",
 # Primer3 Internal Oligo "Sequence" Input Tags
   "SEQUENCE_INTERNAL_EXCLUDED_REGION"        => "",
   "SEQUENCE_INTERNAL_OLIGO"                  => "",
@@ -274,37 +273,26 @@ my %defaultSettings = (
   "PRIMER_INTERNAL_WT_NUM_NS"                => "0.0",
   "PRIMER_INTERNAL_WT_LIBRARY_MISHYB"        => "0.0",
   "PRIMER_INTERNAL_WT_SEQ_QUAL"              => "0.0",
-                            
+
+  "P3_FILE_FLAG"                             => "0",                            
 # End of Primer3 Input Parameters
 
 # Script Parameters
-  "PRIMER_TASK"                              => "Detection",
   "SCRIPT_PRINT_INPUT"                       => "0",
   "SCRIPT_FIX_PRIMER_END"                    => "5",
   
   "SCRIPT_CONTAINS_JAVA_SCRIPT"              => "1",
-
-  "PRIMER_SEQUENCING_LEAD"                   => "50",
-  "PRIMER_SEQUENCING_SPACING"                => "500",
-  "SCRIPT_SEQUENCING_REVERSE"                => "1",
-  "PRIMER_SEQUENCING_INTERVAL"               => "250",
-  "PRIMER_SEQUENCING_ACCURACY"               => "20",
-
-  "PRIMER_PICK_LEFT_PRIMER"                  => "1",
-  "PRIMER_PICK_INTERNAL_OLIGO"               => "0",
-  "PRIMER_PICK_RIGHT_PRIMER"                 => "1",
-  "P3P_DETECTION_USE_PRODUCT_SIZE"        => "0",
-  "P3P_DETECTION_PRODUCT_MIN_SIZE"        => "100",
-  "P3P_DETECTION_PRODUCT_OPT_SIZE"        => "200",
-  "P3P_DETECTION_PRODUCT_MAX_SIZE"        => "1000",
-  
   "SERVER_PARAMETER_FILE"                    => "DEFAULT",
 
+  "P3P_DETECTION_USE_PRODUCT_SIZE"           => "0",
+  "P3P_DETECTION_PRODUCT_MIN_SIZE"           => "100",
+  "P3P_DETECTION_PRODUCT_OPT_SIZE"           => "200",
+  "P3P_DETECTION_PRODUCT_MAX_SIZE"           => "1000",
   "P3P_PRIMER_NAME_ACRONYM_LEFT"             => "F",
   "P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO"   => "IN",
   "P3P_PRIMER_NAME_ACRONYM_RIGHT"            => "R",
   "P3P_PRIMER_NAME_ACRONYM_SPACER"           => "_"
-# if you ad parameters here also add them to the respective save array
+# if you add parameters here also add them to the respective save array
 );
 
 # Array for the tasks Primer3plus can do (needed to build the HTML)
@@ -704,10 +692,6 @@ sub getMisLibrary {
 
 sub getLibraryList {
   return @misLibraryList;
-}
-
-sub getTaskList {
-  return @taskList;
 }
 
 sub getServerParameterFiles {
