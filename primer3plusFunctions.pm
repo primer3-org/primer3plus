@@ -1107,18 +1107,12 @@ sub new_try_run ($$$) {
     $resultsHash  = shift;
 
     my ($p3cOutputKeys, $p3cParametersKey, $readLine, $lineKey, $lineValue);
-    my ($outputLine, $p3cInputKeys, $value);
-    my (@p3cParameters, @nameKeyComplete, @readTheLine);
+    my ($outputLine, $p3cInputKeys, $value, $openError);
+    my (@p3cParameters, @readTheLine);
     my (%p3cInput, %p3cOutput );
-    my ( $namePrimerType, $nameNumber, $nameKeyName, $nameKeyValue );
         
     my $primer3BIN = getMachineSetting("PRIMER_BIN");
     my $callPrimer3 = $primer3BIN . getMachineSetting("PRIMER_RUNTIME");
-    my $acronymLeft  = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_LEFT"};
-    my $acronymRight = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
-    my $acronymOligo = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO"};
-    my $acronymSpace = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"};
-    my $sequenceName = $completeHash->{"SEQUENCE_ID"};
     my $inputFile = getMachineSetting("USER_CACHE_FILES_PATH");
     $inputFile .= "Input_";
     $inputFile .= makeUniqueID();
@@ -1135,6 +1129,8 @@ sub new_try_run ($$$) {
                    "primers/oligos to evaluate");
         setDoNotPick("1");
     }
+
+###### Create a hash with parameters primer3 understands
     
     # We copy over only the keys from the default hash to be save
     # from broken tags provided by the user
@@ -1146,7 +1142,9 @@ sub new_try_run ($$$) {
         }
     }
     $p3cInput{"PRIMER_TASK"} = $completeHash->{"SCRIPT_TASK"};
-
+    $p3cInput{PRIMER_PICK_ANYWAY}  = "1";
+    $p3cInput{P3_FILE_FLAG}        = "0";
+    $p3cInput{PRIMER_EXPLAIN_FLAG} = "1";
 
 ###### Set all the tags to special values for the run
 
@@ -1159,19 +1157,7 @@ sub new_try_run ($$$) {
         $p3cInput{"PRIMER_PRODUCT_SIZE_RANGE"} = "$minSize-$maxSize";
     }
 
-    # Be sure to get all sequencing primers
-    if (($completeHash->{"SCRIPT_TASK"}) eq "pick_sequencing_primers") {
-        $p3cInput{"PRIMER_NUM_RETURN"} = 1000;
-    }
-
-    # Copy all necessary parmeters
-    
-    # Set some parameters to enable primer3 to work
-    $p3cInput{PRIMER_PICK_ANYWAY}  = "1";
-    $p3cInput{P3_FILE_FLAG}        = "0";
-    $p3cInput{PRIMER_EXPLAIN_FLAG} = "1";
-
-    # prepare parameters for primer3
+    # replace the names by the filenames
     my %misLibrary = getMisLibrary();
     my $libary;
     if ( defined $p3cInput{"PRIMER_MISPRIMING_LIBRARY"} ) {
@@ -1183,7 +1169,12 @@ sub new_try_run ($$$) {
         $p3cInput{"PRIMER_INTERNAL_MISHYB_LIBRARY"} = $misLibrary{$libary};
     }
 
-    ## Check if Primer3 can be run
+    # Be sure to get all sequencing primers
+    if (($completeHash->{"SCRIPT_TASK"}) eq "pick_sequencing_primers") {
+        $p3cInput{"PRIMER_NUM_RETURN"} = 1000;
+    }
+
+###### Check if Primer3 can be run
     if ( !( -e $primer3BIN ) ) {
         setMessage("Configuration Error: $primer3BIN ".
                    "can not be found!");
@@ -1195,22 +1186,31 @@ sub new_try_run ($$$) {
         setDoNotPick("1");
     }
 
+    ## Only continue here if everything is OK
     if ( getDoNotPick() != 0 ) {
          setMessage("Primer3 did not run due to an internal conflict.");
          return;
     }
 
-    open( FILE, ">$inputFile" ) or 
-        setMessage("cannot write $inputFile");
-    foreach $p3cInputKeys ( keys( %p3cInput ) ) {
-        $value = $p3cInput{"$p3cInputKeys"};
-        if ( $value ne "" ) {
-            print FILE qq{$p3cInputKeys=$p3cInput{"$p3cInputKeys"}\n};
+###### Create input file
+    $openError = 0;
+    open( FILE, ">$inputFile" ) or $openError = 1;
+    if ($openError == 0) {
+        foreach $p3cInputKeys ( keys( %p3cInput ) ) {
+            $value = $p3cInput{"$p3cInputKeys"};
+            if ( $value ne "" ) {
+                print FILE qq{$p3cInputKeys=$p3cInput{"$p3cInputKeys"}\n};
+            }
         }
+        print FILE qq{=\n};
+        close(FILE);
+    } else {
+        setMessage("cannot write $inputFile");
+        return;
     }
-    print FILE qq{=\n};
-    close(FILE);
 
+
+###### Really run primer3
     open PRIMER3OUTPUT, "$callPrimer3 < $inputFile 2>&1 |"
         or setMessage("could not start primer3");
     while (<PRIMER3OUTPUT>) {
@@ -1219,7 +1219,7 @@ sub new_try_run ($$$) {
     close PRIMER3OUTPUT;
 #   unlink $inputFile;
 
-
+###### Interprete the output
     foreach $readLine (@readTheLine) {
         ( $lineKey, $lineValue ) = split "=", $readLine;
         $lineKey   =~ s/\s//g;
@@ -1229,10 +1229,36 @@ sub new_try_run ($$$) {
 
         # Make a Name for each primer
         if ( $lineKey =~ /_SEQUENCE$/ ) {
-            @nameKeyComplete = split "_", $lineKey;
+            createPrimerName($lineKey, $completeHash, $resultsHash);
+        }
+    }
+  
+    return;
+}
+
+###############################
+# createName: Name the primer #
+###############################
+sub createPrimerName ($$$$) {
+    my ($inName, $completeHash, $resultsHash);
+    $inName       = shift;
+    $completeHash = shift;
+    $resultsHash  = shift;
+
+    my @nameKeyComplete;
+    my ( $namePrimerType, $nameNumber, $nameKeyName, $nameKeyValue );
+        
+    my $acronymLeft  = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_LEFT"};
+    my $acronymRight = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
+    my $acronymOligo = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO"};
+    my $acronymSpace = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"};
+    my $sequenceName = $completeHash->{"SEQUENCE_ID"};
+
+    if ( $inName =~ /_SEQUENCE$/ ) {
+            @nameKeyComplete = split "_", $inName;
             $namePrimerType = $nameKeyComplete[1];
             $nameNumber = $nameKeyComplete[2];
-            $nameKeyName = $lineKey;
+            $nameKeyName = $inName;
             $nameKeyName =~ s/SEQUENCE/NAME/;
             $nameKeyValue = "";
 
@@ -1265,10 +1291,9 @@ sub new_try_run ($$$) {
                 $nameKeyValue .= "??";
             }
             $resultsHash->{"$nameKeyName"} = $nameKeyValue;
-            @nameKeyComplete = "";
-        }
     }
-  
+    
+    
     return;
 }
 
