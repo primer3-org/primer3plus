@@ -109,7 +109,7 @@ my %misLibrary = (
   "HUMAN"             => "humrep_and_simple.txt",
   "RODENT_AND_SIMPLE" => "rodrep_and_simple.txt",
   "RODENT"            => "rodent_ref.txt",
-  "DROSOPHILA"        => "drosophila.w.transposons.txt"
+  "DROSOPHILA"        => "drosophila_w_transposons.txt"
   # Put more repeat libraries here. Add them also to the array.
 );
 

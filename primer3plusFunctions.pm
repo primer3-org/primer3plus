@@ -416,16 +416,20 @@ sub createSequenceFile {
 # createSettingsFile: Write all Information associated with Settings in a string #
 ##################################################################################
 sub createSettingsFile {
-	my ($settings, $saveKey, $returnString);
+	my ($settings, $type, $saveKey, $returnString);
 	$settings = shift;
-	my (@saveSettingsKeys) = getSaveSettingsParameters();
+	my (@saveSettingsKeys) = keys %$settings;
+	my @sortkeys = sort @saveSettingsKeys;
 
 	$returnString  = "Primer3Plus File - Do not Edit\r\n";
 	$returnString .= "Type: Settings\r\n";
 	$returnString .= "\r\n";
 
-	foreach $saveKey (@saveSettingsKeys) {
-		$returnString .= $saveKey . "=" . $settings->{$saveKey} . "\r\n";
+	foreach $saveKey (@sortkeys) {
+	    if (($saveKey =~ /^PRIMER_/)
+	         || ($saveKey =~ /^P3P_/)) {
+	        $returnString .= $saveKey . "=" . $settings->{$saveKey} . "\r\n";
+	    }		
 	}
 
 	$returnString .= "\r\n";
