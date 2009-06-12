@@ -98,9 +98,6 @@ my %machineSettings = (
   # The maximal time Primer3Manager will store the cached files / cookies.
   "MAX_STORAGE_TIME" =>  "+4d",
 
-  # If you make any substantial modifications give this code a new
-  # version designation.
-  "CGI_VERSION" => "(primer3_www_results.cgi v 0.5)"
 );
 
   # Add mispriming / mishybing libraries; 
