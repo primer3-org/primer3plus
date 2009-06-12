@@ -746,7 +746,7 @@ sub checkParameters (\%) {
         my $choosenSequence = $dataStorage->{"SEQUENCE_TEMPLATE"};
         if ( $choosenSequence eq "example" ) {
             $dataStorage->{"SEQUENCE_TEMPLATE"} = getLyk3Sequence();
-            $dataStorage->{"SEQUENCE_ID"} = "Medicago NSP2";
+            $dataStorage->{"SEQUENCE_ID"} = "Medicago Lyk3";
         } else {
             $dataStorage->{"SEQUENCE_TEMPLATE"} = "";
             $dataStorage->{"SEQUENCE_ID"} = "";
