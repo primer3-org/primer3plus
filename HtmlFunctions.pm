@@ -460,8 +460,8 @@ $formHTML .= qq{
 <div id="primer3plus_task_bar">
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="25%">
-       <col width="55%">
+       <col width="50%">
+       <col width="30%">
 
        <col width="20%">
      </colgroup>
@@ -470,7 +470,22 @@ $formHTML .= qq{
 	
 <input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="SCRIPT_CONTAINS_JAVA_SCRIPT,PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,SCRIPT_SEQUENCING_REVERSE,P3P_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,SCRIPT_PRINT_INPUT,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" type="hidden">
 
-         <a id="PRIMER_TASK_INPUT" name="PRIMER_TASK_INPUT" href="$machineSettings{URL_HELP}#PRIMER_TASK">
+         <a name="SERVER_PARAMETER_FILE_INPUT" href="$machineSettings{URL_HELP}#SERVER_PARAMETER_FILE">
+         Load server settings:</a>&nbsp;&nbsp;
+         <select name="SERVER_PARAMETER_FILE">
+};
+
+        my @ServerParameterFiles = getServerParameterFilesList;
+	my $option;
+        foreach $option (@ServerParameterFiles) {
+                my $selectedStatus = "";
+                if ($option eq $settings{SERVER_PARAMETER_FILE} ) {$selectedStatus = " selected=\"selected\"" };
+                $formHTML .= "         <option$selectedStatus>$option</option>\n";
+        }
+
+        $formHTML .= qq{         </select>&nbsp;
+       <input name="Activate_Settings" value="Activate Settings" type="submit"><br>
+             <a id="PRIMER_TASK_INPUT" name="PRIMER_TASK_INPUT" href="$machineSettings{URL_HELP}#PRIMER_TASK">
          Task:</a>&nbsp;
         <select id="PRIMER_TASK" name="PRIMER_TASK" class="primer3plus_task" onchange="showSelection(this);" onkeyup="showSelection(this)">
 };
@@ -982,31 +997,13 @@ $formHTML .= qq{
        <col width="100%">
      </colgroup>
       <tbody><tr>
-      <td class="primer3plus_cell_no_border">
-         <a name="SERVER_PARAMETER_FILE_INPUT" href="$machineSettings{URL_HELP}#SERVER_PARAMETER_FILE">
-         Please select special settings here:</a>&nbsp;&nbsp;
-         <select name="SERVER_PARAMETER_FILE">
-};
-
-        my @ServerParameterFiles = getServerParameterFilesList;
-	my $option;
-        foreach $option (@ServerParameterFiles) {
-                my $selectedStatus = "";
-                if ($option eq $settings{SERVER_PARAMETER_FILE} ) {$selectedStatus = " selected=\"selected\"" };
-                $formHTML .= "         <option$selectedStatus>$option</option>\n";
-        }
-
-        $formHTML .= qq{         </select>&nbsp;(use Activate Settings button to load the selected settings)
-       </td>
-     </tr>
-     <tr>
        <td class="primer3plus_cell_no_border"><a name="SCRIPT_SETTINGS_FILE_INPUT">To upload or save a settings file from
          your local computer, choose here:</a>
        </td>
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border"><input name="SCRIPT_SETTINGS_FILE" type="file">&nbsp;&nbsp;
-             <input name="Activate_Settings" value="Activate Settings" type="submit">&nbsp;&nbsp;&nbsp;
+             <input name="Load_Settings" value="Load Settings" type="submit">&nbsp;&nbsp;&nbsp;
          <input name="Save_Settings" value="Save Settings" type="submit">
        </td>
      </tr>
