@@ -235,43 +235,22 @@ sub divNoJavascript {
 # divTopBar: Writes the TopBar for the Form #    
 #############################################
 sub divTopBar {
-	my $type;
-	$type = shift;
+	my $title = shift;
+	my $explain = shift;
+	my $help = shift;
 	
-	my ($title, $explain, $topLeft, $topRight, $lowLeft, $lowRight);
-	
-	if ($type eq "Manager") {
-	$title    = "Primer3Manager";
-	$explain  = "manage your primer library";
-	$topLeft  = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_FORM_ACTION}">Primer3Plus</a>};
-	$topRight = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_HELP}">Help</a>};
-	$lowLeft  = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_ABOUT}">About</a>};
-	$lowRight = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_SOURCE}">Source Code</a>};
+	if ($title eq "0") {
+		$title = "Primer3Plus";
 	}
-	elsif ($type eq "About") {
-	$title    = "Primer3Plus - About";
-	$explain  = "pick primers from a DNA sequence";
-	$topLeft  = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_PRIMER_MANAGER}">Primer3Manager</a>};
-	$topRight = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_HELP}">Help</a>};
-	$lowLeft  = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_FORM_ACTION}">back to Form</a>};
-	$lowRight = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_SOURCE}">Source Code</a>};
+	if ($explain eq "0") {
+		$explain = "pick primers from a DNA sequence";
 	}
-	elsif ($type eq "Help") {
-	$title    = "Primer3Plus - Help";
-	$explain  = "pick primers from a DNA sequence";
-	$topLeft  = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_PRIMER_MANAGER}">Primer3Manager</a>};
-	$topRight = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_ABOUT}">About</a>};
-	$lowLeft  = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_FORM_ACTION}">back to Form</a>};
-	$lowRight = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_SOURCE}">Source Code</a>};
+	if ($explain eq "1") {
+		$explain = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_HELP}">Help</a>};
 	}
-	else {
-	$title    = "Primer3Plus";
-	$explain  = "pick primers from a DNA sequence";
-	$topLeft  = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_PRIMER_MANAGER}">Primer3Manager</a>};
-	$topRight = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_HELP}">Help</a>};
-	$lowLeft  = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_ABOUT}">About</a>};
-	$lowRight = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_SOURCE}">Source Code</a>};
-	}	
+	if ($help eq "0") {
+		$help = qq{<a class="primer3plus_top_bar_link" href="$machineSettings{URL_HELP}">Help</a>};
+	}
 		
 	my $formHTML = qq{
 <div id="primer3plus_top_bar">
@@ -285,15 +264,15 @@ sub divTopBar {
        <td class="primer3plus_top_bar_cell" rowspan="2"><a class="primer3plus_top_bar_title">$title</a><br>
        <a class="primer3plus_top_bar_explain" id="top">$explain</a>
        </td>
-       <td class="primer3plus_top_bar_cell">$topLeft
+       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="primer3plusPackage.cgi">More...</a>
        </td>
-       <td class="primer3plus_top_bar_cell">$topRight
+       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://sourceforge.net/projects/primer3/">Source Code</a>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_top_bar_cell">$lowLeft
+       <td class="primer3plus_top_bar_cell">$help
        </td>
-       <td class="primer3plus_top_bar_cell">$lowRight
+       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="primer3plusAbout.cgi">About</a>
        </td>
      </tr>
    </table>
@@ -750,7 +729,7 @@ function setRegion(tagOpen,tagClose) {
 <form name="mainForm" action="$machineSettings{URL_FORM_ACTION}" method="post" enctype="multipart/form-data" onReset="initTabs();">
 };
 
-$formHTML .= divTopBar("Basic");
+$formHTML .= divTopBar(0,0,0);
 $formHTML .= divTaskBar(\%settings);
 $formHTML .= divNoJavascript();
 $formHTML .= divMessages();
@@ -2071,7 +2050,7 @@ sub createSelectSequence {
 <form action="$machineSettings{URL_FORM_ACTION}" method="post" enctype="multipart/form-data">
 };
 
-$formHTML .= divTopBar("Basic");
+$formHTML .= divTopBar(0,0,0);
 
 $formHTML .= divMessages();
 
@@ -2174,7 +2153,7 @@ sub createHelpHTML {
 
 };
 
-$formHTML .= divTopBar("Help");
+$formHTML .= divTopBar("Primer3Plus - Help",0,"");
 
 $formHTML .= divMessages;
 
@@ -2792,7 +2771,7 @@ sub createAboutHTML {
   my $formHTML = qq{
 <div id="primer3plus_complete">
 };
-$formHTML .= divTopBar("About");
+$formHTML .= divTopBar("Primer3Plus - About",0,0);
 
 $formHTML .= divMessages();
 
@@ -2961,7 +2940,7 @@ sub createPackageHTML {
 
 };
 
-$formHTML .= divTopBar("More...");
+$formHTML .= divTopBar(0,0,0);
 
 $formHTML .= divMessages;
 
@@ -3592,7 +3571,7 @@ sub createResultsNoPrimers {
   my $formHTML = qq{
 <div id="primer3plus_complete">
 };
-$formHTML .= divTopBar("Default");
+$formHTML .= divTopBar(0,0,0);
 
 $formHTML .= divMessages();
 
@@ -3646,7 +3625,7 @@ sub createResultsDetection {
   my $formHTML = qq{
 <div id="primer3plus_complete">
 };
-$formHTML .= divTopBar("Default");
+$formHTML .= divTopBar(0,0,0);
 
 $formHTML .= divMessages();
 
@@ -3738,7 +3717,7 @@ sub createResultsPrimerCheck {
 <div id="primer3plus_complete">
 };
 
-$formHTML .= divTopBar("Default");
+$formHTML .= divTopBar(0,0,0);
 
 $formHTML .= divMessages();
 
@@ -3906,7 +3885,7 @@ sub createResultsList {
 
 <form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
 };
-$formHTML .= divTopBar("Default");
+$formHTML .= divTopBar(0,0,0);
 
 $formHTML .= divMessages();
 
@@ -3974,7 +3953,7 @@ sub createResultsPrimerList {
   my $formHTML = qq{
 <div id="primer3plus_complete">
 };
-$formHTML .= divTopBar("Default");
+$formHTML .= divTopBar(0,0,0);
 
 $formHTML .= divMessages();
 
@@ -4653,7 +4632,7 @@ sub createManagerHTML {
 
 <form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
 };
-$formHTML .= divTopBar("Manager");
+$formHTML .= divTopBar("Primer3Manager", "manage your primer library",0);
 
 $formHTML .= divMessages();
 
