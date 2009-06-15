@@ -57,65 +57,6 @@ sub getPrimerNumber {
 return $primerNumber;
 }
 
-##################################################################
-# mainResultsHTML: Will select the function to write a HTML-Form #
-##################################################################
-sub mainResultsHTML {
-  my ($completeParameters, $results); 
-  $completeParameters = shift;
-  $results = shift;
-
-  my $returnString;
-  my $task = $results->{"PRIMER_TASK"};
-  my $pair_count = 0;
-  my $primer_count = 0;
-
-  # To be sure primer3 run well and provided results  
-  if (defined $results->{"PRIMER_PAIR_NUM_RETURNED"}){
-      $pair_count = $results->{"PRIMER_PAIR_NUM_RETURNED"};
-      $primer_count = $results->{"PRIMER_LEFT_NUM_RETURNED"};
-      $primer_count += $results->{"PRIMER_INTERNAL_NUM_RETURNED"};
-      $primer_count += $results->{"PRIMER_RIGHT_NUM_RETURNED"};
-  } else {
-      $returnString = createResultsNoPrimers($completeParameters, $results);       
-  }
-
-
-  if (($task eq "pick_detection_primers") 
-       || ($task eq "pick_cloning_primers")
-       || ($task eq "pick_discriminative_primers")
-       || ($task eq "pick_sequencing_primers")
-       || ($task eq "pick_primer_list")
-       || ($task eq "check_primers")) {
-      if ($pair_count != 0) {
-          $returnString = createResultsDetection($completeParameters, $results);
-      } elsif ($task eq "pick_sequencing_primers") {
-          $returnString = createResultsPrimerList($completeParameters, $results, "0");
-      } else {
-          $returnString = createResultsPrimerList($completeParameters, $results, "1");
-      }
-  }
-  elsif ($task eq "Detection") {
-      $returnString = createResultsDetection($completeParameters, $results);
-  }
-  elsif ($task eq "Primer_Check") {
-      $returnString = createResultsPrimerCheck($completeParameters, $results);
-  }
-  elsif ($task eq "Cloning") {
-      $returnString = createResultsDetection($completeParameters, $results);
-  }
-  elsif ($task eq "Primer_List") {
-      $returnString = createResultsPrimerList($completeParameters, $results, "1");
-  }
-  elsif ($task eq "Sequencing") {
-      $returnString = createResultsPrimerList($completeParameters, $results, "0");
-  }
-  else {
-      $returnString = createResultsList($results);
-  }
-
-  return $returnString;
-}
 
 ################################################################################
 # getWrapper: Reads the template file in which Primer3plus pastes it's content #
@@ -171,66 +112,6 @@ sub getWrapper {
   return $FileContent;
 };
 
-##########################################################
-# divMessages: Writes all the messages in an HTML - Form #
-##########################################################
-sub divMessages {
-	my @messages = getMessages();
-	my $formHTML = "";
-	
-	if ($#messages > -1 ) {
-	$formHTML = qq{
-<div id="primer3plus_messages">
-   <table class="primer3plus_table_no_border">};
-
-my $note;
-foreach $note (@messages) {
-	$formHTML .= qq{
-     <tr>
-       <td class="primer3plus_note">$note</td>
-     </tr>} ;
-};
-$formHTML .= qq{
-   </table>
-</div>
-
-};
-	}
-	else {
-	$formHTML = "";
-	}
-	return $formHTML;
-}
-
-########################################################### 
-# divNoJavascript:                                        #
-# Writes a message that is hidden by JavaScript, so only  #
-# JavaScript disabled browser show it.                    #
-###########################################################
-sub divNoJavascript {
-	my $urlFormAction = getMachineSetting("URL_FORM_ACTION");
-	$urlFormAction .= "?SCRIPT_CONTAINS_JAVA_SCRIPT=0";
-	my $formHTML = qq{
-<script type="text/javascript">
-	document.write("<style type=\\"text/css\\">div#primer3plus_no_javascript { display: none; }</style>");
-</script>
-
-<div id="primer3plus_no_javascript">
-   <table class="primer3plus_table_no_border">
-     <tr>
-       <td class="primer3plus_note">
-       		JavaScript is not enabled, please enable JavaScript and refresh the browser, 
-       		or click this link for the <a href="$urlFormAction">non-Javascript version</a>.
-       </td>
-     </tr>
-   </table>
-</div>
-};
-
-	return $formHTML;
-}
-
-
 #############################################
 # divTopBar: Writes the TopBar for the Form #    
 #############################################
@@ -282,192 +163,36 @@ sub divTopBar {
 	return $formHTML;
 }
 
-###############################################
-# divTaskBar: Writes the TaskBar for the Form #
-###############################################
-sub divTaskBar {
-        my %settings;
-	%settings = %{(shift)};
-
-	my $formHTML = qq{
-<div id="primer3plus_task_bar">
-   <table class="primer3plus_table_no_border">
-     <colgroup>
-       <col width="25%">
-       <col width="55%">
-
-       <col width="20%">
-     </colgroup>
-	<tr>
-	<td class="primer3plus_cell_no_border">
+##########################################################
+# divMessages: Writes all the messages in an HTML - Form #
+##########################################################
+sub divMessages {
+	my @messages = getMessages();
+	my $formHTML = "";
 	
-<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="SCRIPT_CONTAINS_JAVA_SCRIPT,PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,SCRIPT_SEQUENCING_REVERSE,P3P_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,SCRIPT_PRINT_INPUT,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" type="hidden">
+	if ($#messages > -1 ) {
+	$formHTML = qq{
+<div id="primer3plus_messages">
+   <table class="primer3plus_table_no_border">};
 
-         <a id="PRIMER_TASK_INPUT" name="PRIMER_TASK_INPUT" href="$machineSettings{URL_HELP}#PRIMER_TASK">
-         Task:</a>&nbsp;
-        <select id="PRIMER_TASK" name="PRIMER_TASK" class="primer3plus_task" onchange="showSelection(this);" onkeyup="showSelection(this)">
-};
-
-        my $option;
-        foreach $option (@scriptTask) {
-                my $selectedStatus = "";
-                if ($option eq $settings{PRIMER_TASK} ) {$selectedStatus = " selected=\"selected\"" };
-                $formHTML .= "         <option class=\"primer3plus_task\"$selectedStatus>$option</option>\n";
-        }
-
-        $formHTML .= qq{         </select>
-       </td>};
-
-        $formHTML .= qq{
-        <td class="primer3plus_cell_no_border_explain">
-   <div id="primer3plus_explain_Detection"
-        };
-
-        if ($settings{PRIMER_TASK} ne "Detection")  {
-                $formHTML .= qq{style="display: none;" };
-        }
-$formHTML .= qq{>
-     <a>Select primer pairs to detect the given template sequence. Optionally targets and included/excluded regions can be specified.</a>
-   </div>
-   <div id="primer3plus_explain_Cloning" };
-
-        if ($settings{PRIMER_TASK} ne "Cloning")  {
-                $formHTML .= qq{style="display: none;" };
-        }
-$formHTML .= qq{>
-     <a>Mark an included region to pick primers fixed at its the boundaries. The quality of the primers might be low.</a>
-   </div>
-   <div id="primer3plus_explain_Sequencing" };
-
-        if ($settings{PRIMER_TASK} ne "Sequencing")  {
-                $formHTML .= qq{style="display: none;" };
-        }
-$formHTML .= qq{>
-     <a>Pick a series of primers on both strands for sequencing. Optionally the regions of interest can be marked using targets.</a>
-   </div>
-   <div id="primer3plus_explain_Primer_List" };
-
-        if ($settings{PRIMER_TASK} ne "Primer_List")  {
-                $formHTML .= qq{style="display: none;" };
-        }
-$formHTML .= qq{>
-     <a>Returns a list of all possible primers the can be designed on the template sequence. Optionally targets and included/exlcuded regions can be specified.</a>
-   </div>
-   <div id="primer3plus_explain_Primer_Check" };
-
-        if ($settings{PRIMER_TASK} ne "Primer_Check")  {
-                $formHTML .= qq{style="display: none;" };
-        }
-$formHTML .= qq{>
-     <a>Evaluate a primer of known sequence with the given settings.</a>
-   </div>
-         </td><td class="primer3plus_cell_no_border" align="right">};
-
-$formHTML .= divPickPrimerButton();
-
-$formHTML .= qq{
-        </td>
-        </tr>
-   </tbody></table>
-</div>
-};
-
-	return $formHTML;
-}
-
-##############################################
-# divActionButtons: Writes the Action Button #    
-##############################################
-sub divActionButtons {
-	my $formHTML = qq{   
-	<table>
-           <tr>
-                <td><input name="Pick_Primers" value="Pick Primers" type="submit" style="background: #83db7b; "></td><td><input value="Reset Form" type="reset"></td>
-                <td><input name="Default_Settings" value="Reset Form" type="submit"></td>
-           </tr>
-        </table>
-};
-	return $formHTML;
-}
-
-#################################################
-# divPickPrimerButton: Writes the Action Button #    
-#################################################
-sub divPickPrimerButton {
-	my $formHTML = qq{   
-	<table><tr>
-	<td><input id="primer3plus_pick_primers_button" class="primer3plus_action_button" name="Pick_Primers" value="Pick Primers" type="submit" style="background: #83db7b;"></td>
-	<td><input class="primer3plus_action_button" name="Default_Settings" value="Reset Form" type="submit"></td>
-	</tr></table>
-};
-	return $formHTML;
-}
-
-###################################################
-# divStatistics: Writes the Statistics in a table #    
-###################################################
-sub divStatistics {
-	my %settings; 
-    %settings = %{(shift)};
-	
-	my $formHTML;
-	my $notEmpty;
-	$notEmpty = 0;
-
-
-$formHTML .= qq{  <div id="primer3plus_statictics" class="primer3plus_tab_page_no_border">
-  <table class="primer3plus_table_with_border">
-      <colgroup>
-        <col width="20%">
-        <col width="80%">
-      </colgroup>
+my $note;
+foreach $note (@messages) {
+	$formHTML .= qq{
      <tr>
-       <td class="primer3plus_cell_with_border" colspan="2">Statistics:</td>
-     </tr>
+       <td class="primer3plus_note">$note</td>
+     </tr>} ;
 };
-if (defined ($settings{"PRIMER_LEFT_EXPLAIN"}) and (($settings{"PRIMER_LEFT_EXPLAIN"}) ne "")) {
-$notEmpty = 1;
-$formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_with_border">Left Primer:</td>
-       <td class="primer3plus_cell_with_border">$settings{"PRIMER_LEFT_EXPLAIN"}</td>
-     </tr>
-};
-}
-if (defined ($settings{"PRIMER_INTERNAL_OLIGO_EXPLAIN"}) and (($settings{"PRIMER_INTERNAL_OLIGO_EXPLAIN"}) ne "")) {
-$notEmpty = 1;
-$formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_with_border">Internal Oligo:</td>
-       <td class="primer3plus_cell_with_border">$settings{"PRIMER_INTERNAL_OLIGO_EXPLAIN"}</td>
-     </tr>
-};
-}
-if (defined ($settings{"PRIMER_RIGHT_EXPLAIN"}) and (($settings{"PRIMER_RIGHT_EXPLAIN"}) ne "")) {
-$notEmpty = 1;
-$formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_with_border">Right Primer:</td>
-       <td class="primer3plus_cell_with_border">$settings{"PRIMER_RIGHT_EXPLAIN"}</td>
-     </tr>
-};
-}
-if (defined ($settings{"PRIMER_PAIR_EXPLAIN"}) and (($settings{"PRIMER_PAIR_EXPLAIN"}) ne "")) {
-$notEmpty = 1;
-$formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_with_border">Primer Pair:</td>
-       <td class="primer3plus_cell_with_border">$settings{"PRIMER_PAIR_EXPLAIN"}</td>
-     </tr>
-};
-}
-$formHTML .= qq{  </table>
-  </div>
-};
+$formHTML .= qq{
+   </table>
+</div>
 
-if ($notEmpty == 0) {
-$formHTML = "";
-}
-	 
+};
+	}
+	else {
+	$formHTML = "";
+	}
 	return $formHTML;
 }
-
 
 ################################################################################################
 # createStartUpUseScript: Will write an HTML-Form based on the parameters in the Hash supplied #
@@ -730,8 +455,114 @@ function setRegion(tagOpen,tagClose) {
 };
 
 $formHTML .= divTopBar(0,0,0);
-$formHTML .= divTaskBar(\%settings);
-$formHTML .= divNoJavascript();
+
+$formHTML .= qq{
+<div id="primer3plus_task_bar">
+   <table class="primer3plus_table_no_border">
+     <colgroup>
+       <col width="25%">
+       <col width="55%">
+
+       <col width="20%">
+     </colgroup>
+	<tr>
+	<td class="primer3plus_cell_no_border">
+	
+<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="SCRIPT_CONTAINS_JAVA_SCRIPT,PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,SCRIPT_SEQUENCING_REVERSE,P3P_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,SCRIPT_PRINT_INPUT,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" type="hidden">
+
+         <a id="PRIMER_TASK_INPUT" name="PRIMER_TASK_INPUT" href="$machineSettings{URL_HELP}#PRIMER_TASK">
+         Task:</a>&nbsp;
+        <select id="PRIMER_TASK" name="PRIMER_TASK" class="primer3plus_task" onchange="showSelection(this);" onkeyup="showSelection(this)">
+};
+
+        my $option;
+        foreach $option (@scriptTask) {
+                my $selectedStatus = "";
+                if ($option eq $settings{PRIMER_TASK} ) {$selectedStatus = " selected=\"selected\"" };
+                $formHTML .= "         <option class=\"primer3plus_task\"$selectedStatus>$option</option>\n";
+        }
+
+        $formHTML .= qq{         </select>
+       </td>};
+
+        $formHTML .= qq{
+        <td class="primer3plus_cell_no_border_explain">
+   <div id="primer3plus_explain_Detection"
+        };
+
+        if ($settings{PRIMER_TASK} ne "Detection")  {
+                $formHTML .= qq{style="display: none;" };
+        }
+$formHTML .= qq{>
+     <a>Select primer pairs to detect the given template sequence. Optionally targets and included/excluded regions can be specified.</a>
+   </div>
+   <div id="primer3plus_explain_Cloning" };
+
+        if ($settings{PRIMER_TASK} ne "Cloning")  {
+                $formHTML .= qq{style="display: none;" };
+        }
+$formHTML .= qq{>
+     <a>Mark an included region to pick primers fixed at its the boundaries. The quality of the primers might be low.</a>
+   </div>
+   <div id="primer3plus_explain_Sequencing" };
+
+        if ($settings{PRIMER_TASK} ne "Sequencing")  {
+                $formHTML .= qq{style="display: none;" };
+        }
+$formHTML .= qq{>
+     <a>Pick a series of primers on both strands for sequencing. Optionally the regions of interest can be marked using targets.</a>
+   </div>
+   <div id="primer3plus_explain_Primer_List" };
+
+        if ($settings{PRIMER_TASK} ne "Primer_List")  {
+                $formHTML .= qq{style="display: none;" };
+        }
+$formHTML .= qq{>
+     <a>Returns a list of all possible primers the can be designed on the template sequence. Optionally targets and included/exlcuded regions can be specified.</a>
+   </div>
+   <div id="primer3plus_explain_Primer_Check" };
+
+        if ($settings{PRIMER_TASK} ne "Primer_Check")  {
+                $formHTML .= qq{style="display: none;" };
+        }
+$formHTML .= qq{>
+     <a>Evaluate a primer of known sequence with the given settings.</a>
+   </div>
+         </td><td class="primer3plus_cell_no_border" align="right">};
+
+$formHTML .= qq{   
+	<table><tr>
+	<td><input id="primer3plus_pick_primers_button" class="primer3plus_action_button" name="Pick_Primers" value="Pick Primers" type="submit" style="background: #83db7b;"></td>
+	<td><input class="primer3plus_action_button" name="Default_Settings" value="Reset Form" type="submit"></td>
+	</tr></table>
+};
+
+$formHTML .= qq{
+        </td>
+        </tr>
+   </tbody></table>
+</div>
+};
+
+my $urlFormAction = getMachineSetting("URL_FORM_ACTION");
+$urlFormAction .= "?SCRIPT_CONTAINS_JAVA_SCRIPT=0";
+$formHTML .= qq{
+<script type="text/javascript">
+	document.write("<style type=\\"text/css\\">div#primer3plus_no_javascript { display: none; }</style>");
+</script>
+
+<div id="primer3plus_no_javascript">
+   <table class="primer3plus_table_no_border">
+     <tr>
+       <td class="primer3plus_note">
+       		JavaScript is not enabled, please enable JavaScript and refresh the browser, 
+       		or click this link for the <a href="$urlFormAction">non-Javascript version</a>.
+       </td>
+     </tr>
+   </table>
+</div>
+};
+
 $formHTML .= divMessages();
 
 
@@ -2030,6 +1861,131 @@ initTabs();
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
   return $returnString;
+}
+
+##################################################################
+# mainResultsHTML: Will select the function to write a HTML-Form #
+##################################################################
+sub mainResultsHTML {
+  my ($completeParameters, $results); 
+  $completeParameters = shift;
+  $results = shift;
+
+  my $returnString;
+  my $task = $results->{"PRIMER_TASK"};
+  my $pair_count = 0;
+  my $primer_count = 0;
+
+  # To be sure primer3 run well and provided results  
+  if (defined $results->{"PRIMER_PAIR_NUM_RETURNED"}){
+      $pair_count = $results->{"PRIMER_PAIR_NUM_RETURNED"};
+      $primer_count = $results->{"PRIMER_LEFT_NUM_RETURNED"};
+      $primer_count += $results->{"PRIMER_INTERNAL_NUM_RETURNED"};
+      $primer_count += $results->{"PRIMER_RIGHT_NUM_RETURNED"};
+  } else {
+      $returnString = createResultsNoPrimers($completeParameters, $results);       
+  }
+
+
+  if (($task eq "pick_detection_primers") 
+       || ($task eq "pick_cloning_primers")
+       || ($task eq "pick_discriminative_primers")
+       || ($task eq "pick_sequencing_primers")
+       || ($task eq "pick_primer_list")
+       || ($task eq "check_primers")) {
+      if ($pair_count != 0) {
+          $returnString = createResultsDetection($completeParameters, $results);
+      } elsif ($task eq "pick_sequencing_primers") {
+          $returnString = createResultsPrimerList($completeParameters, $results, "0");
+      } else {
+          $returnString = createResultsPrimerList($completeParameters, $results, "1");
+      }
+  }
+  elsif ($task eq "Detection") {
+      $returnString = createResultsDetection($completeParameters, $results);
+  }
+  elsif ($task eq "Primer_Check") {
+      $returnString = createResultsPrimerCheck($completeParameters, $results);
+  }
+  elsif ($task eq "Cloning") {
+      $returnString = createResultsDetection($completeParameters, $results);
+  }
+  elsif ($task eq "Primer_List") {
+      $returnString = createResultsPrimerList($completeParameters, $results, "1");
+  }
+  elsif ($task eq "Sequencing") {
+      $returnString = createResultsPrimerList($completeParameters, $results, "0");
+  }
+  else {
+      $returnString = createResultsList($results);
+  }
+
+  return $returnString;
+}
+
+###################################################
+# divStatistics: Writes the Statistics in a table #    
+###################################################
+sub divStatistics {
+	my %settings; 
+    %settings = %{(shift)};
+	
+	my $formHTML;
+	my $notEmpty;
+	$notEmpty = 0;
+
+
+$formHTML .= qq{  <div id="primer3plus_statictics" class="primer3plus_tab_page_no_border">
+  <table class="primer3plus_table_with_border">
+      <colgroup>
+        <col width="20%">
+        <col width="80%">
+      </colgroup>
+     <tr>
+       <td class="primer3plus_cell_with_border" colspan="2">Statistics:</td>
+     </tr>
+};
+if (defined ($settings{"PRIMER_LEFT_EXPLAIN"}) and (($settings{"PRIMER_LEFT_EXPLAIN"}) ne "")) {
+$notEmpty = 1;
+$formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_with_border">Left Primer:</td>
+       <td class="primer3plus_cell_with_border">$settings{"PRIMER_LEFT_EXPLAIN"}</td>
+     </tr>
+};
+}
+if (defined ($settings{"PRIMER_INTERNAL_OLIGO_EXPLAIN"}) and (($settings{"PRIMER_INTERNAL_OLIGO_EXPLAIN"}) ne "")) {
+$notEmpty = 1;
+$formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_with_border">Internal Oligo:</td>
+       <td class="primer3plus_cell_with_border">$settings{"PRIMER_INTERNAL_OLIGO_EXPLAIN"}</td>
+     </tr>
+};
+}
+if (defined ($settings{"PRIMER_RIGHT_EXPLAIN"}) and (($settings{"PRIMER_RIGHT_EXPLAIN"}) ne "")) {
+$notEmpty = 1;
+$formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_with_border">Right Primer:</td>
+       <td class="primer3plus_cell_with_border">$settings{"PRIMER_RIGHT_EXPLAIN"}</td>
+     </tr>
+};
+}
+if (defined ($settings{"PRIMER_PAIR_EXPLAIN"}) and (($settings{"PRIMER_PAIR_EXPLAIN"}) ne "")) {
+$notEmpty = 1;
+$formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_with_border">Primer Pair:</td>
+       <td class="primer3plus_cell_with_border">$settings{"PRIMER_PAIR_EXPLAIN"}</td>
+     </tr>
+};
+}
+$formHTML .= qq{  </table>
+  </div>
+};
+
+if ($notEmpty == 0) {
+$formHTML = "";
+}
+	 
+	return $formHTML;
 }
 
 ################################################################################
