@@ -2306,26 +2306,12 @@ $formHTML .= divMessages;
 $formHTML .= qq{
 <div id="primer3plus_help">
 
-<h2><a name="cautions">Cautions</a></h2>
-  <p>Some of the most important issues in primer picking can be addressed only before using Primer3. These are sequence
-    quality (including making sure the sequence is not vector and not chimeric) and avoiding repetitive elements.<br>
-    <br>
-    Techniques for avoiding problems include a thorough understanding of possible vector contaminants and cloning
-    artifacts coupled with database searches using blast, fasta, or other similarity searching program to screen for
-    vector contaminants and possible repeats.  Repbase (J. Jurka, A.F.A. Smit, C. Pethiyagoda, and others, 1995-1996) 
-    <a href="ftp://ftp.ncbi.nih.gov/repository/repbase">ftp://ftp.ncbi.nih.gov/repository/repbase</a>
-    ) is an excellent source of repeat sequences and pointers to the literature.  Primer3 now allows you to screen
-    candidate oligos against a Mispriming Library (or a Mishyb Library in the case of internal oligos).<br>
-    <br>
-    Sequence quality can be controlled by manual trace viewing and quality clipping or automatic quality clipping
-    programs.  Low-quality bases should be changed to N's or can be made part of Excluded Regions. The beginning of
-    a sequencing read is often problematic because of primer peaks, and the end of the read often contains many
-    low-quality or even meaningless called bases. Therefore when picking primers from single-pass sequence it is
-    often best to use the Included Region parameter to ensure that Primer3 chooses primers in the high quality region
-    of the read.<br>
-    <br>
-    In addition, Primer3 takes as input a <a href="#SEQUENCE_QUALITY">Sequence Quality</a> list for use with those
-    base calling programs such as Phred that output this information.
+<h2><a name="primer3plus" href="primer3plus.cgi">Primer3Plus</a></h2>
+  <p>Primer3Plus is the module which runs primer3 to pick primers.
+  </p>
+
+<h2><a name="primer3manager" href="primer3manager.cgi">Primer3Manager</a></h2>
+  <p>Primer3Manager allows to manage selected primers and to save them.
   </p>
 
 
