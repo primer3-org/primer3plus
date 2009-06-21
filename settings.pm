@@ -145,22 +145,28 @@ my %defaultSettings = (
   "SEQUENCE_INCLUDED_REGION"                 =>"",
   "SEQUENCE_TARGET"                          =>"",
   "SEQUENCE_EXCLUDED_REGION"                 =>"",
-  "SEQUENCE_PRIMER_OVERLAP_POS"              =>"", #
-  "SEQUENCE_INTERNAL_EXCLUDED_REGION"        =>"", #
+  "SEQUENCE_PRIMER_OVERLAP_POS"              =>"",
+  "SEQUENCE_INTERNAL_EXCLUDED_REGION"        =>"",
   "SEQUENCE_PRIMER"                          =>"",
   "SEQUENCE_INTERNAL_OLIGO"                  =>"",
   "SEQUENCE_PRIMER_REVCOMP"                  =>"",
-  "SEQUENCE_START_CODON_POSITION"            =>"", #"-1000000", #
-  "SEQUENCE_QUALITY"                         =>"", #
-  "SEQUENCE_FORCE_LEFT_START"                =>"", #"-1", #
-  "SEQUENCE_FORCE_LEFT_END"                  =>"", #"-1", #
-  "SEQUENCE_FORCE_RIGHT_START"               =>"", #"-1", #
-  "SEQUENCE_FORCE_RIGHT_END"                 =>"", #"-1", #
+  "SEQUENCE_START_CODON_POSITION"            =>"", #"-1000000",
+  "SEQUENCE_QUALITY"                         =>"",
+  "SEQUENCE_FORCE_LEFT_START"                =>"", #"-1",
+  "SEQUENCE_FORCE_LEFT_END"                  =>"", #"-1",
+  "SEQUENCE_FORCE_RIGHT_START"               =>"", #"-1",
+  "SEQUENCE_FORCE_RIGHT_END"                 =>"", #"-1",
 # Primer3 "Global" Input Tags
   "PRIMER_TASK"                              => "pick_detection_primers",
   "PRIMER_PICK_LEFT_PRIMER"                  => "1",
   "PRIMER_PICK_INTERNAL_OLIGO"               => "0",
   "PRIMER_PICK_RIGHT_PRIMER"                 => "1",
+  
+  
+  
+  
+  
+  
   "PRIMER_PICK_ANYWAY"	                     => "1", #
   "PRIMER_EXPLAIN_FLAG"                      => "0", #
   "PRIMER_LOWERCASE_MASKING"                 => "0", #
@@ -237,10 +243,6 @@ my %defaultSettings = (
   "SCRIPT_SEQUENCING_REVERSE"                => "1", #
   "PRIMER_SEQUENCING_INTERVAL"               => "250", #
   "PRIMER_SEQUENCING_ACCURACY"               => "20", #
-# Primer3 Internal Oligo "Sequence" Input Tags
-  "SEQUENCE_INTERNAL_EXCLUDED_REGION"        => "", #
-  "SEQUENCE_INTERNAL_OLIGO"                  => "", #
-# Primer3 Internal Oligo "Global" Input Tags
   "PRIMER_INTERNAL_OPT_SIZE"                 => "20", #
   "PRIMER_INTERNAL_MIN_SIZE"                 => "18", #
   "PRIMER_INTERNAL_MAX_SIZE"                 => "27", #
@@ -272,7 +274,7 @@ my %defaultSettings = (
   "PRIMER_INTERNAL_WT_LIBRARY_MISHYB"        => "0.0", #
   "PRIMER_INTERNAL_WT_SEQ_QUAL"              => "0.0", #
 
-  "P3_FILE_FLAG"                             => "0", #                        
+  "P3_FILE_FLAG"                             => "0",
 # End of Primer3 Input Parameters
 
 # Script Parameters

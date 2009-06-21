@@ -600,7 +600,7 @@ $formHTML .= qq{
         <li id="tab3"><a onclick="showTab('tab3','primer3plus_advanced_primer_picking')">Advanced Settings</a></li>
         <li id="tab4"><a onclick="showTab('tab4','primer3plus_internal_oligo')">Internal Oligo</a></li>
         <li id="tab5"><a onclick="showTab('tab5','primer3plus_penalties')">Penalty Weights</a></li>
-        <li id="tab6"><a onclick="showTab('tab6','primer3plus_advanced_sequence')">Sequence Quality</a></li>
+        <li id="tab6"><a onclick="showTab('tab6','primer3plus_advanced_sequence')">Advanced Sequence</a></li>
         </ul>
 </div>};
 
@@ -767,6 +767,24 @@ $formHTML .= qq{>
      </tr>
   </table>
 </div>
+<div id="primer3plus_primer_overlap_pos_box">
+  <table class="primer3plus_table_no_border">
+     <colgroup>
+       <col width="20%">
+       <col width="2%">
+       <col width="78%">
+     </colgroup>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('A list of positions in the given sequence. The value for this parameter has the form position.<br>E.g. 120: only pick primers overlaping the position 120.<br> Or use ? in the source sequence to mark the position.<br>Primer3 tries to pick primer pairs were the forward or the reverse primer overlaps one of these positions.');"
+         onmouseout="toolTip();"  name="SEQUENCE_PRIMER_OVERLAP_POS_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_PRIMER_OVERLAP_POS">Primer overlap positions:</a>
+       </td>
+       <td class="primer3plus_cell_no_border">?
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="40" id="SEQUENCE_PRIMER_OVERLAP_POS" name="SEQUENCE_PRIMER_OVERLAP_POS" value="$settings{SEQUENCE_PRIMER_OVERLAP_POS}" type="text">
+       </td>
+     </tr>
+  </table>
+</div>
 <br>
 <div id="primer3plus_pick_which">
    <table class="primer3plus_table_no_border">
@@ -811,13 +829,36 @@ $formHTML .= qq{>
        <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" id="SEQUENCE_PRIMER_REVCOMP" name="SEQUENCE_PRIMER_REVCOMP" value="$settings{SEQUENCE_PRIMER_REVCOMP}" type="text">
        </td>
      </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border_bg"><a href="$machineSettings{URL_HELP}#SEQUENCE_FORCE_LEFT_START">Force start:</a>&nbsp;&nbsp;
+         <input size="6" name="SEQUENCE_FORCE_LEFT_START" value="$settings{SEQUENCE_FORCE_LEFT_START}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;
+       </td>
+       <td class="primer3plus_cell_no_border_bg"><a href="$machineSettings{URL_HELP}#SEQUENCE_FORCE_RIGHT_START">Force start:</a>&nbsp;&nbsp;
+         <input size="6" name="SEQUENCE_FORCE_RIGHT_START" value="$settings{SEQUENCE_FORCE_RIGHT_START}" type="text">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border_bg"><a href="$machineSettings{URL_HELP}#SEQUENCE_FORCE_LEFT_END">Force end:</a>&nbsp;&nbsp;&nbsp;
+         <input size="6" name="SEQUENCE_FORCE_LEFT_END" value="$settings{SEQUENCE_FORCE_LEFT_END}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;
+       </td>
+       <td class="primer3plus_cell_no_border_bg"><a href="$machineSettings{URL_HELP}#SEQUENCE_FORCE_RIGHT_END">Force end:</a>&nbsp;&nbsp;&nbsp;
+         <input size="6" name="SEQUENCE_FORCE_RIGHT_END" value="$settings{SEQUENCE_FORCE_RIGHT_END}" type="text">
+       </td>
+     </tr>
   </table>
+</div>
+</div>
 </div>
 };
 
-$formHTML .= qq{</div>
-</div>
-<div id="primer3plus_advanced_sequence" style="display: none;" class="primer3plus_tab_page">
+####################################
+# Create the ADVANCED SEQUENCE tab #
+####################################
+$formHTML .= qq{<div id="primer3plus_advanced_sequence" style="display: none;" class="primer3plus_tab_page">
    <table class="primer3plus_table_no_border">
     <tr>
        <td class="primer3plus_cell_no_border"> <a name="PRIMER_FIRST_BASE_INDEX_INPUT" href="$machineSettings{URL_HELP}#PRIMER_FIRST_BASE_INDEX">
@@ -1335,8 +1376,8 @@ $formHTML .= qq{
        <col width="68%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#internal_oligo_generic">
-         Hyb Oligo Excluded Region:</a>
+       <td class="primer3plus_cell_no_border"><a name="internal_oligo_generic_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_INTERNAL_EXCLUDED_REGION">
+         Excluded Region:</a>
        </td>
        <td class="primer3plus_cell_no_border"><input id="SEQUENCE_INTERNAL_EXCLUDED_REGION" name="SEQUENCE_INTERNAL_EXCLUDED_REGION"
          value="$settings{SEQUENCE_INTERNAL_EXCLUDED_REGION}" type="text">
