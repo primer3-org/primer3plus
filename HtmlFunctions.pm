@@ -943,40 +943,49 @@ $formHTML .= qq{
        <col width="40%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_OPT_SIZE_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SIZE">Primer Size</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_OPT_SIZE_INPUT">Primer Size</a>
        </td>
-       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_MIN_SIZE" value="$settings{PRIMER_MIN_SIZE}" type="text">
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_MIN_SIZE">Min:</a>
+       <input size="4" name="PRIMER_MIN_SIZE" value="$settings{PRIMER_MIN_SIZE}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_OPT_SIZE" value="$settings{PRIMER_OPT_SIZE}" type="text">
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_OPT_SIZE">Opt:</a>
+       <input size="4" name="PRIMER_OPT_SIZE" value="$settings{PRIMER_OPT_SIZE}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_MAX_SIZE" value="$settings{PRIMER_MAX_SIZE}" type="text">
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_MAX_SIZE">Max:</a> 
+       <input size="4" name="PRIMER_MAX_SIZE" value="$settings{PRIMER_MAX_SIZE}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_OPT_TM_INPUT" href="$machineSettings{URL_HELP}#PRIMER_TM">Primer Tm</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_OPT_TM_INPUT">Primer Tm</a>
        </td>
-       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_MIN_TM" value="$settings{PRIMER_MIN_TM}" type="text">
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_MIN_TM">Min:</a>
+         <input size="4" name="PRIMER_MIN_TM" value="$settings{PRIMER_MIN_TM}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_OPT_TM" value="$settings{PRIMER_OPT_TM}" type="text">
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_OPT_TM">Opt:</a>
+         <input size="4" name="PRIMER_OPT_TM" value="$settings{PRIMER_OPT_TM}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_MAX_TM" value="$settings{PRIMER_MAX_TM}" type="text">
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_MAX_TM">Max:</a>
+         <input size="4" name="PRIMER_MAX_TM" value="$settings{PRIMER_MAX_TM}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;&nbsp;
+       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;
          <a name="PRIMER_PAIR_MAX_DIFF_TM_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_MAX_DIFF_TM">
          Max Tm Difference:</a> <input size="4" name="PRIMER_PAIR_MAX_DIFF_TM"
          value="$settings{PRIMER_PAIR_MAX_DIFF_TM}" type="text">
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_GC_PERCENT_INPUT" href="$machineSettings{URL_HELP}#PRIMER_GC_PERCENT">Primer GC%</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_GC_PERCENT_INPUT">Primer GC%</a>
        </td>
-       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_MIN_GC" value="$settings{PRIMER_MIN_GC}" type="text">
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_MIN_GC">Min:</a>
+          <input size="4" name="PRIMER_MIN_GC" value="$settings{PRIMER_MIN_GC}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_OPT_GC_PERCENT" value="$settings{PRIMER_OPT_GC_PERCENT}" type="text">
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_OPT_GC_PERCENT">Opt:</a>
+         <input size="4" name="PRIMER_OPT_GC_PERCENT" value="$settings{PRIMER_OPT_GC_PERCENT}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_MAX_GC" value="$settings{PRIMER_MAX_GC}" type="text">
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_MAX_GC">Max:</a>
+         <input size="4" name="PRIMER_MAX_GC" value="$settings{PRIMER_MAX_GC}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;&nbsp;<a onmouseover="toolTip('Select which end of the primer is fixed and which end can be extended or shortened by Primer3Plus fo find optimal primers.');"
          onmouseout="toolTip();" name="SCRIPT_FIX_PRIMER_END_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_FIX_PRIMER_END">Fix the</a>
@@ -1142,15 +1151,25 @@ $formHTML .= qq{</div>
        </td>         
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_NUM_RETURN_INPUT" href="$machineSettings{URL_HELP}#PRIMER_NUM_RETURN">Number To Return:</a>
-       </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_NUM_RETURN" value="$settings{PRIMER_NUM_RETURN}" type="text">
-       </td>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_GC_CLAMP_INPUT" href="$machineSettings{URL_HELP}#PRIMER_GC_CLAMP">CG Clamp:</a>
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_GC_CLAMP" value="$settings{PRIMER_GC_CLAMP}" type="text">
        </td>
-    </tr>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_END_GC_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_END_GC">Max End GC:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MAX_END_GC" value="$settings{PRIMER_MAX_END_GC}" type="text">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_NUM_RETURN_INPUT" href="$machineSettings{URL_HELP}#PRIMER_NUM_RETURN">Number To Return:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_NUM_RETURN" value="$settings{PRIMER_NUM_RETURN}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border">
+       </td>
+       <td class="primer3plus_cell_no_border">
+       </td>
+     </tr>
      <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_SELF_ANY_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_SELF_ANY">Max Self Complementarity:</a>
        </td>
@@ -1162,8 +1181,10 @@ $formHTML .= qq{</div>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"></td>
-       <td class="primer3plus_cell_no_border"></td>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_POS_OVERLAP_TO_END_DIST_INPUT" href="$machineSettings{URL_HELP}#PRIMER_POS_OVERLAP_TO_END_DIST">
+         Max Pos/End Overlap:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_POS_OVERLAP_TO_END_DIST" value="$settings{PRIMER_POS_OVERLAP_TO_END_DIST}" type="text"></td>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_END_STABILITY_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_END_STABILITY">
          Max 3' Stability:</a>
        </td>
@@ -1395,46 +1416,46 @@ $formHTML .= qq{
        <col width="35%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_INTERNAL_OLIGO_SIZE_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SIZE">Hyb Oligo Size:</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_INTERNAL_OLIGO_SIZE_INPUT">Hyb Oligo Size:</a>
        </td>
-       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_INTERNAL_MIN_SIZE"
-         value="$settings{PRIMER_INTERNAL_MIN_SIZE}" type="text">
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MIN_SIZE">Min:</a>
+         <input size="4" name="PRIMER_INTERNAL_MIN_SIZE" value="$settings{PRIMER_INTERNAL_MIN_SIZE}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_INTERNAL_OPT_SIZE"
-         value="$settings{PRIMER_INTERNAL_OPT_SIZE}" type="text">
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_OPT_SIZE">Opt:</a>
+         <input size="4" name="PRIMER_INTERNAL_OPT_SIZE" value="$settings{PRIMER_INTERNAL_OPT_SIZE}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_INTERNAL_MAX_SIZE"
-         value="$settings{PRIMER_INTERNAL_MAX_SIZE}" type="text">
-       </td>
-       <td class="primer3plus_cell_no_border">
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_OPT_TM_INPUT" href="$machineSettings{URL_HELP}#PRIMER_TM">Hyb Oligo Tm:</a> 
-       </td>
-       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_INTERNAL_MIN_TM"
-         value="$settings{PRIMER_INTERNAL_MIN_TM}" type="text">
-       </td>
-       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_INTERNAL_OPT_TM"
-         value="$settings{PRIMER_INTERNAL_OPT_TM}" type="text"> 
-       </td>
-       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_INTERNAL_MAX_TM"
-         value="$settings{PRIMER_INTERNAL_MAX_TM}" type="text">
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MAX_SIZE">Max:</a>
+         <input size="4" name="PRIMER_INTERNAL_MAX_SIZE" value="$settings{PRIMER_INTERNAL_MAX_SIZE}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_INTERNAL_OLIGO_GC_INPUT" href="$machineSettings{URL_HELP}#PRIMER_GC">Hyb Oligo GC%</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_OPT_TM_INPUT">Hyb Oligo Tm:</a> 
        </td>
-       <td class="primer3plus_cell_no_border">Min: <input size="4" name="PRIMER_INTERNAL_MIN_GC"
-         value="$settings{PRIMER_INTERNAL_MIN_GC}" type="text">
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MIN_TM">Min:</a>
+         <input size="4" name="PRIMER_INTERNAL_MIN_TM" value="$settings{PRIMER_INTERNAL_MIN_TM}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">Opt: <input size="4" name="PRIMER_INTERNAL_OPT_GC_PERCENT"
-         value="$settings{PRIMER_INTERNAL_OPT_GC_PERCENT}" type="text">
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_OPT_TM">Opt:</a>
+         <input size="4" name="PRIMER_INTERNAL_OPT_TM" value="$settings{PRIMER_INTERNAL_OPT_TM}" type="text"> 
        </td>
-       <td class="primer3plus_cell_no_border">Max: <input size="4" name="PRIMER_INTERNAL_MAX_GC"
-         value="$settings{PRIMER_INTERNAL_MAX_GC}" type="text">
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MAX_TM">Max:</a>
+         <input size="4" name="PRIMER_INTERNAL_MAX_TM" value="$settings{PRIMER_INTERNAL_MAX_TM}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_INTERNAL_OLIGO_GC_INPUT">Hyb Oligo GC%</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MIN_GC">Min:</a>
+         <input size="4" name="PRIMER_INTERNAL_MIN_GC" value="$settings{PRIMER_INTERNAL_MIN_GC}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_OPT_GC_PERCENT">Opt:</a>
+         <input size="4" name="PRIMER_INTERNAL_OPT_GC_PERCENT" value="$settings{PRIMER_INTERNAL_OPT_GC_PERCENT}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MAX_GC">Max:</a>
+         <input size="4" name="PRIMER_INTERNAL_MAX_GC" value="$settings{PRIMER_INTERNAL_MAX_GC}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">
        </td>
@@ -1537,9 +1558,13 @@ $formHTML .= qq{         </select>
      </tr>
    </table>
   </div>
+</div>
 };
 
-$formHTML .= qq{</div>
+##################################
+# Create the PENALTY WEIGHTS tab #
+##################################
+$formHTML .= qq{
 <div id="primer3plus_penalties" class="primer3plus_tab_page" style="display: none;">
    <table class="primer3plus_table_penalties">
      <colgroup>
@@ -1552,10 +1577,10 @@ $formHTML .= qq{</div>
        <h3>For Primers</h3>
        </td>
        <td class="primer3plus_cell_penalties">
-       <h3>For Primer Pairs</h3>
+       <h3>For Internal Oligos</h3>
        </td>
        <td class="primer3plus_cell_penalties">
-       <h3>For Hyb Oligos</h3>
+       <h3>For Primer Pairs</h3>
        </td>
      </tr>
    </table>
@@ -1578,17 +1603,67 @@ $formHTML .= qq{</div>
        <col width="9%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_penalties"><a name="WT_TM_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Tm</a>
+       <td class="primer3plus_cell_penalties"><a name="PRIMER_WT_SIZE_INPUT">Size</a>
        </td>
-       <td class="primer3plus_cell_penalties">Lt:
+       <td class="primer3plus_cell_penalties"><a href="$machineSettings{URL_HELP}#PRIMER_WT_SIZE_LT">Lt:</a>
+       </td>
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_SIZE_LT"
+         value="$settings{PRIMER_WT_SIZE_LT}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties"><a href="$machineSettings{URL_HELP}#PRIMER_WT_SIZE_GT">Gt:</a>
+       </td>
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_SIZE_GT"
+         value="$settings{PRIMER_WT_SIZE_GT}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties"><a name="PRIMER_INTERNAL_WT_SIZE_INPUT">Size</a>
+       </td>
+       <td class="primer3plus_cell_penalties"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_WT_SIZE_LT">Lt:</a>
+       </td>
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_SIZE_LT"
+         value="$settings{PRIMER_INTERNAL_WT_SIZE_LT}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_WT_SIZE_GT">Gt:</a>
+       </td>
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_SIZE_GT"
+         value="$settings{PRIMER_INTERNAL_WT_SIZE_GT}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties"><a name="PAIR_WT_PRODUCT_SIZE_INPUT">Product Size</a>
+       </td>
+       <td class="primer3plus_cell_penalties"><a href="$machineSettings{URL_HELP}#PRIMER_PAIR_WT_PRODUCT_SIZE_LT">Lt:</a> 
+       </td>
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_PRODUCT_SIZE_LT"
+         value="$settings{PRIMER_PAIR_WT_PRODUCT_SIZE_LT}" type="text"> 
+       </td>
+       <td class="primer3plus_cell_penalties"><a href="$machineSettings{URL_HELP}#PRIMER_PAIR_WT_PRODUCT_SIZE_GT">Gt:</a>
+       </td>
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_PRODUCT_SIZE_GT"
+         value="$settings{PRIMER_PAIR_WT_PRODUCT_SIZE_GT}" type="text">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_penalties"><a name="PRIMER_WT_TM_INPUT">Tm</a>
+       </td>
+       <td class="primer3plus_cell_penalties"><a href="$machineSettings{URL_HELP}#PRIMER_WT_TM_LT">Lt:</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_TM_LT"
          value="$settings{PRIMER_WT_TM_LT}" type="text">
        </td>
-       <td class="primer3plus_cell_penalties">Gt:
+       <td class="primer3plus_cell_penalties"><a href="$machineSettings{URL_HELP}#PRIMER_WT_TM_GT">Gt:</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_TM_GT"
          value="$settings{PRIMER_WT_TM_GT}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties"><a name="PRIMER_INTERNAL_WT_TM_INPUT">Tm</a>
+       </td>
+       <td class="primer3plus_cell_penalties"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_WT_TM_LT">Lt:</a>
+       </td>
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_TM_LT"
+         value="$settings{PRIMER_INTERNAL_WT_TM_LT}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_WT_TM_GT">Gt:</a>
+       </td>
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_TM_GT"
+         value="$settings{PRIMER_INTERNAL_WT_TM_GT}" type="text">
        </td>
        <td class="primer3plus_cell_penalties"><a name="PAIR_WT_PRODUCT_TM_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Product Tm</a>
        </td>
@@ -1602,91 +1677,41 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_PRODUCT_TM_GT"
          value="$settings{PRIMER_PAIR_WT_PRODUCT_TM_GT}" type="text">
        </td>
-       <td class="primer3plus_cell_penalties"><a name="IO_WT_TM_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Tm</a>
-       </td>
-       <td class="primer3plus_cell_penalties">Lt:
-       </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_TM_LT"
-         value="$settings{PRIMER_INTERNAL_WT_TM_LT}" type="text">
-       </td>
-       <td class="primer3plus_cell_penalties">Gt: 
-       </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_TM_GT"
-         value="$settings{PRIMER_INTERNAL_WT_TM_GT}" type="text">
-       </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_penalties"><a name="WT_SIZE_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Size</a>
+       <td class="primer3plus_cell_penalties"><a name="PRIMER_WT_GC_PERCENT_INPUT">GC%</a> 
        </td>
-       <td class="primer3plus_cell_penalties">Lt:
-       </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_SIZE_LT"
-         value="$settings{PRIMER_WT_SIZE_LT}" type="text">
-       </td>
-       <td class="primer3plus_cell_penalties">Gt:
-       </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_SIZE_GT"
-         value="$settings{PRIMER_WT_SIZE_GT}" type="text">
-       </td>
-       <td class="primer3plus_cell_penalties"><a name="PAIR_WT_PRODUCT_SIZE_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Product Size</a>
-       </td>
-       <td class="primer3plus_cell_penalties">Lt: 
-       </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_PRODUCT_SIZE_LT"
-         value="$settings{PRIMER_PAIR_WT_PRODUCT_SIZE_LT}" type="text"> 
-       </td>
-       <td class="primer3plus_cell_penalties">Gt:
-       </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_PRODUCT_SIZE_GT"
-         value="$settings{PRIMER_PAIR_WT_PRODUCT_SIZE_GT}" type="text">
-       </td>
-       <td class="primer3plus_cell_penalties"><a name="IO_WT_SIZE_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Size</a>
-       </td>
-       <td class="primer3plus_cell_penalties">Lt:
-       </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_SIZE_LT"
-         value="$settings{PRIMER_INTERNAL_WT_SIZE_LT}" type="text">
-       </td>
-       <td class="primer3plus_cell_penalties">Gt: 
-       </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_SIZE_GT"
-         value="$settings{PRIMER_INTERNAL_WT_SIZE_GT}" type="text">
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_penalties"><a name="WT_GC_PERCENT_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">GC%</a> 
-       </td>
-       <td class="primer3plus_cell_penalties">Lt:
+       <td class="primer3plus_cell_penalties"><a href="$machineSettings{URL_HELP}#PRIMER_WT_GC_PERCENT_LT">Lt:</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_GC_PERCENT_LT"
          value="$settings{PRIMER_WT_GC_PERCENT_LT}" type="text">
        </td>
-       <td class="primer3plus_cell_penalties">Gt:
+       <td class="primer3plus_cell_penalties"><a href="$machineSettings{URL_HELP}#PRIMER_WT_GC_PERCENT_GT">Gt:</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_GC_PERCENT_GT"
          value="$settings{PRIMER_WT_GC_PERCENT_GT}" type="text">
        </td>
-       <td class="primer3plus_cell_penalties">
+       <td class="primer3plus_cell_penalties"><a name="PRIMER_INTERNAL_WT_GC_PERCENT_INPUT">GC%</a>
        </td>
-       <td class="primer3plus_cell_penalties"> 
-       </td>
-       <td class="primer3plus_cell_penalties"> 
-       </td>
-       <td class="primer3plus_cell_penalties">
-       </td>
-       <td class="primer3plus_cell_penalties">
-       </td>
-       <td class="primer3plus_cell_penalties"><a name="IO_WT_GC_PERCENT_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">GC%</a>
-       </td>
-       <td class="primer3plus_cell_penalties">Lt:
+       <td class="primer3plus_cell_penalties"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_WT_GC_PERCENT_LT">Lt:</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_GC_PERCENT_LT"
          value="$settings{PRIMER_INTERNAL_WT_GC_PERCENT_LT}" type="text">
        </td>
-       <td class="primer3plus_cell_penalties">Gt: 
+       <td class="primer3plus_cell_penalties"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_WT_GC_PERCENT_GT">Gt:</a> 
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_GC_PERCENT_GT"
          value="$settings{PRIMER_INTERNAL_WT_GC_PERCENT_GT}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
+       <td class="primer3plus_cell_penalties"> 
+       </td>
+       <td class="primer3plus_cell_penalties"> 
+       </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
+       <td class="primer3plus_cell_penalties">
        </td>
      </tr>
    </table>
@@ -1705,15 +1730,15 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_LIBRARY_MISPRIMING"
          value="$settings{PRIMER_PAIR_WT_LIBRARY_MISPRIMING}" type="text">
        </td>
-       <td class="primer3plus_cell_penalties"><a name="PAIR_WT_REP_SIM_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Pair Mispriming</a>
-       </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_LIBRARY_MISPRIMING"
-         value="$settings{PRIMER_PAIR_WT_LIBRARY_MISPRIMING}" type="text">
-       </td>
        <td class="primer3plus_cell_penalties"><a name="IO_WT_REP_SIM_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Hyb Oligo Mishybing</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_LIBRARY_MISHYB"
          value="$settings{PRIMER_INTERNAL_WT_LIBRARY_MISHYB}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties"><a name="PAIR_WT_REP_SIM_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Pair Mispriming</a>
+       </td>
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_LIBRARY_MISPRIMING"
+         value="$settings{PRIMER_PAIR_WT_LIBRARY_MISPRIMING}" type="text">
        </td>
      </tr>
      <tr>
@@ -1722,17 +1747,17 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_SELF_ANY"
          value="$settings{PRIMER_WT_SELF_ANY}" type="text">
        </td>
-       <td class="primer3plus_cell_penalties"><a name="PAIR_WT_COMPL_ANY_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">
-         Any Complementarity</a>
-       </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_COMPL_ANY"
-         value="$settings{PRIMER_PAIR_WT_COMPL_ANY}" type="text">
-       </td>
        <td class="primer3plus_cell_penalties"><a name="IO_WT_COMPL_ANY_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">
          Self Complementarity</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_SELF_ANY"
          value="$settings{PRIMER_INTERNAL_WT_SELF_ANY}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties"><a name="PAIR_WT_COMPL_ANY_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">
+         Any Complementarity</a>
+       </td>
+       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_COMPL_ANY"
+         value="$settings{PRIMER_PAIR_WT_COMPL_ANY}" type="text">
        </td>
      </tr>
      <tr>
@@ -1741,14 +1766,14 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_SELF_END"
          value="$settings{PRIMER_WT_SELF_END}" type="text">
        </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
        <td class="primer3plus_cell_penalties"><a name="PAIR_WT_COMPL_END_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">3' Self Complementarity</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_COMPL_END"
          value="$settings{PRIMER_PAIR_WT_COMPL_END}" type="text">
-       </td>
-       <td class="primer3plus_cell_penalties">
-       </td>
-       <td class="primer3plus_cell_penalties">
        </td>
      </tr>
      <tr>
@@ -1757,14 +1782,14 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_TEMPLATE_MISPRIMING"
          value="$settings{PRIMER_WT_TEMPLATE_MISPRIMING}" type="text">
        </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
        <td class="primer3plus_cell_penalties"><a name="PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Template Mispriming</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_TEMPLATE_MISPRIMING"
          value="$settings{PRIMER_PAIR_WT_TEMPLATE_MISPRIMING}" type="text">
-       </td>
-       <td class="primer3plus_cell_penalties">
-       </td>
-       <td class="primer3plus_cell_penalties">
        </td>
      </tr>
      <tr>
@@ -1773,14 +1798,14 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_NUM_NS"
          value="$settings{PRIMER_WT_NUM_NS}" type="text">
        </td>
-       <td class="primer3plus_cell_penalties">
-       </td>
-       <td class="primer3plus_cell_penalties">
-       </td>
        <td class="primer3plus_cell_penalties"><a name="IO_WT_NUM_NS_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Hyb Oligo #N's</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_NUM_NS"
          value="$settings{PRIMER_INTERNAL_WT_NUM_NS}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
+       <td class="primer3plus_cell_penalties">
        </td>
      </tr>
      <tr>
@@ -1789,14 +1814,14 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_SEQ_QUAL"
          value="$settings{PRIMER_WT_SEQ_QUAL}" type="text">
        </td>
-       <td class="primer3plus_cell_penalties">
-       </td>
-       <td class="primer3plus_cell_penalties">
-       </td>
        <td class="primer3plus_cell_penalties"><a name="IO_WT_SEQ_QUAL_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Sequence Quality</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_SEQ_QUAL"
          value="$settings{PRIMER_INTERNAL_WT_SEQ_QUAL}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
+       <td class="primer3plus_cell_penalties">
        </td>
      </tr>
      <tr>
@@ -1820,14 +1845,14 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_POS_PENALTY"
          value="$settings{PRIMER_WT_POS_PENALTY}" type="text">
        </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
        <td class="primer3plus_cell_penalties"><a name="PAIR_WT_DIFF_TM_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">Tm Difference</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_DIFF_TM"
          value="$settings{PRIMER_PAIR_WT_DIFF_TM}" type="text">
-       </td>
-       <td class="primer3plus_cell_penalties">
-       </td>
-       <td class="primer3plus_cell_penalties">
        </td>
      </tr>
      <tr>
@@ -1836,15 +1861,15 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_END_STABILITY"
          value="$settings{PRIMER_WT_END_STABILITY}" type="text">
        </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
        <td class="primer3plus_cell_penalties"><a name="PAIR_WT_PR_PENALTY_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">
          Primer Penalty Weight</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_PR_PENALTY"
          value="$settings{PRIMER_PAIR_WT_PR_PENALTY}" type="text">
-       </td>
-       <td class="primer3plus_cell_penalties">
-       </td>
-       <td class="primer3plus_cell_penalties">
        </td>
      </tr>
      <tr>
@@ -1854,15 +1879,15 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INSIDE_PENALTY"
          value="$settings{PRIMER_INSIDE_PENALTY}" type="text">
        </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
+       <td class="primer3plus_cell_penalties">
+       </td>
        <td class="primer3plus_cell_penalties"><a name="PAIR_WT_IO_PENALTY_INPUT" href="$machineSettings{URL_HELP}#generic_penalty_weights">
          Hyb Oligo Penalty Weight</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_IO_PENALTY"
          value="$settings{PRIMER_PAIR_WT_IO_PENALTY}" type="text">
-       </td>
-       <td class="primer3plus_cell_penalties">
-       </td>
-       <td class="primer3plus_cell_penalties">
        </td>
      </tr>
      <tr>
