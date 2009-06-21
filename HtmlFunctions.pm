@@ -209,7 +209,7 @@ sub mainStartUpHTML {
 </DIV>  	
 
 <SCRIPT language=JavaScript>
-var prevTabPage = "primer3plus_primer";
+var prevTabPage = "primer3plus_main_tab";
 var prevTab = "tab1";
 
 function showTab(tab,id) {
@@ -454,8 +454,14 @@ function setRegion(tagOpen,tagClose) {
 <form name="mainForm" action="$machineSettings{URL_FORM_ACTION}" method="post" enctype="multipart/form-data" onReset="initTabs();">
 };
 
+######################
+# Insert the Top Bar #
+######################
 $formHTML .= divTopBar(0,0,0);
 
+################################################################
+# Create the always visible Settings/Task and pick primers bar #
+################################################################
 $formHTML .= qq{
 <div id="primer3plus_task_bar">
    <table class="primer3plus_table_no_border">
@@ -578,22 +584,31 @@ $formHTML .= qq{
 </div>
 };
 
+##################################
+# Insert possible Error Messages #
+##################################
 $formHTML .= divMessages();
 
-
-        $formHTML .= qq{  
+#######################
+# Create the Tab line #
+#######################
+$formHTML .= qq{  
 <div id="menuBar">
         <ul>
-        <li id="tab1"><a onclick="showTab('tab1','primer3plus_primer')">Main</a></li>
+        <li id="tab1"><a onclick="showTab('tab1','primer3plus_main_tab')">Main</a></li>
         <li id="tab2"><a onclick="showTab('tab2','primer3plus_general_primer_picking')">General Settings</a></li>
         <li id="tab3"><a onclick="showTab('tab3','primer3plus_advanced_primer_picking')">Advanced Settings</a></li>
-        <li id="tab4"><a onclick="showTab('tab4','primer3plus_Internal_Oligo')">Internal Oligo</a></li>
+        <li id="tab4"><a onclick="showTab('tab4','primer3plus_internal_oligo')">Internal Oligo</a></li>
         <li id="tab5"><a onclick="showTab('tab5','primer3plus_penalties')">Penalty Weights</a></li>
         <li id="tab6"><a onclick="showTab('tab6','primer3plus_advanced_sequence')">Sequence Quality</a></li>
         </ul>
-</div>
+</div>};
 
-<div id="primer3plus_primer" class="primer3plus_tab_page">
+#######################
+# Create the MAIN tab #
+#######################
+$formHTML .= qq{
+<div id="primer3plus_main_tab" class="primer3plus_tab_page">
 
 <div id="primer3plus_name_lib">
    <table class="primer3plus_table_no_border">
@@ -766,24 +781,24 @@ $formHTML .= qq{>
 
 	$formHTML .= ($settings{PRIMER_PICK_LEFT_PRIMER}) ? "checked=\"checked\" " : "";
  
-	$formHTML .= qq{ type="checkbox">Pick left primer<br>
-         or use left primer below.
+	$formHTML .= qq{ type="checkbox"><a href="$machineSettings{URL_HELP}#PRIMER_PICK_LEFT_PRIMER">Pick left primer</a><br>
+         or use <a href="$machineSettings{URL_HELP}#SEQUENCE_PRIMER">left primer</a> below.
        </td>
        <td class="primer3plus_cell_no_border_bg" valign="top">
          <input id="PRIMER_PICK_INTERNAL_OLIGO" name="PRIMER_PICK_INTERNAL_OLIGO" value="1" };
 
 	$formHTML .= ($settings{PRIMER_PICK_INTERNAL_OLIGO}) ? "checked=\"checked\" " : "";
  
-	$formHTML .= qq{type="checkbox">Pick hybridization probe<br>
-         (internal oligo) or use oligo below.
+	$formHTML .= qq{type="checkbox"><a href="$machineSettings{URL_HELP}#PRIMER_PICK_INTERNAL_OLIGO">Pick hybridization probe</a><br>
+         (internal oligo) or use <a href="$machineSettings{URL_HELP}#SEQUENCE_INTERNAL_OLIGO">oligo</a> below.
        </td>
        <td class="primer3plus_cell_no_border_bg" valign="top">
          <input id="PRIMER_PICK_RIGHT_PRIMER" name="PRIMER_PICK_RIGHT_PRIMER" value="1" };
 
 	$formHTML .= ($settings{PRIMER_PICK_RIGHT_PRIMER}) ? "checked=\"checked\" " : "";
  
-	$formHTML .= qq{ type="checkbox">Pick right primer
-         or use right primer<br>
+	$formHTML .= qq{ type="checkbox"><a href="$machineSettings{URL_HELP}#PRIMER_PICK_RIGHT_PRIMER">Pick right primer</a>
+         or use <a href="$machineSettings{URL_HELP}#SEQUENCE_PRIMER_REVCOMP">right primer</a><br>
          below (5'-&gt;3' on opposite strand).
        </td>
      </tr>
@@ -859,10 +874,13 @@ $formHTML .= qq{</div>
        </td>
      </tr>
    </table>
+</div>
 };
 
-$formHTML .= qq{</div>
-
+###################################
+# Create the GENERAL SETTINGS tab #
+###################################
+$formHTML .= qq{
 <div id="primer3plus_general_primer_picking" class="primer3plus_tab_page" style="display: none;">
    <table class="primer3plus_table_no_border">
      <tr>
@@ -1309,7 +1327,7 @@ $formHTML .= qq{</div>
 };
 
 $formHTML .= qq{
-<div id="primer3plus_Internal_Oligo" class="primer3plus_tab_page" style="display: none;">
+<div id="primer3plus_internal_oligo" class="primer3plus_tab_page" style="display: none;">
   <div class="primer3plus_section">
    <table class="primer3plus_table_no_border">
      <colgroup>
@@ -1846,7 +1864,7 @@ $formHTML .= qq{</div>
 </div>	
 <script type="text/javascript">
 function initTabs() {
-	showTab('tab1','primer3plus_primer');
+	showTab('tab1','primer3plus_main_tab');
 	showTopic('$task');
 }
 initTabs();
