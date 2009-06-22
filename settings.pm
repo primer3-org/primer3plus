@@ -164,7 +164,7 @@ my %defaultSettings = (
   "PRIMER_NUM_RETURN"                        => "5",
   "PRIMER_POS_OVERLAP_TO_END_DIST"           => "5",
   "PRIMER_PRODUCT_SIZE_RANGE"                => "150-250 100-300 301-400 401-500 501-600 601-700 701-850 851-1000",
-  "PRIMER_PRODUCT_OPT_SIZE"                  => "0",
+  "PRIMER_PRODUCT_OPT_SIZE"                  => "",
   "PRIMER_PAIR_WT_PRODUCT_SIZE_LT"           => "0.0",
   "PRIMER_PAIR_WT_PRODUCT_SIZE_GT"           => "0.0",
   "PRIMER_MIN_SIZE"                          => "18",
@@ -273,27 +273,23 @@ my %defaultSettings = (
   "PRIMER_SEQUENCING_SPACING"                => "500",
   "PRIMER_SEQUENCING_INTERVAL"               => "250",
   "PRIMER_SEQUENCING_ACCURACY"               => "20",
-  "PRIMER_WT_END_QUAL"=>"0.0",
-  "PRIMER_INTERNAL_WT_END_QUAL"=>"0.0",  
+  "PRIMER_WT_END_QUAL"                       => "0.0",
+  "PRIMER_INTERNAL_WT_END_QUAL"              => "0.0",  
 
   "P3_FILE_FLAG"                             => "0",
 # End of Primer3 Input Parameters
 
-# Script Parameters
-  "SCRIPT_PRINT_INPUT"                       => "0", #
-  "SCRIPT_FIX_PRIMER_END"                    => "5", #
-  
-  "SCRIPT_CONTAINS_JAVA_SCRIPT"              => "1", #
-  "SERVER_PARAMETER_FILE"                    => "DEFAULT", #
+# Primer3Plus Input Parameters
+  "P3P_PRIMER_NAME_ACRONYM_LEFT"             => "F",
+  "P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO"   => "IN",
+  "P3P_PRIMER_NAME_ACRONYM_RIGHT"            => "R",
+  "P3P_PRIMER_NAME_ACRONYM_SPACER"           => "_",
 
-  "P3P_DETECTION_USE_PRODUCT_SIZE"           => "0", #
-  "P3P_DETECTION_PRODUCT_MIN_SIZE"           => "100", #
-  "P3P_DETECTION_PRODUCT_OPT_SIZE"           => "200", #
-  "P3P_DETECTION_PRODUCT_MAX_SIZE"           => "1000", #
-  "P3P_PRIMER_NAME_ACRONYM_LEFT"             => "F", #
-  "P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO"   => "IN", #
-  "P3P_PRIMER_NAME_ACRONYM_RIGHT"            => "R", #
-  "P3P_PRIMER_NAME_ACRONYM_SPACER"           => "_" #
+# Script Parameters
+  "SCRIPT_PRODUCT_MIN_SIZE"                  => "",
+  "SCRIPT_PRODUCT_MAX_SIZE"                  => "",
+  "SERVER_PARAMETER_FILE"                    => "DEFAULT"
+
 # if you add parameters here also add them to the respective save array
 );
 
@@ -500,9 +496,6 @@ PRIMER_SEQUENCING_LEAD
 PRIMER_SEQUENCING_SPACING
 PRIMER_SEQUENCING_INTERVAL
 PRIMER_SEQUENCING_ACCURACY
-SCRIPT_PRINT_INPUT
-SCRIPT_FIX_PRIMER_END
-SCRIPT_CONTAINS_JAVA_SCRIPT
 P3P_DETECTION_USE_PRODUCT_SIZE
 P3P_DETECTION_PRODUCT_MIN_SIZE
 P3P_DETECTION_PRODUCT_OPT_SIZE

@@ -474,7 +474,7 @@ $formHTML .= qq{
 	<tr>
 	<td class="primer3plus_cell_no_border">
 	
-<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="SCRIPT_CONTAINS_JAVA_SCRIPT,PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,SCRIPT_SEQUENCING_REVERSE,P3P_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,SCRIPT_PRINT_INPUT,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" type="hidden">
+<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,SCRIPT_SEQUENCING_REVERSE,P3P_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" type="hidden">
 
          <a name="SERVER_PARAMETER_FILE_INPUT" href="$machineSettings{URL_HELP}#SERVER_PARAMETER_FILE">
          Load server settings:</a>&nbsp;&nbsp;
@@ -565,8 +565,9 @@ $formHTML .= qq{
 </div>
 };
 
-my $urlFormAction = getMachineSetting("URL_FORM_ACTION");
-$urlFormAction .= "?SCRIPT_CONTAINS_JAVA_SCRIPT=0";
+###########################
+# Write a Javascript hint #
+###########################
 $formHTML .= qq{
 <script type="text/javascript">
 	document.write("<style type=\\"text/css\\">div#primer3plus_no_javascript { display: none; }</style>");
@@ -576,8 +577,7 @@ $formHTML .= qq{
    <table class="primer3plus_table_no_border">
      <tr>
        <td class="primer3plus_note">
-       		JavaScript is not enabled, please enable JavaScript and refresh the browser, 
-       		or click this link for the <a href="$urlFormAction">non-Javascript version</a>.
+       		JavaScript is not enabled, please enable JavaScript and refresh the browser.</a>.
        </td>
      </tr>
    </table>
@@ -987,10 +987,7 @@ $formHTML .= qq{
        <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_MAX_GC">Max:</a>
          <input size="4" name="PRIMER_MAX_GC" value="$settings{PRIMER_MAX_GC}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;&nbsp;<a onmouseover="toolTip('Select which end of the primer is fixed and which end can be extended or shortened by Primer3Plus fo find optimal primers.');"
-         onmouseout="toolTip();" name="SCRIPT_FIX_PRIMER_END_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_FIX_PRIMER_END">Fix the</a>
-         <input size="2" name="SCRIPT_FIX_PRIMER_END" value="$settings{SCRIPT_FIX_PRIMER_END}" type="text">
-         <a href="$machineSettings{URL_HELP}#SCRIPT_FIX_PRIMER_END"> prime end of the primer</a>
+       <td class="primer3plus_cell_no_border">
        </td>
      </tr>
    </table>
@@ -1087,8 +1084,8 @@ $formHTML .= qq{</div>
      <colgroup>
        <col width="25%">
        <col width="15%">
-       <col width="30%">
-       <col width="35%">
+       <col width="27%">
+       <col width="33%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_POLY_X_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_POLY_X">Max Poly-X:</a>
@@ -1253,11 +1250,11 @@ $formHTML .= qq{</div>
    <br>
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="23%">
-       <col width="16%">
-       <col width="16%">
-       <col width="16%">
-       <col width="29%">
+       <col width="17%">
+       <col width="15%">
+       <col width="15%">
+       <col width="15%">
+       <col width="38%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_PRODUCT_TM_INPUT">Product Tm</a>
@@ -1274,49 +1271,25 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_no_border">
        </td>
      </tr>
-   </table>
-   <br>
-<div class="primer3plus_section">
-   <table class="primer3plus_table_no_border">
-     <colgroup>
-       <col width="23%">
-       <col width="16%">
-       <col width="16%">
-       <col width="16%">
-       <col width="29%">
-     </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border" colspan="3">
-         <input name="P3P_DETECTION_USE_PRODUCT_SIZE"  value="1" };
-
-	$formHTML .= ($settings{P3P_DETECTION_USE_PRODUCT_SIZE}) ? "checked=\"checked\" " : "";
- 
-	$formHTML .= qq{type="checkbox">
-         <a onmouseover="toolTip('Select box to specify the min, opt, and max product sizes only if you absolutely must!<br>Using them is too slow (and too computationally intensive for our server).');" onmouseout="toolTip();" name="P3P_DETECTION_USE_PRODUCT_SIZE_INPUT" href="$machineSettings{URL_HELP}#REVERSE">
-         Use Product Size Input and ignore Product Size Range</a>
-       </td>
-       <td class="primer3plus_cell_no_border" colspan="2">Warning: slow and expensive!</td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_PRODUCT_SIZE_INPUT" href="primer3plusHelp.cgi#PRIMER_PRODUCT_SIZE">Product Size</a>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_PRODUCT_SIZE_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PRODUCT_OPT_SIZE">Product Size</a>
        </td>
        <td class="primer3plus_cell_no_border_right">Min: 
-         <input size="6" name="P3P_DETECTION_PRODUCT_MIN_SIZE" 
-         value="$settings{P3P_DETECTION_PRODUCT_MIN_SIZE}" type="text">
+         <input size="6" name="SCRIPT_PRODUCT_MIN_SIZE" 
+         value="$settings{SCRIPT_PRODUCT_MIN_SIZE}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border_right">Opt: 
-         <input size="6" name="P3P_DETECTION_PRODUCT_OPT_SIZE" 
-         value="$settings{P3P_DETECTION_PRODUCT_OPT_SIZE}" type="text">
+       <td class="primer3plus_cell_no_border_right"><a href="$machineSettings{URL_HELP}#PRIMER_PRODUCT_OPT_SIZE">Opt:</a> 
+         <input size="6" name="PRIMER_PRODUCT_OPT_SIZE" 
+         value="$settings{PRIMER_PRODUCT_OPT_SIZE}" type="text">
        </td>
        <td class="primer3plus_cell_no_border_right">Max: 
-         <input size="6" name="P3P_DETECTION_PRODUCT_MAX_SIZE" 
-         value="$settings{P3P_DETECTION_PRODUCT_MAX_SIZE}" type="text">
+         <input size="6" name="SCRIPT_PRODUCT_MAX_SIZE" 
+         value="$settings{SCRIPT_PRODUCT_MAX_SIZE}" type="text">
        </td>
        <td class="primer3plus_cell_no_border">
        </td>
      </tr>
    </table>
-</div>
    <table class="primer3plus_table_no_border">
      <tr>
        <td class="primer3plus_cell_no_border"><input name="PRIMER_PICK_ANYWAY"  value="1" };
@@ -1324,30 +1297,29 @@ $formHTML .= qq{</div>
 	$formHTML .= ($settings{PRIMER_PICK_ANYWAY}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{type="checkbox">
-         <a name="PRIMER_PICK_ANYWAY_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PICK_ANYWAY">Pick Anyway</a> </td>
-       <td class="primer3plus_cell_no_border"><input name="PRIMER_LIBERAL_BASE"  value="1" };
+         <a name="PRIMER_PICK_ANYWAY_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PICK_ANYWAY">Pick Anyway</a>
+         &nbsp;&nbsp;&nbsp;
+         <input name="PRIMER_LIBERAL_BASE"  value="1" };
 
 	$formHTML .= ($settings{PRIMER_LIBERAL_BASE}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{type="checkbox">
-         <a name="PRIMER_LIBERAL_BASE_INPUT" href="$machineSettings{URL_HELP}#PRIMER_LIBERAL_BASE">Liberal Base</a></td>
-       <td class="primer3plus_cell_no_border"><input name="PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" value="1" };
+         <a name="PRIMER_LIBERAL_BASE_INPUT" href="$machineSettings{URL_HELP}#PRIMER_LIBERAL_BASE">Liberal Base</a>
+         &nbsp;&nbsp;&nbsp;
+         <input name="PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" value="1" };
 
 	$formHTML .= ($settings{PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{type="checkbox">
-	     <a name="PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS_INPUT" href="$machineSettings{URL_HELP}#PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS">Do not treat ambiguity codes in libraries as consensus</a> </td>
-       <td class="primer3plus_cell_no_border"><input name="PRIMER_LOWERCASE_MASKING" value="1" };
+	     <a name="PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS_INPUT" href="$machineSettings{URL_HELP}#PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS">Do not treat ambiguity codes in libraries as consensus</a>
+         &nbsp;&nbsp;&nbsp;
+         <input name="PRIMER_LOWERCASE_MASKING" value="1" };
 
 	$formHTML .= ($settings{PRIMER_LOWERCASE_MASKING}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{type="checkbox">
-		<a name="PRIMER_LOWERCASE_MASKING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_LOWERCASE_MASKING">Use Lowercase Masking</a></td>
-	    <td class="primer3plus_cell_no_border" valign="top">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	    &nbsp;&nbsp;&nbsp;
-	      <input name="SCRIPT_CONTAINS_JAVA_SCRIPT" value="1" type="hidden">
+		<a name="PRIMER_LOWERCASE_MASKING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_LOWERCASE_MASKING">Use Lowercase Masking</a>
        </td>
-
      </tr>
    </table>
 
@@ -1355,24 +1327,19 @@ $formHTML .= qq{</div>
    <b>Sequencing</b>
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="12%">
-       <col width="4%">
-       <col width="10%">
-       <col width="12%">
-       <col width="4%">
-       <col width="10%">
+       <col width="25%">
+       <col width="15%">
+       <col width="27%">
+       <col width="33%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Space between primer binding site and the start of readable sequencing');" onmouseout="toolTip();" name="PRIMER_SEQUENCING_LEAD_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SEQUENCING_LEAD">Lead</a>
-       </td>
-       <td class="primer3plus_cell_no_border">Bp:
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SEQUENCING_LEAD" value="$settings{PRIMER_SEQUENCING_LEAD}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Space between the primers on one DNA strand');" onmouseout="toolTip();" name="PRIMER_SEQUENCING_SPACING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SEQUENCING_SPACING">
          Spacing</a>
        </td>
-       <td class="primer3plus_cell_no_border">Bp: </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SEQUENCING_SPACING" value="$settings{PRIMER_SEQUENCING_SPACING}" type="text">
        </td>
      </tr>
@@ -1380,30 +1347,14 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Space in which Primer3Plus picks the optimal primer');" onmouseout="toolTip();" name="PRIMER_SEQUENCING_ACCURACY_INPUT"
          href="$machineSettings{URL_HELP}#PRIMER_SEQUENCING_ACCURACY">Accuracy</a>
        </td>
-       <td class="primer3plus_cell_no_border">Bp:
-       </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SEQUENCING_ACCURACY" value="$settings{PRIMER_SEQUENCING_ACCURACY}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Space between primers on the forward and the reverse strand');" onmouseout="toolTip();" name="PRIMER_SEQUENCING_INTERVAL_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SEQUENCING_INTERVAL">
          Interval</a>
        </td>
-       <td class="primer3plus_cell_no_border">Bp:
-       </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SEQUENCING_INTERVAL" value="$settings{PRIMER_SEQUENCING_INTERVAL}" type="text">
+      <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SEQUENCING_INTERVAL" value="$settings{PRIMER_SEQUENCING_INTERVAL}" type="text">
        </td>
      </tr> 
-     <tr>
-       <td class="primer3plus_cell_no_border" colspan="2">
-         <a onmouseover="toolTip('Pick primers on the reverse DNA strand as well');" onmouseout="toolTip();" name="SCRIPT_SEQUENCING_REVERSE_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_SEQUENCING_REVERSE">Pick Reverse Primers</a>
-	</td>
-       <td class="primer3plus_cell_no_border">
-	<input name="SCRIPT_SEQUENCING_REVERSE" value="1" };
-
-	$formHTML .= ($settings{SCRIPT_SEQUENCING_REVERSE}) ? "checked=\"checked\" " : "";
- 
-	$formHTML .= qq{type="checkbox">
-       </td>
-     </tr>
    </table></div>
 </div>
 };

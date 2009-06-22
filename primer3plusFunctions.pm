@@ -739,7 +739,7 @@ sub checkParameters (\%) {
 	my ($dataStorage);
 	$dataStorage = shift;
 	my %misLibrary      = getMisLibrary();
-	my ( $fixPrimerEnd, $libary );
+	my $libary;
 	
     ## A hidden way to obtain a example sequence for demonstration
     if ( defined( $dataStorage->{"Default_Settings"} ) ) {
@@ -761,13 +761,6 @@ sub checkParameters (\%) {
             $dataStorage->{"SEQUENCE_ID"} = $dataStorage->{"SEQUENCE_ID_$choosenSequence"};
         }
     }
-
-	## Check from which end to cut a primer
-	$fixPrimerEnd = $dataStorage->{"SCRIPT_FIX_PRIMER_END"};
-	if ( $fixPrimerEnd ne "3" ) {
-		$fixPrimerEnd = "5";
-		$dataStorage->{"SCRIPT_FIX_PRIMER_END"} = $fixPrimerEnd;
-	}
 
 	## Check if the mispriming libarys exist and can be used
 	$libary = $dataStorage->{"PRIMER_MISPRIMING_LIBRARY"};
@@ -883,45 +876,21 @@ sub checkParameters (\%) {
 	my $cutRight = "";
 
 	if ( ( length $primerLeft ) > $maxPrimerSize ) {
-		if ( $fixPrimerEnd eq "5" ) {
-			$cutLeft = substr( $primerLeft, 0, $maxPrimerSize );
-			setMessage("ERROR: Left Primer longer than $maxPrimerSize ".
-			           "bp. Additional bases were removed on the 3' end");
-		}
-		else {
-			$cutPosition = ( ( length $primerLeft ) - $maxPrimerSize );
-			$cutLeft = substr( $primerLeft, $cutPosition, $maxPrimerSize );
-			setMessage("ERROR: Left Primer longer than $maxPrimerSize ".
-			           "bp. Additional bases were removed on the 5' end");
-		}
+		$cutLeft = substr( $primerLeft, 0, $maxPrimerSize );
+		setMessage("ERROR: Left Primer longer than $maxPrimerSize ".
+			       "bp. Additional bases were removed on the 3' end");
 		$dataStorage->{"SEQUENCE_PRIMER"} = $cutLeft;
 	}
 	if ( ( length $internalOligo ) > $maxPrimerSize ) {
-		if ( $fixPrimerEnd eq "5" ) {
-			$cutOligo = substr( $internalOligo, 0, $maxPrimerSize );
-			setMessage("ERROR: Internal Oligo longer than $maxPrimerSize ".
-			           "bp. Additional bases were removed on the 3' end");
-		}
-		else {
-			$cutPosition = ( ( length $internalOligo ) - $maxPrimerSize );
-			$cutOligo = substr( $internalOligo, $cutPosition, $maxPrimerSize );
-			setMessage("ERROR: Internal Oligo longer than $maxPrimerSize ".
-			           "bp. Additional bases were removed on the 5' end");
-		}
+		$cutOligo = substr( $internalOligo, 0, $maxPrimerSize );
+		setMessage("ERROR: Internal Oligo longer than $maxPrimerSize ".
+			       "bp. Additional bases were removed on the 3' end");
 		$dataStorage->{"SEQUENCE_INTERNAL_OLIGO"} = $cutOligo;
 	}
 	if ( ( length $primerRight ) > $maxPrimerSize ) {
-		if ( $fixPrimerEnd eq "5" ) {
-			$cutRight = substr( $primerRight, 0, $maxPrimerSize );
-			setMessage("ERROR: Right Primer longer than $maxPrimerSize ".
-			           "bp. Additional bases were removed on the 3' end");
-		}
-		else {
-			$cutPosition = ( ( length $primerRight ) - $maxPrimerSize );
-			$cutRight = substr( $primerRight, $cutPosition, $maxPrimerSize );
-			setMessage("ERROR: Right Primer longer than $maxPrimerSize ".
-			           "bp. Additional bases were removed on the 5' end");
-		}
+		$cutRight = substr( $primerRight, 0, $maxPrimerSize );
+		setMessage("ERROR: Right Primer longer than $maxPrimerSize ".
+			       "bp. Additional bases were removed on the 3' end");
 		$dataStorage->{"SEQUENCE_PRIMER_REVCOMP"} = $cutRight;
 	}
 
@@ -1068,11 +1037,9 @@ sub runPrimer3 ($$$) {
 ###### Set all the tags to special values for the run
 
     ## Set the parameters to use optimal Product size input
-    if ( ( $completeHash->{"P3P_DETECTION_USE_PRODUCT_SIZE"} ) ne "0" ) {
-        my $minSize = $completeHash->{"P3P_DETECTION_PRODUCT_MIN_SIZE"};
-        $p3cInput{"PRIMER_PRODUCT_OPT_SIZE"} =
-             $completeHash->{"P3P_DETECTION_PRODUCT_OPT_SIZE"};
-        my $maxSize = $completeHash->{"P3P_DETECTION_PRODUCT_MAX_SIZE"};
+    if ( $completeHash->{"PRIMER_PRODUCT_OPT_SIZE"} ne "" ) {
+        my $minSize = $completeHash->{"SCRIPT_PRODUCT_MIN_SIZE"};
+        my $maxSize = $completeHash->{"SCRIPT_PRODUCT_MAX_SIZE"};
         $p3cInput{"PRIMER_PRODUCT_SIZE_RANGE"} = "$minSize-$maxSize";
     }
 
