@@ -2165,8 +2165,14 @@ $returnHTML .= qq{
 #########################################################################
 sub divErrorsWarning {
     my $errorString = shift;
+    my @messages;
+    my $mess;
     
-    setMessage("$errorString");
+    @messages = split ';', $errorString;
+    
+    foreach $mess (@messages) {
+        setMessage("Error: $mess");
+    }
     
     return 0;
 }
@@ -2249,56 +2255,6 @@ Primer3plus could not pick any primers. Try less strict settings.<br>
 };
 
 $formHTML .= divStatistics($settings);
-
-  return $formHTML;
-}
-
-####################################################################################
-# createResultsDetection: Will write an HTML-Form based for the detection Function #
-####################################################################################
-sub createResultsDetection {
-  my $settings = shift;
-
-my $formHTML .= qq{
-<form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data" target="primer3manager">
-
-};
-
-$formHTML .= divPrimerBox($settings,"0","1");
-
-$formHTML .= qq{<div class="primer3plus_submit">
-<input name="Submit" value="Send to Primer3Manager" type="submit"> <input value="Reset Form" type="reset">
-</div>
-};
-
-$formHTML .= divHTMLsequence($settings, "1");
-
-$formHTML .= qq{ <div class="primer3plus_select_all">
-<br>
-<input name="SELECT_ALL_PRIMERS" value="1" type="checkbox"> &nbsp; Select all Primers<br>
-<br>
-</div>
-};
-
-for (my $primerCount = 1 ; $primerCount < $settings->{"PRIMER_PAIR_NUM_RETURNED"} ; $primerCount++) {
-    $formHTML .= divPrimerBox($settings,$primerCount,"0");
-
-    $formHTML .= qq{<div class="primer3plus_submit">
-<br>
-<input name="Submit" value="Send to Primer3Manager" type="submit"> <input value="Reset Form" type="reset">
-<br>
-<br>
-<br>
-</div>
-};
-}
-
-$formHTML .= divStatistics($settings);
-
-$formHTML .= qq{
-</form>
-
-};
 
   return $formHTML;
 }
@@ -2468,6 +2424,56 @@ $formHTML .= qq{<div class="primer3plus_submit">
 $formHTML .= qq{<br>
 
 </form>
+};
+
+  return $formHTML;
+}
+
+####################################################################################
+# createResultsDetection: Will write an HTML-Form based for the detection Function #
+####################################################################################
+sub createResultsDetection {
+  my $settings = shift;
+
+my $formHTML .= qq{
+<form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data" target="primer3manager">
+
+};
+
+$formHTML .= divPrimerBox($settings,"0","1");
+
+$formHTML .= qq{<div class="primer3plus_submit">
+<input name="Submit" value="Send to Primer3Manager" type="submit"> <input value="Reset Form" type="reset">
+</div>
+};
+
+$formHTML .= divHTMLsequence($settings, "1");
+
+$formHTML .= qq{ <div class="primer3plus_select_all">
+<br>
+<input name="SELECT_ALL_PRIMERS" value="1" type="checkbox"> &nbsp; Select all Primers<br>
+<br>
+</div>
+};
+
+for (my $primerCount = 1 ; $primerCount < $settings->{"PRIMER_PAIR_NUM_RETURNED"} ; $primerCount++) {
+    $formHTML .= divPrimerBox($settings,$primerCount,"0");
+
+    $formHTML .= qq{<div class="primer3plus_submit">
+<br>
+<input name="Submit" value="Send to Primer3Manager" type="submit"> <input value="Reset Form" type="reset">
+<br>
+<br>
+<br>
+</div>
+};
+}
+
+$formHTML .= divStatistics($settings);
+
+$formHTML .= qq{
+</form>
+
 };
 
   return $formHTML;
@@ -2726,9 +2732,54 @@ sub divPrimerBox {
 
   $selection = $counter + 1;
 
-  my $primerAny;
-  my $primerEnd;
-  my $primerTM;
+  my $primerAny = "";
+  my $primerEnd = "";
+  my $productTM = "";
+  my $productOligDiff = "";
+  my $pairPenalty = "";
+  my $productMispriming = "";
+  my $productToA = "";
+  my $pairPenalty = "";
+  
+  if (defined ($results->{"PRIMER_PAIR_$counter\_PRODUCT_TM"}) 
+        and (($results->{"PRIMER_PAIR_$counter\_PRODUCT_TM"}) ne "")) {
+      $productTM .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_PRODUCT_TM">Tm:</a> };
+      $productTM .= sprintf ("%.1f",($results->{"PRIMER_PAIR_$counter\_PRODUCT_TM"}));
+      $productTM .= qq{ &deg;C};
+  }
+  if (defined ($results->{"PRIMER_PAIR_$counter\_PRODUCT_TM_OLIGO_TM_DIFF"}) 
+        and (($results->{"PRIMER_PAIR_$counter\_PRODUCT_TM_OLIGO_TM_DIFF"}) ne "")) {
+      $productOligDiff .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_PRODUCT_TM_OLIGO_TM_DIFF">dT:</a> };
+      $productOligDiff .= sprintf ("%.1f",($results->{"PRIMER_PAIR_$counter\_PRODUCT_TM_OLIGO_TM_DIFF"}));
+      $productOligDiff .= qq{ &deg;C};
+  }
+  if ((defined ($results->{"PRIMER_PAIR\_$counter\_COMPL_ANY"})) 
+        and (($results->{"PRIMER_PAIR\_$counter\_COMPL_ANY"}) ne "")) {
+      $primerAny .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_COMPL_ANY">Any:</a> };
+      $primerAny .= sprintf ("%.1f",($results->{"PRIMER_PAIR\_$counter\_COMPL_ANY"}));
+  }
+  if ((defined ($results->{"PRIMER_PAIR\_$counter\_COMPL_END"}))
+        and (($results->{"PRIMER_PAIR\_$counter\_COMPL_END"}) ne "")) {
+      $primerEnd .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_COMPL_END">End:</a> };
+      $primerEnd .= sprintf ("%.1f",($results->{"PRIMER_PAIR\_$counter\_COMPL_END"}));
+  }
+  if ((defined ($results->{"PRIMER_PAIR\_$counter\_TEMPLATE_MISPRIMING"}))
+        and (($results->{"PRIMER_PAIR\_$counter\_TEMPLATE_MISPRIMING"}) ne "")) {
+      $productMispriming .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_TEMPLATE_MISPRIMING">Temp Bind:</a> };
+      $productMispriming .= sprintf ("%.1f",($results->{"PRIMER_PAIR\_$counter\_TEMPLATE_MISPRIMING"}));
+  }
+  if (defined ($results->{"PRIMER_PAIR_$counter\_T_OPT_A"}) 
+        and (($results->{"PRIMER_PAIR_$counter\_T_OPT_A"}) ne "")) {
+      $productToA .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_T_OPT_A">T opt A:</a> };
+      $productToA .= sprintf ("%.1f",($results->{"PRIMER_PAIR_$counter\_T_OPT_A"}));
+  }
+  if ((defined ($results->{"PRIMER_PAIR\_$counter\_PENALTY"}))
+        and (($results->{"PRIMER_PAIR\_$counter\_PENALTY"}) ne "")) {
+      $pairPenalty .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_PENALTY">Penalty:</a> };
+      $pairPenalty .= sprintf ("%.3f",($results->{"PRIMER_PAIR\_$counter\_PENALTY"}));
+  }
+
+  
 
   my $formHTML = qq{  <div class="primer3plus_primer_pair_box">
   <table class="primer3plus_table_primer_pair_box">
@@ -2754,51 +2805,27 @@ $formHTML .= partPrimerData( $results, $counter, "INTERNAL", $checked);
 
 $formHTML .= partPrimerData( $results, $counter, "RIGHT", $checked);
 
-if ((defined ($results->{"PRIMER_PAIR\_$counter\_COMPL_ANY"})) 
-		and (($results->{"PRIMER_PAIR\_$counter\_COMPL_ANY"}) ne "")
-		and (defined ($results->{"PRIMER_PAIR\_$counter\_COMPL_END"}))
-		and (($results->{"PRIMER_PAIR\_$counter\_COMPL_END"}) ne "")) {
-
-$primerAny = sprintf ("%.1f",($results->{"PRIMER_PAIR\_$counter\_COMPL_ANY"}));
-$primerEnd = sprintf ("%.1f",($results->{"PRIMER_PAIR\_$counter\_COMPL_END"}));
-
 $formHTML .= qq{     <tr class="primer3plus_primer_pair">
-       <td colspan="2" class="primer3plus_cell_primer_pair_box">Product Size: &nbsp; $results->{"PRIMER_PRODUCT_SIZE\_$counter"} bp</td>
-       <td class="primer3plus_cell_primer_pair_box">Pair Any: $primerAny</td>
-       <td class="primer3plus_cell_primer_pair_box">Pair End: $primerEnd</td>
-       <td class="primer3plus_cell_primer_pair_box">};
-}
-else {
-$formHTML .= qq{     <tr class="primer3plus_primer_pair">
-       <td colspan="2" class="primer3plus_cell_primer_pair_box">Product Size: &nbsp; $results->{"PRIMER_PRODUCT_SIZE\_$counter"} bp</td>
-       <td class="primer3plus_cell_primer_pair_box"></td>
-       <td class="primer3plus_cell_primer_pair_box"></td>
-       <td class="primer3plus_cell_primer_pair_box">};
-}
-if (defined ($results->{"PRIMER_PRODUCT_TM\_$counter"}) 
-		and (($results->{"PRIMER_PRODUCT_TM\_$counter"}) ne "")) {
-    $primerTM = sprintf ("%.1f",($results->{"PRIMER_PRODUCT_TM\_$counter"}));
-    $formHTML .= qq{Product TM:<br>&nbsp; &nbsp; $primerTM &deg;C};
-}
-$formHTML .= qq{</td>
-       <td class="primer3plus_cell_primer_pair_box">};
-
-if (defined ($results->{"PRIMER_PRODUCT_TM_OLIGO_TM_DIFF\_$counter"}) 
-		and (($results->{"PRIMER_PRODUCT_TM_OLIGO_TM_DIFF\_$counter"}) ne "")) {
-    $primerTM = sprintf ("%.1f",($results->{"PRIMER_PRODUCT_TM_OLIGO_TM_DIFF\_$counter"}));
-    $formHTML .= qq{Product - Tm:<br>&nbsp; &nbsp;&nbsp; $primerTM &deg;C};
-}
-
-$formHTML .= qq{</td>
+       <td colspan="2" class="primer3plus_cell_primer_pair_box"><strong>Pair:</strong>&nbsp;&nbsp;&nbsp;
+         <a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_PRODUCT_SIZE">Product Size:</a>&nbsp;
+         &nbsp;$results->{"PRIMER_PAIR_$counter\_PRODUCT_SIZE"} bp</td>
+       <td class="primer3plus_cell_primer_pair_box">$productTM</td>
+       <td class="primer3plus_cell_primer_pair_box">$productOligDiff</td>
+       <td class="primer3plus_cell_primer_pair_box">$primerAny</td>
+       <td class="primer3plus_cell_primer_pair_box">$primerEnd</td>
+       <td class="primer3plus_cell_primer_pair_box">$productMispriming</td>
+       <td class="primer3plus_cell_primer_pair_box">$productToA</td>
+       <td class="primer3plus_cell_primer_pair_box">$pairPenalty</td>
      </tr>
 };
 
-if (defined ($results->{"PRIMER_PAIR\_$counter\_MISPRIMING_SCORE"}) 
-		and (($results->{"PRIMER_PAIR\_$counter\_MISPRIMING_SCORE"}) ne "")) {
+if (defined ($results->{"PRIMER_PAIR_$counter\_LIBRARY_MISPRIMING"}) 
+		and (($results->{"PRIMER_PAIR_$counter\_LIBRARY_MISPRIMING"}) ne "")) {
 
 $formHTML .= qq{     <tr class="primer3plus_primer_pair">
-       <td class="primer3plus_cell_primer_pair_box">Pair Mispriming:</td>
-       <td colspan="5" class="primer3plus_cell_primer_pair_box">$results->{"PRIMER_PAIR\_$counter\_MISPRIMING_SCORE"}</td>
+       <td colspan="2" class="primer3plus_cell_primer_pair_box">
+         <a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_LIBRARY_MISPRIMING">Library Mispriming:</a></td>
+       <td colspan="7" class="primer3plus_cell_primer_pair_box">$results->{"PRIMER_PAIR_$counter\_LIBRARY_MISPRIMING"}</td>
      </tr>
 };
 }   
@@ -2938,7 +2965,11 @@ $formHTML .= qq{type="checkbox">
      </tr>
 };
 }
-}
+  $formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_no_border" colspan="9"></td>
+     </tr>
+};
+		}
 else {
 	$formHTML = "";
 }
@@ -3020,7 +3051,7 @@ sub divHTMLsequence {
   }
 
   ## Handy for testing:
-#  $sequence = $format;
+  #  $sequence = $format;
 
   $formHTML = qq{  <div id="primer3plus_result_sequence" class="primer3plus_tab_page_no_border">
   <table class="primer3plus_table_no_border">
