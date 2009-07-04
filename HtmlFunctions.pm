@@ -1930,131 +1930,6 @@ initTabs();
   return $returnString;
 }
 
-##################################################################
-# mainResultsHTML: Will select the function to write a HTML-Form #
-##################################################################
-sub mainResultsHTML {
-  my ($completeParameters, $results); 
-  $completeParameters = shift;
-  $results = shift;
-
-  my $returnString;
-  my $task = $results->{"PRIMER_TASK"};
-  my $pair_count = 0;
-  my $primer_count = 0;
-
-  # To be sure primer3 run well and provided results  
-  if (defined $results->{"PRIMER_PAIR_NUM_RETURNED"}){
-      $pair_count = $results->{"PRIMER_PAIR_NUM_RETURNED"};
-      $primer_count = $results->{"PRIMER_LEFT_NUM_RETURNED"};
-      $primer_count += $results->{"PRIMER_INTERNAL_NUM_RETURNED"};
-      $primer_count += $results->{"PRIMER_RIGHT_NUM_RETURNED"};
-  } else {
-      $returnString = createResultsNoPrimers($completeParameters, $results);       
-  }
-
-
-  if (($task eq "pick_detection_primers") 
-       || ($task eq "pick_cloning_primers")
-       || ($task eq "pick_discriminative_primers")
-       || ($task eq "pick_sequencing_primers")
-       || ($task eq "pick_primer_list")
-       || ($task eq "check_primers")) {
-      if ($pair_count != 0) {
-          $returnString = createResultsDetection($completeParameters, $results);
-      } elsif ($task eq "pick_sequencing_primers") {
-          $returnString = createResultsPrimerList($completeParameters, $results, "0");
-      } else {
-          $returnString = createResultsPrimerList($completeParameters, $results, "1");
-      }
-  }
-  elsif ($task eq "Detection") {
-      $returnString = createResultsDetection($completeParameters, $results);
-  }
-  elsif ($task eq "Primer_Check") {
-      $returnString = createResultsPrimerCheck($completeParameters, $results);
-  }
-  elsif ($task eq "Cloning") {
-      $returnString = createResultsDetection($completeParameters, $results);
-  }
-  elsif ($task eq "Primer_List") {
-      $returnString = createResultsPrimerList($completeParameters, $results, "1");
-  }
-  elsif ($task eq "Sequencing") {
-      $returnString = createResultsPrimerList($completeParameters, $results, "0");
-  }
-  else {
-      $returnString = createResultsList($results);
-  }
-
-  return $returnString;
-}
-
-###################################################
-# divStatistics: Writes the Statistics in a table #    
-###################################################
-sub divStatistics {
-	my %settings; 
-    %settings = %{(shift)};
-	
-	my $formHTML;
-	my $notEmpty;
-	$notEmpty = 0;
-
-
-$formHTML .= qq{  <div id="primer3plus_statictics" class="primer3plus_tab_page_no_border">
-  <table class="primer3plus_table_with_border">
-      <colgroup>
-        <col width="20%">
-        <col width="80%">
-      </colgroup>
-     <tr>
-       <td class="primer3plus_cell_with_border" colspan="2">Statistics:</td>
-     </tr>
-};
-if (defined ($settings{"PRIMER_LEFT_EXPLAIN"}) and (($settings{"PRIMER_LEFT_EXPLAIN"}) ne "")) {
-$notEmpty = 1;
-$formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_with_border">Left Primer:</td>
-       <td class="primer3plus_cell_with_border">$settings{"PRIMER_LEFT_EXPLAIN"}</td>
-     </tr>
-};
-}
-if (defined ($settings{"PRIMER_INTERNAL_OLIGO_EXPLAIN"}) and (($settings{"PRIMER_INTERNAL_OLIGO_EXPLAIN"}) ne "")) {
-$notEmpty = 1;
-$formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_with_border">Internal Oligo:</td>
-       <td class="primer3plus_cell_with_border">$settings{"PRIMER_INTERNAL_OLIGO_EXPLAIN"}</td>
-     </tr>
-};
-}
-if (defined ($settings{"PRIMER_RIGHT_EXPLAIN"}) and (($settings{"PRIMER_RIGHT_EXPLAIN"}) ne "")) {
-$notEmpty = 1;
-$formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_with_border">Right Primer:</td>
-       <td class="primer3plus_cell_with_border">$settings{"PRIMER_RIGHT_EXPLAIN"}</td>
-     </tr>
-};
-}
-if (defined ($settings{"PRIMER_PAIR_EXPLAIN"}) and (($settings{"PRIMER_PAIR_EXPLAIN"}) ne "")) {
-$notEmpty = 1;
-$formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_with_border">Primer Pair:</td>
-       <td class="primer3plus_cell_with_border">$settings{"PRIMER_PAIR_EXPLAIN"}</td>
-     </tr>
-};
-}
-$formHTML .= qq{  </table>
-  </div>
-};
-
-if ($notEmpty == 0) {
-$formHTML = "";
-}
-	 
-	return $formHTML;
-}
-
 ################################################################################
 # createSelectSequence: Will write an HTML-Form containing sequences to select #
 ################################################################################
@@ -2125,36 +2000,36 @@ for ( my $i = 1 ; $i < $sequenceCounter ; $i++ ) {
  </div>
  };
 
-	$formHTML .= divHTMLformatSequence($settings{"SEQUENCE_$i"}, 1);
-	
-	$formHTML .= qq{<br>
+    $formHTML .= divHTMLformatSequence($settings{"SEQUENCE_$i"}, 1);
+    
+    $formHTML .= qq{<br>
 <br>};
 };
 
 my $HashKeys;
 foreach $HashKeys (sort(keys(%settings))){
-	if ($HashKeys eq "Pick_Primers") {
-	}
-	elsif ($HashKeys eq "SCRIPT_SEQUENCE_FILE_CONTENT") {
-	}
-	elsif ($HashKeys eq "SCRIPT_SEQUENCE_FILE") {
-	}
-	elsif ($HashKeys eq "SCRIPT_SETTINGS_FILE") {
-	}
-	elsif ($HashKeys eq "Upload_File") {
-	}
+    if ($HashKeys eq "Pick_Primers") {
+    }
+    elsif ($HashKeys eq "SCRIPT_SEQUENCE_FILE_CONTENT") {
+    }
+    elsif ($HashKeys eq "SCRIPT_SEQUENCE_FILE") {
+    }
+    elsif ($HashKeys eq "SCRIPT_SETTINGS_FILE") {
+    }
+    elsif ($HashKeys eq "Upload_File") {
+    }
     else {
-    	$formHTML .= qq{
+        $formHTML .= qq{
     <input type="hidden" name="$HashKeys" value="$settings{$HashKeys}">};
-	}
+    }
 };
 
-	$formHTML .= qq{ <input id="primer3plus_select_sequence_button" class="primer3plus_action_button"
+    $formHTML .= qq{ <input id="primer3plus_select_sequence_button" class="primer3plus_action_button"
    name="SelectOneSequence" value="Select Sequence" type="submit"><br>
  <br>
  </from>
 </div>
-	};
+    };
 
   my $returnString = $templateText;
 
@@ -2164,291 +2039,216 @@ foreach $HashKeys (sort(keys(%settings))){
 }
 
 
-###########################################################
-# createHelpHTML: Will write an HTML-Form containing Help #
-###########################################################
+##################################################################
+# mainResultsHTML: Will select the function to write a HTML-Form #
+##################################################################
+sub mainResultsHTML {
+  my ($completeParameters, $results); 
+  $completeParameters = shift;
+  $results = shift;
 
-sub createHelpHTML {
-  my $helpHTML = shift;
+  my $task = $results->{"PRIMER_TASK"};
+  my $pair_count = 0;
+  my $primer_count = 0;
+  my $returnHTML = "";
+
+  # Get the frame for the webpage
   my $templateText = getWrapper();
 
-  my $formHTML = qq{
+  # Push all errors to the messages array
+  if (defined ($results->{PRIMER_ERROR}) and (($results->{PRIMER_ERROR}) ne "")) {
+      divErrorsWarning($results->{PRIMER_ERROR});
+  }
+  if (defined ($results->{PRIMER_WARNING}) and (($results->{PRIMER_WARNING}) ne "")) {
+      divErrorsWarning($results->{PRIMER_WARNING});
+  }
+
+  # Figure out if any primers were returned and
+  # write a helping page if no primers are returned  
+  if (defined $results->{"PRIMER_PAIR_NUM_RETURNED"}){
+      $pair_count = $results->{"PRIMER_PAIR_NUM_RETURNED"};
+  }
+  if (defined $results->{"PRIMER_LEFT_NUM_RETURNED"}){
+      $primer_count = $results->{"PRIMER_LEFT_NUM_RETURNED"};
+  }
+  if (defined $results->{"PRIMER_INTERNAL_NUM_RETURNED"}){
+      $primer_count += $results->{"PRIMER_INTERNAL_NUM_RETURNED"};
+  }
+  if (defined $results->{"PRIMER_RIGHT_NUM_RETURNED"}){
+      $primer_count += $results->{"PRIMER_RIGHT_NUM_RETURNED"};
+  }
+  
+  #############################################
+  ### Ugly fix
+  
+  if ($task eq "Detection") {
+      $task = "pick_detection_primers";
+  }
+  elsif ($task eq "Primer_Check") {
+      $task = "check_primers";
+  }
+  elsif ($task eq "Cloning") {
+      $task = "pick_cloning_primers";
+  }
+  elsif ($task eq "Primer_List") {
+      $task = "pick_primer_list";
+  }
+  elsif ($task eq "Sequencing") {
+      $task = "pick_sequencing_primers";
+  }  
+  
+  ##############################################
+  
+  
+  
+  # Now work out the HTML code
+  #---------------------------
+  
+  $returnHTML = qq{
 <div id="primer3plus_complete">
-
 };
-
-$formHTML .= divTopBar("Primer3Plus - Help",0,"");
-
-$formHTML .= divMessages;
-
-$formHTML .= $helpHTML;
-
-  my $returnString = $templateText;
-
-  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
-
-  return $returnString;
-}
-
-#####################################################################################
-# createAboutHTML: Will write an HTML-Form containing information about Primer3plus #
-#####################################################################################
-
-sub createAboutHTML {
-  my $templateText = getWrapper();
-
-  my $formHTML = qq{
-<div id="primer3plus_complete">
+  # Write the top bar
+  $returnHTML .= divTopBar(0,0,0);
+  # Write the error messages
+  $returnHTML .= divMessages();
+  # Start the primer3plus results section
+  $returnHTML .= qq{
+<div id="primer3plus_results">
 };
-$formHTML .= divTopBar("Primer3Plus - About",0,0);
-
-$formHTML .= divMessages();
-
-$formHTML .= qq{
-<div id="primer3plus_about">
-
-<h1>Primer3Plus is a web-interface for primer3</h1>
-
-<h2>Primer3Plus</h2>
-<h3>Primer3Plus - Download Primer3Plus Program and Source Code</h3>
-<p>
-<a href="http://sourceforge.net/projects/primer3/">
-Source code is available at http://sourceforge.net/projects/primer3/.
-</a>
-</p>
-
-<h3>Primer3Plus - Copyright Notice and Disclaimer</h3>
-<p>
-Copyright (c) 2006, 2007<br>
-by Andreas Untergasser and Harm Nijveen<br>
-All rights reserved.<br>
-<br>
-The Primer3Plus is free software; you can redistribute it and/or modify<br>
-it under the terms of the GNU General Public License as published by<br>
-the Free Software Foundation; either version 2 of the License, or<br>
-(at your option) any later version.<br>
-<br>
-Primer3Plus is distributed in the hope that it will be useful,<br>
-but WITHOUT ANY WARRANTY; without even the implied warranty of<br>
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br>
-GNU General Public License for more details.<br>
-<br>
-To received a copy of the GNU General Public License<br>
-write to the Free Software Foundation, Inc., 51 Franklin St,<br>
-Fifth Floor, Boston, MA  02110-1301  USA<br>
-<br>
-
-<h3>Citing Primer3Plus</h3>
-<p>
-Andreas Untergasser, Harm Nijveen, Xiangyu Rao, Ton Bisseling, Ren&eacute; Geurts, and Jack A.M. Leunissen: 
-<b>Primer3Plus, an enhanced web interface to Primer3</b> Nucleic Acids Research 2007 35: W71-W74; doi:10.1093/nar/gkm306
-</p>
-
-<h3>Acknowledgments of Primer3Plus</h3>
-<p>
-We thank Gerben Bijl for extensive beta-testing.
-</p>
-
-<h2>Primer3</h2>
-
-<h3>Primer3 - Alternative Web Interface</h3>
-<p>
-<a href="http://primer3.sourceforge.net/webif.php">http://primer3.sourceforge.net/webif.php</a>
-</p>
-
-<h3>Primer3 - Download Primer3 Program and Source Code</h3>
-<p>
-<a href="http://sourceforge.net/projects/primer3/">
-Source code available at http://sourceforge.net/projects/primer3/.
-</a>
-</p>
-
-<h3>Primer3 - Copyright Notice and Disclaimer</h3>
-<p>
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006<br>
-Whitehead
-Institute for Biomedical Research, 
-<a href="http://jura.wi.mit.edu/rozen/">Steve Rozen</a>, and Helen Skaletsky<br>
-All rights reserved.
-</p>
-<pre>
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the names of the copyright holders nor contributors may
-be used to endorse or promote products derived from this software
-without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-</pre>
+  # Write the back button
+  $returnHTML .= divReturnToInput($completeParameters);
 
 
-<h3>Citing Primer3</h3>
-<p>
-We request that use of this software be cited in publications as
-</p>
-<p>
-<a href="http://jura.wi.mit.edu/rozen/">Steve Rozen</a>
-and Helen J. Skaletsky (2000)
-<a href="http://jura.wi.mit.edu/rozen/papers/rozen-and-skaletsky-2000-primer3.pdf">
-Primer3 on the WWW for general users and for biologist programmers.
-</a>
-In: Krawetz S, Misener S (eds)
-<i>Bioinformatics Methods and Protocols: Methods in Molecular Biology.</i>
-Humana Press, Totowa, NJ, pp 365-386<br>
-</p>
+  # Write some help if no primers found
+  if ($primer_count == 0){
+      $returnHTML .= createResultsNoPrimers($results);       
+  } 
+  # If only one primer was found we write the results different
+  elsif ($primer_count == 1) {
+      $returnHTML .= createResultsPrimerCheck($results);
+  }
+  # Print out pair boxes
+  elsif ($pair_count != 0) {
+      $returnHTML .= createResultsDetection($completeParameters, $results);
+  } 
+  # Sequencing needs a different sequenceprint
+  elsif ($task eq "pick_sequencing_primers") {
+      $returnHTML .= createResultsPrimerList($completeParameters, $results, "0");
+  } 
+  # The regular output
+  else {
+      $returnHTML .= createResultsPrimerList($completeParameters, $results, "1");
+  } 
 
-<h3>Acknowledgments of Primer3</h3>
-<p>
-The development of Primer3 and the Primer3
-web site was funded by 
-Howard Hughes Medical Institute
-and by the 
-National Institutes of Health,
-<a href="http://www.nhgri.nih.gov/">
-National Human Genome Research Institute.</a>
-under grants R01-HG00257
-(to David C. Page) and P50-HG00098 (to Eric S. Lander).
-</p>
+  # This should never happen - it prints the hash
+#  else {
+#      $returnHTML .= createResultsList($results);
+#  }
 
-<p>
-We thank
-<a href="http://www.centerline.com">
-Centerline Software, Inc.,
-</a>
-for use of their TestCenter memory-error, -leak, and test-coverage checker.
-</p>
-<p>
-Primer3 was a complete re-implementation
-of an earlier program:
-Primer 0.5 (<em>Steve Lincoln, Mark Daly, and Eric S. Lander</em>).
-<em>Lincoln Stein</em> championed the 
-idea of making Primer3 a software component suitable for high-throughput
-primer design.
-</p>
-
+# Close the complete and the results div
+$returnHTML .= qq{
 </div>
-
-</div>	
+</div>
 };
 
+  # Embedd the created HTML code into the loaded template file
   my $returnString = $templateText;
-
-  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
+  $returnString =~ s/<!-- Primer3plus will include code here -->/$returnHTML/;
 
   return $returnString;
 }
 
+#########################################################################
+# divErrorsWarning: Writes the Errors and warnings in the message array #   
+#########################################################################
+sub divErrorsWarning {
+    my $errorString = shift;
+    
+    setMessage("$errorString");
+    
+    return 0;
+}
 
-################################################################
-# createPackageHTML: Creates an HTML-Page with all p3p modules #
-################################################################
+###################################################
+# divStatistics: Writes the Statistics in a table #    
+###################################################
+sub divStatistics {
+	my %settings; 
+    %settings = %{(shift)};
+	
+	my $formHTML;
+	my $notEmpty;
+	$notEmpty = 0;
 
-sub createPackageHTML {
-  my $templateText = getWrapper();
 
-  my $formHTML = qq{
-<div id="primer3plus_complete">
-
+$formHTML .= qq{  <div id="primer3plus_statictics" class="primer3plus_tab_page_no_border">
+  <table class="primer3plus_table_with_border">
+      <colgroup>
+        <col width="20%">
+        <col width="80%">
+      </colgroup>
+     <tr>
+       <td class="primer3plus_cell_with_border" colspan="2">Statistics:</td>
+     </tr>
+};
+if (defined ($settings{"PRIMER_LEFT_EXPLAIN"}) and (($settings{"PRIMER_LEFT_EXPLAIN"}) ne "")) {
+$notEmpty = 1;
+$formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_with_border">Left Primer:</td>
+       <td class="primer3plus_cell_with_border">$settings{"PRIMER_LEFT_EXPLAIN"}</td>
+     </tr>
+};
+}
+if (defined ($settings{"PRIMER_INTERNAL_OLIGO_EXPLAIN"}) and (($settings{"PRIMER_INTERNAL_OLIGO_EXPLAIN"}) ne "")) {
+$notEmpty = 1;
+$formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_with_border">Internal Oligo:</td>
+       <td class="primer3plus_cell_with_border">$settings{"PRIMER_INTERNAL_OLIGO_EXPLAIN"}</td>
+     </tr>
+};
+}
+if (defined ($settings{"PRIMER_RIGHT_EXPLAIN"}) and (($settings{"PRIMER_RIGHT_EXPLAIN"}) ne "")) {
+$notEmpty = 1;
+$formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_with_border">Right Primer:</td>
+       <td class="primer3plus_cell_with_border">$settings{"PRIMER_RIGHT_EXPLAIN"}</td>
+     </tr>
+};
+}
+if (defined ($settings{"PRIMER_PAIR_EXPLAIN"}) and (($settings{"PRIMER_PAIR_EXPLAIN"}) ne "")) {
+$notEmpty = 1;
+$formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_with_border">Primer Pair:</td>
+       <td class="primer3plus_cell_with_border">$settings{"PRIMER_PAIR_EXPLAIN"}</td>
+     </tr>
+};
+}
+$formHTML .= qq{  </table>
+  </div>
 };
 
-$formHTML .= divTopBar(0,0,0);
-
-$formHTML .= divMessages;
-
-$formHTML .= qq{
-<div id="primer3plus_help">
-
-<h2><a name="primer3plus" href="primer3plus.cgi">Primer3Plus</a></h2>
-  <p>Primer3Plus is the module which runs primer3 to pick primers.
-  </p>
-
-<h2><a name="primer3manager" href="primer3manager.cgi">Primer3Manager</a></h2>
-  <p>Primer3Manager allows to manage selected primers and to save them.
-  </p>
-
-
-</div>
-
-</div>	
-};
-
-  my $returnString = $templateText;
-
-  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
-
-  return $returnString;
+if ($notEmpty == 0) {
+$formHTML = "";
+}
+	 
+	return $formHTML;
 }
 
 ##################################################################################
 # createResultsNoPrimers: Will write an HTML-Form based if no primers were found #
 ##################################################################################
 sub createResultsNoPrimers {
-  my $completeParameters; 
-  my %settings;
-  $completeParameters = shift; 
-  %settings = %{(shift)};
+  my $settings = shift;
 
-  my $HashKeys;
-
-  my $templateText = getWrapper();
-
-  if (defined ($settings{PRIMER_ERROR}) and (($settings{PRIMER_ERROR}) ne "")) {
-      setMessage("$settings{PRIMER_ERROR}");
-  }
-  if (defined ($settings{PRIMER_WARNING}) and (($settings{PRIMER_WARNING}) ne "")) {
-      setMessage("$settings{PRIMER_WARNING}");
-  }
-
-  my $formHTML = qq{
-<div id="primer3plus_complete">
-};
-$formHTML .= divTopBar(0,0,0);
-
-$formHTML .= divMessages();
-
-$formHTML .= qq{
-<div id="primer3plus_results">
-};
-
-$formHTML .= divReturnToInput($completeParameters);
-
-$formHTML .= divStatistics(\%settings);
-
-$formHTML .= qq{<div id="primer3plus_footer">
+  my $formHTML =  qq{
 <br>
-
-More about <a href="$machineSettings{URL_ABOUT}">Primer3Plus</a>...
-
-</div>
-
-</form>
-
-</div>  
+Primer3plus could not pick any primers. Try less strict settings.<br>
+<br>
 };
 
-  my $returnString = $templateText;
+$formHTML .= divStatistics($settings);
 
-  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
-
-  return $returnString;
+  return $formHTML;
 }
 
 ####################################################################################
@@ -2462,29 +2262,7 @@ sub createResultsDetection {
 
   my $HashKeys;
 
-  my $templateText = getWrapper();
-
-  if (defined ($settings{PRIMER_ERROR}) and (($settings{PRIMER_ERROR}) ne "")) {
-      setMessage("$settings{PRIMER_ERROR}");
-  }
-  if (defined ($settings{PRIMER_WARNING}) and (($settings{PRIMER_WARNING}) ne "")) {
-      setMessage("$settings{PRIMER_WARNING}");
-  }
-
-  my $formHTML = qq{
-<div id="primer3plus_complete">
-};
-$formHTML .= divTopBar(0,0,0);
-
-$formHTML .= divMessages();
-
-$formHTML .= qq{
-<div id="primer3plus_results">
-};
-
-$formHTML .= divReturnToInput($completeParameters);
-
-$formHTML .= qq{
+my $formHTML .= qq{
 <form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data" target="primer3manager">
 
 };
@@ -2520,23 +2298,12 @@ for (my $primerCount = 1 ; $primerCount < $settings{"PRIMER_NUM_RETURN"} ; $prim
 
 $formHTML .= divStatistics(\%settings);
 
-$formHTML .= qq{<div id="primer3plus_footer">
-<br>
-
-More about <a href="$machineSettings{URL_ABOUT}">Primer3Plus</a>...
-
-</div>
-
+$formHTML .= qq{
 </form>
 
-</div>  
 };
 
-  my $returnString = $templateText;
-
-  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
-
-  return $returnString;
+  return $formHTML;
 }
 
 ###################################################################################
@@ -2544,39 +2311,11 @@ More about <a href="$machineSettings{URL_ABOUT}">Primer3Plus</a>...
 ###################################################################################
 
 sub createResultsPrimerCheck {
-  my $completeParameters; 
-  my %settings;
-  $completeParameters = shift; 
-  %settings = %{(shift)};
-
-  my $results = \%settings;
+  my $results = shift;
 
   my $HashKeys;
 
-  my $templateText = getWrapper();
-
-  if (defined ($settings{PRIMER_ERROR}) and (($settings{PRIMER_ERROR}) ne "")) {
-      setMessage("$settings{PRIMER_ERROR}");
-  }
-  if (defined ($settings{PRIMER_WARNING}) and (($settings{PRIMER_WARNING}) ne "")) {
-      setMessage("$settings{PRIMER_WARNING}");
-  }
-  
   my $formHTML = qq{
-<div id="primer3plus_complete">
-};
-
-$formHTML .= divTopBar(0,0,0);
-
-$formHTML .= divMessages();
-
-$formHTML .= qq{
-<div id="primer3plus_results">
-};
-
-$formHTML .= divReturnToInput($completeParameters);
-
-$formHTML .= qq{
 <form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
 
 };
@@ -2662,19 +2401,11 @@ $formHTML .= qq{<div class="primer3plus_submit">
 };
 
 $formHTML .= qq{<br>
-</div>
-
 
 </form>
-
-</div>	
 };
 
-  my $returnString = $templateText;
-
-  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
-
-  return $returnString;
+  return $formHTML;
 }
 
 ############################################################
@@ -2719,15 +2450,6 @@ sub createResultsList {
   my $results = \%settings;
 
   my $HashKeys;
-
-  my $templateText = getWrapper();
-
-  if (defined ($settings{PRIMER_ERROR}) and (($settings{PRIMER_ERROR}) ne "")) {
-      setMessage("$settings{PRIMER_ERROR}");
-  }
-  if (defined ($settings{PRIMER_WARNING}) and (($settings{PRIMER_WARNING}) ne "")) {
-      setMessage("$settings{PRIMER_WARNING}");
-  }
 
   my $formHTML = qq{
 <div id="primer3plus_complete">
@@ -2774,11 +2496,7 @@ More about <a href="$machineSettings{URL_ABOUT}">Primer3Plus</a>...
 </div>	
 };
 
-  my $returnString = $templateText;
-
-  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
-
-  return $returnString;
+  return $formHTML;
 }
 
 ################################################################################
@@ -2790,26 +2508,7 @@ sub createResultsPrimerList {
   %settings = %{(shift)};
   $sortedInput = shift;
 
-  my $templateText = getWrapper();
-
-  if (defined ($settings{PRIMER_ERROR}) and (($settings{PRIMER_ERROR}) ne "")) {
-      setMessage("$settings{PRIMER_ERROR}");
-  }
-  if (defined ($settings{PRIMER_WARNING}) and (($settings{PRIMER_WARNING}) ne "")) {
-      setMessage("$settings{PRIMER_WARNING}");
-  }
-
-  my $formHTML = qq{
-<div id="primer3plus_complete">
-};
-$formHTML .= divTopBar(0,0,0);
-
-$formHTML .= divMessages();
-
-$formHTML .= qq{<div id="primer3plus_results">
-};
-
-$formHTML .= divReturnToInput($completeParameters);
+  my $formHTML = "";
 
 $formHTML .= qq{
 <form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data" target="primer3manager">
@@ -2885,23 +2584,11 @@ $formHTML .= qq{   <div class="primer3plus_select_all">
 };
   }
 
-$formHTML .= qq{<div id="primer3plus_footer">
-<br>
-
-More about <a href="$machineSettings{URL_ABOUT}">Primer3Plus</a>...
-
-</div>
-
+$formHTML .= qq{
 </form>
-
-</div>	
 };
 
-  my $returnString = $templateText;
-
-  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
-
-  return $returnString;
+  return $formHTML;
 }
 
 sub divLongList {
@@ -3461,6 +3148,239 @@ sub divHTMLformatSequence {
 };
 
   return $formHTML;
+}
+
+###########################################################
+# createHelpHTML: Will write an HTML-Form containing Help #
+###########################################################
+
+sub createHelpHTML {
+  my $helpHTML = shift;
+  my $templateText = getWrapper();
+
+  my $formHTML = qq{
+<div id="primer3plus_complete">
+
+};
+
+$formHTML .= divTopBar("Primer3Plus - Help",0,"");
+
+$formHTML .= divMessages;
+
+$formHTML .= $helpHTML;
+
+  my $returnString = $templateText;
+
+  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
+
+  return $returnString;
+}
+
+#####################################################################################
+# createAboutHTML: Will write an HTML-Form containing information about Primer3plus #
+#####################################################################################
+
+sub createAboutHTML {
+  my $templateText = getWrapper();
+
+  my $formHTML = qq{
+<div id="primer3plus_complete">
+};
+$formHTML .= divTopBar("Primer3Plus - About",0,0);
+
+$formHTML .= divMessages();
+
+$formHTML .= qq{
+<div id="primer3plus_about">
+
+<h1>Primer3Plus is a web-interface for primer3</h1>
+
+<h2>Primer3Plus</h2>
+<h3>Primer3Plus - Download Primer3Plus Program and Source Code</h3>
+<p>
+<a href="http://sourceforge.net/projects/primer3/">
+Source code is available at http://sourceforge.net/projects/primer3/.
+</a>
+</p>
+
+<h3>Primer3Plus - Copyright Notice and Disclaimer</h3>
+<p>
+Copyright (c) 2006, 2007<br>
+by Andreas Untergasser and Harm Nijveen<br>
+All rights reserved.<br>
+<br>
+The Primer3Plus is free software; you can redistribute it and/or modify<br>
+it under the terms of the GNU General Public License as published by<br>
+the Free Software Foundation; either version 2 of the License, or<br>
+(at your option) any later version.<br>
+<br>
+Primer3Plus is distributed in the hope that it will be useful,<br>
+but WITHOUT ANY WARRANTY; without even the implied warranty of<br>
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br>
+GNU General Public License for more details.<br>
+<br>
+To received a copy of the GNU General Public License<br>
+write to the Free Software Foundation, Inc., 51 Franklin St,<br>
+Fifth Floor, Boston, MA  02110-1301  USA<br>
+<br>
+
+<h3>Citing Primer3Plus</h3>
+<p>
+Andreas Untergasser, Harm Nijveen, Xiangyu Rao, Ton Bisseling, Ren&eacute; Geurts, and Jack A.M. Leunissen: 
+<b>Primer3Plus, an enhanced web interface to Primer3</b> Nucleic Acids Research 2007 35: W71-W74; doi:10.1093/nar/gkm306
+</p>
+
+<h3>Acknowledgments of Primer3Plus</h3>
+<p>
+We thank Gerben Bijl for extensive beta-testing.
+</p>
+
+<h2>Primer3</h2>
+
+<h3>Primer3 - Alternative Web Interface</h3>
+<p>
+<a href="http://primer3.sourceforge.net/webif.php">http://primer3.sourceforge.net/webif.php</a>
+</p>
+
+<h3>Primer3 - Download Primer3 Program and Source Code</h3>
+<p>
+<a href="http://sourceforge.net/projects/primer3/">
+Source code available at http://sourceforge.net/projects/primer3/.
+</a>
+</p>
+
+<h3>Primer3 - Copyright Notice and Disclaimer</h3>
+<p>
+Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006<br>
+Whitehead
+Institute for Biomedical Research, 
+<a href="http://jura.wi.mit.edu/rozen/">Steve Rozen</a>, and Helen Skaletsky<br>
+All rights reserved.
+</p>
+<pre>
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the names of the copyright holders nor contributors may
+be used to endorse or promote products derived from this software
+without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+</pre>
+
+
+<h3>Citing Primer3</h3>
+<p>
+We request that use of this software be cited in publications as
+</p>
+<p>
+<a href="http://jura.wi.mit.edu/rozen/">Steve Rozen</a>
+and Helen J. Skaletsky (2000)
+<a href="http://jura.wi.mit.edu/rozen/papers/rozen-and-skaletsky-2000-primer3.pdf">
+Primer3 on the WWW for general users and for biologist programmers.
+</a>
+In: Krawetz S, Misener S (eds)
+<i>Bioinformatics Methods and Protocols: Methods in Molecular Biology.</i>
+Humana Press, Totowa, NJ, pp 365-386<br>
+</p>
+
+<h3>Acknowledgments of Primer3</h3>
+<p>
+The development of Primer3 and the Primer3
+web site was funded by 
+Howard Hughes Medical Institute
+and by the 
+National Institutes of Health,
+<a href="http://www.nhgri.nih.gov/">
+National Human Genome Research Institute.</a>
+under grants R01-HG00257
+(to David C. Page) and P50-HG00098 (to Eric S. Lander).
+</p>
+
+<p>
+We thank
+<a href="http://www.centerline.com">
+Centerline Software, Inc.,
+</a>
+for use of their TestCenter memory-error, -leak, and test-coverage checker.
+</p>
+<p>
+Primer3 was a complete re-implementation
+of an earlier program:
+Primer 0.5 (<em>Steve Lincoln, Mark Daly, and Eric S. Lander</em>).
+<em>Lincoln Stein</em> championed the 
+idea of making Primer3 a software component suitable for high-throughput
+primer design.
+</p>
+
+</div>
+
+</div>  
+};
+
+  my $returnString = $templateText;
+
+  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
+
+  return $returnString;
+}
+
+
+################################################################
+# createPackageHTML: Creates an HTML-Page with all p3p modules #
+################################################################
+
+sub createPackageHTML {
+  my $templateText = getWrapper();
+
+  my $formHTML = qq{
+<div id="primer3plus_complete">
+
+};
+
+$formHTML .= divTopBar(0,0,0);
+
+$formHTML .= divMessages;
+
+$formHTML .= qq{
+<div id="primer3plus_help">
+
+<h2><a name="primer3plus" href="primer3plus.cgi">Primer3Plus</a></h2>
+  <p>Primer3Plus is the module which runs primer3 to pick primers.
+  </p>
+
+<h2><a name="primer3manager" href="primer3manager.cgi">Primer3Manager</a></h2>
+  <p>Primer3Manager allows to manage selected primers and to save them.
+  </p>
+
+
+</div>
+
+</div>  
+};
+
+  my $returnString = $templateText;
+
+  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
+
+  return $returnString;
 }
 
 #####################
