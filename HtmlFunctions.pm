@@ -2733,20 +2733,18 @@ sub divPrimerBox {
   my $formHTML = qq{  <div class="primer3plus_primer_pair_box">
   <table class="primer3plus_table_primer_pair_box">
      <colgroup>
-       <col width="16%">
-       <col width="16%">
-       <col width="16%">
-       <col width="16%">
-       <col width="16%">
-       <col width="16%">
+       <col width="12.5%">
+       <col width="12.5%">
+       <col width="10.5%">
+       <col width="10%">
+       <col width="9%">
+       <col width="8.5%">
+       <col width="13.5%">
+       <col width="10.5%">
+       <col width="13%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_primer_pair_box">Pair $selection:</td>
-       <td class="primer3plus_cell_primer_pair_box"></td>
-       <td class="primer3plus_cell_primer_pair_box"></td>
-       <td class="primer3plus_cell_primer_pair_box"></td>
-       <td class="primer3plus_cell_primer_pair_box"></td>
-       <td class="primer3plus_cell_primer_pair_box"></td>
+       <td colspan="9" class="primer3plus_cell_primer_pair_box">Pair $selection:</td>
      </tr>
 };
 
@@ -2821,14 +2819,8 @@ sub partPrimerData {
   
   $selection = $counter + 1;
     
-  my $primerStart;
-  my $primerLength;
-  my $primerTM;
-  my $primerGC;
-  my $primerSelf;
-  my $primerAny;
-  my $primerEnd;
-  my $primerNumber;
+  my ($primerStart, $primerLength, $primerTM, $primerGC, $primerAny);
+  my ($primerEnd, $primerNumber, $primerEndStability, $primerTemplateBinding, $primerPenalty);
   
   my $cssName;
   my $writeName;
@@ -2852,10 +2844,19 @@ sub partPrimerData {
 if (defined ($results->{"PRIMER_$type\_$counter\_SEQUENCE"})
 		and (($results->{"PRIMER_$type\_$counter\_SEQUENCE"}) ne "")) {
 
-$primerNumber = getPrimerNumber();
+  $primerNumber = getPrimerNumber();
+
+  ($primerStart, $primerLength) = split "," , $results->{"PRIMER_$type\_$counter"};
+  $primerTM = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_TM"}));
+  $primerGC = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_GC_PERCENT"}));
+  $primerAny = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_SELF_ANY"}));
+  $primerEnd = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_SELF_END"}));
+  $primerTemplateBinding = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_TEMPLATE_MISPRIMING"}));
+  $primerEndStability = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_END_STABILITY"}));
+  $primerPenalty = sprintf ("%.3f",($results->{"PRIMER_$type\_$counter\_PENALTY"}));
 
 $formHTML .= qq{     <tr class="primer3plus_$cssName">
-       <td colspan="6" class="primer3plus_cell_primer_pair_box"><input id="PRIMER_$primerNumber\_SELECT" name="PRIMER_$primerNumber\_SELECT" value="1" };
+       <td colspan="9" class="primer3plus_cell_primer_pair_box"><input id="PRIMER_$primerNumber\_SELECT" name="PRIMER_$primerNumber\_SELECT" value="1" };
 
 $formHTML .= ($checked) ? "checked=\"checked\" " : "";
  
@@ -2865,64 +2866,78 @@ $formHTML .= qq{type="checkbox">
      </tr>
      <tr>
        <td class="primer3plus_cell_primer_pair_box">Sequence:</td>
-       <td colspan="5" class="primer3plus_cell_primer_pair_box"><input id="PRIMER_$primerNumber\_SEQUENCE" name="PRIMER_$primerNumber\_SEQUENCE"
+       <td colspan="8" class="primer3plus_cell_primer_pair_box"><input id="PRIMER_$primerNumber\_SEQUENCE" name="PRIMER_$primerNumber\_SEQUENCE"
          value="$results->{"PRIMER_$type\_$counter\_SEQUENCE"}" size="90"></td>
      </tr>
-};
-
-  ($primerStart, $primerLength) = split "," , $results->{"PRIMER_$type\_$counter"};
-  $primerTM = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_TM"}));
-  $primerGC = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_GC_PERCENT"}));
-  $primerSelf = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_SELF_ANY"}));
-  $primerAny = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_SELF_END"}));
-
-$formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_primer_pair_box">Start: &nbsp; $primerStart</td>
-       <td class="primer3plus_cell_primer_pair_box">Length: &nbsp; $primerLength bp</td>
-       <td class="primer3plus_cell_primer_pair_box">Tm: &nbsp; $primerTM &deg;C </td>
-       <td class="primer3plus_cell_primer_pair_box">GC: &nbsp; $primerGC %</td>
-       <td class="primer3plus_cell_primer_pair_box">ANY: &nbsp; $primerSelf</td>
-       <td class="primer3plus_cell_primer_pair_box">SELF: &nbsp; $primerAny</td>
+     <tr>
+       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4">Start:</a> $primerStart</td>
+       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4">Length:</a> $primerLength bp</td>
+       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TM">Tm:</a> $primerTM &deg;C </td>
+       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_GC_PERCENT">GC:</a> $primerGC %</td>
+       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_ANY">Any:</a> $primerAny</td>
+       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_END">End:</a> $primerEnd</td>
+       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TEMPLATE_MISPRIMING">Temp Bind:</a> $primerAny</td>
+       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_END_STABILITY">3' Stab:</a> $primerEndStability</td>
+       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_PENALTY">Penalty:</a> $primerPenalty</td>
      </tr>
 };
 
-if (defined ($results->{"PRIMER_$type\_$counter\_MISPRIMING_SCORE"}) 
-		and (($results->{"PRIMER_$type\_$counter\_MISPRIMING_SCORE"}) ne "")) {
+  if ((defined ($results->{"PRIMER_$type\_$counter\_POSITION_PENALTY"}) 
+        and (($results->{"PRIMER_$type\_$counter\_POSITION_PENALTY"}) ne ""))
+        or (defined ($results->{"PRIMER_$type\_$counter\_MIN_SEQ_QUALITY"}) 
+        and (($results->{"PRIMER_$type\_$counter\_MIN_SEQ_QUALITY"}) ne ""))) {
+    my $primerPosPen = "";
+    my $primerMinSeqQual = "";
+    if (defined ($results->{"PRIMER_$type\_$counter\_POSITION_PENALTY"}) 
+        and (($results->{"PRIMER_$type\_$counter\_POSITION_PENALTY"}) ne "")) {
+        $primerPosPen = qq{<a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_POSITION_PENALTY">Position Penalty:</a>&nbsp;&nbsp;};
+        $primerPosPen .= $results->{"PRIMER_$type\_$counter\_POSITION_PENALTY"};
+    }
+    if (defined ($results->{"PRIMER_$type\_$counter\_MIN_SEQ_QUALITY"}) 
+        and (($results->{"PRIMER_$type\_$counter\_MIN_SEQ_QUALITY"}) ne "")) {
+        $primerMinSeqQual = qq{<a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_MIN_SEQ_QUALITY">Min Seq Quality:</a>&nbsp;&nbsp;};
+        $primerMinSeqQual .= $results->{"PRIMER_$type\_$counter\_MIN_SEQ_QUALITY"};
+    }
+            
+    $formHTML .= qq{     <tr>
+       <td colspan="2" class="primer3plus_cell_primer_pair_box">$primerPosPen</td>
+       <td colspan="2" class="primer3plus_cell_primer_pair_box">$primerMinSeqQual</td>
+       <td class="primer3plus_cell_primer_pair_box"></td>
+       <td class="primer3plus_cell_primer_pair_box"></td>
+       <td class="primer3plus_cell_primer_pair_box"></td>
+       <td class="primer3plus_cell_primer_pair_box"></td>
+       <td class="primer3plus_cell_primer_pair_box"></td>
+     </tr>
+};
+  }
+  
+  if (defined ($results->{"PRIMER_$type\_$counter\_LIBRARY_MISPRIMING"}) 
+        and (($results->{"PRIMER_$type\_$counter\_LIBRARY_MISPRIMING"}) ne "")) {
+    $formHTML .= qq{     <tr>
+       <td colspan="9" class="primer3plus_cell_primer_pair_box">
+         <a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_LIBRARY_MISPRIMING">Library Mispriming:</a>&nbsp;
+         $results->{"PRIMER_$type\_$counter\_LIBRARY_MISPRIMING"}</td>
+     </tr>
+};
+  }
 
-$formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_primer_pair_box">Mispriming:</td>
-       <td colspan="5" class="primer3plus_cell_primer_pair_box">$results->{"PRIMER_$type\_$counter\_MISPRIMING_SCORE"}</td>
+  if (defined ($results->{"PRIMER_$type\_$counter\_LIBRARY_MISHYB"}) 
+        and (($results->{"PRIMER_$type\_$counter\_LIBRARY_MISHYB"}) ne "")) {
+    $formHTML .= qq{     <tr>
+       <td colspan="9" class="primer3plus_cell_primer_pair_box">
+         <a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_4_LIBRARY_MISHYB">Library Mishyb:</a>&nbsp;
+         $results->{"PRIMER_$type\_$counter\_LIBRARY_MISHYB"}</td>
+     </tr>
+};
+  }
+  if (defined ($results->{"PRIMER_$type\_$counter\_PROBLEMS"}) 
+		and (($results->{"PRIMER_$type\_$counter\_PROBLEMS"}) ne "")) {
+    $formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_no_border_problem"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_PROBLEMS">Problems:</a></td>
+       <td class="primer3plus_cell_no_border_problem" colspan="8">$results->{"PRIMER_$type\_$counter\_PROBLEMS"}</td>
      </tr>
 };
 }
-if (defined ($results->{"PRIMER_$type\_$counter\_WARNING"}) 
-		and (($results->{"PRIMER_$type\_$counter\_WARNING"}) ne "")) {
-my $warningMessage = $results->{"PRIMER_$type\_$counter\_WARNING"};
-$warningMessage =~ s/^Left primer/$writeName/;
-$formHTML .= qq{     <tr>
-       <td class="primer3plus_warning" colspan="6">$warningMessage</td>
-     </tr>
-};
-}
-if (defined ($results->{"PRIMER_$type\_$counter\_ERROR"}) 
-		and (($results->{"PRIMER_$type\_$counter\_ERROR"}) ne "")) {
-my $errorMessage = $results->{"PRIMER_$type\_$counter\_ERROR"};
-$errorMessage =~ s/^Left primer/$writeName/;
-$formHTML .= qq{     <tr>
-       <td class="primer3plus_warning" colspan="6">$errorMessage</td>
-    </tr>
-};
-}
-if (defined ($results->{"PRIMER_$type\_$counter\_MESSAGE"}) 
-		and (($results->{"PRIMER_$type\_$counter\_MESSAGE"}) ne "")) {
-my $infoMessage = $results->{"PRIMER_$type\_$counter\_MESSAGE"};
-$infoMessage =~ s/^Left primer/$writeName/;
-$formHTML .= qq{     <tr>
-       <td class="primer3plus_warning" colspan="6">$infoMessage</td>
-     </tr>
-};
-}
-$formHTML .= qq{	<tr><td class="primer3plus_cell_primer_pair_box" colspan="6"></td></tr>}
 }
 else {
 	$formHTML = "";
