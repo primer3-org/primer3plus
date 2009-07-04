@@ -2550,9 +2550,9 @@ $formHTML .= qq{
 # createResultsPrimerList: Will write an Tabels all Primers in the Result Hash #
 ################################################################################
 sub createResultsPrimerList {
-  my ($completeParameters, %settings, $sortedInput) ; 
+  my ($completeParameters, $settings, $sortedInput) ; 
   $completeParameters = shift; 
-  %settings = %{(shift)};
+  $settings = shift;
   $sortedInput = shift;
 
   my $formHTML = "";
@@ -2562,10 +2562,10 @@ $formHTML .= qq{
 };
 
 if ($sortedInput == 0){
-   $formHTML .= divHTMLsequence(\%settings, "0");
+   $formHTML .= divHTMLsequence($settings, "0");
 }
 else {
-   $formHTML .= divHTMLsequence(\%settings, "-1");
+   $formHTML .= divHTMLsequence($settings, "-1");
 }
 
 $formHTML .= qq{   <div class="primer3plus_select_all">
@@ -2578,10 +2578,10 @@ $formHTML .= qq{   <div class="primer3plus_select_all">
    </div>
 };
 
- if (defined ($settings{PRIMER_LEFT_0_SEQUENCE})) {
+ if (defined ($settings->{PRIMER_LEFT_0_SEQUENCE})) {
      $formHTML .= qq{<h2 class="primer3plus_left_primer">Left Primers:</h2>
 };
-     $formHTML .= divLongList(\%settings,"LEFT",$sortedInput);
+     $formHTML .= divLongList($settings,"LEFT",$sortedInput);
 
      $formHTML .= qq{<br>
 };
@@ -2595,10 +2595,10 @@ $formHTML .= qq{   <div class="primer3plus_select_all">
 </div>
 };  }
 
- if (defined ($settings{PRIMER_INTERNAL_OLIGO_0_SEQUENCE})) {
+ if (defined ($settings->{PRIMER_INTERNAL_OLIGO_0_SEQUENCE})) {
      $formHTML .= qq{<h2 class="primer3plus_internal_oligo">Internal Oligos:</h2>
 };
-     $formHTML .= divLongList(\%settings,"INTERNAL_OLIGO",$sortedInput);
+     $formHTML .= divLongList($settings,"INTERNAL_OLIGO",$sortedInput);
 
      $formHTML .= qq{<br>
 };
@@ -2613,10 +2613,10 @@ $formHTML .= qq{   <div class="primer3plus_select_all">
 };
   }
  
- if (defined ($settings{PRIMER_RIGHT_0_SEQUENCE})) {
+ if (defined ($settings->{PRIMER_RIGHT_0_SEQUENCE})) {
      $formHTML .= qq{<h2 class="primer3plus_right_primer">Right Primers:</h2>
 };
-     $formHTML .= divLongList(\%settings,"RIGHT",$sortedInput);
+     $formHTML .= divLongList($settings,"RIGHT",$sortedInput);
 
      $formHTML .= qq{<br>
 };
@@ -2645,39 +2645,48 @@ sub divLongList {
   $sortedInput = shift;
 
 
-  $formHTML = qq{
-  <div class="primer3plus_long_list">
-   <table class="primer3plus_long_list_table">
-     <colgroup>
-       <col style="width:20%">
-       <col style="width:38%">
-       <col style="width:6%; text-align:right">
-       <col style="width:8%; text-align:right">
-       <col style="width:7%; text-align:right">
-       <col style="width:7%; text-align:right">
-       <col style="width:7%; text-align:right">
-       <col style="width:7%; text-align:right">
-     </colgroup>
-     <tr>
-       <td class="primer3plus_cell_long_list">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Name</td>
-       <td class="primer3plus_cell_long_list">Sequence</td>
-       <td class="primer3plus_cell_long_list">Start</td>
-       <td class="primer3plus_cell_long_list">Length</td>
-       <td class="primer3plus_cell_long_list">Tm</td>
-       <td class="primer3plus_cell_long_list">GC %</td>
-       <td class="primer3plus_cell_long_list">ANY</td>
-       <td class="primer3plus_cell_long_list">END</td>
-     <tr>
-};
-
   my $primerStart;
   my $primerLength;
   my $primerTM;
   my $primerGC;
   my $primerSelf;
   my $primerEnd;
+  my $primerTemplateBinding;
+  my $primerEndStability;
+  my $primerPenalty;
   my $stopLoop;
   my $primerNumber;
+
+  $formHTML = qq{
+  <div class="primer3plus_long_list">
+   <table class="primer3plus_long_list_table">
+     <colgroup>
+       <col style="width:16%">
+       <col style="width:28%">
+       <col style="width:6.5%; text-align:right">
+       <col style="width:6.5%; text-align:right">
+       <col style="width:6%; text-align:right">
+       <col style="width:6.5%; text-align:right">
+       <col style="width:5.5%; text-align:right">
+       <col style="width:5.5%; text-align:right">
+       <col style="width:6.5%; text-align:right">
+       <col style="width:6.5%; text-align:right">
+       <col style="width:7.5%; text-align:right">
+     </colgroup>
+     <tr>
+       <td class="primer3plus_cell_long_list">&nbsp; &nbsp; &nbsp; &nbsp; Name</td>
+       <td class="primer3plus_cell_long_list">Sequence</td>
+       <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4">Start</a></td>
+       <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4">Length</a></td>
+       <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TM">Tm</a></td>
+       <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_GC_PERCENT">GC %</a></td>
+       <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_ANY">Any</a></td>
+       <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_END">End:</a></td>
+       <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TEMPLATE_MISPRIMING">Temp Bind</a></td>
+       <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_END_STABILITY">3' Stab</a></td>
+       <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_PENALTY">Penalty</a></td>
+     </tr>
+};
 
   my $counter = 0;
   for ($stopLoop = 0 ; $stopLoop ne 1 ; ) {
@@ -2686,11 +2695,14 @@ sub divLongList {
       $primerGC = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_GC_PERCENT"}));
       $primerSelf = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_SELF_ANY"}));
       $primerEnd = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_SELF_END"}));
+      $primerTemplateBinding = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_TEMPLATE_MISPRIMING"}));
+      $primerEndStability = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_END_STABILITY"}));
+      $primerPenalty = sprintf ("%.3f",($results->{"PRIMER_$primerType\_$counter\_PENALTY"}));
       $primerNumber = getPrimerNumber();
 
-      $formHTML .= qq{     <tr>
+  $formHTML .= qq{     <tr>
        <td class="primer3plus_cell_long_list"><input id="PRIMER_$primerNumber\_SELECT" name="PRIMER_$primerNumber\_SELECT" value="1" type="checkbox">
-       &nbsp; &nbsp;<input id="PRIMER_$primerNumber\_NAME" name="PRIMER_$primerNumber\_NAME"
+       &nbsp; <input id="PRIMER_$primerNumber\_NAME" name="PRIMER_$primerNumber\_NAME"
            value="$results->{"PRIMER_$primerType\_$counter\_NAME"}" size="12"></td>
        <td class="primer3plus_cell_long_list"><input id="PRIMER_$primerNumber\_SEQUENCE" name="PRIMER_$primerNumber\_SEQUENCE"
          value="$results->{"PRIMER_$primerType\_$counter\_SEQUENCE"}" size="35"></td>
@@ -2700,6 +2712,9 @@ sub divLongList {
        <td class="primer3plus_cell_long_list">$primerGC</td>
        <td class="primer3plus_cell_long_list">$primerSelf</td>
        <td class="primer3plus_cell_long_list">$primerEnd</td>
+       <td class="primer3plus_cell_long_list">$primerTemplateBinding</td>
+       <td class="primer3plus_cell_long_list">$primerEndStability</td>
+       <td class="primer3plus_cell_long_list">$primerPenalty</td>
      </tr>
 };
       $counter++;
@@ -3015,6 +3030,7 @@ sub divHTMLsequence {
       $format = addRegion($format,$results->{"SEQUENCE_INCLUDED_REGION"},$firstBase,"I");
   }
   
+  # Add only the first primer pair e.g. Detection
   if ($firstPair eq 1) {
       if (defined ($results->{"PRIMER_LEFT_0"}) and (($results->{"PRIMER_LEFT_0"}) ne "")) {
            $format = addRegion($format,$results->{"PRIMER_LEFT_0"},$firstBase,"F");
@@ -3026,9 +3042,11 @@ sub divHTMLsequence {
            $format = addRegion($format,$results->{"PRIMER_RIGHT_0"},$firstBase,"R");
       }
   }
+  # Mark no primers on the sequence e.g. Primer list
   elsif ($firstPair eq -1) {
       
   }
+  # Mark all primers on the sequence e.g. Sequencing
   else {
       $run = 1;
       for (my $counter = 0 ; $run eq 1 ; $counter++ ) {
