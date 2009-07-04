@@ -2117,7 +2117,9 @@ sub mainResultsHTML {
 };
   # Write the back button
   $returnHTML .= divReturnToInput($completeParameters);
-
+  
+  # Print the content of the Hash (sometimes helpfull)
+  # $returnHTML .= printHashOut($results);
 
   # Write some help if no primers found
   if ($primer_count == 0){
@@ -2129,7 +2131,7 @@ sub mainResultsHTML {
   }
   # Print out pair boxes
   elsif ($pair_count != 0) {
-      $returnHTML .= createResultsDetection($completeParameters, $results);
+      $returnHTML .= createResultsDetection($results);
   } 
   # Sequencing needs a different sequenceprint
   elsif ($task eq "pick_sequencing_primers") {
@@ -2199,7 +2201,7 @@ $formHTML .= qq{     <tr>
      </tr>
 };
 }
-if (defined ($settings{"PRIMER_INTERNAL_OLIGO_EXPLAIN"}) and (($settings{"PRIMER_INTERNAL_OLIGO_EXPLAIN"}) ne "")) {
+if (defined ($settings{"PRIMER_INTERNAL_EXPLAIN"}) and (($settings{"PRIMER_INTERNAL_EXPLAIN"}) ne "")) {
 $notEmpty = 1;
 $formHTML .= qq{     <tr>
        <td class="primer3plus_cell_with_border">Internal Oligo:</td>
@@ -2255,26 +2257,21 @@ $formHTML .= divStatistics($settings);
 # createResultsDetection: Will write an HTML-Form based for the detection Function #
 ####################################################################################
 sub createResultsDetection {
-  my $completeParameters; 
-  my %settings;
-  $completeParameters = shift; 
-  %settings = %{(shift)};
-
-  my $HashKeys;
+  my $settings = shift;
 
 my $formHTML .= qq{
 <form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data" target="primer3manager">
 
 };
 
-$formHTML .= divPrimerBox(\%settings,"0","1");
+$formHTML .= divPrimerBox($settings,"0","1");
 
 $formHTML .= qq{<div class="primer3plus_submit">
 <input name="Submit" value="Send to Primer3Manager" type="submit"> <input value="Reset Form" type="reset">
 </div>
 };
 
-$formHTML .= divHTMLsequence(\%settings, "1");
+$formHTML .= divHTMLsequence($settings, "1");
 
 $formHTML .= qq{ <div class="primer3plus_select_all">
 <br>
@@ -2283,8 +2280,8 @@ $formHTML .= qq{ <div class="primer3plus_select_all">
 </div>
 };
 
-for (my $primerCount = 1 ; $primerCount < $settings{"PRIMER_NUM_RETURN"} ; $primerCount++) {
-    $formHTML .= divPrimerBox(\%settings,$primerCount,"0");
+for (my $primerCount = 1 ; $primerCount < $settings->{"PRIMER_PAIR_NUM_RETURNED"} ; $primerCount++) {
+    $formHTML .= divPrimerBox($settings,$primerCount,"0");
 
     $formHTML .= qq{<div class="primer3plus_submit">
 <br>
@@ -2296,7 +2293,7 @@ for (my $primerCount = 1 ; $primerCount < $settings{"PRIMER_NUM_RETURN"} ; $prim
 };
 }
 
-$formHTML .= divStatistics(\%settings);
+$formHTML .= divStatistics($settings);
 
 $formHTML .= qq{
 </form>
@@ -2312,13 +2309,8 @@ $formHTML .= qq{
 
 sub createResultsPrimerCheck {
   my $results = shift;
-
-  my $HashKeys;
-
-  my $formHTML = qq{
-<form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
-
-};
+  my $type;
+  my $formHTML = "";
 
   my $primerStart;
   my $primerLength;
@@ -2328,67 +2320,140 @@ sub createResultsPrimerCheck {
   my $primerAny;
   my $primerEnd;
   my $primerStab;
-  my $primerNumber = getPrimerNumber();
+  my $primerPenalty;
 
-$formHTML .= qq{  <div class="primer3plus_oligo_box">
+  ## Figure out which primer to return
+  ## This function will be only run if only one primer was found
+  if (defined ($results->{"PRIMER_LEFT_0_SEQUENCE"})) {
+      $type = "LEFT";
+  }
+  if (defined ($results->{"PRIMER_RIGHT_0_SEQUENCE"})) {
+      $type = "RIGHT";
+  }
+  if (defined ($results->{"PRIMER_INTERNAL_0_SEQUENCE"})) {
+      $type = "INTERNAL";
+  }
+
+  ## Format the information
+  ($primerStart, $primerLength) = split "," , $results->{"PRIMER_$type\_0"};
+  $primerTM = sprintf ("%.1f",($results->{"PRIMER_$type\_0_TM"}));
+  $primerGC = sprintf ("%.1f",($results->{"PRIMER_$type\_0_GC_PERCENT"}));
+  $primerSelf = sprintf ("%.1f",($results->{"PRIMER_$type\_0_SELF_ANY"}));
+  $primerAny = sprintf ("%.1f",($results->{"PRIMER_$type\_0_SELF_END"}));
+  $primerStab = sprintf ("%.1f",($results->{"PRIMER_$type\_0_END_STABILITY"}));
+  $primerPenalty = sprintf ("%.3f",($results->{"PRIMER_$type\_0_PENALTY"}));
+
+  $formHTML .= qq{
+<form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
+
+  <div class="primer3plus_oligo_box">
   <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="15%">
-       <col width="85%">
+       <col width="17%">
+       <col width="83%">
      </colgroup>
      <tr class="primer3plus_left_primer">
-       <td class="primer3plus_cell_no_border"><input name="PRIMER_$primerNumber\_SELECT" value="1" checked="checked" type="checkbox"> &nbsp; Oligo:</td>
-       <td class="primer3plus_cell_no_border"><input name="PRIMER_$primerNumber\_NAME" value="$results->{"PRIMER_LEFT_0_NAME"}" size="40"></td>
+       <td class="primer3plus_cell_no_border"><input name="PRIMER_0_SELECT" value="1" checked="checked" type="checkbox"> &nbsp; Oligo:</td>
+       <td class="primer3plus_cell_no_border"><input name="PRIMER_0_NAME" value="$results->{"PRIMER_$type\_0_NAME"}" size="40"></td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border">Sequence:</td>
-       <td class="primer3plus_cell_no_border"><input name="PRIMER_$primerNumber\_SEQUENCE" value="$results->{"PRIMER_LEFT_0_SEQUENCE"}" size="90"></td>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SEQUENCE">Sequence:</a></td>
+       <td class="primer3plus_cell_no_border"><input name="PRIMER_0_SEQUENCE" value="$results->{"PRIMER_$type\_0_SEQUENCE"}" size="90"></td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4">Length:</a></td>
+       <td class="primer3plus_cell_no_border">$primerLength bp</td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TM">Tm:</a></td>
+       <td class="primer3plus_cell_no_border">$primerTM &deg;C </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_GC_PERCENT">GC:</a></td>
+       <td class="primer3plus_cell_no_border">$primerGC %</td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_ANY">Any Dimer:</a></td>
+       <td class="primer3plus_cell_no_border">$primerSelf</td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_END">End Dimer:</a></td>
+       <td class="primer3plus_cell_no_border">$primerAny</td>
+     </tr>};
+
+  if (defined ($results->{"PRIMER_$type\_0_TEMPLATE_MISPRIMING"}) 
+        and (($results->{"PRIMER_$type\_0_TEMPLATE_MISPRIMING"}) ne "")) {
+      my   $primerTempMispr = sprintf ("%.1f",($results->{"PRIMER_$type\_0_TEMPLATE_MISPRIMING"}));
+
+      $formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TEMPLATE_MISPRIMING">Template Mispriming:</a></td>
+       <td class="primer3plus_cell_no_border">$primerTempMispr</td>
      </tr>
 };
+  }
 
-  ($primerStart, $primerLength) = split "," , $results->{"PRIMER_LEFT_0"};
-  $primerTM = sprintf ("%.1f",($results->{"PRIMER_LEFT_0_TM"}));
-  $primerGC = sprintf ("%.1f",($results->{"PRIMER_LEFT_0_GC_PERCENT"}));
-  $primerSelf = sprintf ("%.1f",($results->{"PRIMER_LEFT_0_SELF_ANY"}));
-  $primerAny = sprintf ("%.1f",($results->{"PRIMER_LEFT_0_SELF_END"}));
-  $primerStab = sprintf ("%.1f",($results->{"PRIMER_LEFT_0_END_STABILITY"}));
-
-$formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_no_border">Length:</td>
-       <td class="primer3plus_cell_no_border">$primerLength bp</td>
+     $formHTML .= qq{
+     
      <tr>
-     </tr>
-       <td class="primer3plus_cell_no_border">Tm:</td>
-       <td class="primer3plus_cell_no_border">$primerTM &deg;C </td>
-     <tr>
-     </tr>
-       <td class="primer3plus_cell_no_border">GC:</td>
-       <td class="primer3plus_cell_no_border">$primerGC %</td>
-     <tr>
-     </tr>
-       <td class="primer3plus_cell_no_border">ANY:</td>
-       <td class="primer3plus_cell_no_border">$primerSelf</td>
-     <tr>
-     </tr>
-       <td class="primer3plus_cell_no_border">SELF:</td>
-       <td class="primer3plus_cell_no_border">$primerAny</td>
-     </tr>
-     </tr>
-       <td class="primer3plus_cell_no_border">3' Stability:</td>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_END_STABILITY">3' Stability:</a></td>
        <td class="primer3plus_cell_no_border">$primerStab &Delta;G</td>
      </tr>
-};
-
-if (defined ($results->{"PRIMER_LEFT_0_MISPRIMING_SCORE"}) 
-		and (($results->{"PRIMER_LEFT_0_MISPRIMING_SCORE"}) ne "")) {
+     <tr>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_PENALTY">Penalty:</a></td>
+       <td class="primer3plus_cell_no_border">$primerPenalty</td>
+     </tr>
+  };
+  # Now the optional fields
+  if (defined ($results->{"PRIMER_$type\_0_POSITION_PENALTY"}) 
+        and (($results->{"PRIMER_$type\_0_POSITION_PENALTY"}) ne "")) {
+     my   $primerPosPenalty = sprintf ("%.3f",($results->{"PRIMER_$type\_0_POSITION_PENALTY"}));
 
 $formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_no_border">Mispriming:</td>
-       <td class="primer3plus_cell_no_border">$results->{"PRIMER_LEFT_0_MISPRIMING_SCORE"}</td>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_POSITION_PENALTY">Position Penalty:</a></td>
+       <td class="primer3plus_cell_no_border">$primerPosPenalty</td>
+     </tr>
+};
+  }
+
+  if (defined ($results->{"PRIMER_$type\_0_LIBRARY_MISPRIMING"}) 
+        and (($results->{"PRIMER_$type\_0_LIBRARY_MISPRIMING"}) ne "")) {
+
+$formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_LIBRARY_MISPRIMING">Library Mispriming:</a></td>
+       <td class="primer3plus_cell_no_border">$results->{"PRIMER_$type\_0_LIBRARY_MISPRIMING"}</td>
+     </tr>
+};
+  }
+
+  if (defined ($results->{"PRIMER_$type\_0_LIBRARY_MISHYB"}) 
+        and (($results->{"PRIMER_$type\_0_LIBRARY_MISHYB"}) ne "")) {
+
+$formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_4_LIBRARY_MISHYB">Library Mishyb:</a></td>
+       <td class="primer3plus_cell_no_border">$results->{"PRIMER_$type\_0_LIBRARY_MISHYB"}</td>
+     </tr>
+};
+  }
+
+  if (defined ($results->{"PRIMER_$type\_0_MIN_SEQ_QUALITY"}) 
+        and (($results->{"PRIMER_$type\_0_MIN_SEQ_QUALITY"}) ne "")) {
+
+$formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_MIN_SEQ_QUALITY">Min Seq Quality:</a></td>
+       <td class="primer3plus_cell_no_border">$results->{"PRIMER_$type\_0_MIN_SEQ_QUALITY"}</td>
+     </tr>
+};
+  }
+
+  if (defined ($results->{"PRIMER_$type\_0_PROBLEMS"}) 
+        and (($results->{"PRIMER_$type\_0_PROBLEMS"}) ne "")) {
+
+$formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_no_border_problem"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_PROBLEMS">Problems:</a></td>
+       <td class="primer3plus_cell_no_border_problem">$results->{"PRIMER_$type\_0_PROBLEMS"}</td>
      </tr>
 };
 }
-
 $formHTML .= qq{  </table>
   </div>
 };
@@ -2440,29 +2505,16 @@ $formHTML .= qq{
   return $formHTML;
 }
 
-####################################################################################
-# createResultsList: Will write an HTML-Form for the Parameters in the Result Hash #
-####################################################################################
-sub createResultsList {
-  my %settings; 
+###############################################################################
+# printHashOut: Will write an HTML-Form for the Parameters in the Result Hash #
+###############################################################################
+sub printHashOut {
+  my %settings;
   %settings = %{(shift)};
-
-  my $results = \%settings;
-
   my $HashKeys;
 
-  my $formHTML = qq{
-<div id="primer3plus_complete">
-
-<form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
-};
-$formHTML .= divTopBar(0,0,0);
-
-$formHTML .= divMessages();
-
-$formHTML .= qq{
-<div id="primer3plus_results">
-<table class="primer3plus_table_no_border">
+  my $formHTML = qq{<br>
+   <table class="primer3plus_table_no_border">
       <colgroup>
         <col width="40%">
         <col width="60%">
@@ -2473,7 +2525,7 @@ $formHTML .= qq{
     <tr>
 };
 
-foreach $HashKeys (sort(keys(%settings))){
+  foreach $HashKeys (sort(keys(%settings))){
     $formHTML .= qq{
      <tr>
        <td class="primer3plus_cell_no_border">$HashKeys</td>
@@ -2482,18 +2534,7 @@ foreach $HashKeys (sort(keys(%settings))){
 };
 $formHTML .= qq{
    </table>
-</div>
-
-<div id="primer3plus_footer">
-<br>
-
-More about <a href="$machineSettings{URL_ABOUT}">Primer3Plus</a>...
-
-</div>
-
-</form>
-
-</div>	
+   <br>
 };
 
   return $formHTML;
