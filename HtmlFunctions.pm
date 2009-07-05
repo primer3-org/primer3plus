@@ -775,10 +775,10 @@ $formHTML .= qq{>
        <col width="78%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('A list of positions in the given sequence. The value for this parameter has the form position.<br>E.g. 120: only pick primers overlaping the position 120.<br> Or use ? in the template sequence to mark the position.<br>Primer3 tries to pick primer pairs were the forward or the reverse primer overlaps one of these positions.');"
+       <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('A list of positions in the given sequence. The value for this parameter has the form position.<br>E.g. 120: only pick primers overlaping the position 120.<br> Or use - in the template sequence to mark the position.<br>Primer3 tries to pick primer pairs were the forward or the reverse primer overlaps one of these positions.');"
          onmouseout="toolTip();"  name="SEQUENCE_PRIMER_OVERLAP_POS_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_PRIMER_OVERLAP_POS">Primer overlap positions:</a>
        </td>
-       <td class="primer3plus_cell_no_border">?
+       <td class="primer3plus_cell_no_border">-
        </td>
        <td class="primer3plus_cell_no_border"><input size="40" id="SEQUENCE_PRIMER_OVERLAP_POS" name="SEQUENCE_PRIMER_OVERLAP_POS" value="$settings{SEQUENCE_PRIMER_OVERLAP_POS}" type="text">
        </td>

@@ -618,22 +618,6 @@ sub loadFile {
 	    setMessage("Primer3Plus loaded SeqEdit-File");
     }
 
-	# Read GeneBank file format old way
-#	elsif ( $fileString =~ /ORIGIN/ ) {
-#		my ( $name, $sequence, $temp );
-#		( $name,     $sequence ) = split "ORIGIN", $fileString;
-#		( $sequence, $temp )     = split "//",     $sequence;
-#		$sequence =~ s/\d//g;
-#
-#		( $temp, $name ) = split "DEFINITION", $name;
-#		( $name, $temp ) = split "\n",         $name;
-#		$name =~ s/^\s*//;
-#
-#		$dataTarget->{"SEQUENCE_ID"} = $name;
-#		$dataTarget->{"SEQUENCE_TEMPLATE"} = $sequence;
-#		setMessage("Primer3Plus loaded GenBank-File");
-#	}
-
 	# Read GenBank file format
 	elsif ( ( $fileString =~ /ORIGIN/ ) and ( $fileString =~ /LOCUS/ ) ) {
 		my ( $name, $sequence, $temp, $inSeq, $sequenceCounter );
@@ -802,7 +786,8 @@ sub checkParameters (\%) {
 	my $realSequence     = $dataStorage->{"SEQUENCE_TEMPLATE"};
 	my $excludedRegion   = $dataStorage->{"SEQUENCE_EXCLUDED_REGION"};
 	my $target           = $dataStorage->{"SEQUENCE_TARGET"};
-	my $includedRegion   = $dataStorage->{"SEQUENCE_INCLUDED_REGION"};
+    my $includedRegion   = $dataStorage->{"SEQUENCE_INCLUDED_REGION"};
+    my $overlapPos       = $dataStorage->{"SEQUENCE_PRIMER_OVERLAP_POS"};
 
 	if ( $realSequence =~ /^\s*>([^\n]*)/ ) {
 
@@ -825,19 +810,20 @@ sub checkParameters (\%) {
 		$realSequence =~ s/\d//g;
 	}
 	$realSequence =~ s/\s//g;
-	my ( $m_target, $m_excluded_region, $m_included_region ) =
-	          read_sequence_markup( $realSequence, ( [ '[', ']' ], [ '<', '>' ], [ '{', '}' ] ) );
+    my ($m_target, $m_excluded_region, $m_included_region, $m_overlap_pos)
+        = read_sequence_markup($realSequence, (['[', ']'], ['<','>'], ['{','}'], ['-','-']));
 	$realSequence =~ s/[\[\]\<\>\{\}]//g;
+	$realSequence =~ s/-//g;
 	if ($m_target && @$m_target) {
 		if ($target) {
-			setMessage("WARNING Targets specified both as sequence".
+			setMessage("WARNING: Targets specified both as sequence".
 			           " markups and in Other Per-Sequence Inputs");
 		}
 		$target = add_start_len_list( $target, $m_target, $firstBaseIndex );
 	}
 	if ($m_excluded_region && @$m_excluded_region) {
 		if ($excludedRegion) {
-			setMessage("WARNING Excluded Regions specified both as sequence".
+			setMessage("WARNING: Excluded Regions specified both as sequence".
 			           " markups and in Other Per-Sequence Inputs");
 		}
 		$excludedRegion =
@@ -853,11 +839,19 @@ sub checkParameters (\%) {
 		}
 		$includedRegion =  add_start_len_list( $includedRegion, $m_included_region, $firstBaseIndex );
 	}
+    if ($m_overlap_pos && @$m_overlap_pos) {
+        if ($overlapPos) {
+            setMessage("WARNING: Primer overlap positions specified both as sequence".
+                       " markups and in Other Per-Sequence Inputs");
+        }
+        $overlapPos = add_start_only_list( $overlapPos, $m_overlap_pos,  $firstBaseIndex );
+    }
 	$dataStorage->{"SEQUENCE_ID"} = $sequenceID;
 	$dataStorage->{"SEQUENCE_TEMPLATE"}           = $realSequence;
 	$dataStorage->{"SEQUENCE_EXCLUDED_REGION"}    = $excludedRegion;
 	$dataStorage->{"SEQUENCE_TARGET"}             = $target;
 	$dataStorage->{"SEQUENCE_INCLUDED_REGION"}    = $includedRegion;
+    $dataStorage->{"SEQUENCE_PRIMER_OVERLAP_POS"} = $overlapPos;
 
 	## Remove Commas in Product size ranges
 	$dataStorage->{"PRIMER_PRODUCT_SIZE_RANGE"} =~ s/,/ /g;
@@ -901,89 +895,92 @@ sub checkParameters (\%) {
 # Functions for the region functionality from primer3web #
 ##########################################################
 sub add_start_len_list($$$) {
-	my ( $list_string, $list, $plus ) = @_;
-	my $sp = $list_string ? ' ' : '';
-	for (@$list) {
-		$list_string .= ( $sp . ( $_->[0] + $plus ) . "," . $_->[1] );
-		$sp = ' ';
-	}
-	return $list_string;
+    my ($list_string, $list, $plus) = @_;
+    my $sp = $list_string ? ' ' : '' ;
+    for (@$list) {
+    $list_string .= ($sp . ($_->[0] + $plus) . "," . $_->[1]);
+    $sp = ' ';
+    }
+    return $list_string;
+}
+
+sub add_start_only_list($$$) {
+    my ($list_string, $list, $plus) = @_;
+    my $sp = $list_string ? ' ' : '' ;
+    for (@$list) {
+    $list_string .= ($sp . ($_->[0] + $plus));
+    $sp = ' ';
+    }
+    return $list_string;
 }
 
 sub read_sequence_markup($@) {
-	my ( $s, @delims ) = @_;
-
-	# E.g. ['/','/'] would be ok in @delims, but
-	# no two pairs in @delims may share a character.
-	my @out = ();
-	for (@delims) {
-		push @out, read_sequence_markup_1_delim( $s, $_, @delims );
-	}
-	@out;
+    my ($s, @delims) = @_;
+    # E.g. ['/','/'] would be ok in @delims, but
+    # no two pairs in @delims may share a character.
+    my @out = (); 
+    for (@delims) {
+        push @out, read_sequence_markup_1_delim($s, $_, @delims);
+    }
+    @out;
 }
 
 sub read_sequence_markup_1_delim($$@) {
-	my ( $s, $d, @delims ) = @_;
-	my ( $d0, $d1 ) = @$d;
-	my $other_delims = '';
-	for (@delims) {
-		next if $_->[0] eq $d0 and $_->[1] eq $d1;
-		confess 'Programming error' if $_->[0] eq $d0;
-		confess 'Programming error' if $_->[1] eq $d1;
-		$other_delims .= '\\' . $_->[0] . '\\' . $_->[1];
-	}
-	if ($other_delims) {
-		$s =~ s/[$other_delims]//g;
-	}
-
-	# $s now contains only the delimters of interest.
-	my @s = split( //, $s );
-	my ( $c, $pos ) = ( 0, 0 );
-	my @out = ();
-	my $len;
-	while (@s) {
-		$c = shift(@s);
-		next if ( $c eq ' ' );    # Already used delimeters are set to ' '
-		if ( $c eq $d0 ) {
-			$len = len_to_delim( $d0, $d1, \@s );
-			return undef if ( !defined $len );
-			push @out, [ $pos, $len ];
-		}
-		elsif ( $c eq $d1 ) {
-
-			# There is a closing delimiter with no opening
-			# delimeter, an input error.
-			setDoNotPick("1");
-			setMessage("ERROR IN SEQUENCE: closing delimiter $d1 not preceded by $d0");
-			return undef;
-		}
-		else {
-			$pos++;
-		}
-	}
-	return \@out;
+    my ($s,  $d, @delims) = @_;
+    my ($d0, $d1) = @$d;
+    my $other_delims = '';
+    for (@delims) {
+    next if $_->[0] eq $d0 and $_->[1] eq $d1;
+    confess 'Programming error' if $_->[0] eq $d0;
+    confess 'Programming error' if $_->[1] eq $d1;
+    $other_delims .= '\\' . $_->[0] . '\\' . $_->[1];
+    }
+    if ($other_delims) {
+        $s =~ s/[$other_delims]//g;
+    }
+    # $s now contains only the delimters of interest.
+    my @s = split(//, $s);
+    my ($c, $pos) = (0, 0);
+    my @out = ();
+    my $len;
+    while (@s) {
+    $c = shift(@s);
+    next if ($c eq ' '); # Already used delimeters are set to ' '
+    if (($c eq $d0) && ($d0 eq $d1)) {
+        push @out, [$pos, 0];
+    }elsif ($c eq $d0) {
+        $len = len_to_delim($d0, $d1, \@s);
+        return undef if (!defined $len);
+        push @out, [$pos, $len];
+    } elsif ($c eq $d1) {
+        # There is a closing delimiter with no opening
+        # delimeter, an input error.
+        setDoNotPick("1");
+        print "<br>ERROR IN SEQUENCE: closing delimiter $d1 not preceded by $d0\n";
+        return undef;
+    } else {
+        $pos++;
+    }
+    }
+    return \@out;
 }
 
 sub len_to_delim($$$) {
-	my ( $d0, $d1, $s ) = @_;
-	my $i;
-	my $len = 0;
-	for $i ( 0 .. $#{$s} ) {
-		if ( $s->[$i] eq $d0 ) {
-
-			# ignore it;
-		}
-		elsif ( $s->[$i] eq $d1 ) {
-			$s->[$i] = ' ';
-			return $len;
-		}
-		else { $len++ }
-	}
-
-	# There was no terminating delim;
-	setDoNotPick("1");
-	setMessage("ERROR IN SEQUENCE: closing delimiter $d1 did not follow $d0");
-	return undef;
+    my ($d0, $d1, $s) = @_;
+    my $i;
+    my $len = 0;
+    for $i (0..$#{$s}) {
+      if ($s->[$i] eq $d0) {
+         # ignore it;
+      } elsif ($s->[$i] eq $d1) {
+         $s->[$i] = ' ';
+         return $len;
+      } else { $len++ }
+    }
+    # There was no terminating delim;
+    setDoNotPick("1");
+    print "<br>ERROR IN SEQUENCE: closing delimiter $d1 did not follow $d0\n";
+    return undef;
 }
 
 ##################################################
