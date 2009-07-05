@@ -1119,7 +1119,7 @@ sub runPrimer3 ($$$) {
 ###############################
 # createName: Name the primer #
 ###############################
-sub createPrimerName () {
+sub createPrimerName ($$$) {
     my ($inName, $completeHash, $resultsHash);
     $inName       = shift;
     $completeHash = shift;
@@ -1221,7 +1221,7 @@ sub makeUniqueID () {
 ####################################################################################
 # getDate: Returns the Date as a string: D is format DD_MM_YY, Y is format YY_MM_DD#
 ####################################################################################
-sub getDate (){
+sub getDate ($$){
 	my $style     = shift;
 	my $separator = shift;
 	my $date;

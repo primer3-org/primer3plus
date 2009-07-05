@@ -32,7 +32,8 @@ our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
 @ISA = qw(Exporter);
 @EXPORT = qw(&mainStartUpHTML &createHelpHTML &createAboutHTML 
              &createPackageHTML &mainResultsHTML &createManagerHTML 
-             &getWrapper &createSelectSequence);
+             &createCompareFileHTML &createResultCompareFileHTML
+             &getWrapper &createSelectSequence );
 $VERSION = "1.00";
 
 ##########################################################################
@@ -474,7 +475,7 @@ $formHTML .= qq{
 	<tr>
 	<td class="primer3plus_cell_no_border">
 	
-<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,SCRIPT_SEQUENCING_REVERSE,P3P_DETECTION_USE_PRODUCT_SIZE,PRIMER_LIBERAL_BASE,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" type="hidden">
+<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,SCRIPT_SEQUENCING_REVERSE,PRIMER_LIBERAL_BASE,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" type="hidden">
 
          <a name="SERVER_PARAMETER_FILE_INPUT" href="$machineSettings{URL_HELP}#SERVER_PARAMETER_FILE">
          Load server settings:</a>&nbsp;&nbsp;
@@ -3269,8 +3270,7 @@ sub divHTMLformatSequence {
 ###########################################################
 # createHelpHTML: Will write an HTML-Form containing Help #
 ###########################################################
-
-sub createHelpHTML {
+sub createHelpHTML ($) {
   my $helpHTML = shift;
   my $templateText = getWrapper();
 
@@ -3522,7 +3522,7 @@ $formHTML .= divTopBar(0,0,0);
 $formHTML .= divMessages;
 
 $formHTML .= qq{
-<div id="primer3plus_help">
+<div id="primer3plus_results">
 
 <h2><a name="primer3plus" href="primer3plus.cgi">Primer3Plus</a></h2>
   <p>Primer3Plus is the module which runs primer3 to pick primers.
@@ -3538,6 +3538,223 @@ $formHTML .= qq{
   </p>
 
 
+</div>
+
+</div>  
+};
+
+  my $returnString = $templateText;
+
+  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
+
+  return $returnString;
+}
+
+####################################################
+# createCompareFileHTML: Compares the stored files #
+####################################################
+sub createCompareFileHTML () {
+  my $templateText = getWrapper();
+
+  my $formHTML = qq{
+<div id="primer3plus_complete">
+
+};
+
+  $formHTML .= divTopBar("Primer3CompareFiles","find the difference",0);
+
+  $formHTML .= divMessages;
+
+  $formHTML .= qq{
+<div id="primer3plus_results">
+
+  <p>&nbsp;&nbsp;Primer3ComareFiles allows to compare files with each other and the 
+     default values to identify differences.<br>
+     <br>
+     <form name="mainForm" action="$machineSettings{URL_COMPARE_FILE}" method="post" enctype="multipart/form-data">
+     &nbsp;&nbsp;<a name="SCRIPT_SEQUENCE_FILE_INPUT">File 1:</a>
+     <input name="SCRIPT_SEQUENCE_FILE" type="file"><br>
+     <br>
+     &nbsp;&nbsp;<a name="SCRIPT_SEQUENCE_FILE_INPUT">File 2:</a>
+     <input name="SCRIPT_SETTINGS_FILE" type="file"><br>
+     <br>
+     &nbsp;&nbsp;<a name="SERVER_PARAMETER_FILE_INPUT">
+     Server settings:</a>&nbsp;&nbsp;
+     <select name="SERVER_PARAMETER_FILE">
+};
+
+  my @ServerParameterFiles = getServerParameterFilesList;
+  my $option;
+  foreach $option (@ServerParameterFiles) {
+      my $selectedStatus = "";
+      if ($option eq "Default" ) {
+          $selectedStatus = " selected=\"selected\"" 
+      };
+      $formHTML .= "     <option$selectedStatus>$option</option>\n";
+  }
+  $formHTML .= qq{     </select>&nbsp;
+     <br>
+     <br>
+     &nbsp;&nbsp;<input name="Compare_Files" value="Compare Files" type="submit">
+     </form>
+  </p>
+
+
+</div>
+
+</div>  
+};
+
+  my $returnString = $templateText;
+
+  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
+
+  return $returnString;
+}
+
+##########################################################################
+# createResultCompareFileHTML: Creates an HTML-Page with the differences #
+##########################################################################
+sub createResultCompareFileHTML {
+  my $fileOne = shift;
+  my $fileTwo = shift;
+  my $serverFile = shift;
+  my %resEqualServer = %{(shift)};
+  my %resDiffServer = %{(shift)};
+  my %resEqualFiles = %{(shift)};
+  my %resDiffFiles = %{(shift)};
+
+  my $templateText = getWrapper();
+  my $theKey;
+
+  my $formHTML = qq{
+<div id="primer3plus_complete">
+
+};
+
+  $formHTML .= divTopBar("Primer3CompareFiles","find the difference",0);
+
+  $formHTML .= divMessages;
+
+  $formHTML .= qq{
+<div id="primer3plus_results">
+
+  <table class="primer3plus_table_with_border">
+     <colgroup>
+       <col width="46%">
+       <col width="18%">
+       <col width="18%">
+       <col width="18%">
+     </colgroup>
+     <tr>
+       <td colspan="4"><strong>Parameters different to the Server file</strong></td>
+     </tr>
+     <tr>
+       <td><strong>Parameter</strong></td>
+       <td><strong>File 1</strong></td>
+       <td><strong>File 2</strong></td>
+       <td><strong>Server file</strong></td>
+     </tr>
+};
+  foreach $theKey (keys(%resDiffServer)) {
+      $formHTML .= qq{     <tr>
+       <td>$theKey</td>
+       <td>$fileOne->{$theKey}</td>
+       <td>$fileTwo->{$theKey}</td>
+       <td>$serverFile->{$theKey}</td>
+     </tr>
+};
+    }
+ 
+  $formHTML .= qq{</table>
+<br>
+  <table class="primer3plus_table_with_border">
+     <colgroup>
+       <col width="46%">
+       <col width="18%">
+       <col width="18%">
+       <col width="18%">
+     </colgroup>
+     <tr>
+       <td colspan="4"><strong>Parameters different between the files</strong></td>
+     </tr>
+     <tr>
+       <td><strong>Parameter</strong></td>
+       <td><strong>File 1</strong></td>
+       <td><strong>File 2</strong></td>
+       <td></td>
+     </tr>
+};
+  foreach $theKey (keys(%resDiffFiles)) {
+      $formHTML .= qq{     <tr>
+       <td>$theKey</td>
+       <td>$fileOne->{$theKey}</td>
+       <td>$fileTwo->{$theKey}</td>
+       <td></td>
+     </tr>
+};
+    }
+ 
+  $formHTML .= qq{</table>
+<br>
+  <table class="primer3plus_table_with_border">
+     <colgroup>
+       <col width="46%">
+       <col width="18%">
+       <col width="18%">
+       <col width="18%">
+     </colgroup>
+     <tr>
+       <td colspan="4"><strong>Parameters equal between the files</strong></td>
+     </tr>
+     <tr>
+       <td><strong>Parameter</strong></td>
+       <td><strong>File 1</strong></td>
+       <td><strong>File 2</strong></td>
+       <td></td>
+     </tr>
+};
+  foreach $theKey (keys(%resEqualFiles)) {
+      $formHTML .= qq{     <tr>
+       <td>$theKey</td>
+       <td>$fileOne->{$theKey}</td>
+       <td>$fileTwo->{$theKey}</td>
+       <td></td>
+     </tr>
+};
+    }
+ 
+  $formHTML .= qq{</table>
+<br>
+<table class="primer3plus_table_with_border">
+     <colgroup>
+       <col width="46%">
+       <col width="18%">
+       <col width="18%">
+       <col width="18%">
+     </colgroup>
+     <tr>
+       <td colspan="4"><strong>Parameters equal to the Server file</strong></td>
+     </tr>
+     <tr>
+       <td><strong>Parameter</strong></td>
+       <td><strong>File 1</strong></td>
+       <td><strong>File 2</strong></td>
+       <td><strong>Server file</strong></td>
+     </tr>
+};
+  foreach $theKey (keys(%resEqualServer)) {
+      $formHTML .= qq{     <tr>
+       <td>$theKey</td>
+       <td>$fileOne->{$theKey}</td>
+       <td>$fileTwo->{$theKey}</td>
+       <td>$serverFile->{$theKey}</td>
+     </tr>
+};
+    }
+ 
+  $formHTML .= qq{</table>
+<br>
 </div>
 
 </div>  
