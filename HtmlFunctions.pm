@@ -3581,6 +3581,7 @@ sub createCompareFileHTML () {
      &nbsp;&nbsp;<a name="SERVER_PARAMETER_FILE_INPUT">
      Server settings:</a>&nbsp;&nbsp;
      <select name="SERVER_PARAMETER_FILE">
+     <option>None</option>
 };
 
   my @ServerParameterFiles = getServerParameterFilesList;
