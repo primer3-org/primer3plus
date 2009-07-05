@@ -2999,7 +2999,7 @@ sub divHTMLsequence {
   my ($results, $sequence, $seqLength, $firstBase);
   my ($base, $count, $preCount, $postCount, $printBase) ;
   my ($format, $baseFormat, $preFormat, $firstPair);
-  my (@targets, $region, $run, $counter);
+  my (@targets, $region, $run, $counter, $madeRegion);
   my $formHTML;
    
   $results = shift;
@@ -3067,6 +3067,14 @@ sub divHTMLsequence {
             }
       }
   }
+  if (defined ($results->{"SEQUENCE_PRIMER_OVERLAP_POS"}) and (($results->{"SEQUENCE_PRIMER_OVERLAP_POS"}) ne "")) {
+      @targets = split ' ', $results->{"SEQUENCE_PRIMER_OVERLAP_POS"};
+      foreach $region (@targets) {
+          $madeRegion = $region - 1;
+          $madeRegion .= ",2";
+          $format = addRegion($format,$madeRegion,$firstBase,"-");
+      }
+  }
 
   ## Handy for testing:
   #  $sequence = $format;
@@ -3120,6 +3128,9 @@ sub divHTMLsequence {
          }
          if ($baseFormat eq "B") {
              $formHTML .= qq{<a class="primer3plus_left_right_primer">};
+         }
+         if ($baseFormat eq "-") {
+             $formHTML .= qq{<a class="primer3plus_primer_overlap_pos">};
          }
 
      }
