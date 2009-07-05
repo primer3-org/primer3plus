@@ -550,10 +550,14 @@ sub loadFile {
 			$fileType = "Sequence";
 			$readable = 1;
 		}
-		if ( $fileContent[1] =~ /P3_FILE_TYPE=settings/ ) {
-			$fileType = "Settings";
-			$readable = 1;
-		}
+        if ( $fileContent[1] =~ /P3_FILE_TYPE=settings/ ) {
+            $fileType = "Settings";
+            $readable = 1;
+        }
+        if ( $fileContent[1] =~ /P3_FILE_TYPE=all/ ) {
+            $fileType = "All";
+            $readable = 1;
+        }
 		# Read it directly to the Hash provided
 		if ($readable == 1) {
 			for ( my $i = 3 ; $i <= $#fileContent ; $i++ ) {

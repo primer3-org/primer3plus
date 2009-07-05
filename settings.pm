@@ -91,6 +91,9 @@ my %machineSettings = (
   # The maximal time Primer3Manager will store the cached files / cookies.
   "MAX_STORAGE_TIME" =>  "+4d",
 
+  # The version number of primer3plus.
+  "P3P_VERSION" =>  "2.0.0",
+
 );
 
   # Add mispriming / mishybing libraries; 

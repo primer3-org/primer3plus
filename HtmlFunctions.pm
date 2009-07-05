@@ -3306,10 +3306,20 @@ $formHTML .= divTopBar("Primer3Plus - About",0,0);
 
 $formHTML .= divMessages();
 
+my $p3p_version = getMachineSetting("P3P_VERSION");
+my $p3_version = getPrimer3Version();
+
 $formHTML .= qq{
 <div id="primer3plus_about">
 
-<h1>Primer3Plus is a web-interface for primer3</h1>
+<h2>Primer3Plus is a web-interface for primer3</h2>
+
+<h2>Versions</h2>
+<p>Primer3Plus Version: $p3p_version <br>
+   <br>
+   Primer3 Version : $p3_version<br>
+   <br>
+</p>
 
 <h2>Primer3Plus</h2>
 <h3>Primer3Plus - Download Primer3Plus Program and Source Code</h3>
@@ -3458,6 +3468,42 @@ primer design.
   return $returnString;
 }
 
+###########################################################
+# getPrimer3Version: get version information from primer3 #
+###########################################################
+sub getPrimer3Version () {
+    my @readTheLine;
+    my $readLine;
+    my $returnLine;
+    my $primer3BIN = getMachineSetting("PRIMER_BIN");
+    my $callPrimer3 = $primer3BIN . getMachineSetting("PRIMER_RUNTIME");
+
+###### Check if Primer3 can be run
+    if ( !( -e $primer3BIN ) ) {
+        return("Configuration Error: $primer3BIN ".
+                   "can not be found!");
+    }
+    if ( !( -x $primer3BIN ) ) {
+        return("Configuration Error: $primer3BIN ".
+                   "is not executable!");
+    }
+
+###### Really run primer3
+    open PRIMER3OUTPUT, "$callPrimer3 -about 2>&1 |"
+        or setMessage("could not start primer3");
+    while (<PRIMER3OUTPUT>) {
+        push @readTheLine, $_;
+    }
+    close PRIMER3OUTPUT;
+#   unlink $inputFile;
+
+###### Interprete the output
+    foreach $readLine (@readTheLine) {
+        $returnLine .= $readLine;
+    }
+  
+    return $returnLine;
+}
 
 ################################################################
 # createPackageHTML: Creates an HTML-Page with all p3p modules #
@@ -3484,6 +3530,11 @@ $formHTML .= qq{
 
 <h2><a name="primer3manager" href="primer3manager.cgi">Primer3Manager</a></h2>
   <p>Primer3Manager allows to manage selected primers and to save them.
+  </p>
+
+<h2><a name="primer3compareFiles" href="primer3compareFiles.cgi">Primer3ComareFiles</a></h2>
+  <p>Primer3ComareFiles allows to compare files with each other and the 
+     default values to identify differences.
   </p>
 
 
