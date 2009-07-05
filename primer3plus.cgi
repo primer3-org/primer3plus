@@ -72,6 +72,7 @@ if ( defined $parametersHTML{Default_Settings} ) {
     $defaultSettings{"SEQUENCE_TEMPLATE"} = $completeParameters{"SEQUENCE_TEMPLATE"};
     $defaultSettings{"SEQUENCE_ID"} = $completeParameters{"SEQUENCE_ID"};
 	print mainStartUpHTML( \%defaultSettings ), "\n";
+	writeStatistics("primer3plus_main_start");
 }
 
 elsif (( defined $parametersHTML{Upload_File} )
@@ -89,10 +90,12 @@ elsif (( defined $parametersHTML{Upload_File} )
         
     	print "Content-type: text/html\n\n";
 	    print createSelectSequence( \%completeParameters ), "\n";
+	    writeStatistics("primer3plus_main_start");
 	}
 	else {
 		print "Content-type: text/html\n\n";
 		print mainStartUpHTML( \%completeParameters ), "\n";
+		writeStatistics("primer3plus_main_start");
 	}
 }
 
@@ -101,11 +104,13 @@ elsif ( defined $parametersHTML{Save_Sequence} ) {
 	           $completeParameters{SEQUENCE_ID} : "Sequence";
 	print "Content-disposition: attachment; filename=$fName.txt\n\n";
 	print createFile( \%completeParameters, "Q" );
+    writeStatistics("primer3plus_main_start");
 }
 
 elsif ( defined $parametersHTML{Save_Settings} ) {
 	print "Content-disposition: attachment; filename=Primer3plus_Settings.txt\n\n";
 	print createFile( \%completeParameters, "S" );
+    writeStatistics("primer3plus_main_start");
 }
 
 
@@ -113,10 +118,12 @@ elsif ( defined $parametersHTML{Pick_Primers} ) {
 	runPrimer3( \%completeParameters, \%defaultSettings, \%resultsHash );
 	print "Content-type: text/html\n\n";
 	print mainResultsHTML( \%completeParameters, \%resultsHash ), "\n";
+    writeStatistics("primer3plus_run_primer3");
 }
 
 else {
 	print "Content-type: text/html\n\n";
 	print mainStartUpHTML( \%completeParameters ), "\n";
+    writeStatistics("primer3plus_main_start");
 }
 

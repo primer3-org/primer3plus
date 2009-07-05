@@ -107,15 +107,17 @@ if ($controlParameter{"Submit"} && $controlParameter{"Submit"} eq "Save File") {
     my $fileDate = getDate("Y","_");	
     print "Content-disposition: attachment; filename=Primers_$fileDate.fas\n\n";
     print $saveFile;
+    writeStatistics("primer3manager");
 }
 elsif ($controlParameter{"Submit"} && $controlParameter{"Submit"} eq "Order selected Primers") {
     print "Content-type: text/html\n\n";
     print customPrimerOrder(\@sequencesFinal, \@namesFinal, \@toOrderFinal),"\n";
-
+    writeStatistics("primer3manager");
 }
 else {
     $cookieID = setCookie($uniqueID);
     print createManagerHTML(\@sequencesFinal, \@namesFinal, \@toOrderFinal, \@dateFinal),"\n";
+    writeStatistics("primer3manager");
 }
 
 

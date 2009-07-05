@@ -33,7 +33,7 @@ our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
 @EXPORT = qw(&mainStartUpHTML &createHelpHTML &createAboutHTML 
              &createPackageHTML &mainResultsHTML &createManagerHTML 
              &createCompareFileHTML &createResultCompareFileHTML
-             &getWrapper &createSelectSequence );
+             &getWrapper &createSelectSequence &createStatisticsHTML );
 $VERSION = "1.00";
 
 ##########################################################################
@@ -3490,7 +3490,7 @@ sub getPrimer3Version () {
 
 ###### Really run primer3
     open PRIMER3OUTPUT, "$callPrimer3 -about 2>&1 |"
-        or setMessage("could not start primer3");
+        or return "";
     while (<PRIMER3OUTPUT>) {
         push @readTheLine, $_;
     }
@@ -3535,6 +3535,58 @@ $formHTML .= qq{
 <h2><a name="primer3compareFiles" href="primer3compareFiles.cgi">Primer3ComareFiles</a></h2>
   <p>Primer3ComareFiles allows to compare files with each other and the 
      default values to identify differences.
+  </p>
+
+<h2><a name="primer3statistics" href="primer3statistics.cgi">Primer3Statistics</a></h2>
+  <p>Primer3Statistics prints statistics about primer3plus usage.
+  </p>
+
+
+</div>
+
+</div>  
+};
+
+  my $returnString = $templateText;
+
+  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
+
+  return $returnString;
+}
+
+##############################################################
+# createStatisticsHTML: Creates an HTML-Page with Statistics #
+##############################################################
+sub createStatisticsHTML {
+  my $templateText = getWrapper();
+
+  my $formHTML = qq{
+<div id="primer3plus_complete">
+
+};
+
+$formHTML .= divTopBar("Primer3Statistics","whatch the server glow",0);
+
+$formHTML .= divMessages;
+
+$formHTML .= qq{
+<div id="primer3plus_results">
+
+<h2><a name="primer3plus" href="primer3plus.cgi">Primer3Plus</a></h2>
+  <p>Primer3Plus is the module which runs primer3 to pick primers.
+  </p>
+
+<h2><a name="primer3manager" href="primer3manager.cgi">Primer3Manager</a></h2>
+  <p>Primer3Manager allows to manage selected primers and to save them.
+  </p>
+
+<h2><a name="primer3compareFiles" href="primer3compareFiles.cgi">Primer3ComareFiles</a></h2>
+  <p>Primer3ComareFiles allows to compare files with each other and the 
+     default values to identify differences.
+  </p>
+
+<h2><a name="primer3statistics" href="primer3statistics.cgi">Primer3Statistics</a></h2>
+  <p>Primer3Statistics prints statistics about primer3plus usage.
   </p>
 
 

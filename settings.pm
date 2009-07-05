@@ -76,6 +76,9 @@ my %machineSettings = (
   # The path were primer3Manager finds its parameter files for server stored settings.
   "USER_PARAMETERS_FILES_PATH" =>  "./parameter_files/",
 
+  # The path were primer3Statistics will be stored.
+  "USER_STATISTICS_FILES_PATH" =>  "./statistics_files/",
+
   # The URL for information about Primer3plus
   "URL_ABOUT" => "primer3plusAbout.cgi",
 
@@ -93,6 +96,9 @@ my %machineSettings = (
 
   # The maximal time Primer3Manager will store the cached files / cookies.
   "MAX_STORAGE_TIME" =>  "+4d",
+
+  # Allow statistics Y for everybody, N for nobody, P private.
+  "STATISTICS" =>  "Y",
 
   # The version number of primer3plus.
   "P3P_VERSION" =>  "2.0.0",

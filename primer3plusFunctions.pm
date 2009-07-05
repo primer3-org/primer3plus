@@ -38,7 +38,7 @@ our ( @ISA, @EXPORT, @EXPORT_OK, $VERSION );
      &createManagerFile &getSetCookie &getCookie &setCookie &getCacheFile &setCacheFile
      &loadManagerFile &loadFile &checkParameters &runPrimer3 &reverseSequence
      &getParametersForManager &loadServerSettFile &extractSelectedPrimers &addToArray
-     &getDate &makeUniqueID);
+     &getDate &makeUniqueID &writeStatistics &readStatistics);
 
 $VERSION = "1.00";
 
@@ -1241,6 +1241,69 @@ sub getDate ($$){
 	}
 
 	return $date;
+}
+
+################################################
+# writeStatistics: Updates the statistics file #
+################################################
+sub readStatistics ($) {
+    my $fileName;
+    $fileName = shift;
+    my $fileInAString;
+    my $line;
+    my $dateCout = 0;
+    my $oldLine = "...";
+    my @rawDates;
+    my %dates;
+
+    my $completeFileName = getMachineSetting("USER_STATISTICS_FILES_PATH"). $fileName . ".txt";
+
+    open( TEMPLATEFILE, "<$completeFileName" ) or return %dates;
+    binmode TEMPLATEFILE;
+    my $data;
+    while ( read TEMPLATEFILE, $data, 1024 ) {
+        $fileInAString .= $data;
+    }
+    close(TEMPLATEFILE);
+    
+    @rawDates = split '\n', $fileInAString;
+    foreach $line (@rawDates) {
+        if ($line eq $oldLine ) {
+            $dateCout++;
+        } elsif ($oldLine eq "...") {
+            $dateCout = 1;
+            $oldLine = $line
+        }else {
+            $dates{$oldLine} = $dateCout;
+            $dateCout = 1;
+            $oldLine = $line
+        }
+    }
+    $dates{$oldLine} = $dateCout;
+
+    return %dates;
+}
+
+################################################
+# writeStatistics: Updates the statistics file #
+################################################
+sub writeStatistics ($) {
+    my $fileName;
+    $fileName = shift;
+
+    # If we do not want statistics stop here
+    if (getMachineSetting("STATISTICS") eq "N") {
+        return;
+    }
+
+    my $completeFileName = getMachineSetting("USER_STATISTICS_FILES_PATH"). $fileName . ".txt";
+
+    open( TEMPLATEFILE, ">>$completeFileName" ) or return;
+    print TEMPLATEFILE getDate("Y", ".");
+    print TEMPLATEFILE "\n";
+    close(TEMPLATEFILE);
+
+    return;
 }
 
 ############################################################################
