@@ -100,12 +100,12 @@ elsif ( defined $parametersHTML{Save_Sequence} ) {
 	my $fName = ( length( $completeParameters{SEQUENCE_ID} ) > 2 ) ?
 	           $completeParameters{SEQUENCE_ID} : "Sequence";
 	print "Content-disposition: attachment; filename=$fName.txt\n\n";
-	print createSequenceFile( \%completeParameters );
+	print createFile( \%completeParameters, "Q" );
 }
 
 elsif ( defined $parametersHTML{Save_Settings} ) {
 	print "Content-disposition: attachment; filename=Primer3plus_Settings.txt\n\n";
-	print createSettingsFile( \%completeParameters );
+	print createFile( \%completeParameters, "S" );
 }
 
 

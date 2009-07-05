@@ -34,7 +34,7 @@ use settings;
 
 our ( @ISA, @EXPORT, @EXPORT_OK, $VERSION );
 @ISA    = qw(Exporter);
-@EXPORT = qw(&getParametersHTML &constructCombinedHash &createSequenceFile &createSettingsFile
+@EXPORT = qw(&getParametersHTML &constructCombinedHash &createFile
      &createManagerFile &getSetCookie &getCookie &setCookie &getCacheFile &setCacheFile
      &loadManagerFile &loadFile &checkParameters &runPrimer3 &reverseSequence
      &getParametersForManager &loadServerSettFile &extractSelectedPrimers &addToArray
@@ -391,43 +391,36 @@ sub constructCombinedHash {
 	return %combined;
 }
 
-######################################################################################
-# createSequenceFile: Write all Information associated with the Sequence in a string #
-######################################################################################
-sub createSequenceFile {
-	my ($settings, $saveKey, $returnString);
-	$settings = shift;
-	my @saveSequenceKeys = getSaveSequenceParameters();
-
-	$returnString  = "Primer3Plus File - Do not Edit\r\n";
-	$returnString .= "Type: Sequence\r\n";
-	$returnString .= "\r\n";
-
-	foreach $saveKey (@saveSequenceKeys) {
-		$returnString .= $saveKey . "=" . $settings->{$saveKey} . "\r\n";
-	}
-
-	$returnString .= "\r\n";
-
-	return $returnString;
-}
-
-##################################################################################
-# createSettingsFile: Write all Information associated with Settings in a string #
-##################################################################################
-sub createSettingsFile {
+##########################################################################
+# createFile: Write all Information associated with Settings in a string #
+# Type: S - Settings, Q - Sequence, A - All                              #
+##########################################################################
+sub createFile {
 	my ($settings, $type, $saveKey, $returnString);
 	$settings = shift;
+	$type = shift;
 	my (@saveSettingsKeys) = keys %$settings;
 	my @sortkeys = sort @saveSettingsKeys;
 
-	$returnString  = "Primer3Plus File - Do not Edit\r\n";
-	$returnString .= "Type: Settings\r\n";
-	$returnString .= "\r\n";
+	$returnString  = "Primer3 File - http://primer3.sourceforge.net\r\n";
+
+    if ($type eq "S") {
+        $returnString .= "P3_FILE_TYPE=settings\r\n";
+    } elsif ($type eq "Q") {
+        $returnString .= "P3_FILE_TYPE=sequence\r\n";
+    } else {
+        $returnString .= "P3_FILE_TYPE=all\r\n";
+    }
+    $returnString .= "\r\n";
+    if ($type eq "S") {
+        $returnString .= "P3_FILE_ID=User settings\r\n";
+    }
 
 	foreach $saveKey (@sortkeys) {
-	    if (($saveKey =~ /^PRIMER_/)
-	         || ($saveKey =~ /^P3P_/)) {
+	    if ( ($type eq "A") or 
+	         ($type eq "Q" and $saveKey =~ /^SEQUENCE_/) or
+	         ($type eq "S" and (($saveKey =~ /^PRIMER_/)
+	                       or ($saveKey =~ /^P3P_/)))) {
 	        $returnString .= $saveKey . "=" . $settings->{$saveKey} . "\r\n";
 	    }		
 	}
@@ -549,15 +542,15 @@ sub loadFile {
 	$fileString =~ s/^\s*//;
 
 	# Read Primer3Plus file
-	if ( $fileString =~ /Primer3Plus File/ ) {
+	if ( $fileString =~ /Primer3 File -/ ) {
 		@fileContent = split '\n', $fileString;
 		$readable = 0;
 		# Figure out the type of File
-		if ( $fileContent[1] =~ /Type: Sequence/ ) {
+		if ( $fileContent[1] =~ /P3_FILE_TYPE=sequence/ ) {
 			$fileType = "Sequence";
 			$readable = 1;
 		}
-		if ( $fileContent[1] =~ /Type: Settings/ ) {
+		if ( $fileContent[1] =~ /P3_FILE_TYPE=settings/ ) {
 			$fileType = "Settings";
 			$readable = 1;
 		}
@@ -1122,7 +1115,7 @@ sub runPrimer3 ($$$) {
 ###############################
 # createName: Name the primer #
 ###############################
-sub createPrimerName ($$$$) {
+sub createPrimerName () {
     my ($inName, $completeHash, $resultsHash);
     $inName       = shift;
     $completeHash = shift;
@@ -1196,7 +1189,7 @@ sub reverseSequence ($) {
 #####################################
 # makeUniqueID: Returns a unique ID #
 #####################################
-sub makeUniqueID {
+sub makeUniqueID () {
 	my ( $UID, $randomNumber, $time );
 	my ($second,     $minute,    $hour,
 		$dayOfMonth, $month,     $yearOffset,
@@ -1224,7 +1217,7 @@ sub makeUniqueID {
 ####################################################################################
 # getDate: Returns the Date as a string: D is format DD_MM_YY, Y is format YY_MM_DD#
 ####################################################################################
-sub getDate {
+sub getDate (){
 	my $style     = shift;
 	my $separator = shift;
 	my $date;
@@ -1249,7 +1242,7 @@ sub getDate {
 ############################################################################
 # getLyk3Sequence: Returns an example sequence for demonstration purpurses #
 ############################################################################
-sub getLyk3Sequence {
+sub getLyk3Sequence () {
     my $sequence = qq {acaatattgtattggtgagatcatataagatttgatgtcaacatcttcgtaaaggtctcagatt
         cgattctccccggtatcaatttaagtgagctaatttagcttcttaaaaaataaaatcaaacaacttttacataaactca
         gtgaaaacttggatataaagtatccttatactactctttagtcttgattagtctctgcaaagatatttatatgtacttt
