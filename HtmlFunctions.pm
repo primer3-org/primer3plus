@@ -3557,8 +3557,37 @@ $formHTML .= qq{
 ##############################################################
 # createStatisticsHTML: Creates an HTML-Page with Statistics #
 ##############################################################
-sub createStatisticsHTML {
+sub createStatisticsHTML ($$$$$) {
+  my %startUps = %{(shift)};
+  my %primer3Runs = %{(shift)};
+  my %managerRuns = %{(shift)};
+  my %staticticsViews = %{(shift)};
+  my $printStats = shift;
+
   my $templateText = getWrapper();
+  my $theKey;
+  my $monthKey;
+  my %startUpsMonth;
+  my %primer3RunsMonth;
+  my %managerRunsMonth;
+  my %staticticsViewsMonth;
+  my %allDates;
+
+  # Collect all the dates and the Month usage:
+  foreach $theKey (keys(%startUps)) {
+      $allDates{$theKey} = 1;
+      # Add to the month
+      $monthKey = $theKey;
+      $monthKey =~ s/\.\d+$// ;
+      setMessage("err $theKey");
+      if (defined $startUpsMonth{$monthKey}) {
+          $startUpsMonth{$monthKey} += $startUps{$theKey};
+      } else {
+          $startUpsMonth{$monthKey} = $startUps{$theKey};
+      }
+      setMessage("end $startUpsMonth{$monthKey}");
+  }
+
 
   my $formHTML = qq{
 <div id="primer3plus_complete">
@@ -3569,11 +3598,12 @@ $formHTML .= divTopBar("Primer3Statistics","whatch the server glow",0);
 
 $formHTML .= divMessages;
 
-$formHTML .= qq{
+if ($printStats eq "Y") { 
+    $formHTML .= qq{
 <div id="primer3plus_results">
 
-<h2><a name="primer3plus" href="primer3plus.cgi">Primer3Plus</a></h2>
-  <p>Primer3Plus is the module which runs primer3 to pick primers.
+<h2><a name="primer3plus" href="primer3plus.cgi">$startUpsMonth{$theKey}</a></h2>
+  <p>Keys 
   </p>
 
 <h2><a name="primer3manager" href="primer3manager.cgi">Primer3Manager</a></h2>
@@ -3594,6 +3624,16 @@ $formHTML .= qq{
 
 </div>  
 };
+  } else {
+    $formHTML .= qq{
+<div id="primer3plus_results">
+
+<h2>Display of statistics is not supported on this server!</h2>
+</div>
+
+</div>  
+};
+}
 
   my $returnString = $templateText;
 

@@ -31,6 +31,9 @@ use settings;
 
 my $printStats = "Y";
 my %startUps;
+my %primer3Runs;
+my %managerRuns;
+my %staticticsViews;
 
 
 if ((getMachineSetting("STATISTICS") eq "N")
@@ -39,18 +42,19 @@ if ((getMachineSetting("STATISTICS") eq "N")
 }
 
 %startUps = readStatistics("primer3plus_main_start");
+%primer3Runs = readStatistics("primer3plus_run_primer3");
+%managerRuns = readStatistics("primer3manager");
+%staticticsViews = readStatistics("primer3plus_statistics");
 
 my $theKey;
 foreach $theKey (keys(%startUps)) {
     setMessage("$theKey = $startUps{$theKey}");
 };
-       
-        
-        
-        
-
 
 print "Content-type: text/html\n\n";
-print createStatisticsHTML(), "\n";
+print createStatisticsHTML(\%startUps, \%primer3Runs, \%managerRuns, \%staticticsViews, $printStats), "\n";
+
+writeStatistics("primer3plus_statistics");
+
 
 

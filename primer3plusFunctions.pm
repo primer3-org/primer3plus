@@ -1250,12 +1250,16 @@ sub readStatistics ($) {
     my $fileName;
     $fileName = shift;
     my $fileInAString;
+    my $processedDate;
+    my $processedCount;
+    my $compressedFile;
     my $line;
     my $dateCout = 0;
     my $oldLine = "...";
     my @rawDates;
     my %dates;
 
+    my $today = getDate("Y", ".");
     my $completeFileName = getMachineSetting("USER_STATISTICS_FILES_PATH"). $fileName . ".txt";
 
     open( TEMPLATEFILE, "<$completeFileName" ) or return %dates;
@@ -1268,18 +1272,34 @@ sub readStatistics ($) {
     
     @rawDates = split '\n', $fileInAString;
     foreach $line (@rawDates) {
-        if ($line eq $oldLine ) {
+        $line =~ s/\s//g;
+        if ($line =~ /=/ ) {
+            ($processedDate, $processedCount) = split '=', $line;
+            $dates{$processedDate} = $processedCount;
+            $compressedFile .= $line . "\n";
+            $oldLine = $processedDate;
+            $dateCout = $processedCount;
+        } elsif ($line eq $oldLine) {
             $dateCout++;
         } elsif ($oldLine eq "...") {
             $dateCout = 1;
             $oldLine = $line
         }else {
             $dates{$oldLine} = $dateCout;
+            $compressedFile .= $line ."=". $dateCout . "\n";
             $dateCout = 1;
             $oldLine = $line
         }
     }
     $dates{$oldLine} = $dateCout;
+    $compressedFile .= $line . "\n";
+    
+    $completeFileName = getMachineSetting("USER_STATISTICS_FILES_PATH"). "TMP_" . $fileName . ".txt";
+
+    open( TEMPLATEFILE, ">$completeFileName" ) or return %dates;
+    print TEMPLATEFILE $compressedFile;
+    close(TEMPLATEFILE);
+    
 
     return %dates;
 }
