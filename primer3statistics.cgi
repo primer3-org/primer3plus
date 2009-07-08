@@ -46,11 +46,6 @@ if ((getMachineSetting("STATISTICS") eq "N")
 %managerRuns = readStatistics("primer3manager");
 %staticticsViews = readStatistics("primer3plus_statistics");
 
-my $theKey;
-foreach $theKey (keys(%startUps)) {
-    setMessage("$theKey = $startUps{$theKey}");
-};
-
 print "Content-type: text/html\n\n";
 print createStatisticsHTML(\%startUps, \%primer3Runs, \%managerRuns, \%staticticsViews, $printStats), "\n";
 

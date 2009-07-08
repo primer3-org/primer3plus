@@ -30,6 +30,8 @@ use CGI::Cookie;
 use FileHandle;
 use IPC::Open3;
 use Exporter;
+use File::Copy;
+
 use settings;
 
 our ( @ISA, @EXPORT, @EXPORT_OK, $VERSION );
@@ -1254,6 +1256,7 @@ sub readStatistics ($) {
     my $processedCount;
     my $compressedFile;
     my $line;
+    my $date;
     my $dateCout = 0;
     my $oldLine = "...";
     my @rawDates;
@@ -1261,6 +1264,7 @@ sub readStatistics ($) {
 
     my $today = getDate("Y", ".");
     my $completeFileName = getMachineSetting("USER_STATISTICS_FILES_PATH"). $fileName . ".txt";
+    my $completeTmpFileName;
 
     open( TEMPLATEFILE, "<$completeFileName" ) or return %dates;
     binmode TEMPLATEFILE;
@@ -1273,33 +1277,39 @@ sub readStatistics ($) {
     @rawDates = split '\n', $fileInAString;
     foreach $line (@rawDates) {
         $line =~ s/\s//g;
-        if ($line =~ /=/ ) {
-            ($processedDate, $processedCount) = split '=', $line;
-            $dates{$processedDate} = $processedCount;
-            $compressedFile .= $line . "\n";
-            $oldLine = $processedDate;
-            $dateCout = $processedCount;
-        } elsif ($line eq $oldLine) {
-            $dateCout++;
-        } elsif ($oldLine eq "...") {
-            $dateCout = 1;
-            $oldLine = $line
-        }else {
-            $dates{$oldLine} = $dateCout;
-            $compressedFile .= $line ."=". $dateCout . "\n";
-            $dateCout = 1;
-            $oldLine = $line
+        if ($line =~ /\d/ ) {
+            $date = $line;
+            if ($line =~ /=/ ) {
+                if ($oldLine ne "...") {
+                    $compressedFile .= $oldLine ."=". $dateCout . "\n";
+                }
+                ($processedDate, $processedCount) = split '=', $line;
+                $dates{$processedDate} = $processedCount;
+                $oldLine = $processedDate;
+                $dateCout = $processedCount;
+            } elsif ($line eq $oldLine) {
+                $dateCout++;
+            } elsif ($oldLine eq "...") {
+                $dateCout = 1;
+                $oldLine = $line;
+            }else {
+                $dates{$oldLine} = $dateCout;
+                $compressedFile .= $oldLine ."=". $dateCout . "\n";
+                $dateCout = 1;
+                $oldLine = $line;
+            }
         }
     }
     $dates{$oldLine} = $dateCout;
-    $compressedFile .= $line . "\n";
+    $compressedFile .= $oldLine ."=". $dateCout . "\n";
     
-    $completeFileName = getMachineSetting("USER_STATISTICS_FILES_PATH"). "TMP_" . $fileName . ".txt";
+    $completeTmpFileName = getMachineSetting("USER_STATISTICS_FILES_PATH"). "TMP_" . $fileName . ".txt";
 
-    open( TEMPLATEFILE, ">$completeFileName" ) or return %dates;
+    open( TEMPLATEFILE, ">$completeTmpFileName" ) or return %dates;
     print TEMPLATEFILE $compressedFile;
     close(TEMPLATEFILE);
     
+    copy($completeTmpFileName,$completeFileName) or setMessage("Copy did not work");
 
     return %dates;
 }

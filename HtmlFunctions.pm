@@ -3567,11 +3567,16 @@ sub createStatisticsHTML ($$$$$) {
   my $templateText = getWrapper();
   my $theKey;
   my $monthKey;
+  my $startUpsVal;
+  my $primer3RunsVal;
+  my $managerRunsVal;
+  my $staticticsViewsVal;
   my %startUpsMonth;
   my %primer3RunsMonth;
   my %managerRunsMonth;
   my %staticticsViewsMonth;
   my %allDates;
+  my %allMonth;
 
   # Collect all the dates and the Month usage:
   foreach $theKey (keys(%startUps)) {
@@ -3579,19 +3584,53 @@ sub createStatisticsHTML ($$$$$) {
       # Add to the month
       $monthKey = $theKey;
       $monthKey =~ s/\.\d+$// ;
-      setMessage("err $theKey");
       if (defined $startUpsMonth{$monthKey}) {
           $startUpsMonth{$monthKey} += $startUps{$theKey};
       } else {
           $startUpsMonth{$monthKey} = $startUps{$theKey};
+          $allMonth{$monthKey} = 1;
       }
-      setMessage("end $startUpsMonth{$monthKey}");
+  }
+  foreach $theKey (keys(%primer3Runs)) {
+      $allDates{$theKey} = 1;
+      # Add to the month
+      $monthKey = $theKey;
+      $monthKey =~ s/\.\d+$// ;
+      if (defined $primer3RunsMonth{$monthKey}) {
+          $primer3RunsMonth{$monthKey} += $primer3Runs{$theKey};
+      } else {
+          $primer3RunsMonth{$monthKey} = $primer3Runs{$theKey};
+          $allMonth{$monthKey} = 1;
+      }
+  }
+  foreach $theKey (keys(%managerRuns)) {
+      $allDates{$theKey} = 1;
+      # Add to the month
+      $monthKey = $theKey;
+      $monthKey =~ s/\.\d+$// ;
+      if (defined $managerRunsMonth{$monthKey}) {
+          $managerRunsMonth{$monthKey} += $managerRuns{$theKey};
+      } else {
+          $managerRunsMonth{$monthKey} = $managerRuns{$theKey};
+          $allMonth{$monthKey} = 1;
+      }
+  }
+  foreach $theKey (keys(%staticticsViews)) {
+      $allDates{$theKey} = 1;
+      # Add to the month
+      $monthKey = $theKey;
+      $monthKey =~ s/\.\d+$// ;
+      if (defined $staticticsViewsMonth{$monthKey}) {
+          $staticticsViewsMonth{$monthKey} += $staticticsViews{$theKey};
+      } else {
+          $staticticsViewsMonth{$monthKey} = $staticticsViews{$theKey};
+          $allMonth{$monthKey} = 1;
+      }
   }
 
 
   my $formHTML = qq{
 <div id="primer3plus_complete">
-
 };
 
 $formHTML .= divTopBar("Primer3Statistics","whatch the server glow",0);
@@ -3602,25 +3641,110 @@ if ($printStats eq "Y") {
     $formHTML .= qq{
 <div id="primer3plus_results">
 
-<h2><a name="primer3plus" href="primer3plus.cgi">$startUpsMonth{$theKey}</a></h2>
-  <p>Keys 
-  </p>
+<h2>Usage per month:</h2>
+  <table class="primer3plus_table_with_border">
+     <colgroup>
+       <col width="20%">
+       <col width="20%">
+       <col width="20%">
+       <col width="20%">
+       <col width="20%">
+     </colgroup>
+     <tr>
+       <td><strong>Date</strong></td>
+       <td><strong>Primer3Plus start ups</strong></td>
+       <td><strong>Primer3 runs</strong></td>
+       <td><strong>Primer3Manager runs</strong></td>
+       <td><strong>Primer3Statistics views</strong></td>
+     </tr>
+};
 
-<h2><a name="primer3manager" href="primer3manager.cgi">Primer3Manager</a></h2>
-  <p>Primer3Manager allows to manage selected primers and to save them.
-  </p>
+  foreach $theKey (reverse sort(keys(%allMonth))) {
+      if (defined $startUpsMonth{$theKey}) {
+          $startUpsVal = $startUpsMonth{$theKey};
+      } else {
+          $startUpsVal = "---";
+      }
+      if (defined $primer3RunsMonth{$theKey}) {
+          $primer3RunsVal = $primer3RunsMonth{$theKey};
+      } else {
+          $primer3RunsVal = "---";
+      }
+      if (defined $managerRunsMonth{$theKey}) {
+          $managerRunsVal = $managerRunsMonth{$theKey};
+      } else {
+          $managerRunsVal = "---";
+      }
+      if (defined $staticticsViewsMonth{$theKey}) {
+          $staticticsViewsVal = $staticticsViewsMonth{$theKey};
+      } else {
+          $staticticsViewsVal = "---";
+      }
+      $theKey =~ s/\./-/g;
+      $formHTML .= qq{    <tr>
+       <td>$theKey</td>
+       <td>$startUpsVal</td>
+       <td>$primer3RunsVal</td>
+       <td>$managerRunsVal</td>
+       <td>$staticticsViewsVal</td>
+     </tr>
+};
+  }
 
-<h2><a name="primer3compareFiles" href="primer3compareFiles.cgi">Primer3ComareFiles</a></h2>
-  <p>Primer3ComareFiles allows to compare files with each other and the 
-     default values to identify differences.
-  </p>
+$formHTML .= qq{
+  </table>
+<h2>Usage per day:</h2>
+  <table class="primer3plus_table_with_border">
+     <colgroup>
+       <col width="20%">
+       <col width="20%">
+       <col width="20%">
+       <col width="20%">
+       <col width="20%">
+     </colgroup>
+     <tr>
+       <td><strong>Date</strong></td>
+       <td><strong>Primer3Plus start ups</strong></td>
+       <td><strong>Primer3 runs</strong></td>
+       <td><strong>Primer3Manager runs</strong></td>
+       <td><strong>Primer3Statistics views</strong></td>
+     </tr>
+};
 
-<h2><a name="primer3statistics" href="primer3statistics.cgi">Primer3Statistics</a></h2>
-  <p>Primer3Statistics prints statistics about primer3plus usage.
-  </p>
+  foreach $theKey (reverse sort(keys(%allDates))) {
+      if (defined $startUps{$theKey}) {
+          $startUpsVal = $startUps{$theKey};
+      } else {
+          $startUpsVal = "---";
+      }
+      if (defined $primer3Runs{$theKey}) {
+          $primer3RunsVal = $primer3Runs{$theKey};
+      } else {
+          $primer3RunsVal = "---";
+      }
+      if (defined $managerRuns{$theKey}) {
+          $managerRunsVal = $managerRuns{$theKey};
+      } else {
+          $managerRunsVal = "---";
+      }
+      if (defined $staticticsViews{$theKey}) {
+          $staticticsViewsVal = $staticticsViews{$theKey};
+      } else {
+          $staticticsViewsVal = "---";
+      }
+      $theKey =~ s/\./-/g;
+      $formHTML .= qq{    <tr>
+       <td>$theKey</td>
+       <td>$startUpsVal</td>
+       <td>$primer3RunsVal</td>
+       <td>$managerRunsVal</td>
+       <td>$staticticsViewsVal</td>
+     </tr>
+};
+  }
 
-
-</div>
+$formHTML .= qq{
+  </table></div>
 
 </div>  
 };
