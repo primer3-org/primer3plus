@@ -240,7 +240,6 @@ sub loadServerSettFile {
   my $fileName = shift;
   my $filePath = getMachineSetting("USER_PARAMETERS_FILES_PATH") . $fileName;
   my $FileContent = "";
-  my $StringExist;
   my $FileContentBasic = "";
   
   # Try to read the Parameter file
@@ -260,9 +259,6 @@ sub loadServerSettFile {
         	$FileContent .= $_;
   	}
     close(TEMPLATEFILE);
-
-	# Find out if the string for the replacement could be found
-	$StringExist = index ( $FileContent , "<!-- Primer3Plus will include code here -->" );
   }
   else {
     $FileContent = "";

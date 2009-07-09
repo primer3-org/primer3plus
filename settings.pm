@@ -130,7 +130,6 @@ my %serverParameterFiles = (
   "Default"               => "",
   "qPCR"                  => "qPCR.txt",
   "Probe"                 => "probe.txt",
-  "Use_Product_Size"      => "productSize.txt",
   # Put more Setting Files here. Add them also to the array.
 );
 
@@ -292,7 +291,7 @@ my %defaultSettings = (
 
 # Primer3Plus Input Parameters
   "P3P_PRIMER_NAME_ACRONYM_LEFT"             => "F",
-  "P3P_PRIMER_NAME_ACRONYM_INTERNAL"   => "IN",
+  "P3P_PRIMER_NAME_ACRONYM_INTERNAL"         => "IN",
   "P3P_PRIMER_NAME_ACRONYM_RIGHT"            => "R",
   "P3P_PRIMER_NAME_ACRONYM_SPACER"           => "_",
 
