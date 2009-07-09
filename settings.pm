@@ -127,9 +127,11 @@ my @misLibraryList = (
 
   # Add sever stored Setting Files here: 
 my %serverParameterFiles = (
-  "Default"               => "",
-  "qPCR"                  => "qPCR.txt",
-  "Probe"                 => "probe.txt",
+  "Default"           => "",
+  "qPCR"              => "qPCR.txt",
+  "Probe"             => "probe.txt",
+  "p3web v0.4.0 Def"  => "primer3web_v0_4_0_default_settings.txt",
+  "p3 v1.1.4 Def"     => "primer3_v1_1_4_default_settings.txt",
   # Put more Setting Files here. Add them also to the array.
 );
 
@@ -138,7 +140,8 @@ my @serverParameterFilesList = (
   "Default",
   "qPCR",
   "Probe",  
-  "Use_Product_Size",
+  "p3web v0.4.0 Def",
+  "p3 v1.1.4 Def",
   # Put more Setting Files here. Add them also to the hash.
 );
 
