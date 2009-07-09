@@ -830,26 +830,6 @@ $formHTML .= qq{>
        <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" id="SEQUENCE_PRIMER_REVCOMP" name="SEQUENCE_PRIMER_REVCOMP" value="$settings{SEQUENCE_PRIMER_REVCOMP}" type="text">
        </td>
      </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border_bg"><a href="$machineSettings{URL_HELP}#SEQUENCE_FORCE_LEFT_START">Force start:</a>&nbsp;&nbsp;
-         <input size="6" name="SEQUENCE_FORCE_LEFT_START" value="$settings{SEQUENCE_FORCE_LEFT_START}" type="text">
-       </td>
-       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;
-       </td>
-       <td class="primer3plus_cell_no_border_bg"><a href="$machineSettings{URL_HELP}#SEQUENCE_FORCE_RIGHT_START">Force start:</a>&nbsp;&nbsp;
-         <input size="6" name="SEQUENCE_FORCE_RIGHT_START" value="$settings{SEQUENCE_FORCE_RIGHT_START}" type="text">
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border_bg"><a href="$machineSettings{URL_HELP}#SEQUENCE_FORCE_LEFT_END">Force end:</a>&nbsp;&nbsp;&nbsp;
-         <input size="6" name="SEQUENCE_FORCE_LEFT_END" value="$settings{SEQUENCE_FORCE_LEFT_END}" type="text">
-       </td>
-       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;
-       </td>
-       <td class="primer3plus_cell_no_border_bg"><a href="$machineSettings{URL_HELP}#SEQUENCE_FORCE_RIGHT_END">Force end:</a>&nbsp;&nbsp;&nbsp;
-         <input size="6" name="SEQUENCE_FORCE_RIGHT_END" value="$settings{SEQUENCE_FORCE_RIGHT_END}" type="text">
-       </td>
-     </tr>
   </table>
 </div>
 </div>
@@ -861,6 +841,45 @@ $formHTML .= qq{>
 ####################################
 $formHTML .= qq{<div id="primer3plus_advanced_sequence" style="display: none;" class="primer3plus_tab_page">
    <table class="primer3plus_table_no_border">
+     <colgroup>
+       <col width="30%">
+       <col width="10%">
+       <col width="30%">
+       <col width="10%">
+       <col width="20%">
+     </colgroup>
+    <tr>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#SEQUENCE_FORCE_LEFT_START">
+         Force Left Primer Start:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"> <input size="6" name="SEQUENCE_FORCE_LEFT_START"
+         value="$settings{SEQUENCE_FORCE_LEFT_START}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#SEQUENCE_FORCE_RIGHT_START">
+         Force Right Primer Start:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="6" name="SEQUENCE_FORCE_RIGHT_START"
+         value="$settings{SEQUENCE_FORCE_RIGHT_START}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"> 
+       </td>
+     </tr>
+    <tr>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#SEQUENCE_FORCE_LEFT_END">
+         Force Left Primer End:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="6" name="SEQUENCE_FORCE_LEFT_END"
+         value="$settings{SEQUENCE_FORCE_LEFT_END}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#SEQUENCE_FORCE_RIGHT_END">
+         Force Right Primer End:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="6" name="SEQUENCE_FORCE_RIGHT_END"
+         value="$settings{SEQUENCE_FORCE_RIGHT_END}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"> 
+       </td>
+     </tr>
     <tr>
        <td class="primer3plus_cell_no_border"> <a name="PRIMER_FIRST_BASE_INDEX_INPUT" href="$machineSettings{URL_HELP}#PRIMER_FIRST_BASE_INDEX">
          First Base Index:</a>
@@ -868,7 +887,7 @@ $formHTML .= qq{<div id="primer3plus_advanced_sequence" style="display: none;" c
        <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_FIRST_BASE_INDEX"
          value="$settings{PRIMER_FIRST_BASE_INDEX}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"> <a name="SEQUENCE_QUALITY_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_QUALITY">
+       <td colspan="3" class="primer3plus_cell_no_border"> <a name="SEQUENCE_QUALITY_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_QUALITY">
          Sequence Quality:</a>
        </td>
      </tr>
@@ -879,7 +898,7 @@ $formHTML .= qq{<div id="primer3plus_advanced_sequence" style="display: none;" c
        <td class="primer3plus_cell_no_border"><input size="4" name="SEQUENCE_START_CODON_POSITION"
          value="$settings{SEQUENCE_START_CODON_POSITION}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border" rowspan="5">
+       <td class="primer3plus_cell_no_border" rowspan="5" colspan="3">
          <textarea rows="8" cols="40" name="SEQUENCE_QUALITY">$settings{SEQUENCE_QUALITY}</textarea>
        </td>
      </tr>
