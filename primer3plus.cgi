@@ -46,7 +46,7 @@ if ( defined $parametersHTML{SCRIPT_SEQUENCE_FILE_CONTENT} ) {
 # Load the server-stored Settings-File in %parametersHTML
 if (    ( !defined $parametersHTML{SCRIPT_SETTINGS_FILE_CONTENT} )
 	and ( defined $parametersHTML{Activate_Settings} ) ) {
-    my $settingsName = $parametersHTML{SERVER_PARAMETER_FILE};
+    my $settingsName = $parametersHTML{SCRIPT_SERVER_PARAMETER_FILE};
 	if ( $settingsName eq "Default"){
 		%parametersHTML = getDefaultSettings();
 	}
@@ -83,7 +83,7 @@ elsif (( defined $parametersHTML{Upload_File} )
 		setMessage("Error: no file to upload");
 	}
 	if ( defined $parametersHTML{Activate_Settings} ) {
-		setMessage("Active Settings: $parametersHTML{SERVER_PARAMETER_FILE} ");
+		setMessage("Active Settings: $parametersHTML{SCRIPT_SERVER_PARAMETER_FILE} ");
 	}
 	if ( $parametersHTML{SCRIPT_SEQUENCE_COUNTER} > 1 ) {
         setMessage("Multiple Sequences uploaded");

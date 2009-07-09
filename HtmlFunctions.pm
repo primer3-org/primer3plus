@@ -477,16 +477,16 @@ $formHTML .= qq{
 	
 <input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,SCRIPT_SEQUENCING_REVERSE,PRIMER_LIBERAL_BASE,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" type="hidden">
 
-         <a name="SERVER_PARAMETER_FILE_INPUT" href="$machineSettings{URL_HELP}#SERVER_PARAMETER_FILE">
+         <a name="SCRIPT_SERVER_PARAMETER_FILE_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_SERVER_PARAMETER_FILE">
          Load server settings:</a>&nbsp;&nbsp;
-         <select name="SERVER_PARAMETER_FILE">
+         <select name="SCRIPT_SERVER_PARAMETER_FILE">
 };
 
         my @ServerParameterFiles = getServerParameterFilesList;
 	my $option;
         foreach $option (@ServerParameterFiles) {
                 my $selectedStatus = "";
-                if ($option eq $settings{SERVER_PARAMETER_FILE} ) {$selectedStatus = " selected=\"selected\"" };
+                if ($option eq $settings{SCRIPT_SERVER_PARAMETER_FILE} ) {$selectedStatus = " selected=\"selected\"" };
                 $formHTML .= "         <option$selectedStatus>$option</option>\n";
         }
 
@@ -1229,10 +1229,10 @@ $formHTML .= qq{</div>
        </td>
        <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_LEFT" value="$settings{P3P_PRIMER_NAME_ACRONYM_LEFT}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO">
+       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_INTERNAL_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_INTERNAL">
        Internal Oligo Acronym:</a>
        </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO" value="$settings{P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO}" type="text">
+       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_INTERNAL" value="$settings{P3P_PRIMER_NAME_ACRONYM_INTERNAL}" type="text">
        </td>
      </tr>
      <tr>
@@ -3794,9 +3794,9 @@ sub createCompareFileHTML () {
      &nbsp;&nbsp;<a name="SCRIPT_SEQUENCE_FILE_INPUT">File 2:</a>
      <input name="SCRIPT_SETTINGS_FILE" type="file"><br>
      <br>
-     &nbsp;&nbsp;<a name="SERVER_PARAMETER_FILE_INPUT">
+     &nbsp;&nbsp;<a name="SCRIPT_SERVER_PARAMETER_FILE_INPUT">
      Server settings:</a>&nbsp;&nbsp;
-     <select name="SERVER_PARAMETER_FILE">
+     <select name="SCRIPT_SERVER_PARAMETER_FILE">
      <option>None</option>
 };
 
@@ -3843,19 +3843,8 @@ sub createResultCompareFileHTML {
 
   my $templateText = getWrapper();
   my $theKey;
-
-  my $formHTML = qq{
-<div id="primer3plus_complete">
-
-};
-
-  $formHTML .= divTopBar("Primer3CompareFiles","find the difference",0);
-
-  $formHTML .= divMessages;
-
-  $formHTML .= qq{
-<div id="primer3plus_results">
-
+  
+  my $tableStart = qq{
   <table class="primer3plus_table_with_border">
      <colgroup>
        <col width="46%">
@@ -3873,7 +3862,23 @@ sub createResultCompareFileHTML {
        <td><strong>Server file</strong></td>
      </tr>
 };
-  foreach $theKey (keys(%resDiffServer)) {
+
+
+  my $formHTML = qq{
+<div id="primer3plus_complete">
+};
+
+  $formHTML .= divTopBar("Primer3CompareFiles","find the difference",0);
+
+  $formHTML .= divMessages;
+
+  $formHTML .= qq{
+<div id="primer3plus_results">
+
+};
+  $formHTML .= $tableStart;
+
+  foreach $theKey (sort(keys(%resDiffServer))) {
       $formHTML .= qq{     <tr>
        <td>$theKey</td>
        <td>$fileOne->{$theKey}</td>
@@ -3885,24 +3890,10 @@ sub createResultCompareFileHTML {
  
   $formHTML .= qq{</table>
 <br>
-  <table class="primer3plus_table_with_border">
-     <colgroup>
-       <col width="46%">
-       <col width="18%">
-       <col width="18%">
-       <col width="18%">
-     </colgroup>
-     <tr>
-       <td colspan="4"><strong>Parameters different between the files</strong></td>
-     </tr>
-     <tr>
-       <td><strong>Parameter</strong></td>
-       <td><strong>File 1</strong></td>
-       <td><strong>File 2</strong></td>
-       <td></td>
-     </tr>
 };
-  foreach $theKey (keys(%resDiffFiles)) {
+  $formHTML .= $tableStart;
+
+  foreach $theKey (sort(keys(%resDiffFiles))) {
       $formHTML .= qq{     <tr>
        <td>$theKey</td>
        <td>$fileOne->{$theKey}</td>
@@ -3914,24 +3905,10 @@ sub createResultCompareFileHTML {
  
   $formHTML .= qq{</table>
 <br>
-  <table class="primer3plus_table_with_border">
-     <colgroup>
-       <col width="46%">
-       <col width="18%">
-       <col width="18%">
-       <col width="18%">
-     </colgroup>
-     <tr>
-       <td colspan="4"><strong>Parameters equal between the files</strong></td>
-     </tr>
-     <tr>
-       <td><strong>Parameter</strong></td>
-       <td><strong>File 1</strong></td>
-       <td><strong>File 2</strong></td>
-       <td></td>
-     </tr>
 };
-  foreach $theKey (keys(%resEqualFiles)) {
+  $formHTML .= $tableStart;
+
+  foreach $theKey (sort(keys(%resEqualFiles))) {
       $formHTML .= qq{     <tr>
        <td>$theKey</td>
        <td>$fileOne->{$theKey}</td>
@@ -3943,24 +3920,10 @@ sub createResultCompareFileHTML {
  
   $formHTML .= qq{</table>
 <br>
-<table class="primer3plus_table_with_border">
-     <colgroup>
-       <col width="46%">
-       <col width="18%">
-       <col width="18%">
-       <col width="18%">
-     </colgroup>
-     <tr>
-       <td colspan="4"><strong>Parameters equal to the Server file</strong></td>
-     </tr>
-     <tr>
-       <td><strong>Parameter</strong></td>
-       <td><strong>File 1</strong></td>
-       <td><strong>File 2</strong></td>
-       <td><strong>Server file</strong></td>
-     </tr>
 };
-  foreach $theKey (keys(%resEqualServer)) {
+  $formHTML .= $tableStart;
+
+  foreach $theKey (sort(keys(%resEqualServer))) {
       $formHTML .= qq{     <tr>
        <td>$theKey</td>
        <td>$fileOne->{$theKey}</td>

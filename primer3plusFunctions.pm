@@ -529,6 +529,7 @@ sub loadFile {
 	$makeMessage = shift;
 	my @fileContent;
 	my ( $line, $lineKey, $lineValue, $fileType, $readable, $sequenceCounter, $multiName );
+	my %translator;
 
     $sequenceCounter = 0;
 
@@ -573,6 +574,28 @@ sub loadFile {
 				setMessage("Primer3Plus loaded $fileType File");
 			}
 		}
+	}
+
+    # Read Primer3Plus file
+	elsif ( $fileString =~ /Primer3Plus File/ ) {
+		@fileContent = split '\n', $fileString;
+		%translator = getTranslateOldVersion();
+		# Read it directly to the Hash provided
+        setMessage("Old Primer3Plus File loaded. Check if all values are correct.");
+        setMessage("Save new Settings File to use latest version.");
+		for ( my $i = 3 ; $i <= $#fileContent ; $i++ ) {
+			$line = $fileContent[$i];
+			if ( ( index( $line, "=" ) ) > 2 ) {
+                ( $lineKey, $lineValue ) = split "=", $line;
+                if (($lineKey eq "SCRIPT_CONTAINS_JAVA_SCRIPT") ||
+                    ($lineKey eq "SCRIPT_PRINT_INPUT")) {
+			    } elsif (defined $translator{$lineKey}) {
+                    $dataTarget->{$translator{$lineKey}} = $lineValue;
+                } else {
+                    setMessage("Unprocessed Tag: $lineKey = $lineValue");
+                }
+            }
+        }
 	}
 
 	# Read Fasta file format
@@ -1132,7 +1155,7 @@ sub createPrimerName ($$$) {
         
     my $acronymLeft  = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_LEFT"};
     my $acronymRight = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
-    my $acronymOligo = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL_OLIGO"};
+    my $acronymOligo = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"};
     my $acronymSpace = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"};
     my $sequenceName = $completeHash->{"SEQUENCE_ID"};
 
