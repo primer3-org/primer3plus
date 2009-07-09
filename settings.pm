@@ -308,11 +308,6 @@ my %defaultSettings = (
 
 # Array for the tasks Primer3plus can do (needed to build the HTML)
 my @scriptTasks = (
-  "Detection",
-  "Cloning",
-  "Sequencing",
-  "Primer_List",
-  "Primer_Check",
   "pick_detection_primers",
   "pick_cloning_primers",
   "pick_discriminative_primers",

@@ -253,16 +253,16 @@ function showTopic(id) {
         document.getElementById(id).style.display="inline";
 		document.getElementById("primer3plus_pick_primers_button").value = "Pick Primers";
 
-        if (id == "primer3plus_explain_Primer_Check") {
+        if (id == "primer3plus_explain_check_primers") {
 			setSelection("inline","none","none","none","none","none")
 			document.getElementById("primer3plus_pick_primers_button").value = "Check Primer";             
-        } else if (id == "primer3plus_explain_Detection") {
+        } else if (id == "primer3plus_explain_pick_detection_primers") {
              setSelection("none","inline","inline","inline","inline","inline");
-        } else if (id == "primer3plus_explain_Sequencing") {
+        } else if (id == "primer3plus_explain_pick_sequencing_primers") {
              setSelection("none","inline","none","inline","none","none");
-        } else if (id == "primer3plus_explain_Cloning") {
+        } else if (id == "primer3plus_explain_pick_cloning_primers") {
              setSelection("none","inline","none","none","inline","none");
-        } else if (id == "primer3plus_explain_Primer_List") {
+        } else if (id == "primer3plus_explain_pick_primer_list") {
              setSelection("none","inline","inline","inline","none","none");
         }
     }
@@ -509,7 +509,7 @@ $formHTML .= qq{
 
         $formHTML .= qq{
         <td class="primer3plus_cell_no_border_explain">
-   <div id="primer3plus_explain_Detection"
+   <div id="primer3plus_explain_pick_detection_primers"
         };
 
         if ($settings{PRIMER_TASK} ne "Detection")  {
@@ -518,15 +518,23 @@ $formHTML .= qq{
 $formHTML .= qq{>
      <a>Select primer pairs to detect the given template sequence. Optionally targets and included/excluded regions can be specified.</a>
    </div>
-   <div id="primer3plus_explain_Cloning" };
+   <div id="primer3plus_explain_pick_cloning_primers" };
 
         if ($settings{PRIMER_TASK} ne "Cloning")  {
                 $formHTML .= qq{style="display: none;" };
         }
 $formHTML .= qq{>
-     <a>Mark an included region to pick primers fixed at its the boundaries. The quality of the primers might be low.</a>
+     <a>Mark an included region to pick primers 5' fixed at its the boundaries. The quality of the primers might be low.</a>
    </div>
-   <div id="primer3plus_explain_Sequencing" };
+   <div id="primer3plus_explain_pick_discriminative_primers" };
+
+        if ($settings{PRIMER_TASK} ne "Cloning")  {
+                $formHTML .= qq{style="display: none;" };
+        }
+$formHTML .= qq{>
+     <a>Mark an included region to pick primers 3' fixed at its the boundaries. The quality of the primers might be low.</a>
+   </div>
+   <div id="primer3plus_explain_pick_sequencing_primers" };
 
         if ($settings{PRIMER_TASK} ne "Sequencing")  {
                 $formHTML .= qq{style="display: none;" };
@@ -534,7 +542,7 @@ $formHTML .= qq{>
 $formHTML .= qq{>
      <a>Pick a series of primers on both strands for sequencing. Optionally the regions of interest can be marked using targets.</a>
    </div>
-   <div id="primer3plus_explain_Primer_List" };
+   <div id="primer3plus_explain_pick_primer_list" };
 
         if ($settings{PRIMER_TASK} ne "Primer_List")  {
                 $formHTML .= qq{style="display: none;" };
@@ -542,7 +550,7 @@ $formHTML .= qq{>
 $formHTML .= qq{>
      <a>Returns a list of all possible primers the can be designed on the template sequence. Optionally targets and included/exlcuded regions can be specified.</a>
    </div>
-   <div id="primer3plus_explain_Primer_Check" };
+   <div id="primer3plus_explain_check_primers" };
 
         if ($settings{PRIMER_TASK} ne "Primer_Check")  {
                 $formHTML .= qq{style="display: none;" };
@@ -2097,29 +2105,7 @@ sub mainResultsHTML {
   if (defined $results->{"PRIMER_RIGHT_NUM_RETURNED"}){
       $primer_count += $results->{"PRIMER_RIGHT_NUM_RETURNED"};
   }
-  
-  #############################################
-  ### Ugly fix
-  
-  if ($task eq "Detection") {
-      $task = "pick_detection_primers";
-  }
-  elsif ($task eq "Primer_Check") {
-      $task = "check_primers";
-  }
-  elsif ($task eq "Cloning") {
-      $task = "pick_cloning_primers";
-  }
-  elsif ($task eq "Primer_List") {
-      $task = "pick_primer_list";
-  }
-  elsif ($task eq "Sequencing") {
-      $task = "pick_sequencing_primers";
-  }  
-  
-  ##############################################
-  
-  
+
   
   # Now work out the HTML code
   #---------------------------
