@@ -238,6 +238,15 @@ function showTab(tab,id) {
         document.getElementById(id).style.display="inline";
         prevTabPage = id;
 }
+
+function hideTabs() {
+        document.getElementById('primer3plus_general_primer_picking').style.display="none";
+        document.getElementById('primer3plus_advanced_primer_picking').style.display="none";
+        document.getElementById('primer3plus_internal_oligo').style.display="none";
+        document.getElementById('primer3plus_penalties').style.display="none";
+        document.getElementById('primer3plus_advanced_sequence').style.display="none";
+    
+}
 };
 
 ########################################
@@ -794,7 +803,7 @@ $formHTML .= qq{
 ####################################
 # Create the ADVANCED SEQUENCE tab #
 ####################################
-$formHTML .= qq{<div id="primer3plus_advanced_sequence" style="display: none;" class="primer3plus_tab_page">
+$formHTML .= qq{<div id="primer3plus_advanced_sequence" class="primer3plus_tab_page">
    <table class="primer3plus_table_no_border">
      <colgroup>
        <col width="30%">
@@ -897,7 +906,7 @@ $formHTML .= qq{<div id="primer3plus_advanced_sequence" style="display: none;" c
 # Create the GENERAL SETTINGS tab #
 ###################################
 $formHTML .= qq{
-<div id="primer3plus_general_primer_picking" class="primer3plus_tab_page" style="display: none;">
+<div id="primer3plus_general_primer_picking" class="primer3plus_tab_page">
    <table class="primer3plus_table_no_border">
      <tr>
        <td class="primer3plus_cell_no_border">
@@ -1054,7 +1063,7 @@ $formHTML .= qq{
 };
 
 $formHTML .= qq{</div>
-<div id="primer3plus_advanced_primer_picking" class="primer3plus_tab_page" style="display: none;">
+<div id="primer3plus_advanced_primer_picking" class="primer3plus_tab_page">
    <table class="primer3plus_table_no_border">
      <colgroup>
        <col width="25%">
@@ -1335,7 +1344,7 @@ $formHTML .= qq{</div>
 };
 
 $formHTML .= qq{
-<div id="primer3plus_internal_oligo" class="primer3plus_tab_page" style="display: none;">
+<div id="primer3plus_internal_oligo" class="primer3plus_tab_page">
   <div class="primer3plus_section">
    <table class="primer3plus_table_no_border">
      <colgroup>
@@ -1523,7 +1532,7 @@ $formHTML .= qq{         </select>
 # Create the PENALTY WEIGHTS tab #
 ##################################
 $formHTML .= qq{
-<div id="primer3plus_penalties" class="primer3plus_tab_page" style="display: none;">
+<div id="primer3plus_penalties" class="primer3plus_tab_page">
    <table class="primer3plus_table_penalties">
      <colgroup>
        <col width="33%">
@@ -1888,6 +1897,7 @@ $formHTML .= qq{
 </div>	
 <script type="text/javascript">
 function initPage() {
+    hideTabs();
 	showTab('tab1','primer3plus_main_tab');
     id = "primer3plus_explain_" + "$settings{PRIMER_TASK}";
     showTopic(id);
