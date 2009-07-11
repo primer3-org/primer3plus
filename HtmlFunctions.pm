@@ -207,8 +207,13 @@ sub mainStartUpHTML {
   my $formHTML = qq{
 
 <DIV id=toolTipLayer style="VISIBILITY: hidden; POSITION: absolute; z-index: 1">will be replace by tooltip text
-</DIV>  	
+</DIV>
+};
 
+################################
+# Script for Tab functionality #
+################################
+$formHTML .= qq{
 <SCRIPT language=JavaScript>
 var prevTabPage = "primer3plus_main_tab";
 var prevTab = "tab1";
@@ -233,14 +238,17 @@ function showTab(tab,id) {
         document.getElementById(id).style.display="inline";
         prevTabPage = id;
 }
+};
 
-var prevSelectedid = "";
-var prevSequence = 0;
-var prevSequencing = 0;
+########################################
+# Script for hiding useless parameters #
+########################################
+$formHTML .= qq{
+var prevSelectedid = "primer3plus_explain_" + "$settings{PRIMER_TASK}";
 
 function showSelection(selector) {
         x = selector.selectedIndex;
-        id = "primer3plus_explain_" + selector.options[x].text
+        id = "primer3plus_explain_" + selector.options[x].text;
         showTopic(id);
 }
 
@@ -254,31 +262,40 @@ function showTopic(id) {
 		document.getElementById("primer3plus_pick_primers_button").value = "Pick Primers";
 
         if (id == "primer3plus_explain_check_primers") {
-			setSelection("inline","none","none","none","none","none")
+			setSelection("none","none","none","none","inline")
 			document.getElementById("primer3plus_pick_primers_button").value = "Check Primer";             
         } else if (id == "primer3plus_explain_pick_detection_primers") {
-             setSelection("none","inline","inline","inline","inline","inline");
+             setSelection("inline","inline","inline","inline","inline");
         } else if (id == "primer3plus_explain_pick_sequencing_primers") {
-             setSelection("none","inline","none","inline","none","none");
+             setSelection("none","inline","none","none","none");
         } else if (id == "primer3plus_explain_pick_cloning_primers") {
-             setSelection("none","inline","none","none","inline","none");
+             setSelection("none","none","inline","none","none");
+        } else if (id == "primer3plus_explain_pick_discriminative_primers") {
+             setSelection("none","none","inline","none","none");
         } else if (id == "primer3plus_explain_pick_primer_list") {
-             setSelection("none","inline","inline","inline","none","none");
+             setSelection("inline","inline","inline","inline","none");
         }
     }
 }
 
-function setSelection(primer_only_state,sequenceState,excludedState,targetState,includedState,pickwhichState) {
-        document.getElementById("primer3plus_primer_only").style.display=primer_only_state;
-        document.getElementById("primer3plus_sequence").style.display=sequenceState;
+function setSelection(excludedState,targetState,includedState,regionState,pickwhichState) {
         document.getElementById("primer3plus_excluded_region_box").style.display=excludedState;
         document.getElementById("primer3plus_excluded_region_button").style.display=excludedState;
         document.getElementById("primer3plus_target_region_box").style.display=targetState;
         document.getElementById("primer3plus_target_region_button").style.display=targetState;
         document.getElementById("primer3plus_included_region_box").style.display=includedState;
         document.getElementById("primer3plus_included_region_button").style.display=includedState;
+        document.getElementById("primer3plus_primer_overlap_pos_box").style.display=regionState;
         document.getElementById("primer3plus_pick_which").style.display=pickwhichState;
 }
+};
+
+########################################
+# Script for ???? #
+########################################
+$formHTML .= qq{
+var prevSequence = 0;
+var prevSequencing = 0;
 
 function selectSequencing() {
         var seqId = -1;
@@ -293,22 +310,11 @@ function selectSequencing() {
                 showSelection(document.getElementById('PRIMER_TASK'));
         }
 }
-
-function updateSequence() {
-    document.getElementById("SEQUENCE_PRIMER").value = document.getElementById("SEQUENCE_PRIMER_SCRIPT").value;  
-}
-
-function updatePrimer() {
-    document.getElementById("SEQUENCE_PRIMER_SCRIPT").value = document.getElementById("SEQUENCE_PRIMER").value;  
-}
 };
 
-my $primerSelected = 1;
-
-if ( $settings{PRIMER_TASK} eq "Primer_Check" ) {
-    $primerSelected = 0;
-}
-
+###########################
+# Script for the Tooltips #
+###########################
 $formHTML .= qq{
 var ns4 = document.layers;
 var ns6 = document.getElementById && !document.all;
@@ -400,7 +406,12 @@ function moveToMouseLoc(e) {
 }
 
 initToolTips();
+};
 
+##########################################
+# Script for marking within the sequence #
+##########################################
+$formHTML .= qq{
 function clearMarking() {
         var txtarea = document.mainForm.sequenceTextarea;
         txtarea.value = txtarea.value.replace(/[{}<>[\\]]/g,"");
@@ -452,7 +463,7 @@ function setRegion(tagOpen,tagClose) {
   	
 <div id="primer3plus_complete">
 
-<form name="mainForm" action="$machineSettings{URL_FORM_ACTION}" method="post" enctype="multipart/form-data" onReset="initTabs();">
+<form name="mainForm" action="$machineSettings{URL_FORM_ACTION}" method="post" enctype="multipart/form-data" onReset="initPage();">
 };
 
 ######################
@@ -505,69 +516,33 @@ $formHTML .= qq{
         }
 
         $formHTML .= qq{         </select>
-       </td>};
+       </td>
 
-        $formHTML .= qq{
         <td class="primer3plus_cell_no_border_explain">
-   <div id="primer3plus_explain_pick_detection_primers"
-        };
-
-        if ($settings{PRIMER_TASK} ne "Detection")  {
-                $formHTML .= qq{style="display: none;" };
-        }
-$formHTML .= qq{>
+   <div id="primer3plus_explain_pick_detection_primers" style="display: none;">
      <a>Select primer pairs to detect the given template sequence. Optionally targets and included/excluded regions can be specified.</a>
    </div>
-   <div id="primer3plus_explain_pick_cloning_primers" };
-
-        if ($settings{PRIMER_TASK} ne "Cloning")  {
-                $formHTML .= qq{style="display: none;" };
-        }
-$formHTML .= qq{>
+   <div id="primer3plus_explain_pick_cloning_primers" style="display: none;">
      <a>Mark an included region to pick primers 5' fixed at its the boundaries. The quality of the primers might be low.</a>
    </div>
-   <div id="primer3plus_explain_pick_discriminative_primers" };
-
-        if ($settings{PRIMER_TASK} ne "Cloning")  {
-                $formHTML .= qq{style="display: none;" };
-        }
-$formHTML .= qq{>
+   <div id="primer3plus_explain_pick_discriminative_primers" style="display: none;">
      <a>Mark an included region to pick primers 3' fixed at its the boundaries. The quality of the primers might be low.</a>
    </div>
-   <div id="primer3plus_explain_pick_sequencing_primers" };
-
-        if ($settings{PRIMER_TASK} ne "Sequencing")  {
-                $formHTML .= qq{style="display: none;" };
-        }
-$formHTML .= qq{>
+   <div id="primer3plus_explain_pick_sequencing_primers" style="display: none;">
      <a>Pick a series of primers on both strands for sequencing. Optionally the regions of interest can be marked using targets.</a>
    </div>
-   <div id="primer3plus_explain_pick_primer_list" };
-
-        if ($settings{PRIMER_TASK} ne "Primer_List")  {
-                $formHTML .= qq{style="display: none;" };
-        }
-$formHTML .= qq{>
+   <div id="primer3plus_explain_pick_primer_list" style="display: none;">
      <a>Returns a list of all possible primers the can be designed on the template sequence. Optionally targets and included/exlcuded regions can be specified.</a>
    </div>
-   <div id="primer3plus_explain_check_primers" };
-
-        if ($settings{PRIMER_TASK} ne "Primer_Check")  {
-                $formHTML .= qq{style="display: none;" };
-        }
-$formHTML .= qq{>
+   <div id="primer3plus_explain_check_primers"  style="display: none;">
      <a>Evaluate a primer of known sequence with the given settings.</a>
    </div>
-         </td><td class="primer3plus_cell_no_border" align="right">};
+         </td><td class="primer3plus_cell_no_border" align="right">
 
-$formHTML .= qq{   
 	<table><tr>
 	<td><input id="primer3plus_pick_primers_button" class="primer3plus_action_button" name="Pick_Primers" value="Pick Primers" type="submit" style="background: #83db7b;"></td>
 	<td><input class="primer3plus_action_button" name="Default_Settings" value="Reset Form" type="submit"></td>
 	</tr></table>
-};
-
-$formHTML .= qq{
         </td>
         </tr>
    </tbody></table>
@@ -635,39 +610,7 @@ $formHTML .= qq{
    </table>
 </div>
 
-<div id="primer3plus_primer_only" };
-
-	if ($settings{PRIMER_TASK} ne "Primer_Check")  {
-		$formHTML .= qq{style="display: none;" };
-	} 	
-$formHTML .= qq{>
-    <table class="primer3plus_table_no_border">
-     <colgroup>
-       <col width="32%">
-     </colgroup>
-     <tr>
-       <td class="primer3plus_cell_no_border_bg" valign="top">
-         Primer to test:
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" id="SEQUENCE_PRIMER_SCRIPT" name="SEQUENCE_PRIMER_SCRIPT" 
-          value="$settings{SEQUENCE_PRIMER}" type="text" onblur="updateSequence();" onchange="updateSequence();" onkeyup="updateSequence();">
-       </td>
-     </tr>
-  </table>
-};
-
-$formHTML .= qq{</div>
-
-<div id="primer3plus_sequence" };
-
-	if ($settings{PRIMER_TASK} eq "Primer_Check")  {
-		$formHTML .= qq{style="display: none;" };
-	} 	
-my $sequence = $settings{SEQUENCE_TEMPLATE};
-$sequence =~ s/(\w{80})/$1\n/g;
-$formHTML .= qq{>
+<div id="primer3plus_sequence">
    <table class="primer3plus_table_no_border">
      <tr>
        <td class="primer3plus_cell_no_border" valign="bottom">
@@ -679,7 +622,11 @@ $formHTML .= qq{>
          <input name="SCRIPT_SEQUENCE_FILE" type="file">&nbsp;&nbsp;
 	 <input name="Upload_File" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
        </td>
-     </tr>
+     </tr>};
+
+my $sequence = $settings{SEQUENCE_TEMPLATE};
+$sequence =~ s/(\w{80})/$1\n/g;
+$formHTML .= qq{
      <tr>
        <td colspan=2 class="primer3plus_cell_no_border"> <textarea name="SEQUENCE_TEMPLATE" id="sequenceTextarea" rows="12" cols="90">$sequence</textarea>
        </td>
@@ -830,7 +777,7 @@ $formHTML .= qq{>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" id="SEQUENCE_PRIMER" name="SEQUENCE_PRIMER" value="$settings{SEQUENCE_PRIMER}" type="text" onchange="updatePrimer();" onkeyup="updatePrimer();">
+       <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" id="SEQUENCE_PRIMER" name="SEQUENCE_PRIMER" value="$settings{SEQUENCE_PRIMER}" type="text">
        </td>
        <td class="primer3plus_cell_no_border_bg">&nbsp;&nbsp;<input size="30" id="SEQUENCE_INTERNAL_OLIGO" name="SEQUENCE_INTERNAL_OLIGO" value="$settings{SEQUENCE_INTERNAL_OLIGO}"
          type="text">
@@ -1934,20 +1881,18 @@ $formHTML .= qq{
        </td>
      </tr>
    </table>
-};
-
-my $task = "primer3plus_explain_".$settings{PRIMER_TASK};
-$formHTML .= qq{</div>
+</div>
 
 </form>
 
 </div>	
 <script type="text/javascript">
-function initTabs() {
+function initPage() {
 	showTab('tab1','primer3plus_main_tab');
-	showTopic('$task');
+    id = "primer3plus_explain_" + "$settings{PRIMER_TASK}";
+    showTopic(id);
 }
-initTabs();
+initPage();
 </script>
 };
 
