@@ -79,6 +79,9 @@ my %machineSettings = (
   # The path were primer3Statistics will be stored.
   "USER_STATISTICS_FILES_PATH" =>  "./statistics_files/",
 
+  # The path were Primer3Manager stores its cached files.
+  "USER_CACHE_FILES_PATH" =>  "./cached_data/",
+
   # The URL for information about Primer3plus
   "URL_ABOUT" => "primer3plusAbout.cgi",
 
@@ -90,9 +93,6 @@ my %machineSettings = (
 
   # The maximal number of primers primer3Manager can handle.
   "MAX_NUMBER_PRIMER_MANAGER" =>  "100000",
-
-  # The path were Primer3Manager stores its cached files.
-  "USER_CACHE_FILES_PATH" =>  "./cached_data/",
 
   # The maximal time Primer3Manager will store the cached files / cookies.
   "MAX_STORAGE_TIME" =>  "+4d",

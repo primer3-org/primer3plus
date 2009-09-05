@@ -751,7 +751,7 @@ $formHTML .= qq{
   </table>
 </div>
 <br>
-<div id="primer3plus_pick_which">
+<div id="primer3plus_primer_selection">
    <table class="primer3plus_table_no_border">
      <colgroup>
        <col width="32%">
@@ -764,8 +764,7 @@ $formHTML .= qq{
 
 	$formHTML .= ($settings{PRIMER_PICK_LEFT_PRIMER}) ? "checked=\"checked\" " : "";
  
-	$formHTML .= qq{ type="checkbox"><a href="$machineSettings{URL_HELP}#PRIMER_PICK_LEFT_PRIMER">Pick left primer</a><br>
-         or use <a href="$machineSettings{URL_HELP}#SEQUENCE_PRIMER">left primer</a> below.
+	$formHTML .= qq{ type="checkbox"><a href="$machineSettings{URL_HELP}#PRIMER_PICK_LEFT_PRIMER">Pick left primer</a>
        </td>
        <td class="primer3plus_cell_no_border_bg" valign="top">
          <input id="PRIMER_PICK_INTERNAL_OLIGO" name="PRIMER_PICK_INTERNAL_OLIGO" value="1" };
@@ -773,7 +772,6 @@ $formHTML .= qq{
 	$formHTML .= ($settings{PRIMER_PICK_INTERNAL_OLIGO}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{type="checkbox"><a href="$machineSettings{URL_HELP}#PRIMER_PICK_INTERNAL_OLIGO">Pick hybridization probe</a><br>
-         (internal oligo) or use <a href="$machineSettings{URL_HELP}#SEQUENCE_INTERNAL_OLIGO">oligo</a> below.
        </td>
        <td class="primer3plus_cell_no_border_bg" valign="top">
          <input id="PRIMER_PICK_RIGHT_PRIMER" name="PRIMER_PICK_RIGHT_PRIMER" value="1" };
@@ -781,6 +779,25 @@ $formHTML .= qq{
 	$formHTML .= ($settings{PRIMER_PICK_RIGHT_PRIMER}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{ type="checkbox"><a href="$machineSettings{URL_HELP}#PRIMER_PICK_RIGHT_PRIMER">Pick right primer</a>
+       </td>
+     </tr>
+  </table>
+</div>
+<div id="primer3plus_pick_which">
+   <table class="primer3plus_table_no_border">
+     <colgroup>
+       <col width="32%">
+       <col width="32%">
+       <col width="36%">
+     </colgroup>
+     <tr>
+       <td class="primer3plus_cell_no_border_bg" valign="top">
+         or use <a href="$machineSettings{URL_HELP}#SEQUENCE_PRIMER">left primer</a> below.
+       </td>
+       <td class="primer3plus_cell_no_border_bg" valign="top">
+         (internal oligo) or use <a href="$machineSettings{URL_HELP}#SEQUENCE_INTERNAL_OLIGO">oligo</a> below.
+       </td>
+       <td class="primer3plus_cell_no_border_bg" valign="top">
          or use <a href="$machineSettings{URL_HELP}#SEQUENCE_PRIMER_REVCOMP">right primer</a><br>
          below (5'-&gt;3' on opposite strand).
        </td>

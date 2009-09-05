@@ -1112,13 +1112,13 @@ sub runPrimer3 ($$$) {
 
 
 ###### Really run primer3
-    open PRIMER3OUTPUT, "$callPrimer3 < $inputFile 2>&1 |"
+    open(PRIMER3OUTPUT, "$callPrimer3 $inputFile 2>&1 |")
         or setMessage("could not start primer3");
     while (<PRIMER3OUTPUT>) {
         push @readTheLine, $_;
     }
     close PRIMER3OUTPUT;
-#   unlink $inputFile;
+    unlink $inputFile;
 
 ###### Interprete the output
     foreach $readLine (@readTheLine) {
