@@ -805,7 +805,7 @@ sub checkParameters (\%) {
 	my $excludedRegion   = $dataStorage->{"SEQUENCE_EXCLUDED_REGION"};
 	my $target           = $dataStorage->{"SEQUENCE_TARGET"};
     my $includedRegion   = $dataStorage->{"SEQUENCE_INCLUDED_REGION"};
-    my $overlapPos       = $dataStorage->{"SEQUENCE_PRIMER_OVERLAP_POS"};
+    my $overlapPos       = $dataStorage->{"SEQUENCE_OVERLAP_JUNCTION_LIST"};
 
 	if ( $realSequence =~ /^\s*>([^\n]*)/ ) {
 
@@ -865,11 +865,11 @@ sub checkParameters (\%) {
         $overlapPos = add_start_only_list( $overlapPos, $m_overlap_pos,  $firstBaseIndex );
     }
 	$dataStorage->{"SEQUENCE_ID"} = $sequenceID;
-	$dataStorage->{"SEQUENCE_TEMPLATE"}           = $realSequence;
-	$dataStorage->{"SEQUENCE_EXCLUDED_REGION"}    = $excludedRegion;
-	$dataStorage->{"SEQUENCE_TARGET"}             = $target;
-	$dataStorage->{"SEQUENCE_INCLUDED_REGION"}    = $includedRegion;
-    $dataStorage->{"SEQUENCE_PRIMER_OVERLAP_POS"} = $overlapPos;
+	$dataStorage->{"SEQUENCE_TEMPLATE"}              = $realSequence;
+	$dataStorage->{"SEQUENCE_EXCLUDED_REGION"}       = $excludedRegion;
+	$dataStorage->{"SEQUENCE_TARGET"}                = $target;
+	$dataStorage->{"SEQUENCE_INCLUDED_REGION"}       = $includedRegion;
+    $dataStorage->{"SEQUENCE_OVERLAP_JUNCTION_LIST"} = $overlapPos;
 
 	## Remove Commas in Product size ranges
 	$dataStorage->{"PRIMER_PRODUCT_SIZE_RANGE"} =~ s/,/ /g;

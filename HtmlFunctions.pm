@@ -271,23 +271,23 @@ function showTopic(id) {
 		document.getElementById("primer3plus_pick_primers_button").value = "Pick Primers";
 
         if (id == "primer3plus_explain_check_primers") {
-			setSelection("none","none","none","none","inline")
+			setSelection("none","none","none","none","none","inline")
 			document.getElementById("primer3plus_pick_primers_button").value = "Check Primer";             
         } else if (id == "primer3plus_explain_pick_detection_primers") {
-             setSelection("inline","inline","inline","inline","inline");
+             setSelection("inline","inline","inline","inline","inline","inline");
         } else if (id == "primer3plus_explain_pick_sequencing_primers") {
-             setSelection("none","inline","none","none","none");
+             setSelection("none","inline","none","none","none","none");
         } else if (id == "primer3plus_explain_pick_cloning_primers") {
-             setSelection("none","none","inline","none","none");
+             setSelection("none","none","inline","none","none","none");
         } else if (id == "primer3plus_explain_pick_discriminative_primers") {
-             setSelection("none","none","inline","none","none");
+             setSelection("none","none","inline","none","none","none");
         } else if (id == "primer3plus_explain_pick_primer_list") {
-             setSelection("inline","inline","inline","inline","none");
+             setSelection("inline","inline","inline","inline","inline","none");
         }
     }
 }
 
-function setSelection(excludedState,targetState,includedState,regionState,pickwhichState) {
+function setSelection(excludedState,targetState,includedState,regionState,okPairState,pickwhichState) {
         document.getElementById("primer3plus_excluded_region_box").style.display=excludedState;
         document.getElementById("primer3plus_excluded_region_button").style.display=excludedState;
         document.getElementById("primer3plus_target_region_box").style.display=targetState;
@@ -295,6 +295,7 @@ function setSelection(excludedState,targetState,includedState,regionState,pickwh
         document.getElementById("primer3plus_included_region_box").style.display=includedState;
         document.getElementById("primer3plus_included_region_button").style.display=includedState;
         document.getElementById("primer3plus_primer_overlap_pos_box").style.display=regionState;
+        document.getElementById("primer3plus_pair_ok_reg_box").style.display=okPairState;
         document.getElementById("primer3plus_pick_which").style.display=pickwhichState;
 }
 };
@@ -741,11 +742,28 @@ $formHTML .= qq{
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('A list of positions in the given sequence. The value for this parameter has the form position.<br>E.g. 120: only pick primers overlaping the position 120.<br> Or use - in the template sequence to mark the position.<br>Primer3 tries to pick primer pairs were the forward or the reverse primer overlaps one of these positions.');"
-         onmouseout="toolTip();"  name="SEQUENCE_PRIMER_OVERLAP_POS_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_PRIMER_OVERLAP_POS">Primer overlap positions:</a>
+         onmouseout="toolTip();"  name="SEQUENCE_OVERLAP_JUNCTION_LIST_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_OVERLAP_JUNCTION_LIST">Primer overlap positions:</a>
        </td>
        <td class="primer3plus_cell_no_border">-
        </td>
-       <td class="primer3plus_cell_no_border"><input size="40" id="SEQUENCE_PRIMER_OVERLAP_POS" name="SEQUENCE_PRIMER_OVERLAP_POS" value="$settings{SEQUENCE_PRIMER_OVERLAP_POS}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="40" id="SEQUENCE_OVERLAP_JUNCTION_LIST" name="SEQUENCE_OVERLAP_JUNCTION_LIST" value="$settings{SEQUENCE_OVERLAP_JUNCTION_LIST}" type="text">
+       </td>
+     </tr>
+  </table>
+</div>
+<div id="primer3plus_pair_ok_reg_box">
+  <table class="primer3plus_table_no_border">
+     <colgroup>
+       <col width="20%">
+       <col width="2%">
+       <col width="78%">
+     </colgroup>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a name="SEQUENCE_PRIMER_PAIR_OK_REGION_LIST_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_PRIMER_PAIR_OK_REGION_LIST">Pair OK Region List:</a>
+       </td>
+       <td class="primer3plus_cell_no_border">
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="40" id="SEQUENCE_PRIMER_PAIR_OK_REGION_LIST" name="SEQUENCE_PRIMER_PAIR_OK_REGION_LIST" value="$settings{SEQUENCE_PRIMER_PAIR_OK_REGION_LIST}" type="text">
        </td>
      </tr>
   </table>
@@ -1163,22 +1181,34 @@ $formHTML .= qq{</div>
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_NUM_RETURN" value="$settings{PRIMER_NUM_RETURN}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_POS_OVERLAP_TO_END_DIST_INPUT" href="$machineSettings{URL_HELP}#PRIMER_POS_OVERLAP_TO_END_DIST">
-         Max Pos/End Overlap:</a>
-       </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_POS_OVERLAP_TO_END_DIST" value="$settings{PRIMER_POS_OVERLAP_TO_END_DIST}" type="text">
-       </td>
-     </tr>
-     <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_END_STABILITY_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_END_STABILITY">
          Max End Stability:</a>
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MAX_END_STABILITY" value="$settings{PRIMER_MAX_END_STABILITY}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_MIN_THREE_PRIME_DISTANCE_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MIN_THREE_PRIME_DISTANCE">
-         Min Primer End Distance:</a>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION">
+         5 Prime Junction Overlap: </a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MIN_THREE_PRIME_DISTANCE" value="$settings{PRIMER_MIN_THREE_PRIME_DISTANCE}" type="text">
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION" value="$settings{PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTIONT">
+         3 Prime Junction Overlap: </a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION" value="$settings{PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION}" type="text">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE">
+         Min Left Primer End Distance:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE" value="$settings{PRIMER_MIN_LEFT_THREE_PRIME_DISTANCE}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE">
+         Min Right Primer End Distance:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE" value="$settings{PRIMER_MIN_RIGHT_THREE_PRIME_DISTANCE}" type="text">
        </td>
      </tr>
      <tr>
@@ -3045,8 +3075,8 @@ sub divHTMLsequence {
             }
       }
   }
-  if (defined ($results->{"SEQUENCE_PRIMER_OVERLAP_POS"}) and (($results->{"SEQUENCE_PRIMER_OVERLAP_POS"}) ne "")) {
-      @targets = split ' ', $results->{"SEQUENCE_PRIMER_OVERLAP_POS"};
+  if (defined ($results->{"SEQUENCE_OVERLAP_JUNCTION_LIST"}) and (($results->{"SEQUENCE_OVERLAP_JUNCTION_LIST"}) ne "")) {
+      @targets = split ' ', $results->{"SEQUENCE_OVERLAP_JUNCTION_LIST"};
       foreach $region (@targets) {
           $madeRegion = $region - 1;
           $madeRegion .= ",2";
@@ -3610,7 +3640,7 @@ sub createStatisticsHTML ($$$$$) {
 <div id="primer3plus_complete">
 };
 
-$formHTML .= divTopBar("Primer3Statistics","whatch the server glow",0);
+$formHTML .= divTopBar("Primer3Statistics","watch the server glow",0);
 
 $formHTML .= divMessages;
 
