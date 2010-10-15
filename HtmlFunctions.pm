@@ -2443,8 +2443,14 @@ sub createResultsPrimerCheck {
   my $primerSelf;
   my $primerAny;
   my $primerEnd;
+  my $primerHairpin;
   my $primerStab;
   my $primerPenalty;
+  
+  my $thAdd = "";
+  if (($results->{"PRIMER_THERMODYNAMIC_ALIGNMENT"}) eq "1") {
+  	  $thAdd = "_TH";
+  }
 
   ## Figure out which primer to return
   ## This function will be only run if only one primer was found
@@ -2462,8 +2468,8 @@ sub createResultsPrimerCheck {
   ($primerStart, $primerLength) = split "," , $results->{"PRIMER_$type\_0"};
   $primerTM = sprintf ("%.1f",($results->{"PRIMER_$type\_0_TM"}));
   $primerGC = sprintf ("%.1f",($results->{"PRIMER_$type\_0_GC_PERCENT"}));
-  $primerSelf = sprintf ("%.1f",($results->{"PRIMER_$type\_0_SELF_ANY"}));
-  $primerAny = sprintf ("%.1f",($results->{"PRIMER_$type\_0_SELF_END"}));
+  $primerSelf = sprintf ("%.1f",($results->{"PRIMER_$type\_0_SELF_ANY$thAdd"}));
+  $primerAny = sprintf ("%.1f",($results->{"PRIMER_$type\_0_SELF_END$thAdd"}));
   $primerStab = sprintf ("%.1f",($results->{"PRIMER_$type\_0_END_STABILITY"}));
   $primerPenalty = sprintf ("%.3f",($results->{"PRIMER_$type\_0_PENALTY"}));
 
@@ -2497,27 +2503,36 @@ sub createResultsPrimerCheck {
        <td class="primer3plus_cell_no_border">$primerGC %</td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_ANY">Any Dimer:</a></td>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_ANY$thAdd">Any Dimer:</a></td>
        <td class="primer3plus_cell_no_border">$primerSelf</td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_END">End Dimer:</a></td>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_END$thAdd">End Dimer:</a></td>
        <td class="primer3plus_cell_no_border">$primerAny</td>
      </tr>};
 
-  if (defined ($results->{"PRIMER_$type\_0_TEMPLATE_MISPRIMING"}) 
-        and (($results->{"PRIMER_$type\_0_TEMPLATE_MISPRIMING"}) ne "")) {
-      my   $primerTempMispr = sprintf ("%.1f",($results->{"PRIMER_$type\_0_TEMPLATE_MISPRIMING"}));
+  if (defined ($results->{"PRIMER_$type\_0_TEMPLATE_MISPRIMING$thAdd"}) 
+        and (($results->{"PRIMER_$type\_0_TEMPLATE_MISPRIMING$thAdd"}) ne "")) {
+      my   $primerTempMispr = sprintf ("%.1f",($results->{"PRIMER_$type\_0_TEMPLATE_MISPRIMING$thAdd"}));
 
       $formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TEMPLATE_MISPRIMING">Template Mispriming:</a></td>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TEMPLATE_MISPRIMING$thAdd">Template Mispriming:</a></td>
        <td class="primer3plus_cell_no_border">$primerTempMispr</td>
      </tr>
 };
   }
 
-     $formHTML .= qq{
-     
+  if (($results->{"PRIMER_THERMODYNAMIC_ALIGNMENT"}) eq "1") {
+      $primerHairpin = sprintf ("%.1f",($results->{"PRIMER_$type\_0_HAIRPIN_TH"}));
+      
+      $formHTML .= qq{     <tr>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_HAIRPIN_TH">Hairpin:</a></td>
+       <td class="primer3plus_cell_no_border">$primerHairpin</td>
+     </tr>
+};
+  }
+
+$formHTML .= qq{     
      <tr>
        <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_END_STABILITY">3' Stability:</a></td>
        <td class="primer3plus_cell_no_border">$primerStab &Delta;G</td>
@@ -2824,7 +2839,12 @@ sub divLongList {
   my $primerPenalty;
   my $stopLoop;
   my $primerNumber;
-
+  
+  my $thAdd = "";
+  if (($results->{"PRIMER_THERMODYNAMIC_ALIGNMENT"}) eq "1") {
+  	  $thAdd = "_TH";
+  }
+  
   $formHTML = qq{
   <div class="primer3plus_long_list">
    <table class="primer3plus_long_list_table">
@@ -2848,9 +2868,9 @@ sub divLongList {
        <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4">Length</a></td>
        <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TM">Tm</a></td>
        <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_GC_PERCENT">GC %</a></td>
-       <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_ANY">Any</a></td>
-       <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_END">End:</a></td>
-       <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TEMPLATE_MISPRIMING">Temp Bind</a></td>
+       <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_ANY$thAdd">Any</a></td>
+       <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_END$thAdd">End</a></td>
+       <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TEMPLATE_MISPRIMING$thAdd">TB</a></td>
        <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_END_STABILITY">3' Stab</a></td>
        <td class="primer3plus_cell_long_list"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_PENALTY">Penalty</a></td>
      </tr>
@@ -2861,9 +2881,9 @@ sub divLongList {
       ($primerStart, $primerLength) = split "," , $results->{"PRIMER_$primerType\_$counter"};
       $primerTM = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_TM"}));
       $primerGC = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_GC_PERCENT"}));
-      $primerSelf = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_SELF_ANY"}));
-      $primerEnd = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_SELF_END"}));
-      $primerTemplateBinding = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_TEMPLATE_MISPRIMING"}));
+      $primerSelf = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_SELF_ANY$thAdd"}));
+      $primerEnd = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_SELF_END$thAdd"}));
+      $primerTemplateBinding = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_TEMPLATE_MISPRIMING$thAdd"}));
       $primerEndStability = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_END_STABILITY"}));
       $primerPenalty = sprintf ("%.3f",($results->{"PRIMER_$primerType\_$counter\_PENALTY"}));
       $primerNumber = getPrimerNumber();
@@ -2940,16 +2960,28 @@ sub divPrimerBox {
         and (($results->{"PRIMER_PAIR\_$counter\_COMPL_ANY"}) ne "")) {
       $primerAny .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_COMPL_ANY">Any:</a> };
       $primerAny .= sprintf ("%.1f",($results->{"PRIMER_PAIR\_$counter\_COMPL_ANY"}));
+  } elsif ((defined ($results->{"PRIMER_PAIR\_$counter\_COMPL_ANY_TH"})) 
+        and (($results->{"PRIMER_PAIR\_$counter\_COMPL_ANY_TH"}) ne "")) {
+      $primerAny .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_COMPL_ANY_TH">Any:</a> };
+      $primerAny .= sprintf ("%.1f",($results->{"PRIMER_PAIR\_$counter\_COMPL_ANY_TH"}));
   }
   if ((defined ($results->{"PRIMER_PAIR\_$counter\_COMPL_END"}))
         and (($results->{"PRIMER_PAIR\_$counter\_COMPL_END"}) ne "")) {
       $primerEnd .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_COMPL_END">End:</a> };
       $primerEnd .= sprintf ("%.1f",($results->{"PRIMER_PAIR\_$counter\_COMPL_END"}));
+  } elsif ((defined ($results->{"PRIMER_PAIR\_$counter\_COMPL_END_TH"}))
+        and (($results->{"PRIMER_PAIR\_$counter\_COMPL_END_TH"}) ne "")) {
+      $primerEnd .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_COMPL_END_TH">End:</a> };
+      $primerEnd .= sprintf ("%.1f",($results->{"PRIMER_PAIR\_$counter\_COMPL_END_TH"}));
   }
   if ((defined ($results->{"PRIMER_PAIR\_$counter\_TEMPLATE_MISPRIMING"}))
         and (($results->{"PRIMER_PAIR\_$counter\_TEMPLATE_MISPRIMING"}) ne "")) {
-      $productMispriming .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_TEMPLATE_MISPRIMING">Temp Bind:</a> };
+      $productMispriming .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_TEMPLATE_MISPRIMING">TB:</a> };
       $productMispriming .= sprintf ("%.1f",($results->{"PRIMER_PAIR\_$counter\_TEMPLATE_MISPRIMING"}));
+  } elsif ((defined ($results->{"PRIMER_PAIR\_$counter\_TEMPLATE_MISPRIMING_TH"}))
+        and (($results->{"PRIMER_PAIR\_$counter\_TEMPLATE_MISPRIMING_TH"}) ne "")) {
+      $productMispriming .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_TEMPLATE_MISPRIMING_TH">TB:</a> };
+      $productMispriming .= sprintf ("%.1f",($results->{"PRIMER_PAIR\_$counter\_TEMPLATE_MISPRIMING_TH"}));
   }
   if (defined ($results->{"PRIMER_PAIR_$counter\_T_OPT_A"}) 
         and (($results->{"PRIMER_PAIR_$counter\_T_OPT_A"}) ne "")) {
@@ -2967,18 +2999,19 @@ sub divPrimerBox {
   my $formHTML = qq{  <div class="primer3plus_primer_pair_box">
   <table class="primer3plus_table_primer_pair_box">
      <colgroup>
-       <col width="12.5%">
-       <col width="12.5%">
-       <col width="10.5%">
+       <col width="12.0%">
+       <col width="12.0%">
+       <col width="10.0%">
        <col width="10%">
-       <col width="9%">
+       <col width="8%">
+       <col width="8%">
        <col width="8.5%">
-       <col width="13.5%">
+       <col width="8.0%">
        <col width="10.5%">
        <col width="13%">
      </colgroup>
      <tr>
-       <td colspan="9" class="primer3plus_cell_primer_pair_box">Pair $selection:</td>
+       <td colspan="10" class="primer3plus_cell_primer_pair_box">Pair $selection:</td>
      </tr>
 };
 
@@ -2998,6 +3031,7 @@ $formHTML .= qq{     <tr class="primer3plus_primer_pair">
        <td class="primer3plus_cell_primer_pair_box">$primerEnd</td>
        <td class="primer3plus_cell_primer_pair_box">$productMispriming</td>
        <td class="primer3plus_cell_primer_pair_box">$productToA</td>
+       <td class="primer3plus_cell_primer_pair_box"></td>
        <td class="primer3plus_cell_primer_pair_box">$pairPenalty</td>
      </tr>
 };
@@ -3008,7 +3042,7 @@ if (defined ($results->{"PRIMER_PAIR_$counter\_LIBRARY_MISPRIMING"})
 $formHTML .= qq{     <tr class="primer3plus_primer_pair">
        <td colspan="2" class="primer3plus_cell_primer_pair_box">
          <a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_LIBRARY_MISPRIMING">Library Mispriming:</a></td>
-       <td colspan="7" class="primer3plus_cell_primer_pair_box">$results->{"PRIMER_PAIR_$counter\_LIBRARY_MISPRIMING"}</td>
+       <td colspan="8" class="primer3plus_cell_primer_pair_box">$results->{"PRIMER_PAIR_$counter\_LIBRARY_MISPRIMING"}</td>
      </tr>
 };
 }   
@@ -3027,14 +3061,18 @@ sub partPrimerData {
   $type    = shift;
   $checked = shift;
   
+  
   $selection = $counter + 1;
     
-  my ($primerStart, $primerLength, $primerTM, $primerGC, $primerAny);
+  my ($primerStart, $primerLength, $primerTM, $primerGC, $primerAny, $primerHairpin);
   my ($primerEnd, $primerNumber, $primerEndStability, $primerTemplateBinding, $primerPenalty);
-  
   my $cssName;
   my $writeName;
   
+  my $thAdd = "";
+  if (($results->{"PRIMER_THERMODYNAMIC_ALIGNMENT"}) eq "1") {
+  	  $thAdd = "_TH";
+  }
   if ($type eq "LEFT") {
 		$cssName = "left_primer";
 		$writeName = "Left Primer";
@@ -3059,14 +3097,17 @@ if (defined ($results->{"PRIMER_$type\_$counter\_SEQUENCE"})
   ($primerStart, $primerLength) = split "," , $results->{"PRIMER_$type\_$counter"};
   $primerTM = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_TM"}));
   $primerGC = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_GC_PERCENT"}));
-  $primerAny = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_SELF_ANY"}));
-  $primerEnd = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_SELF_END"}));
-  $primerTemplateBinding = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_TEMPLATE_MISPRIMING"}));
+  $primerAny = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_SELF_ANY$thAdd"}));
+  $primerEnd = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_SELF_END$thAdd"}));
+  $primerTemplateBinding = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_TEMPLATE_MISPRIMING$thAdd"}));
+  if (($results->{"PRIMER_THERMODYNAMIC_ALIGNMENT"}) eq "1") {
+      $primerHairpin = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_HAIRPIN_TH"}));
+  }
   $primerEndStability = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_END_STABILITY"}));
   $primerPenalty = sprintf ("%.3f",($results->{"PRIMER_$type\_$counter\_PENALTY"}));
 
 $formHTML .= qq{     <tr class="primer3plus_$cssName">
-       <td colspan="9" class="primer3plus_cell_primer_pair_box"><input id="PRIMER_$primerNumber\_SELECT" name="PRIMER_$primerNumber\_SELECT" value="1" };
+       <td colspan="10" class="primer3plus_cell_primer_pair_box"><input id="PRIMER_$primerNumber\_SELECT" name="PRIMER_$primerNumber\_SELECT" value="1" };
 
 $formHTML .= ($checked) ? "checked=\"checked\" " : "";
  
@@ -3076,7 +3117,7 @@ $formHTML .= qq{type="checkbox">
      </tr>
      <tr>
        <td class="primer3plus_cell_primer_pair_box">Sequence:</td>
-       <td colspan="8" class="primer3plus_cell_primer_pair_box"><input id="PRIMER_$primerNumber\_SEQUENCE" name="PRIMER_$primerNumber\_SEQUENCE"
+       <td colspan="9" class="primer3plus_cell_primer_pair_box"><input id="PRIMER_$primerNumber\_SEQUENCE" name="PRIMER_$primerNumber\_SEQUENCE"
          value="$results->{"PRIMER_$type\_$counter\_SEQUENCE"}" size="90"></td>
      </tr>
      <tr>
@@ -3084,9 +3125,16 @@ $formHTML .= qq{type="checkbox">
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4">Length:</a> $primerLength bp</td>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TM">Tm:</a> $primerTM &deg;C </td>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_GC_PERCENT">GC:</a> $primerGC %</td>
-       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_ANY">Any:</a> $primerAny</td>
-       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_END">End:</a> $primerEnd</td>
-       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TEMPLATE_MISPRIMING">Temp Bind:</a> $primerAny</td>
+       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_ANY$thAdd">Any:</a> $primerAny</td>
+       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_END$thAdd">End:</a> $primerEnd</td>
+       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TEMPLATE_MISPRIMING$thAdd">TB:</a> $primerAny</td>
+       <td class="primer3plus_cell_primer_pair_box">};
+       
+if (($results->{"PRIMER_THERMODYNAMIC_ALIGNMENT"}) eq "1") {
+       $formHTML .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_HAIRPIN_TH">HP:</a> $primerHairpin};
+}
+
+$formHTML .= qq{</td>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_END_STABILITY">3' Stab:</a> $primerEndStability</td>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_PENALTY">Penalty:</a> $primerPenalty</td>
      </tr>
@@ -3117,6 +3165,7 @@ $formHTML .= qq{type="checkbox">
        <td class="primer3plus_cell_primer_pair_box"></td>
        <td class="primer3plus_cell_primer_pair_box"></td>
        <td class="primer3plus_cell_primer_pair_box"></td>
+       <td class="primer3plus_cell_primer_pair_box"></td>
      </tr>
 };
   }
@@ -3124,7 +3173,7 @@ $formHTML .= qq{type="checkbox">
   if (defined ($results->{"PRIMER_$type\_$counter\_LIBRARY_MISPRIMING"}) 
         and (($results->{"PRIMER_$type\_$counter\_LIBRARY_MISPRIMING"}) ne "")) {
     $formHTML .= qq{     <tr>
-       <td colspan="9" class="primer3plus_cell_primer_pair_box">
+       <td colspan="10" class="primer3plus_cell_primer_pair_box">
          <a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_LIBRARY_MISPRIMING">Library Mispriming:</a>&nbsp;
          $results->{"PRIMER_$type\_$counter\_LIBRARY_MISPRIMING"}</td>
      </tr>
@@ -3134,7 +3183,7 @@ $formHTML .= qq{type="checkbox">
   if (defined ($results->{"PRIMER_$type\_$counter\_LIBRARY_MISHYB"}) 
         and (($results->{"PRIMER_$type\_$counter\_LIBRARY_MISHYB"}) ne "")) {
     $formHTML .= qq{     <tr>
-       <td colspan="9" class="primer3plus_cell_primer_pair_box">
+       <td colspan="10" class="primer3plus_cell_primer_pair_box">
          <a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_4_LIBRARY_MISHYB">Library Mishyb:</a>&nbsp;
          $results->{"PRIMER_$type\_$counter\_LIBRARY_MISHYB"}</td>
      </tr>
@@ -3144,12 +3193,12 @@ $formHTML .= qq{type="checkbox">
 		and (($results->{"PRIMER_$type\_$counter\_PROBLEMS"}) ne "")) {
     $formHTML .= qq{     <tr>
        <td class="primer3plus_cell_no_border_problem"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_PROBLEMS">Problems:</a></td>
-       <td class="primer3plus_cell_no_border_problem" colspan="8">$results->{"PRIMER_$type\_$counter\_PROBLEMS"}</td>
+       <td class="primer3plus_cell_no_border_problem" colspan="9">$results->{"PRIMER_$type\_$counter\_PROBLEMS"}</td>
      </tr>
 };
 }
   $formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_no_border" colspan="9"></td>
+       <td class="primer3plus_cell_no_border" colspan="10"></td>
      </tr>
 };
 		}
