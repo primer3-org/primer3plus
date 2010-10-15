@@ -496,7 +496,7 @@ $formHTML .= qq{
 	<tr>
 	<td class="primer3plus_cell_no_border">
 	
-<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,SCRIPT_SEQUENCING_REVERSE,PRIMER_LIBERAL_BASE,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS" type="hidden">
+<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,PRIMER_PICK_ANYWAY,PRIMER_LIBERAL_BASE,PRIMER_LOWERCASE_MASKING,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS,PRIMER_THERMODYNAMIC_ALIGNMENT" type="hidden">
 
          <a name="SCRIPT_SERVER_PARAMETER_FILE_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_SERVER_PARAMETER_FILE">
          Load server settings:</a>&nbsp;&nbsp;
@@ -1171,9 +1171,24 @@ $formHTML .= qq{</div>
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_GC_CLAMP" value="$settings{PRIMER_GC_CLAMP}" type="text">
        </td>
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_THERMODYNAMIC_ALIGNMENT_INPUT" href="$machineSettings{URL_HELP}#PRIMER_THERMODYNAMIC_ALIGNMENT">
+       Use Thermodynamic Alignment:</a>
+       </td>
+       <td class="primer3plus_cell_no_border_th"><input name="PRIMER_THERMODYNAMIC_ALIGNMENT"  value="1" };
+
+	$formHTML .= ($settings{PRIMER_THERMODYNAMIC_ALIGNMENT}) ? "checked=\"checked\" " : "";
+ 
+	$formHTML .= qq{type="checkbox"><a>&nbsp;&nbsp;Activates Settings Starting with TH:</a>
+       </td>
+     </tr>
+     <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_END_GC_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_END_GC">Max End GC:</a>
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MAX_END_GC" value="$settings{PRIMER_MAX_END_GC}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border">
+       </td>
+       <td class="primer3plus_cell_no_border">
        </td>
      </tr>
      <tr>
@@ -1222,6 +1237,16 @@ $formHTML .= qq{</div>
        </td>
      </tr>
      <tr>
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_MAX_SELF_ANY_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_SELF_ANY_TH">TH: Max Self Complementarity:</a>
+       </td>
+       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_MAX_SELF_ANY_TH" value="$settings{PRIMER_MAX_SELF_ANY_TH}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_PAIR_MAX_COMPL_ANY_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_MAX_COMPL_ANY_TH">TH: Max Pair Complementarity:</a>
+       </td>
+       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_PAIR_MAX_COMPL_ANY_TH" value="$settings{PRIMER_PAIR_MAX_COMPL_ANY_TH}" type="text">
+       </td>
+     </tr>
+     <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_SELF_END_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_SELF_END">Max End Self Complementarity:</a>
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MAX_SELF_END" value="$settings{PRIMER_MAX_SELF_END}" type="text">
@@ -1229,6 +1254,26 @@ $formHTML .= qq{</div>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_PAIR_MAX_COMPL_END_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_MAX_COMPL_END">Max Pair End Complementarity:</a>
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_PAIR_MAX_COMPL_END" value="$settings{PRIMER_PAIR_MAX_COMPL_END}" type="text">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_MAX_SELF_END_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_SELF_END_TH">TH: Max End Self Compl.:</a>
+       </td>
+       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_MAX_SELF_END_TH" value="$settings{PRIMER_MAX_SELF_END_TH}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_PAIR_MAX_COMPL_END_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_MAX_COMPL_END_TH">TH: Max Pair End Complementarity:</a>
+       </td>
+       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_PAIR_MAX_COMPL_END_TH" value="$settings{PRIMER_PAIR_MAX_COMPL_END_TH}" type="text">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_MAX_HAIRPIN_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_HAIRPIN_TH">TH: Max Hairpin:</a>
+       </td>
+       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_MAX_HAIRPIN_TH" value="$settings{PRIMER_MAX_HAIRPIN_TH}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_PAIR_MAX_HAIRPIN_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_MAX_HAIRPIN_TH">TH: Max Pair Hairpin:</a>
+       </td>
+       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_PAIR_MAX_HAIRPIN_TH" value="$settings{PRIMER_PAIR_MAX_HAIRPIN_TH}" type="text">
        </td>
      </tr>
      <tr>
@@ -1240,6 +1285,18 @@ $formHTML .= qq{</div>
        Pair Max Template Mispriming:</a>
        </td>
        <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING" value="$settings{PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING}" type="text">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_MAX_TEMPLATE_MISPRIMING_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_TEMPLATE_MISPRIMING_TH">
+       TH: Max Template Mispriming:</a>
+       </td>
+       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_MAX_TEMPLATE_MISPRIMING_TH" value="$settings{PRIMER_MAX_TEMPLATE_MISPRIMING_TH}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH">
+       TH: Pair Max Template Mispriming:</a>
+       </td>
+       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH" value="$settings{PRIMER_PAIR_MAX_TEMPLATE_MISPRIMING_TH}" type="text">
        </td>
      </tr>
      <tr>
@@ -1528,6 +1585,20 @@ $formHTML .= qq{
        </td>
      </tr>
      <tr>
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_INTERNAL_MAX_SELF_ANY_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MAX_SELF_ANY_TH">
+         TH: Hyb Oligo Self Complementarity:</a>
+       </td>
+       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_INTERNAL_MAX_SELF_ANY_TH"
+         value="$settings{PRIMER_INTERNAL_MAX_SELF_ANY_TH}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_INTERNAL_MAX_SELF_END_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MAX_SELF_END_TH">
+         TH: Hyb Oligo Max End Self Complementarity:</a>
+       </td>
+       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_INTERNAL_MAX_SELF_END_TH"
+         value="$settings{PRIMER_INTERNAL_MAX_SELF_END_TH}" type="text">
+       </td>
+     </tr>
+     <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB">
          Max Template Mishyb:</a>
        </td>
@@ -1539,6 +1610,20 @@ $formHTML .= qq{
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_MAX_LIBRARY_MISHYB"
          value="$settings{PRIMER_INTERNAL_MAX_LIBRARY_MISHYB}" type="text">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH">
+         TH: Max Template Mishyb:</a>
+       </td>
+       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH"
+         value="$settings{PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_INTERNAL_MAX_HAIRPIN_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MAX_HAIRPIN_TH">
+         TH: Hyb Oligo Max Hairpin:</a>
+       </td>
+       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_INTERNAL_MAX_HAIRPIN_TH"
+         value="$settings{PRIMER_INTERNAL_MAX_HAIRPIN_TH}" type="text">
        </td>
      </tr>
      <tr>
@@ -1757,6 +1842,23 @@ $formHTML .= qq{
        </td>
      </tr>
      <tr>
+       <td class="primer3plus_cell_penalties_th"><a name="PRIMER_WT_TEMPLATE_MISPRIMING_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_WT_TEMPLATE_MISPRIMING_TH">TH: Template Mispriming</a>
+       </td>
+       <td class="primer3plus_cell_penalties_th"><input size="4" name="PRIMER_WT_TEMPLATE_MISPRIMING_TH"
+         value="$settings{PRIMER_WT_TEMPLATE_MISPRIMING_TH}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties_th"><a name="PRIMER_INTERNAL_WT_TEMPLATE_MISHYB_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_WT_TEMPLATE_MISHYB_TH">TH: Template Mishyb</a>
+       </td>
+       <td class="primer3plus_cell_penalties_th"><input size="4" name="PRIMER_INTERNAL_WT_TEMPLATE_MISHYB_TH"
+         value="$settings{PRIMER_INTERNAL_WT_TEMPLATE_MISHYB_TH}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties_th"><a name="PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_TH">TH: Template Mispriming</a>
+       </td>
+       <td class="primer3plus_cell_penalties_th"><input size="4" name="PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_TH"
+         value="$settings{PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_TH}" type="text">
+       </td>
+     </tr>
+     <tr>
        <td class="primer3plus_cell_penalties"><a name="PRIMER_WT_LIBRARY_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_WT_LIBRARY_MISPRIMING">Library Mispriming</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_LIBRARY_MISPRIMING"
@@ -1793,6 +1895,26 @@ $formHTML .= qq{
        </td>
      </tr>
      <tr>
+       <td class="primer3plus_cell_penalties_th"><a name="PRIMER_WT_SELF_ANY_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_WT_SELF_ANY_TH">
+         TH: Self Complementarity</a>
+       </td>
+       <td class="primer3plus_cell_penalties_th"><input size="4" name="PRIMER_WT_SELF_ANY_TH"
+         value="$settings{PRIMER_WT_SELF_ANY_TH}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties_th"><a name="PRIMER_INTERNAL_WT_SELF_ANY_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_WT_SELF_ANY_TH">
+         TH: Self Complementarity</a>
+       </td>
+       <td class="primer3plus_cell_penalties_th"><input size="4" name="PRIMER_INTERNAL_WT_SELF_ANY_TH"
+         value="$settings{PRIMER_INTERNAL_WT_SELF_ANY_TH}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties_th"><a name="PRIMER_PAIR_WT_COMPL_ANY_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_WT_COMPL_ANY_TH">
+         TH: Pair Complementarity</a>
+       </td>
+       <td class="primer3plus_cell_penalties_th"><input size="4" name="PRIMER_PAIR_WT_COMPL_ANY_TH"
+         value="$settings{PRIMER_PAIR_WT_COMPL_ANY_TH}" type="text">
+       </td>
+     </tr>
+     <tr>
        <td class="primer3plus_cell_penalties"><a name="PRIMER_WT_SELF_END_INPUT" href="$machineSettings{URL_HELP}#PRIMER_WT_SELF_END">End Self Complementarity</a>
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_SELF_END"
@@ -1807,6 +1929,44 @@ $formHTML .= qq{
        </td>
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_PAIR_WT_COMPL_END"
          value="$settings{PRIMER_PAIR_WT_COMPL_END}" type="text">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_penalties_th"><a name="PRIMER_WT_SELF_END_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_WT_SELF_END_TH">
+         TH: End Self Complementarity</a>
+       </td>
+       <td class="primer3plus_cell_penalties_th"><input size="4" name="PRIMER_WT_SELF_END_TH"
+         value="$settings{PRIMER_WT_SELF_END_TH}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties_th"><a name="PRIMER_INTERNAL_WT_SELF_END_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_WT_SELF_END_TH">
+         TH: End Self Complementarity</a>
+       </td>
+       <td class="primer3plus_cell_penalties_th"><input size="4" name="PRIMER_INTERNAL_WT_SELF_END_TH"
+         value="$settings{PRIMER_INTERNAL_WT_SELF_END_TH}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties_th"><a name="PRIMER_PAIR_WT_COMPL_END_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_WT_COMPL_END_TH">
+         TH: Pair End Complementarity</a>
+       </td>
+       <td class="primer3plus_cell_penalties_th"><input size="4" name="PRIMER_PAIR_WT_COMPL_END_TH"
+         value="$settings{PRIMER_PAIR_WT_COMPL_END_TH}" type="text">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_penalties_th"><a name="PRIMER_WT_HAIRPIN_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_WT_HAIRPIN_TH">
+         TH: Hairpin</a>
+       </td>
+       <td class="primer3plus_cell_penalties_th"><input size="4" name="PRIMER_WT_HAIRPIN_TH"
+         value="$settings{PRIMER_WT_HAIRPIN_TH}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties_th"><a name="PRIMER_INTERNAL_WT_HAIRPIN_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_WT_HAIRPIN_TH">
+         TH: Hairpin</a>
+       </td>
+       <td class="primer3plus_cell_penalties_th"><input size="4" name="PRIMER_INTERNAL_WT_HAIRPIN_TH"
+         value="$settings{PRIMER_INTERNAL_WT_HAIRPIN_TH}" type="text">
+       </td>
+       <td class="primer3plus_cell_penalties_th">
+       </td>
+       <td class="primer3plus_cell_penalties_th">
        </td>
      </tr>
      <tr>
