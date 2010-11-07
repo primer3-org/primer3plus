@@ -1099,8 +1099,7 @@ sub runPrimer3 ($$$) {
     if ($openError == 0) {
         foreach $p3cInputKeys ( keys( %p3cInput ) ) {
             $value = $p3cInput{"$p3cInputKeys"};
-            #TODO: Fix this better
-            if ( ($value ne "") && ($p3cInputKeys ne "PRIMER_INTERNAL_WT_TEMPLATE_MISHYB_TH") ) {
+            if ($value ne "") {
                 print FILE qq{$p3cInputKeys=$p3cInput{"$p3cInputKeys"}\n};
             }
         }

@@ -1599,31 +1599,17 @@ $formHTML .= qq{
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB">
-         Max Template Mishyb:</a>
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_INTERNAL_MAX_HAIRPIN_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MAX_HAIRPIN_TH">
+         TH: Hyb Oligo Max Hairpin:</a>
        </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB"
-         value="$settings{PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB}" type="text">
+       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_INTERNAL_MAX_HAIRPIN_TH"
+         value="$settings{PRIMER_INTERNAL_MAX_HAIRPIN_TH}" type="text">
        </td>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_INTERNAL_MAX_LIBRARY_MISHYB_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MAX_LIBRARY_MISHYB">
          Max Library Mishyb:</a>
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_INTERNAL_MAX_LIBRARY_MISHYB"
          value="$settings{PRIMER_INTERNAL_MAX_LIBRARY_MISHYB}" type="text">
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH">
-         TH: Max Template Mishyb:</a>
-       </td>
-       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH"
-         value="$settings{PRIMER_INTERNAL_MAX_TEMPLATE_MISHYB_TH}" type="text">
-       </td>
-       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_INTERNAL_MAX_HAIRPIN_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MAX_HAIRPIN_TH">
-         TH: Hyb Oligo Max Hairpin:</a>
-       </td>
-       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_INTERNAL_MAX_HAIRPIN_TH"
-         value="$settings{PRIMER_INTERNAL_MAX_HAIRPIN_TH}" type="text">
        </td>
      </tr>
      <tr>
@@ -1830,10 +1816,9 @@ $formHTML .= qq{
        <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_WT_TEMPLATE_MISPRIMING"
          value="$settings{PRIMER_WT_TEMPLATE_MISPRIMING}" type="text">
        </td>
-       <td class="primer3plus_cell_penalties"><a name="PRIMER_INTERNAL_WT_TEMPLATE_MISHYB_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_WT_TEMPLATE_MISHYB">Template Mishyb</a>
+       <td class="primer3plus_cell_penalties">
        </td>
-       <td class="primer3plus_cell_penalties"><input size="4" name="PRIMER_INTERNAL_WT_TEMPLATE_MISHYB"
-         value="$settings{PRIMER_INTERNAL_WT_TEMPLATE_MISHYB}" type="text">
+       <td class="primer3plus_cell_penalties">
        </td>
        <td class="primer3plus_cell_penalties"><a name="PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_WT_TEMPLATE_MISPRIMING">Template Mispriming</a>
        </td>
@@ -1847,10 +1832,9 @@ $formHTML .= qq{
        <td class="primer3plus_cell_penalties_th"><input size="4" name="PRIMER_WT_TEMPLATE_MISPRIMING_TH"
          value="$settings{PRIMER_WT_TEMPLATE_MISPRIMING_TH}" type="text">
        </td>
-       <td class="primer3plus_cell_penalties_th"><a name="PRIMER_INTERNAL_WT_TEMPLATE_MISHYB_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_WT_TEMPLATE_MISHYB_TH">TH: Template Mishyb</a>
+       <td class="primer3plus_cell_penalties">
        </td>
-       <td class="primer3plus_cell_penalties_th"><input size="4" name="PRIMER_INTERNAL_WT_TEMPLATE_MISHYB_TH"
-         value="$settings{PRIMER_INTERNAL_WT_TEMPLATE_MISHYB_TH}" type="text">
+       <td class="primer3plus_cell_penalties">
        </td>
        <td class="primer3plus_cell_penalties_th"><a name="PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_WT_TEMPLATE_MISPRIMING_TH">TH: Template Mispriming</a>
        </td>
@@ -4060,7 +4044,7 @@ sub createResultCompareFileHTML {
   my $templateText = getWrapper();
   my $theKey;
   
-  my $tableStart = qq{
+  my $tableStartA = qq{
   <table class="primer3plus_table_with_border">
      <colgroup>
        <col width="46%">
@@ -4069,7 +4053,9 @@ sub createResultCompareFileHTML {
        <col width="18%">
      </colgroup>
      <tr>
-       <td colspan="4"><strong>Parameters different to the Server file</strong></td>
+       <td colspan="4"><strong>};
+
+  my $tableStartB = qq{</strong></td>
      </tr>
      <tr>
        <td><strong>Parameter</strong></td>
@@ -4092,7 +4078,9 @@ sub createResultCompareFileHTML {
 <div id="primer3plus_results">
 
 };
-  $formHTML .= $tableStart;
+  $formHTML .= $tableStartA;
+  $formHTML .= "Parameters in the files different to the Server file";
+  $formHTML .= $tableStartB;
 
   foreach $theKey (sort(keys(%resDiffServer))) {
       $formHTML .= qq{     <tr>
@@ -4107,7 +4095,9 @@ sub createResultCompareFileHTML {
   $formHTML .= qq{</table>
 <br>
 };
-  $formHTML .= $tableStart;
+  $formHTML .= $tableStartA;
+  $formHTML .= "Parameters different between the files";
+  $formHTML .= $tableStartB;
 
   foreach $theKey (sort(keys(%resDiffFiles))) {
       $formHTML .= qq{     <tr>
@@ -4122,7 +4112,9 @@ sub createResultCompareFileHTML {
   $formHTML .= qq{</table>
 <br>
 };
-  $formHTML .= $tableStart;
+  $formHTML .= $tableStartA;
+  $formHTML .= "Parameters only equal in the files";
+  $formHTML .= $tableStartB;
 
   foreach $theKey (sort(keys(%resEqualFiles))) {
       $formHTML .= qq{     <tr>
@@ -4137,7 +4129,9 @@ sub createResultCompareFileHTML {
   $formHTML .= qq{</table>
 <br>
 };
-  $formHTML .= $tableStart;
+  $formHTML .= $tableStartA;
+  $formHTML .= "Parameters equal in the files and the Server file";
+  $formHTML .= $tableStartB;
 
   foreach $theKey (sort(keys(%resEqualServer))) {
       $formHTML .= qq{     <tr>
