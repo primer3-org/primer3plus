@@ -67,7 +67,7 @@ my %machineSettings = (
   "URL_PRIMER_MANAGER" => "primer3manager.cgi",
 
   # The URL for the compare file action (which will normally be the filename of the script)
-  "URL_COMPARE_FILE" => "primer3CompareFiles.cgi",
+  "URL_COMPARE_FILE" => "primer3compareFiles.cgi",
 
   # The URL for help regarding this screen (which will normally
   # be in the same directory as the this script)

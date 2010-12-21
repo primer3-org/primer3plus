@@ -4081,8 +4081,11 @@ sub createResultCompareFileHTML {
   $formHTML .= $tableStartA;
   $formHTML .= "Parameters in the files different to the Server file";
   $formHTML .= $tableStartB;
-
+  
   foreach $theKey (sort(keys(%resDiffServer))) {
+      if (!(($fileOne->{$theKey} eq "Not defined") 
+          || ($fileTwo->{$theKey} eq "Not defined")
+          || ($serverFile->{$theKey} eq "Not defined"))) {
       $formHTML .= qq{     <tr>
        <td>$theKey</td>
        <td>$fileOne->{$theKey}</td>
@@ -4090,8 +4093,23 @@ sub createResultCompareFileHTML {
        <td>$serverFile->{$theKey}</td>
      </tr>
 };
-    }
- 
+     };
+  }
+
+  foreach $theKey (sort(keys(%resDiffServer))) {
+      if (($fileOne->{$theKey} eq "Not defined") 
+          || ($fileTwo->{$theKey} eq "Not defined")
+          || ($serverFile->{$theKey} eq "Not defined")) {
+      $formHTML .= qq{     <tr>
+       <td>$theKey</td>
+       <td>$fileOne->{$theKey}</td>
+       <td>$fileTwo->{$theKey}</td>
+       <td>$serverFile->{$theKey}</td>
+     </tr>
+};
+     };
+  }
+
   $formHTML .= qq{</table>
 <br>
 };
@@ -4100,15 +4118,33 @@ sub createResultCompareFileHTML {
   $formHTML .= $tableStartB;
 
   foreach $theKey (sort(keys(%resDiffFiles))) {
+      if (!(($fileOne->{$theKey} eq "Not defined") 
+          || ($fileTwo->{$theKey} eq "Not defined")
+          || ($serverFile->{$theKey} eq "Not defined"))) {
       $formHTML .= qq{     <tr>
        <td>$theKey</td>
        <td>$fileOne->{$theKey}</td>
        <td>$fileTwo->{$theKey}</td>
-       <td></td>
+       <td>$serverFile->{$theKey}</td>
      </tr>
 };
-    }
- 
+     };
+  }
+
+  foreach $theKey (sort(keys(%resDiffFiles))) {
+      if (($fileOne->{$theKey} eq "Not defined") 
+          || ($fileTwo->{$theKey} eq "Not defined")
+          || ($serverFile->{$theKey} eq "Not defined")) {
+      $formHTML .= qq{     <tr>
+       <td>$theKey</td>
+       <td>$fileOne->{$theKey}</td>
+       <td>$fileTwo->{$theKey}</td>
+       <td>$serverFile->{$theKey}</td>
+     </tr>
+};
+     };
+  }
+
   $formHTML .= qq{</table>
 <br>
 };
@@ -4117,6 +4153,8 @@ sub createResultCompareFileHTML {
   $formHTML .= $tableStartB;
 
   foreach $theKey (sort(keys(%resEqualFiles))) {
+      if (!(($fileOne->{$theKey} eq "Not defined") 
+          || ($fileTwo->{$theKey} eq "Not defined"))) {
       $formHTML .= qq{     <tr>
        <td>$theKey</td>
        <td>$fileOne->{$theKey}</td>
@@ -4124,8 +4162,22 @@ sub createResultCompareFileHTML {
        <td></td>
      </tr>
 };
-    }
- 
+     };
+  }
+
+  foreach $theKey (sort(keys(%resEqualFiles))) {
+      if (($fileOne->{$theKey} eq "Not defined") 
+          || ($fileTwo->{$theKey} eq "Not defined")) {
+      $formHTML .= qq{     <tr>
+       <td>$theKey</td>
+       <td>$fileOne->{$theKey}</td>
+       <td>$fileTwo->{$theKey}</td>
+       <td></td>
+     </tr>
+};
+     };
+  }
+
   $formHTML .= qq{</table>
 <br>
 };
@@ -4134,6 +4186,9 @@ sub createResultCompareFileHTML {
   $formHTML .= $tableStartB;
 
   foreach $theKey (sort(keys(%resEqualServer))) {
+      if (!(($fileOne->{$theKey} eq "Not defined") 
+          || ($fileTwo->{$theKey} eq "Not defined")
+          || ($serverFile->{$theKey} eq "Not defined"))) {
       $formHTML .= qq{     <tr>
        <td>$theKey</td>
        <td>$fileOne->{$theKey}</td>
@@ -4141,8 +4196,23 @@ sub createResultCompareFileHTML {
        <td>$serverFile->{$theKey}</td>
      </tr>
 };
-    }
- 
+     };
+  }
+
+  foreach $theKey (sort(keys(%resEqualServer))) {
+      if (($fileOne->{$theKey} eq "Not defined") 
+          || ($fileTwo->{$theKey} eq "Not defined")
+          || ($serverFile->{$theKey} eq "Not defined")) {
+      $formHTML .= qq{     <tr>
+       <td>$theKey</td>
+       <td>$fileOne->{$theKey}</td>
+       <td>$fileTwo->{$theKey}</td>
+       <td>$serverFile->{$theKey}</td>
+     </tr>
+};
+     };
+  }
+
   $formHTML .= qq{</table>
 <br>
 </div>
