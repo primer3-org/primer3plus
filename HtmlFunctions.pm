@@ -504,7 +504,7 @@ $formHTML .= qq{
 };
 
         my @ServerParameterFiles = getServerParameterFilesList;
-	my $option;
+	    my $option;
         foreach $option (@ServerParameterFiles) {
                 my $selectedStatus = "";
                 if ($option eq $settings{SCRIPT_SERVER_PARAMETER_FILE} ) {$selectedStatus = " selected=\"selected\"" };
@@ -518,7 +518,6 @@ $formHTML .= qq{
         <select id="PRIMER_TASK" name="PRIMER_TASK" class="primer3plus_task" onchange="showSelection(this);" onkeyup="showSelection(this)">
 };
 
-        my $option;
         foreach $option (@scriptTask) {
                 my $selectedStatus = "";
                 if ($option eq $settings{PRIMER_TASK} ) {$selectedStatus = " selected=\"selected\"" };
@@ -2926,7 +2925,6 @@ sub divPrimerBox {
   my $pairPenalty = "";
   my $productMispriming = "";
   my $productToA = "";
-  my $pairPenalty = "";
   
   if (defined ($results->{"PRIMER_PAIR_$counter\_PRODUCT_TM"}) 
         and (($results->{"PRIMER_PAIR_$counter\_PRODUCT_TM"}) ne "")) {
@@ -4307,8 +4305,12 @@ $blastLinkUse =~ s/;QUERY=/;QUERY=$sequences[$counter]/;
 $formHTML .= qq{     <tr>
        <td class="primer3plus_cell_no_border">&nbsp;&nbsp;<input id="PRIMER_$primerNumber\_SELECT" name="PRIMER_$primerNumber\_SELECT" value="1" };
 
-$formHTML .= ($toOrder[$counter] eq 1) ? "checked=\"checked\" " : "";
- 
+if (defined $toOrder[$counter]) {
+	$formHTML .= ($toOrder[$counter] == 1) ? "checked=\"checked\" " : "";
+} else {
+	$formHTML .= "";
+}
+
 $formHTML .= qq{type="checkbox"></td>
        <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_NAME" name="PRIMER_$primerNumber\_NAME" value="$names[$counter]" size="20"></td>
        <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_SEQUENCE" name="PRIMER_$primerNumber\_SEQUENCE" value="$sequences[$counter]" size="44"></td>

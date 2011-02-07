@@ -441,11 +441,11 @@ sub createManagerFile {
 	my $select;
 
 	for ( my $counter = 0 ; $counter <= $#{$sequences} ; $counter++ ) {
-		if ( $selected->[$counter] eq 1 ) {
-			$select = "X";
-		}
-		else {
-			$select = "O";
+		$select = "O";
+		if (defined $selected->[$counter]) {
+			if ( $selected->[$counter] eq 1 ) {
+				$select = "X";
+			}
 		}
 		$returnString .=
 		  ">$names->[$counter]     |$select|$date->[$counter]\r\n";
@@ -495,15 +495,17 @@ sub loadManagerFile {
 			$nameLine[0] =~ s/\s+$//;
 			$names->[$arrayCounter] = $nameLine[0];
 
-			if ( $nameLine[1] eq "X" ) {
-				$selected->[$arrayCounter] = 1;
-			}
-			else {
-				$selected->[$arrayCounter] = 0;
+			$selected->[$arrayCounter] = 0;
+			if (defined $nameLine[1]) {
+				if ( $nameLine[1] eq "X" ) {
+					$selected->[$arrayCounter] = 1;
+				}
 			}
 
+			if (defined $nameLine[2]) {
 			$date->[$arrayCounter] = $nameLine[2];
-
+			}
+			
 			$counter++;
 			$sequences->[$arrayCounter] = $fileContent[$counter];
 
