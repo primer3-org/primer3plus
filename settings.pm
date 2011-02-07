@@ -50,12 +50,12 @@ my %machineSettings = (
   "MAINTAINER" =>"user&#host.com",
 
   # The location of the primer3_core executable.
- "PRIMER_BIN" =>  "primer3_core.exe",     # for Windows
-# "PRIMER_BIN" =>  "./primer3_core",   # for Linux
+ "WIN_PRIMER_BIN" =>  "primer3_core.exe",   # for Windows
+ "PRIMER_BIN"     =>  "./primer3_core",     # for Linux
 
   # Parameters which are handed in with the programm call.
-  "PRIMER_RUNTIME" =>  " -strict_tags",     # for Windows
-# "PRIMER_RUNTIME" =>  " -strict_tags",     # for Linux
+  "WIN_PRIMER_RUNTIME" =>  " -strict_tags", # for Windows
+  "PRIMER_RUNTIME"     =>  " -strict_tags", # for Linux
 
   # The URL were to find the template HTML
   "URL_HTML_TEMPLATE" => "HtmlTemplate.html",
@@ -105,7 +105,13 @@ my %machineSettings = (
 
 );
 
-  # Add mispriming / mishybing libraries; 
+# Copy the Windows parameters over the Linux ones on a windows machine:
+if ($^O eq 'MSWin32') {
+  $machineSettings{PRIMER_BIN} = $machineSettings{WIN_PRIMER_BIN};
+  $machineSettings{PRIMER_RUNTIME} = $machineSettings{WIN_PRIMER_RUNTIME};
+}
+
+# Add mispriming / mishybing libraries; 
 my %misLibrary = (
   "NONE"              => "",
   "HUMAN"             => "humrep_and_simple.txt",
@@ -115,7 +121,7 @@ my %misLibrary = (
   # Put more repeat libraries here. Add them also to the array.
 );
 
-  #To keep the order like that:
+#To keep the order like that:
 my @misLibraryList = (
   "NONE",
   "HUMAN",
@@ -125,7 +131,7 @@ my @misLibraryList = (
   # Put more repeat libraries here. Add them also to the hash.
 );
 
-  # Add sever stored Setting Files here: 
+# Add sever stored Setting Files here: 
 my %serverParameterFiles = (
   "Default"           => "",
   "qPCR"              => "qPCR.txt",
@@ -135,7 +141,7 @@ my %serverParameterFiles = (
   # Put more Setting Files here. Add them also to the array.
 );
 
-  #To keep the order like that:
+#To keep the order like that:
 my @serverParameterFilesList = (
   "Default",
   "qPCR",
@@ -326,7 +332,6 @@ my %defaultSettings = (
   "SCRIPT_PRODUCT_MAX_SIZE"                  => "",
   "SCRIPT_SERVER_PARAMETER_FILE"             => "DEFAULT"
 
-# if you add parameters here also add them to the respective save array
 );
 
 # Array for the tasks Primer3plus can do (needed to build the HTML)
