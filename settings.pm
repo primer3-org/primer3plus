@@ -50,8 +50,8 @@ my %machineSettings = (
   "MAINTAINER" =>"user&#host.com",
 
   # The location of the primer3_core executable.
- "WIN_PRIMER_BIN" =>  "primer3_core.exe",   # for Windows
- "PRIMER_BIN"     =>  "./primer3_core",     # for Linux
+  "WIN_PRIMER_BIN" =>  "primer3_core.exe",   # for Windows
+  "PRIMER_BIN"     =>  "./primer3_core",     # for Linux
 
   # Parameters which are handed in with the programm call.
   "WIN_PRIMER_RUNTIME" =>  " -strict_tags", # for Windows
