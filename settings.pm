@@ -34,7 +34,7 @@ our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
              &getServerParameterFiles &getServerParameterFilesList 
              &setMessage &getMessages &getTranslateOldVersion);
 
-$VERSION = "2.0.0";
+$VERSION = "2.0.1";
 
 # Here it stores all the messages from within the functions
 my @messages;
@@ -81,6 +81,9 @@ my %machineSettings = (
 
   # The path were Primer3Manager stores its cached files.
   "USER_CACHE_FILES_PATH" =>  "./cached_data/",
+
+  # The path were Primer3Manager stores its error files.
+  "USER_ERROR_FILES_PATH" =>  "./error_files/",
 
   # The URL for information about Primer3plus
   "URL_ABOUT" => "primer3plusAbout.cgi",

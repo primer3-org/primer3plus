@@ -559,13 +559,17 @@ sub loadFile {
             $fileType = "All";
             $readable = 1;
         }
+
 		# Read it directly to the Hash provided
 		if ($readable == 1) {
 			for ( my $i = 3 ; $i <= $#fileContent ; $i++ ) {
 				$line = $fileContent[$i];
 				if ( ( index( $line, "=" ) ) > 2 ) {
 					( $lineKey, $lineValue ) = split "=", $line;
-					$dataTarget->{"$lineKey"} = $lineValue;
+					if (($lineKey =~ /^PRIMER_/) or ($lineKey =~ /^P3P_/)
+					      or ($lineKey =~ /^P3_/) or ($lineKey =~ /^SEQUENCE_/)) {
+						$dataTarget->{"$lineKey"} = $lineValue;
+					}
 				}
 			}
 			if ($makeMessage == 1) {
@@ -1014,6 +1018,7 @@ sub runPrimer3 ($$$) {
 
     my ($p3cOutputKeys, $p3cParametersKey, $readLine, $lineKey, $lineValue);
     my ($outputLine, $p3cInputKeys, $value, $openError);
+    my ($errorFileText);
     my (@p3cParameters, @readTheLine);
     my (%p3cInput, %p3cOutput );
         
@@ -1023,6 +1028,9 @@ sub runPrimer3 ($$$) {
     $inputFile .= "Input_";
     $inputFile .= makeUniqueID();
     $inputFile .= ".txt";
+    my $errorFile = getMachineSetting("USER_ERROR_FILES_PATH");
+    $errorFile .= makeUniqueID();
+    $errorFile .= ".txt";
 
 ###### First check if it makes sense to run primer3
 
@@ -1135,6 +1143,28 @@ sub runPrimer3 ($$$) {
             createPrimerName($lineKey, $completeHash, $resultsHash);
         }
     }
+
+    
+###### In case primer3_core does not provide standard output (crashed, etc...),
+###### write the input in an error file for later analysis
+	
+	if (!(defined($resultsHash->{PRIMER_LEFT_NUM_RETURNED}))) {
+		setMessage("Error running primer3 - unusual output detected");
+		
+		$errorFileText = createFile( $completeHash, "A" );
+		$errorFileText =~ s/\r\n/\n/g;
+
+	    $openError = 0;
+	    open( FILE, ">$errorFile" ) or $openError = 1;
+	    if ($openError == 0) {
+            print FILE qq{$errorFileText};
+	        close(FILE);
+	    } else {
+	        setMessage("Error writing $errorFile");
+	        return;
+	    }
+		
+	}
   
     return;
 }
