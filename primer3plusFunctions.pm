@@ -1018,7 +1018,7 @@ sub runPrimer3 ($$$) {
 
     my ($p3cOutputKeys, $p3cParametersKey, $readLine, $lineKey, $lineValue);
     my ($outputLine, $p3cInputKeys, $value, $openError);
-    my ($errorFileText);
+    my ($errorFileText, $debugInput, $debugOutput);
     my (@p3cParameters, @readTheLine);
     my (%p3cInput, %p3cOutput );
         
@@ -1031,6 +1031,8 @@ sub runPrimer3 ($$$) {
     my $errorFile = getMachineSetting("USER_ERROR_FILES_PATH");
     $errorFile .= makeUniqueID();
     $errorFile .= ".txt";
+    $debugInput = "";
+    $debugOutput = "";
 
 ###### First check if it makes sense to run primer3
 
@@ -1111,6 +1113,7 @@ sub runPrimer3 ($$$) {
             $value = $p3cInput{"$p3cInputKeys"};
             if ($value ne "") {
                 print FILE qq{$p3cInputKeys=$p3cInput{"$p3cInputKeys"}\n};
+                $debugInput .= qq{$p3cInputKeys=$p3cInput{"$p3cInputKeys"}\n};
             }
         }
         print FILE qq{=\n};
@@ -1119,7 +1122,8 @@ sub runPrimer3 ($$$) {
         setMessage("cannot write $inputFile");
         return;
     }
-
+	$resultsHash->{"SCRIPT_DEBUG_INPUT"} = $debugInput;
+    $resultsHash->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = $completeHash->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"};
 
 ###### Really run primer3
     open(PRIMER3OUTPUT, "$callPrimer3 $inputFile 2>&1 |")
@@ -1137,12 +1141,15 @@ sub runPrimer3 ($$$) {
         $lineValue =~ s/\n//g;
         #Write everything in the Output Hash
         $resultsHash->{"$lineKey"} = $lineValue;
+        $debugOutput .= qq{$lineKey=$lineValue\n};
 
         # Make a Name for each primer
         if ( $lineKey =~ /_SEQUENCE$/ ) {
             createPrimerName($lineKey, $completeHash, $resultsHash);
         }
     }
+
+	$resultsHash->{"SCRIPT_DEBUG_OUTPUT"} = $debugOutput;
 
     
 ###### In case primer3_core does not provide standard output (crashed, etc...),

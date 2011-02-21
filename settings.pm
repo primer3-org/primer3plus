@@ -34,7 +34,7 @@ our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
              &getServerParameterFiles &getServerParameterFilesList 
              &setMessage &getMessages &getTranslateOldVersion);
 
-$VERSION = "2.0.1";
+$VERSION = "2.0.2";
 
 # Here it stores all the messages from within the functions
 my @messages;
@@ -331,6 +331,7 @@ my %defaultSettings = (
   "P3P_PRIMER_NAME_ACRONYM_SPACER"           => "_",
 
 # Script Parameters
+  "SCRIPT_DISPLAY_DEBUG_INFORMATION"         => "0",
   "SCRIPT_PRODUCT_MIN_SIZE"                  => "",
   "SCRIPT_PRODUCT_MAX_SIZE"                  => "",
   "SCRIPT_SERVER_PARAMETER_FILE"             => "DEFAULT"

@@ -496,7 +496,7 @@ $formHTML .= qq{
 	<tr>
 	<td class="primer3plus_cell_no_border">
 	
-<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,PRIMER_PICK_ANYWAY,PRIMER_LIBERAL_BASE,PRIMER_LOWERCASE_MASKING,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS,PRIMER_THERMODYNAMIC_ALIGNMENT" type="hidden">
+<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,PRIMER_PICK_ANYWAY,PRIMER_LIBERAL_BASE,PRIMER_LOWERCASE_MASKING,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS,PRIMER_THERMODYNAMIC_ALIGNMENT,SCRIPT_DISPLAY_DEBUG_INFORMATION" type="hidden">
 
          <a name="SCRIPT_SERVER_PARAMETER_FILE_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_SERVER_PARAMETER_FILE">
          Load server settings:</a>&nbsp;&nbsp;
@@ -1373,7 +1373,12 @@ $formHTML .= qq{</div>
          <input size="6" name="SCRIPT_PRODUCT_MAX_SIZE" 
          value="$settings{SCRIPT_PRODUCT_MAX_SIZE}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">
+       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;<input name="SCRIPT_DISPLAY_DEBUG_INFORMATION"  value="1" };
+
+	$formHTML .= ($settings{SCRIPT_DISPLAY_DEBUG_INFORMATION}) ? "checked=\"checked\" " : "";
+ 
+	$formHTML .= qq{type="checkbox">
+         <a name="SCRIPT_DISPLAY_DEBUG_INFORMATION_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_DISPLAY_DEBUG_INFORMATION">Debug Information</a>
        </td>
      </tr>
    </table>
@@ -2269,8 +2274,10 @@ sub mainResultsHTML {
   # Write the back button
   $returnHTML .= divReturnToInput($completeParameters);
   
-  # Print the content of the Hash (sometimes helpfull)
-  # $returnHTML .= printHashOut($results);
+  # Display debug information
+  if ($results->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} eq 1){
+      $returnHTML .= printDebugInfo($results);
+  }
 
   # Write some help if no primers found
   if ($primer_count == 0){
@@ -2293,7 +2300,7 @@ sub mainResultsHTML {
       $returnHTML .= createResultsPrimerList($completeParameters, $results, "1");
   } 
 
-  # This should never happen - it prints the hash
+# This should never happen - it prints the hash
 #  else {
 #      $returnHTML .= createResultsList($results);
 #  }
@@ -2677,36 +2684,31 @@ $formHTML .= qq{
   return $formHTML;
 }
 
-###############################################################################
-# printHashOut: Will write an HTML-Form for the Parameters in the Result Hash #
-###############################################################################
-sub printHashOut {
+#################################################################################
+# printDebugInfo: Will write an HTML-Form for the Parameters in the Result Hash #
+#################################################################################
+sub printDebugInfo {
   my %settings;
   %settings = %{(shift)};
   my $HashKeys;
+  my $HashContent;
+  
+  foreach $HashKeys (sort(keys(%settings))){
+  	if (($HashKeys ne "") && ($HashKeys ne "SCRIPT_DEBUG_INPUT") && ($HashKeys ne "SCRIPT_DEBUG_OUTPUT")) {
+    	$HashContent .= qq{$HashKeys = $settings{$HashKeys}\n};
+  	}
+  };
 
   my $formHTML = qq{<br>
-   <table class="primer3plus_table_no_border">
-      <colgroup>
-        <col width="40%">
-        <col width="60%">
-      </colgroup>
-    <tr>
-      <td class="primer3plus_cell_no_border">Parameter</td>
-      <td class="primer3plus_cell_no_border">Value</td>
-    <tr>
-};
-
-  foreach $HashKeys (sort(keys(%settings))){
-    $formHTML .= qq{
-     <tr>
-       <td class="primer3plus_cell_no_border">$HashKeys</td>
-       <td class="primer3plus_cell_no_border">$settings{$HashKeys}</td>
-     </tr>};
-};
-$formHTML .= qq{
-   </table>
-   <br>
+   <p>The Primer3Plus results hash:<br>
+     <textarea name="SCRIPT_DEBUG_P3P_HASH" cols="100" rows="7">$HashContent</textarea>
+   </p>
+   <p>Input provided to Primer3_core:<br>
+     <textarea name="SCRIPT_DEBUG_P3_INPUT" cols="100" rows="7">$settings{"SCRIPT_DEBUG_INPUT"}</textarea>
+   </p>
+   <p>Output provided by Primer3core:<br>
+     <textarea name="SCRIPT_DEBUG_P3_OUTPUT" cols="100" rows="7">$settings{"SCRIPT_DEBUG_OUTPUT"}</textarea>
+   </p>
 };
 
   return $formHTML;
