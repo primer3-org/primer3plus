@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-#  Copyright (c) 2006, 2007
+#  Copyright (c) 2006 - 2011
 #  by Andreas Untergasser and Harm Nijveen
 #  All rights reserved.
 # 
@@ -21,8 +21,8 @@
 #  if not, write to the Free Software Foundation, Inc., 51 Franklin St,
 #  Fifth Floor, Boston, MA  02110-1301  USA
 
-package settings;
 use strict;
+package settings;
 use CGI;
 use Carp;
 #use CGI::Carp qw(fatalsToBrowser);

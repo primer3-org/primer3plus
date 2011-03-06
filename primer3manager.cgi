@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-#  Copyright (c) 2006, 2007
+#  Copyright (c) 2006 - 2011
 #  by Andreas Untergasser and Harm Nijveen
 #  All rights reserved.
 # 
