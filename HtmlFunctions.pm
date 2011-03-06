@@ -2465,7 +2465,11 @@ sub createResultsPrimerCheck {
 
   $formHTML .= qq{
 <form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
+};
 
+$formHTML .= partHiddenManagerFields($results);
+
+$formHTML .= qq{
   <div class="primer3plus_oligo_box">
   <table class="primer3plus_table_no_border">
      <colgroup>
@@ -2473,12 +2477,12 @@ sub createResultsPrimerCheck {
        <col width="83%">
      </colgroup>
      <tr class="primer3plus_left_primer">
-       <td class="primer3plus_cell_no_border"><input name="PRIMER_0_SELECT" value="1" checked="checked" type="checkbox"> &nbsp; Oligo:</td>
-       <td class="primer3plus_cell_no_border"><input name="PRIMER_0_NAME" value="$results->{"PRIMER_$type\_0_NAME"}" size="40"></td>
+       <td class="primer3plus_cell_no_border"><input name="PRIMER_$type\0_SELECT" value="1" checked="checked" type="checkbox"> &nbsp; Oligo:</td>
+       <td class="primer3plus_cell_no_border"><input name="PRIMER_$type\0_NAME" value="$results->{"PRIMER_$type\_0_NAME"}" size="40"></td>
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SEQUENCE">Sequence:</a></td>
-       <td class="primer3plus_cell_no_border"><input name="PRIMER_0_SEQUENCE" value="$results->{"PRIMER_$type\_0_SEQUENCE"}" size="90"></td>
+       <td class="primer3plus_cell_no_border"><input name="PRIMER_$type\0_SEQUENCE" value="$results->{"PRIMER_$type\_0_SEQUENCE"}" size="90"></td>
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4">Length:</a></td>
@@ -2610,8 +2614,9 @@ sub createResultsDetection {
 
 my $formHTML .= qq{
 <form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data" target="primer3manager">
-
 };
+
+$formHTML .= partHiddenManagerFields($settings);
 
 $formHTML .= divPrimerBox($settings,"0","1");
 
@@ -2729,6 +2734,8 @@ $formHTML .= qq{
 <form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data" target="primer3manager">
 };
 
+$formHTML .= partHiddenManagerFields($settings);
+
 if ($sortedInput == 0){
    $formHTML .= divHTMLsequence($settings, "0");
 }
@@ -2823,7 +2830,6 @@ sub divLongList {
   my $primerEndStability;
   my $primerPenalty;
   my $stopLoop;
-  my $primerNumber;
   
   my $thAdd = "";
   if (($results->{"PRIMER_THERMODYNAMIC_ALIGNMENT"}) eq "1") {
@@ -2871,13 +2877,12 @@ sub divLongList {
       $primerTemplateBinding = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_TEMPLATE_MISPRIMING$thAdd"}));
       $primerEndStability = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_END_STABILITY"}));
       $primerPenalty = sprintf ("%.3f",($results->{"PRIMER_$primerType\_$counter\_PENALTY"}));
-      $primerNumber = getPrimerNumber();
 
   $formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_long_list"><input id="PRIMER_$primerNumber\_SELECT" name="PRIMER_$primerNumber\_SELECT" value="1" type="checkbox">
-       &nbsp; <input id="PRIMER_$primerNumber\_NAME" name="PRIMER_$primerNumber\_NAME"
+       <td class="primer3plus_cell_long_list"><input id="PRIMER_$primerType\_$counter\_SELECT" name="PRIMER_$primerType\_$counter\_SELECT" value="1" type="checkbox">
+       &nbsp; <input id="PRIMER_$primerType\_$counter\_NAME" name="PRIMER_$primerType\_$counter\_NAME"
            value="$results->{"PRIMER_$primerType\_$counter\_NAME"}" size="12"></td>
-       <td class="primer3plus_cell_long_list"><input id="PRIMER_$primerNumber\_SEQUENCE" name="PRIMER_$primerNumber\_SEQUENCE"
+       <td class="primer3plus_cell_long_list"><input id="PRIMER_$primerType\_$counter\_SEQUENCE" name="PRIMER_$primerType\_$counter\_SEQUENCE"
          value="$results->{"PRIMER_$primerType\_$counter\_SEQUENCE"}" size="35"></td>
        <td class="primer3plus_cell_long_list">$primerStart</td>
        <td class="primer3plus_cell_long_list">$primerLength</td>
@@ -2908,6 +2913,30 @@ $formHTML .= qq{
 
   return $formHTML;
 }
+
+############################################################################
+# partHiddenManagerFields: Will write the hidden fields for primer3Manager #
+############################################################################
+sub partHiddenManagerFields {
+  my $settings; 
+  $settings = shift;
+
+  my $formHTML = qq{
+<input type="hidden" name="PRIMER_LEFT_NUM_RETURNED" value="$settings->{"PRIMER_LEFT_NUM_RETURNED"}">
+<input type="hidden" name="PRIMER_INTERNAL_NUM_RETURNED" value="$settings->{"PRIMER_INTERNAL_NUM_RETURNED"}">
+<input type="hidden" name="PRIMER_RIGHT_NUM_RETURNED" value="$settings->{"PRIMER_RIGHT_NUM_RETURNED"}">
+<input type="hidden" name="PRIMER_PAIR_NUM_RETURNED" value="$settings->{"PRIMER_PAIR_NUM_RETURNED"}">
+
+<input type="hidden" name="SCRIPT_DISPLAY_DEBUG_INFORMATION" value="$settings->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"}">
+<input type="hidden" name="P3P_PRIMER_NAME_ACRONYM_LEFT" value="$settings->{"P3P_PRIMER_NAME_ACRONYM_LEFT"}">
+<input type="hidden" name="P3P_PRIMER_NAME_ACRONYM_INTERNAL" value="$settings->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"}">
+<input type="hidden" name="P3P_PRIMER_NAME_ACRONYM_RIGHT" value="$settings->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"}">
+<input type="hidden" name="P3P_PRIMER_NAME_ACRONYM_SPACER" value="$settings->{"P3P_PRIMER_NAME_ACRONYM_SPACER"}">
+};
+
+  return $formHTML;
+}
+
 
 ####################################################
 # divPrimerBox: Creates a box with one primer pair #
@@ -2978,8 +3007,6 @@ sub divPrimerBox {
       $pairPenalty .= sprintf ("%.3f",($results->{"PRIMER_PAIR\_$counter\_PENALTY"}));
   }
 
-  
-
   my $formHTML = qq{  <div class="primer3plus_primer_pair_box">
   <table class="primer3plus_table_primer_pair_box">
      <colgroup>
@@ -2998,6 +3025,12 @@ sub divPrimerBox {
        <td colspan="10" class="primer3plus_cell_primer_pair_box">Pair $selection:</td>
      </tr>
 };
+
+  if ((defined ($results->{"PRIMER_PAIR_$counter\_AMPLICON"}))
+        and (($results->{"PRIMER_PAIR_$counter\_AMPLICON"}) ne "")) {
+  $formHTML .= qq{<input type="hidden" name="PRIMER_PAIR_$counter\_AMPLICON" value="$results->{"PRIMER_PAIR_$counter\_AMPLICON"}">
+};
+  }
 
 $formHTML .= partPrimerData( $results, $counter, "LEFT", $checked);
 
@@ -3049,7 +3082,7 @@ sub partPrimerData {
   $selection = $counter + 1;
     
   my ($primerStart, $primerLength, $primerTM, $primerGC, $primerAny, $primerHairpin);
-  my ($primerEnd, $primerNumber, $primerEndStability, $primerTemplateBinding, $primerPenalty);
+  my ($primerEnd, $primerEndStability, $primerTemplateBinding, $primerPenalty);
   my $cssName;
   my $writeName;
   
@@ -3076,8 +3109,6 @@ sub partPrimerData {
 if (defined ($results->{"PRIMER_$type\_$counter\_SEQUENCE"})
 		and (($results->{"PRIMER_$type\_$counter\_SEQUENCE"}) ne "")) {
 
-  $primerNumber = getPrimerNumber();
-
   ($primerStart, $primerLength) = split "," , $results->{"PRIMER_$type\_$counter"};
   $primerTM = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_TM"}));
   $primerGC = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_GC_PERCENT"}));
@@ -3091,17 +3122,17 @@ if (defined ($results->{"PRIMER_$type\_$counter\_SEQUENCE"})
   $primerPenalty = sprintf ("%.3f",($results->{"PRIMER_$type\_$counter\_PENALTY"}));
 
 $formHTML .= qq{     <tr class="primer3plus_$cssName">
-       <td colspan="10" class="primer3plus_cell_primer_pair_box"><input id="PRIMER_$primerNumber\_SELECT" name="PRIMER_$primerNumber\_SELECT" value="1" };
+       <td colspan="10" class="primer3plus_cell_primer_pair_box"><input id="PRIMER_$type\_$counter\_SELECT" name="PRIMER_$type\_$counter\_SELECT" value="1" };
 
 $formHTML .= ($checked) ? "checked=\"checked\" " : "";
  
 $formHTML .= qq{type="checkbox"> 
          &nbsp;$writeName $selection: &nbsp; &nbsp;
-         <input id="PRIMER_$primerNumber\_NAME" name="PRIMER_$primerNumber\_NAME" value="$results->{"PRIMER_$type\_$counter\_NAME"}" size="40"></td>
+         <input id="PRIMER_$type\_$counter\_NAME" name="PRIMER_$type\_$counter\_NAME" value="$results->{"PRIMER_$type\_$counter\_NAME"}" size="40"></td>
      </tr>
      <tr>
        <td class="primer3plus_cell_primer_pair_box">Sequence:</td>
-       <td colspan="9" class="primer3plus_cell_primer_pair_box"><input id="PRIMER_$primerNumber\_SEQUENCE" name="PRIMER_$primerNumber\_SEQUENCE"
+       <td colspan="9" class="primer3plus_cell_primer_pair_box"><input id="PRIMER_$type\_$counter\_SEQUENCE" name="PRIMER_$type\_$counter\_SEQUENCE"
          value="$results->{"PRIMER_$type\_$counter\_SEQUENCE"}" size="90"></td>
      </tr>
      <tr>
@@ -4244,6 +4275,7 @@ sub createManagerHTML {
 <div id="primer3plus_complete">
 
 <form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
+<input type="hidden" name="SCRIPT_PRIMER_MANAGER" value="DISPLAY">
 };
 $formHTML .= divTopBar("Primer3Manager", "manage your primer library",0);
 

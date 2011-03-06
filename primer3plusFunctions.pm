@@ -1019,6 +1019,7 @@ sub runPrimer3 ($$$) {
     my ($p3cOutputKeys, $p3cParametersKey, $readLine, $lineKey, $lineValue);
     my ($outputLine, $p3cInputKeys, $value, $openError);
     my ($errorFileText, $debugInput, $debugOutput);
+    my ($primerPairCount, $ampliconLeft, $ampliconRight, $ampliconLength, $ampliconDel, $ampliconSequence);
     my (@p3cParameters, @readTheLine);
     my (%p3cInput, %p3cOutput );
         
@@ -1124,6 +1125,13 @@ sub runPrimer3 ($$$) {
     }
 	$resultsHash->{"SCRIPT_DEBUG_INPUT"} = $debugInput;
     $resultsHash->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = $completeHash->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"};
+    
+    #Copy over the information for Primer3Manager
+    $resultsHash->{"P3P_PRIMER_NAME_ACRONYM_LEFT"} = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_LEFT"};
+    $resultsHash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"} = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"};
+    $resultsHash->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"} = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
+    $resultsHash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"};
+
 
 ###### Really run primer3
     open(PRIMER3OUTPUT, "$callPrimer3 $inputFile 2>&1 |")
@@ -1150,13 +1158,12 @@ sub runPrimer3 ($$$) {
     }
 
 	$resultsHash->{"SCRIPT_DEBUG_OUTPUT"} = $debugOutput;
-
-    
+	    
 ###### In case primer3_core does not provide standard output (crashed, etc...),
 ###### write the input in an error file for later analysis
 	
-	if (!(defined($resultsHash->{PRIMER_LEFT_NUM_RETURNED}))) {
-		setMessage("Error running primer3 - unusual output detected");
+	if (!(defined($resultsHash->{"PRIMER_LEFT_NUM_RETURNED"}))) {
+		setMessage("Error running primer3 - unusual output detected.<br />This usually occures if primer3 was terminated due to too high processor load for over 1 minute. Try less strict settings.");
 		
 		$errorFileText = createFile( $completeHash, "A" );
 		$errorFileText =~ s/\r\n/\n/g;
@@ -1172,7 +1179,21 @@ sub runPrimer3 ($$$) {
 	    }
 		
 	}
-  
+    # Calculate the Amplicon to hand it over to Primer3Manager  
+	if (defined($resultsHash->{"PRIMER_PAIR_NUM_RETURNED"})) {
+        for($primerPairCount = 0; $primerPairCount < $resultsHash->{"PRIMER_PAIR_NUM_RETURNED"}; $primerPairCount++) {
+            ($ampliconLeft, $ampliconDel) = split ",", $resultsHash->{"PRIMER_LEFT_$primerPairCount"};
+            ($ampliconRight, $ampliconDel) = split ",", $resultsHash->{"PRIMER_RIGHT_$primerPairCount"};
+            
+            $ampliconLength = $ampliconRight - $ampliconLeft + 1;
+            
+            $ampliconSequence = substr($resultsHash->{"SEQUENCE_TEMPLATE"}, 
+                                       $ampliconLeft - $resultsHash->{"PRIMER_FIRST_BASE_INDEX"}, 
+                                       $ampliconLength);
+            
+            $resultsHash->{"PRIMER_PAIR_$primerPairCount\_AMPLICON"} = $ampliconSequence;
+        }
+	}
     return;
 }
 

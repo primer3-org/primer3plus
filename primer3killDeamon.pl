@@ -34,8 +34,8 @@ my $user = "www-data"; # Could be user www or www-data
 #hash with program names and max cpu times
 #value program name, key time with format: hhmmss
 my %commandHash = (
-    "primer3plus" => 1100,
-    "primer3_core" => 500,
+    "primer3plus"  => 300,
+    "primer3_core" => 100,
 );
 
 my $commandline = "$PS -o pid,time,comm -u $user|";
