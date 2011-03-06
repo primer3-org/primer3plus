@@ -4283,6 +4283,37 @@ sub createManagerDisplayHTML {
   my $templateText = getWrapper();
 
   my $formHTML = qq{
+<SCRIPT language=JavaScript>
+var prevTabPage = "primer3plus_main_tab";
+var prevTab = "tab1";
+
+function showTab(tab,id) {
+        if (id == "" || !document.getElementById(id)) {
+                return;
+        }
+        if (prevTabPage != "" && document.getElementById(prevTabPage)) {
+                document.getElementById(prevTabPage).style.display="none";
+                document.getElementById(prevTab).style.background="white";
+                document.getElementById(prevTab).style.top="0";
+                document.getElementById(prevTab).style.zIndex="0";
+        }
+        if (tab != "" && document.getElementById(tab)) {
+                document.getElementById(tab).style.background="rgb(255, 255, 230)";
+                document.getElementById(tab).style.position="relative";
+                document.getElementById(tab).style.top="2px";
+                document.getElementById(tab).style.zIndex="1";
+                prevTab = tab;
+        }
+        document.getElementById(id).style.display="inline";
+        prevTabPage = id;
+}
+
+function hideTabs() {
+        document.getElementById('primer3plus_load_and_save').style.display="none";
+        document.getElementById('primer3plus_settings').style.display="none";
+}
+</SCRIPT> 	
+ 	
 <div id="primer3plus_complete">
 
 <form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
@@ -4291,26 +4322,31 @@ sub createManagerDisplayHTML {
   $formHTML .= divTopBar("Primer3Manager", "manage your primer library",0);
 
   $formHTML .= divMessages();
-
-  $formHTML .= qq{
-<div id="primer3plus_manager">
-};
   
   # Display debug information
   if ($hash->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} eq 1){
+  	  $formHTML .= qq{
+  <div id="primer3plus_manager">
+};
+  	
       $formHTML .= printDebugInfo($cgiInput, "Provided input on CGI", 0);
       $formHTML .= printDebugInfo($hash, "Merged Information", 0);
+  	  $formHTML .= qq{
+  </div>
+};
   }
 
+  $formHTML .= qq{
+  <div id="menuBar">
+    <ul>
+      <li id="tab1"><a onclick="showTab('tab1','primer3plus_main_tab')">Main</a></li>
+      <li id="tab2"><a onclick="showTab('tab2','primer3plus_load_and_save')">Load and Save</a></li>
+      <li id="tab3"><a onclick="showTab('tab3','primer3plus_settings')">Settings</a></li>
+    </ul>
+  </div>
 
+  <div id="primer3plus_main_tab" class="primer3plus_tab_page">
 
-$formHTML .= qq{   <input type="hidden" id="HTML_MANAGER" name="HTML_MANAGER" value="HTML_MANAGER">
-   <input name="Submit" value="Order selected Primers" type="submit">&nbsp;
-   <input name="Submit" value="Refresh" type="submit">&nbsp;
-   <input value="Reset Form" type="reset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   <input name="Submit" value="Delete selected Primers" type="submit">
-   <br>
-   <br>
    <table class="primer3plus_table_no_border">
      <colgroup>
        <col width="100%">
@@ -4322,11 +4358,17 @@ $formHTML .= qq{   <input type="hidden" id="HTML_MANAGER" name="HTML_MANAGER" va
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border"><input id="DATABASE_FILE" name="DATABASE_FILE" type="file">&nbsp;&nbsp;
-	 <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
-         <input name="Submit" value="Save File" type="submit">
+	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
+         <input name="Submit" value="Save File" type="submit">&nbsp;&nbsp;
+         <input name="Submit" value="Export as Fasta" type="submit">
        </td>
      </tr>
    </table>
+   <br>
+   <input name="Submit" value="Order selected Primers" type="submit">&nbsp;
+   <input name="Submit" value="Refresh" type="submit">&nbsp;
+   <input value="Reset Form" type="reset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   <input name="Submit" value="Edit Mode" type="submit">
    <br>
    <table class="primer3plus_table_no_border">
      <colgroup>
@@ -4382,12 +4424,60 @@ $formHTML .= qq{   </table>
    <input name="Submit" value="Order selected Primers" type="submit">&nbsp;
    <input name="Submit" value="Refresh" type="submit">&nbsp;
    <input value="Reset Form" type="reset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   <input name="Submit" value="Delete selected Primers" type="submit">
+   <input name="Submit" value="Edit Mode" type="submit">
    <br>
    <br>
  </div>
+
+ <div id="primer3plus_load_and_save" class="primer3plus_tab_page">
+
+   <table class="primer3plus_table_no_border">
+     <colgroup>
+       <col width="100%">
+     </colgroup>
+      <tr>
+       <td class="primer3plus_cell_no_border"><a id="MANAGER_FILE_INPUT" name="MANAGER_FILE_INPUT">To upload or save a primer file from
+         your local computer, choose here:</a>
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><input id="DATABASE_FILE" name="DATABASE_FILE" type="file">&nbsp;&nbsp;
+	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
+         <input name="Submit" value="Save File" type="submit">&nbsp;&nbsp;
+         <input name="Submit" value="Export as Fasta" type="submit">
+       </td>
+     </tr>
+   </table>
+ </div>
+ 
+ <div id="primer3plus_settings" class="primer3plus_tab_page">
+
+   <table class="primer3plus_table_no_border">
+     <colgroup>
+       <col width="100%">
+     </colgroup>
+      <tr>
+       <td class="primer3plus_cell_no_border"><a id="MANAGER_FILE_INPUT" name="MANAGER_FILE_INPUT">To upload or save a primer file from
+         your local computer, choose here:</a>
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><input id="DATABASE_FILE" name="DATABASE_FILE" type="file">&nbsp;&nbsp;
+	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
+         <input name="Submit" value="Save File" type="submit">&nbsp;&nbsp;
+         <input name="Submit" value="Export as Fasta" type="submit">
+       </td>
+     </tr>
+   </table>
+ </div>
+ 
+ 
 </form>
 </div>
+<script type="text/javascript">
+  hideTabs();
+  showTab('tab1','primer3plus_main_tab');
+</script>
 };
 
   my $returnString = $templateText;
