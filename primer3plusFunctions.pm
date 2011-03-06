@@ -39,7 +39,7 @@ our ( @ISA, @EXPORT, @EXPORT_OK, $VERSION );
 @EXPORT = qw(&getParametersHTML &constructCombinedHash &createFile
      &createManagerFile &getSetCookie &getCookie &setCookie &getCacheFile &setCacheFile
      &loadManagerFile &loadFile &checkParameters &runPrimer3 &reverseSequence
-     &getParametersForManager &loadServerSettFile &extractSelectedPrimers &addToArray
+     &getParametersForManager &loadServerSettFile &extractCompleteManagerHash &addToArray
      &getDate &makeUniqueID &writeStatistics &readStatistics);
 
 $VERSION = "1.00";
@@ -268,54 +268,144 @@ sub loadServerSettFile {
 };
 
 
-##################################################################################################
-# extractSelectedPrimers: extract the selected primers out of array 1 and write them in array 2  #
-# modus          "A"  copy primer including the selection parameters to the new array            #
-#                "U"  copy primer to the new array and select them                               #
-#                "S"  copy only the selected primer to the new array                             #
-#                "D"  copy only the not selected primer to the new array                         #
-##################################################################################################
-sub extractSelectedPrimers {
-	my ( $sequences1, $names1, $selected1, $date1, $mode,
-		 $sequences2, $names2, $selected2, $date2 );
-		 
-	$sequences1 = shift;
-	$names1     = shift;
-	$selected1  = shift;
-	$date1      = shift;
-	$mode       = shift;
-	$sequences2 = shift;
-	$names2     = shift;
-	$selected2  = shift;
-	$date2      = shift;
+#################################
+# To make a counter for Primers #
+#################################
+my $primerNumber = -1;
 
-	# $counter2 counts the target numbers 
-	my $counter2 = 0;
-	my $maxPrimers = getMachineSetting("MAX_NUMBER_PRIMER_MANAGER");
+sub getPrimerNumber {
+	$primerNumber++;
+return $primerNumber;
+}
 
-	for ( my $counter1 = 0 ; (($counter1 <= $#{$sequences1}) and ($counter1 <= $maxPrimers)) ; $counter1++ ) {
-		if (   ( ${$mode} eq "A" ) or ( ${$mode} eq "U" )
-			or ( ( $selected1->[$counter1] && $selected1->[$counter1] == 1 ) and ( ${$mode} eq "S" ) )
-			or ( ( !($selected1->[$counter1]) || $selected1->[$counter1] != 1 ) and ( ${$mode} eq "D" ) ) ) {
-			
-			$sequences2->[$counter2] = $sequences1->[$counter1];
-			$names2->[$counter2]     = $names1->[$counter1];
-			if ( ${$mode} eq "U" ) {
-			    $selected2->[$counter2] = 1;
-			}
-			else {
-			    $selected2->[$counter2] = $selected1->[$counter1];
-			}
-			if ( $date1->[$counter1] && $date1->[$counter1] =~ /\d/ ) {
-				$date2->[$counter2] = $date1->[$counter1];
-			}
-			else {
-				$date2->[$counter2] = getDate( "D", "." );
-			}
-			$counter2++;
-		}
 
-	}
+###########################################################################
+# extractCompleteManagerHash: extract the manager Hash out $comp of $add  #
+###########################################################################
+sub extractCompleteManagerHash {
+	my ( $comp, $add );
+	$comp = shift;
+	$add  = shift;
+	
+	my (@hashKeys, @nameKeyComplete);
+	my ($hashKey,$primerType, $counter, $outCounter);
+	
+	# First copy over basic information: 
+    $comp->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = $add->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"};
+    $comp->{"P3P_PRIMER_NAME_ACRONYM_LEFT"}     = $add->{"P3P_PRIMER_NAME_ACRONYM_LEFT"};
+    $comp->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"} = $add->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"};
+    $comp->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"}    = $add->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
+    $comp->{"P3P_PRIMER_NAME_ACRONYM_SPACER"}   = $add->{"P3P_PRIMER_NAME_ACRONYM_SPACER"};
+
+    # Work on information from Primer3Plus:
+    if ((defined $add->{"SCRIPT_PRIMER_MANAGER"}) 
+         and ($add->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3PLUS" )) {
+
+        # Now extract the primer pairs and add the missing information:
+        if ((defined $add->{"PRIMER_PAIR_NUM_RETURNED"}) 
+             and ($add->{"PRIMER_PAIR_NUM_RETURNED"} != 0 )) {
+
+            for($counter = 0; $counter < $add->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
+            	# Only add the selected Primers
+                if ((defined $add->{"PRIMER_PAIR_$counter\_SELECT"}) 
+                     and ($add->{"PRIMER_PAIR_$counter\_SELECT"} != 0 )) {
+                    $outCounter = getPrimerNumber();
+                    $comp->{"PRIMER_PAIR_$outCounter\_SELECT"} = 1;
+                    $comp->{"PRIMER_PAIR_$outCounter\_DATE"} = getDate( "D", "." );
+                    
+                    if ((defined $add->{"PRIMER_PAIR_$counter\_NAME"}) 
+                         and ($add->{"PRIMER_PAIR_$counter\_NAME"} ne "")) {
+                        $comp->{"PRIMER_PAIR_$outCounter\_NAME"} = $add->{"PRIMER_PAIR_$counter\_NAME"}; 
+                    } else {
+                        $comp->{"PRIMER_PAIR_$outCounter\_NAME"} = "";
+                    }
+                    
+                    if ((defined $add->{"PRIMER_PAIR_$counter\_AMPLICON"}) 
+                         and ($add->{"PRIMER_PAIR_$counter\_AMPLICON"} ne "")) {
+                        $comp->{"PRIMER_PAIR_$outCounter\_AMPLICON"} = $add->{"PRIMER_PAIR_$counter\_AMPLICON"}; 
+                    } else {
+                        $comp->{"PRIMER_PAIR_$outCounter\_AMPLICON"} = "";
+                    }
+
+                    if ((defined $add->{"PRIMER_LEFT_$counter\_SEQUENCE"}) 
+                         and ($add->{"PRIMER_LEFT_$counter\_SEQUENCE"} ne "")) {
+                        $comp->{"PRIMER_LEFT_$outCounter\_SEQUENCE"} = $add->{"PRIMER_LEFT_$counter\_SEQUENCE"}; 
+                    } else {
+                        $comp->{"PRIMER_LEFT_$outCounter\_SEQUENCE"} = "";
+                    }
+                
+                    if ((defined $add->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}) 
+                         and ($add->{"PRIMER_INTERNAL_$counter\_SEQUENCE"} ne "")) {
+                        $comp->{"PRIMER_INTERNAL_$outCounter\_SEQUENCE"} = $add->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}; 
+                    } else {
+                        $comp->{"PRIMER_INTERNAL_$outCounter\_SEQUENCE"} = "";
+                    }
+                
+                    if ((defined $add->{"PRIMER_RIGHT_$counter\_SEQUENCE"}) 
+                         and ($add->{"PRIMER_RIGHT_$counter\_SEQUENCE"} ne "")) {
+                        $comp->{"PRIMER_RIGHT_$outCounter\_SEQUENCE"} = $add->{"PRIMER_RIGHT_$counter\_SEQUENCE"}; 
+                    } else {
+                        $comp->{"PRIMER_RIGHT_$outCounter\_SEQUENCE"} = "";
+                    }
+                    
+                    $comp->{"PRIMER_INTERNAL2_$outCounter\_SEQUENCE"} = "";
+                
+                }
+            }
+        } # Now extract the primer pairs and add the missing information
+    
+        # Now extract the single primers and add the missing information:
+        if ((defined $add->{"PRIMER_PAIR_NUM_RETURNED"}) 
+             and ($add->{"PRIMER_PAIR_NUM_RETURNED"} == 0 )) {
+
+            @hashKeys = keys(%{$add});
+            foreach $hashKey (@hashKeys) {
+                if ($hashKey =~ /_SELECT$/) {
+                    @nameKeyComplete = split "_", $hashKey;
+                    $primerType = $nameKeyComplete[1];
+                    $counter = $nameKeyComplete[2];
+                    $outCounter = getPrimerNumber();
+                    $comp->{"PRIMER_PAIR_$outCounter\_SELECT"} = 1;
+                    $comp->{"PRIMER_PAIR_$outCounter\_AMPLICON"} = "";
+                    $comp->{"PRIMER_PAIR_$outCounter\_DATE"} = getDate( "D", "." );
+                    $comp->{"PRIMER_INTERNAL2_$outCounter\_SEQUENCE"} = "";
+                    
+                    # Now the name has to be moved to pair
+                    if ((defined $add->{"PRIMER_$primerType\_$counter\_NAME"}) 
+                         and ($add->{"PRIMER_$primerType\_$counter\_NAME"} ne "")) {
+                        $comp->{"PRIMER_PAIR_$outCounter\_NAME"} = $add->{"PRIMER_$primerType\_$counter\_NAME"}; 
+                    } else {
+                        $comp->{"PRIMER_PAIR_$outCounter\_NAME"} = "";
+                    }
+                     	
+                    if ($primerType eq "LEFT") {
+                        $comp->{"PRIMER_LEFT_$outCounter\_SEQUENCE"} = $add->{"PRIMER_LEFT_$counter\_SEQUENCE"}; 
+                    } else {
+                        $comp->{"PRIMER_LEFT_$outCounter\_SEQUENCE"} = "";
+                    }
+                
+                    if ($primerType eq "INTERNAL") {
+                        $comp->{"PRIMER_INTERNAL_$outCounter\_SEQUENCE"} = $add->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}; 
+                    } else {
+                        $comp->{"PRIMER_INTERNAL_$outCounter\_SEQUENCE"} = "";
+                    }
+                
+                    if ($primerType eq "RIGHT") {
+                        $comp->{"PRIMER_RIGHT_$outCounter\_SEQUENCE"} = $add->{"PRIMER_RIGHT_$counter\_SEQUENCE"}; 
+                    } else {
+                        $comp->{"PRIMER_RIGHT_$outCounter\_SEQUENCE"} = "";
+                    }
+                     	
+                }
+            }
+            
+        } # Now extract the primer pairs and add the missing information
+    
+    
+    
+        
+    } # Work on information from Primer3Plus
+
 	return;
 }
 

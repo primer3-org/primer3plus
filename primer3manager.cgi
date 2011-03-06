@@ -28,7 +28,13 @@
 # primers coexist without being a pair. In Primer3Manager, each of this primers
 # must form a "pair" which has only one primer to match RDML later.
 # For primerlists the name and selection is on the primer level, which has to 
-# be realigned for Primer3Manager.
+# be realigned for Primer3Manager, for each PRIMER_PAIR_4_NAME all missing 
+# information is created.
+# After the realignment each pair will have a PRIMER_PAIR_4_NAME, 
+# a PRIMER_PAIR_4_SELECT, a PRIMER_PAIR_4_AMPLICON, a PRIMER_PAIR_4_DATE and
+# PRIMER_LEFT_4_SEQUENCE, PRIMER_INTERNAL_4_SEQUENCE, a PRIMER_RIGHT_4_SEQUENCE.
+# A PRIMER_INTERNAL2_4_SEQUENCE is introduced for RDML compartibility.
+# They will contain information or empty strings "".
 
 use strict;
 use primer3plusFunctions;
@@ -46,10 +52,12 @@ $primerUnitsCounter = 0;
 # Get the HTML-Input and the default settings
 getParametersHTML(\%parametersHTML);
 
+#TODO: remove
 $parametersHTML{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = 1;
 
+extractCompleteManagerHash(\%completeParameters, \%parametersHTML);
 
 print "Content-type: text/html\n\n";
-print mainResultsHTML( \%parametersHTML, \%parametersHTML ), "\n";
+print createManagerDisplayHTML( \%completeParameters, \%parametersHTML), "\n";
 
 

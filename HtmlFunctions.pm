@@ -31,7 +31,7 @@ our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
 
 @ISA = qw(Exporter);
 @EXPORT = qw(&mainStartUpHTML &createHelpHTML &createAboutHTML 
-             &createPackageHTML &mainResultsHTML &createManagerHTML 
+             &createPackageHTML &mainResultsHTML &createManagerDisplayHTML 
              &createCompareFileHTML &createResultCompareFileHTML
              &getWrapper &createSelectSequence &createStatisticsHTML );
 $VERSION = "1.00";
@@ -2276,7 +2276,7 @@ sub mainResultsHTML {
   
   # Display debug information
   if ($results->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} eq 1){
-      $returnHTML .= printDebugInfo($results);
+      $returnHTML .= printDebugInfo($results, "The Primer3Plus results hash", 1);
   }
 
   # Write some help if no primers found
@@ -2694,7 +2694,11 @@ $formHTML .= qq{
 #################################################################################
 sub printDebugInfo {
   my %settings;
+  my $p3input;
+  my $hashText;
   %settings = %{(shift)};
+  $hashText = shift;
+  $p3input = shift;
   my $HashKeys;
   my $HashContent;
   
@@ -2704,18 +2708,22 @@ sub printDebugInfo {
   	}
   };
 
-  my $formHTML = qq{<br>
-   <p>The Primer3Plus results hash:<br>
+  my $formHTML = qq{
+   <p>$hashText:<br>
      <textarea name="SCRIPT_DEBUG_P3P_HASH" cols="100" rows="7">$HashContent</textarea>
    </p>
-   <p>Input provided to Primer3_core:<br>
+};
+
+  if ($p3input != 0 ) {
+    $formHTML .= qq{   <p>Input provided to Primer3_core:<br>
      <textarea name="SCRIPT_DEBUG_P3_INPUT" cols="100" rows="7">$settings{"SCRIPT_DEBUG_INPUT"}</textarea>
    </p>
    <p>Output provided by Primer3core:<br>
      <textarea name="SCRIPT_DEBUG_P3_OUTPUT" cols="100" rows="7">$settings{"SCRIPT_DEBUG_OUTPUT"}</textarea>
    </p>
 };
-
+  }
+  
   return $formHTML;
 }
 
@@ -2932,6 +2940,8 @@ sub partHiddenManagerFields {
 <input type="hidden" name="P3P_PRIMER_NAME_ACRONYM_INTERNAL" value="$settings->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"}">
 <input type="hidden" name="P3P_PRIMER_NAME_ACRONYM_RIGHT" value="$settings->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"}">
 <input type="hidden" name="P3P_PRIMER_NAME_ACRONYM_SPACER" value="$settings->{"P3P_PRIMER_NAME_ACRONYM_SPACER"}">
+
+<input type="hidden" name="SCRIPT_PRIMER_MANAGER" value="PRIMER3PLUS">
 };
 
   return $formHTML;
@@ -4265,13 +4275,10 @@ sub createResultCompareFileHTML {
 #####################
 # Form Manager HTML #
 #####################
-sub createManagerHTML {
-  my (@sequences, @names, @toOrder, @date) ;
-  @sequences = @{(shift)};
-  @names = @{(shift)};
-  @toOrder = @{(shift)};
-  @date = @{(shift)};
-  $primerNumber = -1;
+sub createManagerDisplayHTML {
+  my ($hash, $cgiInput) ;
+  $hash = shift;
+  $cgiInput = shift;
 
   my $templateText = getWrapper();
 
@@ -4281,13 +4288,23 @@ sub createManagerHTML {
 <form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
 <input type="hidden" name="SCRIPT_PRIMER_MANAGER" value="DISPLAY">
 };
-$formHTML .= divTopBar("Primer3Manager", "manage your primer library",0);
+  $formHTML .= divTopBar("Primer3Manager", "manage your primer library",0);
 
-$formHTML .= divMessages();
+  $formHTML .= divMessages();
 
-$formHTML .= qq{
+  $formHTML .= qq{
 <div id="primer3plus_manager">
-   <input type="hidden" id="HTML_MANAGER" name="HTML_MANAGER" value="HTML_MANAGER">
+};
+  
+  # Display debug information
+  if ($hash->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} eq 1){
+      $formHTML .= printDebugInfo($cgiInput, "Provided input on CGI", 0);
+      $formHTML .= printDebugInfo($hash, "Merged Information", 0);
+  }
+
+
+
+$formHTML .= qq{   <input type="hidden" id="HTML_MANAGER" name="HTML_MANAGER" value="HTML_MANAGER">
    <input name="Submit" value="Order selected Primers" type="submit">&nbsp;
    <input name="Submit" value="Refresh" type="submit">&nbsp;
    <input value="Reset Form" type="reset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -4332,33 +4349,33 @@ $formHTML .= qq{
 my ($cgiName, $blastLinkUse);
 my $blastLink = getMachineSetting("URL_BLAST");
 
-for (my $counter=0 ; $counter <= $#sequences ; $counter++) {
-$primerNumber = getPrimerNumber();
-$cgiName = $names[$counter];
-$cgiName =~ tr/ /+/;
+#for (my $counter=0 ; $counter <= $#sequences ; $counter++) {
+#$primerNumber = getPrimerNumber();
+#$cgiName = $names[$counter];
+#$cgiName =~ tr/ /+/;
 #QUERY=&amp;
-$blastLinkUse = $blastLink;
-$blastLinkUse =~ s/;QUERY=/;QUERY=$sequences[$counter]/;
+#$blastLinkUse = $blastLink;
+#$blastLinkUse =~ s/;QUERY=/;QUERY=$sequences[$counter]/;
 
-$formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;<input id="PRIMER_$primerNumber\_SELECT" name="PRIMER_$primerNumber\_SELECT" value="1" };
+#$formHTML .= qq{     <tr>
+#       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;<input id="PRIMER_$primerNumber\_SELECT" name="PRIMER_$primerNumber\_SELECT" value="1" };
 
-if (defined $toOrder[$counter]) {
-	$formHTML .= ($toOrder[$counter] == 1) ? "checked=\"checked\" " : "";
-} else {
-	$formHTML .= "";
-}
+#if (defined $toOrder[$counter]) {
+#	$formHTML .= ($toOrder[$counter] == 1) ? "checked=\"checked\" " : "";
+#} else {
+#	$formHTML .= "";
+#}
 
-$formHTML .= qq{type="checkbox"></td>
-       <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_NAME" name="PRIMER_$primerNumber\_NAME" value="$names[$counter]" size="20"></td>
-       <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_SEQUENCE" name="PRIMER_$primerNumber\_SEQUENCE" value="$sequences[$counter]" size="44"></td>
-       <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_DATE" name="PRIMER_$primerNumber\_DATE" value="$date[$counter]" size="9"></td>
-       <td class="primer3plus_cell_no_border">&nbsp;<a href="$machineSettings{URL_FORM_ACTION}?SEQUENCE_ID=$cgiName&SEQUENCE_PRIMER=$sequences[$counter]&PRIMER_TASK=Primer_Check">Check!</a></td>
-       <td class="primer3plus_cell_no_border">&nbsp;$blastLinkUse</td>
-     </tr>
-};
+#$formHTML .= qq{type="checkbox"></td>
+#       <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_NAME" name="PRIMER_$primerNumber\_NAME" value="$names[$counter]" size="20"></td>
+#       <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_SEQUENCE" name="PRIMER_$primerNumber\_SEQUENCE" value="$sequences[$counter]" size="44"></td>
+#       <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_DATE" name="PRIMER_$primerNumber\_DATE" value="$date[$counter]" size="9"></td>
+#       <td class="primer3plus_cell_no_border">&nbsp;<a href="$machineSettings{URL_FORM_ACTION}?SEQUENCE_ID=$cgiName&SEQUENCE_PRIMER=$sequences[$counter]&PRIMER_TASK=Primer_Check">Check!</a></td>
+#       <td class="primer3plus_cell_no_border">&nbsp;$blastLinkUse</td>
+#     </tr>
+#};
 
-};
+#};
 
 $formHTML .= qq{   </table>
    <br>
