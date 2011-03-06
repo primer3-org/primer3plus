@@ -3011,19 +3011,24 @@ sub divPrimerBox {
   <table class="primer3plus_table_primer_pair_box">
      <colgroup>
        <col width="12.0%">
-       <col width="12.0%">
+       <col width="2.0%">
        <col width="10.0%">
-       <col width="10%">
-       <col width="8%">
-       <col width="8%">
+       <col width="10.0%">
+       <col width="10.0%">
+       <col width="8.0%">
+       <col width="8.0%">
        <col width="8.5%">
        <col width="8.0%">
        <col width="10.5%">
-       <col width="13%">
+       <col width="13.0%">
      </colgroup>
      <tr>
-       <td colspan="10" class="primer3plus_cell_primer_pair_box">Pair $selection:</td>
-     </tr>
+       <td colspan="11" class="primer3plus_cell_primer_pair_box"><input id="PRIMER_PAIR\_$counter\_SELECT" name="PRIMER_PAIR\_$counter\_SELECT" value="1" };
+
+$formHTML .= ($checked) ? "checked=\"checked\" " : "";
+ 
+$formHTML .= qq{type="checkbox">&nbsp;Pair $selection:
+       <input id="PRIMER_PAIR_$counter\_NAME" name="PRIMER_PAIR_$counter\_NAME" value="$results->{"PRIMER_PAIR_$counter\_NAME"}" size="40">
 };
 
   if ((defined ($results->{"PRIMER_PAIR_$counter\_AMPLICON"}))
@@ -3031,6 +3036,11 @@ sub divPrimerBox {
   $formHTML .= qq{<input type="hidden" name="PRIMER_PAIR_$counter\_AMPLICON" value="$results->{"PRIMER_PAIR_$counter\_AMPLICON"}">
 };
   }
+  
+  $formHTML .= qq{       </td>
+     </tr>
+};
+  
 
 $formHTML .= partPrimerData( $results, $counter, "LEFT", $checked);
 
@@ -3039,7 +3049,7 @@ $formHTML .= partPrimerData( $results, $counter, "INTERNAL", $checked);
 $formHTML .= partPrimerData( $results, $counter, "RIGHT", $checked);
 
 $formHTML .= qq{     <tr class="primer3plus_primer_pair">
-       <td colspan="2" class="primer3plus_cell_primer_pair_box"><strong>Pair:</strong>&nbsp;&nbsp;&nbsp;
+       <td colspan="3" class="primer3plus_cell_primer_pair_box"><strong>Pair:</strong>&nbsp;&nbsp;&nbsp;
          <a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_PRODUCT_SIZE">Product Size:</a>&nbsp;
          &nbsp;$results->{"PRIMER_PAIR_$counter\_PRODUCT_SIZE"} bp</td>
        <td class="primer3plus_cell_primer_pair_box">$productTM</td>
@@ -3057,7 +3067,7 @@ if (defined ($results->{"PRIMER_PAIR_$counter\_LIBRARY_MISPRIMING"})
 		and (($results->{"PRIMER_PAIR_$counter\_LIBRARY_MISPRIMING"}) ne "")) {
 
 $formHTML .= qq{     <tr class="primer3plus_primer_pair">
-       <td colspan="2" class="primer3plus_cell_primer_pair_box">
+       <td colspan="3" class="primer3plus_cell_primer_pair_box">
          <a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_LIBRARY_MISPRIMING">Library Mispriming:</a></td>
        <td colspan="8" class="primer3plus_cell_primer_pair_box">$results->{"PRIMER_PAIR_$counter\_LIBRARY_MISPRIMING"}</td>
      </tr>
@@ -3122,22 +3132,16 @@ if (defined ($results->{"PRIMER_$type\_$counter\_SEQUENCE"})
   $primerPenalty = sprintf ("%.3f",($results->{"PRIMER_$type\_$counter\_PENALTY"}));
 
 $formHTML .= qq{     <tr class="primer3plus_$cssName">
-       <td colspan="10" class="primer3plus_cell_primer_pair_box"><input id="PRIMER_$type\_$counter\_SELECT" name="PRIMER_$type\_$counter\_SELECT" value="1" };
-
-$formHTML .= ($checked) ? "checked=\"checked\" " : "";
- 
-$formHTML .= qq{type="checkbox"> 
-         &nbsp;$writeName $selection: &nbsp; &nbsp;
-         <input id="PRIMER_$type\_$counter\_NAME" name="PRIMER_$type\_$counter\_NAME" value="$results->{"PRIMER_$type\_$counter\_NAME"}" size="40"></td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_primer_pair_box">Sequence:</td>
-       <td colspan="9" class="primer3plus_cell_primer_pair_box"><input id="PRIMER_$type\_$counter\_SEQUENCE" name="PRIMER_$type\_$counter\_SEQUENCE"
+       <td colspan="2" class="primer3plus_cell_primer_pair_box"> 
+         &nbsp;$writeName $selection:
+       </td>
+       <td colspan="9" class="primer3plus_cell_primer_pair_box"> 
+         <input id="PRIMER_$type\_$counter\_SEQUENCE" name="PRIMER_$type\_$counter\_SEQUENCE"
          value="$results->{"PRIMER_$type\_$counter\_SEQUENCE"}" size="90"></td>
      </tr>
      <tr>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4">Start:</a> $primerStart</td>
-       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4">Length:</a> $primerLength bp</td>
+       <td colspan="2" class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4">Length:</a> $primerLength bp</td>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TM">Tm:</a> $primerTM &deg;C </td>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_GC_PERCENT">GC:</a> $primerGC %</td>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_ANY$thAdd">Any:</a> $primerAny</td>
@@ -3173,7 +3177,7 @@ $formHTML .= qq{</td>
     }
             
     $formHTML .= qq{     <tr>
-       <td colspan="2" class="primer3plus_cell_primer_pair_box">$primerPosPen</td>
+       <td colspan="3" class="primer3plus_cell_primer_pair_box">$primerPosPen</td>
        <td colspan="2" class="primer3plus_cell_primer_pair_box">$primerMinSeqQual</td>
        <td class="primer3plus_cell_primer_pair_box"></td>
        <td class="primer3plus_cell_primer_pair_box"></td>
@@ -3188,7 +3192,7 @@ $formHTML .= qq{</td>
   if (defined ($results->{"PRIMER_$type\_$counter\_LIBRARY_MISPRIMING"}) 
         and (($results->{"PRIMER_$type\_$counter\_LIBRARY_MISPRIMING"}) ne "")) {
     $formHTML .= qq{     <tr>
-       <td colspan="10" class="primer3plus_cell_primer_pair_box">
+       <td colspan="11" class="primer3plus_cell_primer_pair_box">
          <a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_LIBRARY_MISPRIMING">Library Mispriming:</a>&nbsp;
          $results->{"PRIMER_$type\_$counter\_LIBRARY_MISPRIMING"}</td>
      </tr>
@@ -3198,7 +3202,7 @@ $formHTML .= qq{</td>
   if (defined ($results->{"PRIMER_$type\_$counter\_LIBRARY_MISHYB"}) 
         and (($results->{"PRIMER_$type\_$counter\_LIBRARY_MISHYB"}) ne "")) {
     $formHTML .= qq{     <tr>
-       <td colspan="10" class="primer3plus_cell_primer_pair_box">
+       <td colspan="11" class="primer3plus_cell_primer_pair_box">
          <a href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_4_LIBRARY_MISHYB">Library Mishyb:</a>&nbsp;
          $results->{"PRIMER_$type\_$counter\_LIBRARY_MISHYB"}</td>
      </tr>
@@ -3207,13 +3211,13 @@ $formHTML .= qq{</td>
   if (defined ($results->{"PRIMER_$type\_$counter\_PROBLEMS"}) 
 		and (($results->{"PRIMER_$type\_$counter\_PROBLEMS"}) ne "")) {
     $formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_no_border_problem"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_PROBLEMS">Problems:</a></td>
+       <td class="primer3plus_cell_no_border_problem" colspan="2"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_PROBLEMS">Problems:</a></td>
        <td class="primer3plus_cell_no_border_problem" colspan="9">$results->{"PRIMER_$type\_$counter\_PROBLEMS"}</td>
      </tr>
 };
 }
   $formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_no_border" colspan="10"></td>
+       <td class="primer3plus_cell_no_border" colspan="11"></td>
      </tr>
 };
 		}

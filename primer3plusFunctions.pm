@@ -1207,7 +1207,7 @@ sub createPrimerName ($$$) {
     $resultsHash  = shift;
 
     my @nameKeyComplete;
-    my ( $namePrimerType, $nameNumber, $nameKeyName, $nameKeyValue );
+    my ( $namePrimerType, $nameNumber, $nameKeyName, $nameKeyPair, $nameKeyValue );
         
     my $acronymLeft  = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_LEFT"};
     my $acronymRight = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
@@ -1221,6 +1221,7 @@ sub createPrimerName ($$$) {
             $nameNumber = $nameKeyComplete[2];
             $nameKeyName = $inName;
             $nameKeyName =~ s/SEQUENCE/NAME/;
+            $nameKeyPair = "PRIMER_PAIR_$nameNumber\_NAME";
             $nameKeyValue = "";
 
             # Use the Name or Primer for the ID
@@ -1231,13 +1232,14 @@ sub createPrimerName ($$$) {
                 $nameKeyValue .= "Primer";
             }
             # Add a Number
-            if ( $nameNumber eq "0" ) {
-                $nameKeyValue .= $acronymSpace;
+            if ( $nameNumber ne "0" ) {
+                $nameKeyValue .= $acronymSpace.$nameNumber;
             }
-            else {
-                $nameKeyValue .= $acronymSpace.$nameNumber.$acronymSpace;
-            }
-        
+            
+            $resultsHash->{"$nameKeyPair"} = $nameKeyValue;
+            
+            $nameKeyValue .= $acronymSpace;
+            
             # Add a Type
             if ( $namePrimerType eq "RIGHT" ) {
                 $nameKeyValue .= $acronymRight;

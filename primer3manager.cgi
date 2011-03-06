@@ -21,6 +21,15 @@
 #  if not, write to the Free Software Foundation, Inc., 51 Franklin St,
 #  Fifth Floor, Boston, MA  02110-1301  USA
 
+
+# Primer3Plus will send two types of information, pairs and lists of primers.
+# Pairs are selected and named at the pair level and can be used directly.
+# Primerlists from Primer3Plus will have to be realigned. In P3P left and right
+# primers coexist without being a pair. In Primer3Manager, each of this primers
+# must form a "pair" which has only one primer to match RDML later.
+# For primerlists the name and selection is on the primer level, which has to 
+# be realigned for Primer3Manager.
+
 use strict;
 use primer3plusFunctions;
 use settings;
