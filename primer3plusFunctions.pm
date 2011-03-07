@@ -296,6 +296,20 @@ sub extractCompleteManagerHash {
     $comp->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"} = $add->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"};
     $comp->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"}    = $add->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
     $comp->{"P3P_PRIMER_NAME_ACRONYM_SPACER"}   = $add->{"P3P_PRIMER_NAME_ACRONYM_SPACER"};
+    
+    # Then set the RDML Values if they are not defined:
+    if ((defined $add->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL2"}) 
+         and ($add->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL2"} ne "")) {
+        $comp->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL2"} = $add->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL2"}; 
+    } else {
+        $comp->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL2"} = "IN2";
+    }
+    if ((defined $add->{"P3P_RDML_VERSION"}) 
+         and ($add->{"P3P_RDML_VERSION"} ne "")) {
+        $comp->{"P3P_RDML_VERSION"} = $add->{"P3P_RDML_VERSION"}; 
+    } else {
+        $comp->{"P3P_RDML_VERSION"} = "1.0";
+    }
 
     # Work on information from Primer3Plus:
     if ((defined $add->{"SCRIPT_PRIMER_MANAGER"}) 
@@ -352,6 +366,7 @@ sub extractCompleteManagerHash {
                 
                 }
             }
+            $comp->{"PRIMER_PAIR_NUM_RETURNED"} = $outCounter;
         } # Now extract the primer pairs and add the missing information
     
         # Now extract the single primers and add the missing information:
@@ -398,7 +413,7 @@ sub extractCompleteManagerHash {
                      	
                 }
             }
-            
+            $comp->{"PRIMER_PAIR_NUM_RETURNED"} = $outCounter;
         } # Now extract the primer pairs and add the missing information
     
     

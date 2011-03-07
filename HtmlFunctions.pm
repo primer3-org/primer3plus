@@ -4279,6 +4279,8 @@ sub createManagerDisplayHTML {
   my ($hash, $cgiInput) ;
   $hash = shift;
   $cgiInput = shift;
+  my ($counter, $counter2, $cutAmp, $Amplicon); 
+  
 
   my $templateText = getWrapper();
 
@@ -4346,50 +4348,79 @@ function hideTabs() {
   </div>
 
   <div id="primer3plus_main_tab" class="primer3plus_tab_page">
-
-   <table class="primer3plus_table_no_border">
-     <colgroup>
-       <col width="100%">
-     </colgroup>
-      <tr>
-       <td class="primer3plus_cell_no_border"><a id="MANAGER_FILE_INPUT" name="MANAGER_FILE_INPUT">To upload or save a primer file from
-         your local computer, choose here:</a>
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border"><input id="DATABASE_FILE" name="DATABASE_FILE" type="file">&nbsp;&nbsp;
-	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
-         <input name="Submit" value="Save File" type="submit">&nbsp;&nbsp;
-         <input name="Submit" value="Export as Fasta" type="submit">
-       </td>
-     </tr>
-   </table>
-   <br>
    <input name="Submit" value="Order selected Primers" type="submit">&nbsp;
    <input name="Submit" value="Refresh" type="submit">&nbsp;
    <input value="Reset Form" type="reset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   <input name="Submit" value="Edit Mode" type="submit">
+   <input name="Submit" value="Delete Mode" type="submit">
    <br>
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="7%">
-       <col width="25%">
-       <col width="45%">
-       <col width="15%">
-       <col width="4%">
-       <col width="4%">
+       <col width="10%">
+       <col width="40%">
+       <col width="10%">
+       <col width="40%">
      </colgroup>
-     <tr>
-       <td class="primer3plus_cell_no_border">Select</td>
-       <td class="primer3plus_cell_no_border">&nbsp;Name</td>
-       <td class="primer3plus_cell_no_border">&nbsp;Sequence</td>
-       <td class="primer3plus_cell_no_border">&nbsp;Designed on</td>
-       <td class="primer3plus_cell_no_border">&nbsp;Check!</td>
-       <td class="primer3plus_cell_no_border">&nbsp;BLAST!</td>
-     </tr>
 };
-my ($cgiName, $blastLinkUse);
-my $blastLink = getMachineSetting("URL_BLAST");
+
+  for($counter = 0; $counter <= $hash->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
+
+      $formHTML .= qq{     <tr>
+       <td colspan="2" class="primer3plus_cell_no_border">&nbsp;&nbsp;<input id="PRIMER_PAIR_$counter\_SELECT" name="PRIMER_PAIR_$counter\_SELECT" value="1" };
+
+      if (defined $hash->{"PRIMER_PAIR_$counter\_SELECT"}) {
+          $formHTML .= ($hash->{"PRIMER_PAIR_$counter\_SELECT"} == 1) ? "checked=\"checked\" " : "";
+      } else {
+          $formHTML .= "";
+      }
+
+      $formHTML .= qq{type="checkbox">&nbsp;&nbsp; Name: 
+      	
+      	
+      	$counter</td>
+       <td class="primer3plus_cell_no_border">Designed on</td>
+       <td class="primer3plus_cell_no_border">&nbsp;Check!&nbsp;&nbsp;&nbsp;&nbsp;BLAST!</td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border">Left:</td>
+       <td class="primer3plus_cell_no_border">$hash->{"PRIMER_LEFT_$counter\_SEQUENCE"}</td>
+       <td class="primer3plus_cell_no_border">Right:</td>
+       <td class="primer3plus_cell_no_border">$hash->{"PRIMER_RIGHT_$counter\_SEQUENCE"}</td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border">Internal:</td>
+       <td class="primer3plus_cell_no_border">$hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}</td>
+       <td class="primer3plus_cell_no_border">Internal2:</td>
+       <td class="primer3plus_cell_no_border">$hash->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"}</td>
+     </tr>
+     <tr>
+       <td colspan="4" class="primer3plus_cell_no_border">Amplicon: </td>
+     </tr>
+     <tr>
+       <td colspan="4" class="primer3plus_cell_no_border">
+         };
+    
+    $Amplicon = $hash->{"PRIMER_PAIR_$counter\_AMPLICON"};
+	for($counter2 = 0; $counter2 <= (length($Amplicon)/10); $counter2++) {
+		$cutAmp = substr($hash->{"PRIMER_PAIR_$counter\_AMPLICON"},$counter2*10,10);
+		$formHTML .= $cutAmp;
+		$formHTML .= " ";
+		if (($counter2+1)%10 == 0) {
+			$formHTML .= "<br />";
+		}
+	};
+
+$formHTML .= qq{       </td>
+     </tr>
+     <tr>
+       <td colspan="4" class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;</td>
+     </tr>};
+
+  };
+  
+  $formHTML .= qq{     
+};
+#my ($cgiName, $blastLinkUse);
+#my $blastLink = getMachineSetting("URL_BLAST");
 
 #for (my $counter=0 ; $counter <= $#sequences ; $counter++) {
 #$primerNumber = getPrimerNumber();
@@ -4424,53 +4455,122 @@ $formHTML .= qq{   </table>
    <input name="Submit" value="Order selected Primers" type="submit">&nbsp;
    <input name="Submit" value="Refresh" type="submit">&nbsp;
    <input value="Reset Form" type="reset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   <input name="Submit" value="Edit Mode" type="submit">
+   <input name="Submit" value="Delete Mode" type="submit">
    <br>
    <br>
- </div>
+  </div>
 
- <div id="primer3plus_load_and_save" class="primer3plus_tab_page">
+  <div id="primer3plus_load_and_save" class="primer3plus_tab_page">
 
    <table class="primer3plus_table_no_border">
      <colgroup>
        <col width="100%">
      </colgroup>
-      <tr>
-       <td class="primer3plus_cell_no_border"><a id="MANAGER_FILE_INPUT" name="MANAGER_FILE_INPUT">To upload or save a primer file from
+     <tr>
+       <td class="primer3plus_cell_no_border"><a id="SCRIPT_SEQUENCE_FILE_CONTENT_INPUT" name="SCRIPT_SEQUENCE_FILE_CONTENT_INPUT">To upload a RDML primer file from
          your local computer, choose here:</a>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><input id="DATABASE_FILE" name="DATABASE_FILE" type="file">&nbsp;&nbsp;
+       <td class="primer3plus_cell_no_border"><input id="SCRIPT_SEQUENCE_FILE_CONTENT" name="SCRIPT_SEQUENCE_FILE_CONTENT" type="file">&nbsp;&nbsp;
 	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
-         <input name="Submit" value="Save File" type="submit">&nbsp;&nbsp;
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a id="SCRIPT_SETTINGS_FILE_CONTENT_INPUT" name="SCRIPT_SETTINGS_FILE_CONTENT_INPUT">To import a fasta primer file created by 
+         Primer3Plus up to version 2.1 from your local computer, choose here:</a>
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><input id="SCRIPT_SETTINGS_FILE_CONTENT" name="SCRIPT_SETTINGS_FILE_CONTENT" type="file">&nbsp;&nbsp;
+	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a id="SCRIPT_SAVE_FILE_INPUT" name="SCRIPT_SAVE_FILE_INPUT">To save a RDML file or
+         export as fasta on your local computer, choose here:</a>
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border">
+         <input name="Submit" value="Save RDML File" type="submit">&nbsp;&nbsp;
          <input name="Submit" value="Export as Fasta" type="submit">
        </td>
      </tr>
    </table>
- </div>
- 
- <div id="primer3plus_settings" class="primer3plus_tab_page">
+  </div>
+
+
+  <div id="primer3plus_settings" class="primer3plus_tab_page">
 
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="100%">
+       <col width="25%">
+       <col width="15%">
+       <col width="27%">
+       <col width="33%">
      </colgroup>
-      <tr>
-       <td class="primer3plus_cell_no_border"><a id="MANAGER_FILE_INPUT" name="MANAGER_FILE_INPUT">To upload or save a primer file from
-         your local computer, choose here:</a>
+     <tr>
+       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_LEFT_INPUT">
+       RDML Version:</a>
+       </td>
+       <td class="primer3plus_cell_no_border">
+         <select name="P3P_RDML_VERSION">
+};
+		if ( $hash->{P3P_RDML_VERSION} == 1.1 ) {
+     		$formHTML .= qq{           <option value="1.0">1.0</option>
+           <option selected="selected" value="1.1">1.1</option>
+};
+		}
+		else {
+			$formHTML .= qq{           <option selected="selected" value="1.0">1.0</option>
+           <option value="1.1">1.1</option>
+};		
+		};
+
+        $formHTML .= qq{         </select>
+       </td>
+       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_INTERNAL2_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_INTERNAL">
+       Internal Oligo 2 Acronym:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_INTERNAL2" value="$hash->{P3P_PRIMER_NAME_ACRONYM_INTERNAL2}" type="text">
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><input id="DATABASE_FILE" name="DATABASE_FILE" type="file">&nbsp;&nbsp;
-	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
-         <input name="Submit" value="Save File" type="submit">&nbsp;&nbsp;
-         <input name="Submit" value="Export as Fasta" type="submit">
+       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_LEFT_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_LEFT">
+       Left Primer Acronym:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_LEFT" value="$hash->{P3P_PRIMER_NAME_ACRONYM_LEFT}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_INTERNAL_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_INTERNAL">
+       Internal Oligo Acronym:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_INTERNAL" value="$hash->{P3P_PRIMER_NAME_ACRONYM_INTERNAL}" type="text">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_RIGHT_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_RIGHT">
+       Right Primer Acronym:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_RIGHT" value="$hash->{P3P_PRIMER_NAME_ACRONYM_RIGHT}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_SPACER_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_SPACER">
+       Primer Name Spacer:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_SPACER" value="$hash->{P3P_PRIMER_NAME_ACRONYM_SPACER}" type="text">
        </td>
      </tr>
    </table>
- </div>
- 
+  </div>
+
  
 </form>
 </div>
@@ -4486,5 +4586,6 @@ $formHTML .= qq{   </table>
 
   return $returnString;
 }
+
 
 1;
