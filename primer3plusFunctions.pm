@@ -525,7 +525,7 @@ sub addToManagerHash {
 
     @hashKeys = keys(%{$add});
     foreach $hashKey (@hashKeys) {
-    if ($hashKey =~ /_SEQUENCE$/) {
+    if ($hashKey =~ /_NAME$/) {
         @nameKeyComplete = split "_", $hashKey;
         $primerType = $nameKeyComplete[1];
         $counter = $nameKeyComplete[2];

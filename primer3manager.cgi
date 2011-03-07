@@ -66,10 +66,6 @@ else {
     $uniqueID = makeUniqueID();
 }
 
-# Load the cache file
-getCacheFile(\$uniqueID, \$cacheContent);
-loadFile($cacheContent, \%fileHash, "1");
-
 #TODO: remove
 $parametersHTML{"SCRIPT_OLD_COOKIE"} = $cookieID;
 $parametersHTML{"SCRIPT_NEW_COOKIE"} = $uniqueID;
@@ -79,8 +75,14 @@ $parametersHTML{"SCRIPT_CACHE_CONTENT"} = $cacheContent;
 
 extractCompleteManagerHash(\%completeParameters, \%parametersHTML);
 
-addToManagerHash(\%completeParameters, \%fileHash);
-
+# Load the cache file
+if (!((defined $parametersHTML{"SCRIPT_PRIMER_MANAGER"}) 
+     and (($parametersHTML{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DISPLAYMODE" )
+     or ($parametersHTML{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DELETEMODE" )))) {
+    getCacheFile(\$uniqueID, \$cacheContent);
+    loadFile($cacheContent, \%fileHash, "1");
+    addToManagerHash(\%completeParameters, \%fileHash);
+}
 
 ## Save the final list in the cache file
 $saveFile = createFile(\%completeParameters, "A");
