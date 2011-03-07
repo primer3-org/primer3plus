@@ -4378,7 +4378,7 @@ function hideTabs() {
        <td class="primer3plus_cell_no_border">Designed on</td>
        <td class="primer3plus_cell_no_border"><input id="PRIMER_PAIR_$counter\_DATE" name="PRIMER_PAIR_$counter\_DATE" value="$hash->{"PRIMER_PAIR_$counter\_DATE"}" size="10">
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-         Check!
+         <a href="$machineSettings{URL_FORM_ACTION}?SEQUENCE_ID=$hash->{"PRIMER_PAIR_$counter\_NAME"}&SEQUENCE_PRIMER=$hash->{"PRIMER_LEFT_$counter\_SEQUENCE"}&SEQUENCE_INTERNAL_OLIGO=$hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}&SEQUENCE_PRIMER_REVCOMP=$hash->{"PRIMER_RIGHT_$counter\_SEQUENCE"}&SEQUENCE_TEMPLATE=$hash->{"PRIMER_PAIR_$counter\_AMPLICON"}">Check!</a>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
          BLAST!</td>
      </tr>

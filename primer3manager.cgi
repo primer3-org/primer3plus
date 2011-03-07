@@ -59,5 +59,6 @@ extractCompleteManagerHash(\%completeParameters, \%parametersHTML);
 
 print "Content-type: text/html\n\n";
 print createManagerDisplayHTML( \%completeParameters, \%parametersHTML), "\n";
+writeStatistics("primer3manager");
 
 
