@@ -4276,11 +4276,9 @@ sub createResultCompareFileHTML {
 # Form Manager HTML #
 #####################
 sub createManagerDisplayHTML {
-  my ($hash, $cgiInput) ;
+  my ($hash, $cgiInput, $counter) ;
   $hash = shift;
   $cgiInput = shift;
-  my ($counter, $counter2, $cutAmp, $Amplicon); 
-  
 
   my $templateText = getWrapper();
 
@@ -4365,7 +4363,7 @@ function hideTabs() {
   for($counter = 0; $counter <= $hash->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
 
       $formHTML .= qq{     <tr>
-       <td colspan="2" class="primer3plus_cell_no_border">&nbsp;&nbsp;<input id="PRIMER_PAIR_$counter\_SELECT" name="PRIMER_PAIR_$counter\_SELECT" value="1" };
+       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;<input id="PRIMER_PAIR_$counter\_SELECT" name="PRIMER_PAIR_$counter\_SELECT" value="1" };
 
       if (defined $hash->{"PRIMER_PAIR_$counter\_SELECT"}) {
           $formHTML .= ($hash->{"PRIMER_PAIR_$counter\_SELECT"} == 1) ? "checked=\"checked\" " : "";
@@ -4374,42 +4372,32 @@ function hideTabs() {
       }
 
       $formHTML .= qq{type="checkbox">&nbsp;&nbsp; Name: 
-      	
-      	
-      	$counter</td>
+       </td>
+       <td class="primer3plus_cell_no_border"><input id="PRIMER_PAIR_$counter\_NAME" name="PRIMER_PAIR_$counter\_NAME" value="$hash->{"PRIMER_PAIR_$counter\_NAME"}" size="25">
+       </td>
        <td class="primer3plus_cell_no_border">Designed on</td>
-       <td class="primer3plus_cell_no_border">&nbsp;Check!&nbsp;&nbsp;&nbsp;&nbsp;BLAST!</td>
+       <td class="primer3plus_cell_no_border"><input id="PRIMER_PAIR_$counter\_DATE" name="PRIMER_PAIR_$counter\_DATE" value="$hash->{"PRIMER_PAIR_$counter\_DATE"}" size="10">
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+         Check!
+         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+         BLAST!</td>
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border">Left:</td>
-       <td class="primer3plus_cell_no_border">$hash->{"PRIMER_LEFT_$counter\_SEQUENCE"}</td>
+       <td class="primer3plus_cell_no_border"><input id="PRIMER_LEFT_$counter\_SEQUENCE" name="PRIMER_LEFT_$counter\_SEQUENCE" value="$hash->{"PRIMER_LEFT_$counter\_SEQUENCE"}" size="40"></td>
        <td class="primer3plus_cell_no_border">Right:</td>
-       <td class="primer3plus_cell_no_border">$hash->{"PRIMER_RIGHT_$counter\_SEQUENCE"}</td>
+       <td class="primer3plus_cell_no_border"><input id="PRIMER_RIGHT_$counter\_SEQUENCE" name="PRIMER_RIGHT_$counter\_SEQUENCE" value="$hash->{"PRIMER_RIGHT_$counter\_SEQUENCE"}" size="40"></td>
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border">Internal:</td>
-       <td class="primer3plus_cell_no_border">$hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}</td>
+       <td class="primer3plus_cell_no_border"><input id="PRIMER_INTERNAL_$counter\_SEQUENCE" name="PRIMER_INTERNAL_$counter\_SEQUENCE" value="$hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}" size="40"></td>
        <td class="primer3plus_cell_no_border">Internal2:</td>
-       <td class="primer3plus_cell_no_border">$hash->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"}</td>
+       <td class="primer3plus_cell_no_border"><input id="PRIMER_INTERNAL2_$counter\_SEQUENCE" name="PRIMER_INTERNAL2_$counter\_SEQUENCE" value="$hash->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"}" size="40"></td>
      </tr>
      <tr>
-       <td colspan="4" class="primer3plus_cell_no_border">Amplicon: </td>
-     </tr>
-     <tr>
-       <td colspan="4" class="primer3plus_cell_no_border">
-         };
-    
-    $Amplicon = $hash->{"PRIMER_PAIR_$counter\_AMPLICON"};
-	for($counter2 = 0; $counter2 <= (length($Amplicon)/10); $counter2++) {
-		$cutAmp = substr($hash->{"PRIMER_PAIR_$counter\_AMPLICON"},$counter2*10,10);
-		$formHTML .= $cutAmp;
-		$formHTML .= " ";
-		if (($counter2+1)%10 == 0) {
-			$formHTML .= "<br />";
-		}
-	};
-
-$formHTML .= qq{       </td>
+       <td class="primer3plus_cell_no_border">Amplicon: </td>
+       <td colspan="3" class="primer3plus_cell_no_border"><textarea name="PRIMER_PAIR_$counter\_AMPLICON" id="PRIMER_PAIR_$counter\_AMPLICON" rows="4" cols="85">$hash->{"PRIMER_PAIR_$counter\_AMPLICON"}</textarea>
+       </td>
      </tr>
      <tr>
        <td colspan="4" class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;</td>
