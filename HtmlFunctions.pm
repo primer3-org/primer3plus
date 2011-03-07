@@ -4317,7 +4317,7 @@ function hideTabs() {
 <div id="primer3plus_complete">
 
 <form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
-<input type="hidden" name="SCRIPT_PRIMER_MANAGER" value="PRIMER3MANAGER">
+<input type="hidden" name="SCRIPT_PRIMER_MANAGER" value="$hash->{"SCRIPT_PRIMER_MANAGER"}">
 <input type="hidden" name="PRIMER_PAIR_NUM_RETURNED" value="$hash->{"PRIMER_PAIR_NUM_RETURNED"}">
 };
   $formHTML .= divTopBar("Primer3Manager", "manage your primer library",0);
@@ -4347,10 +4347,20 @@ function hideTabs() {
   </div>
 
   <div id="primer3plus_main_tab" class="primer3plus_tab_page">
-   <input name="Submit" value="Order selected Primers" type="submit">&nbsp;
+};
+     
+     if ($hash->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DISPLAYMODE" ){
+         $formHTML .= qq{   <input name="Submit" value="Order selected Primers" type="submit" style="background: #83db7b;">&nbsp;
    <input name="Submit" value="Refresh" type="submit">&nbsp;
    <input value="Reset Form" type="reset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   <input name="Submit" value="Delete Mode" type="submit">
+   <input name="Submit" value="Delete Mode" type="submit">};
+     } else {
+     	 $formHTML .= qq{   <input name="Submit" value="Delete selected Primers" type="submit" style="background: #FF8040;">&nbsp;
+   <input name="Submit" value="Refresh" type="submit">&nbsp;
+   <input value="Reset Form" type="reset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   <input name="Submit" value="Order Mode" type="submit">};
+     }
+     $formHTML .= qq{
    <br>
    <table class="primer3plus_table_no_border">
      <colgroup>
@@ -4441,10 +4451,20 @@ function hideTabs() {
 
 $formHTML .= qq{   </table>
    <br>
-   <input name="Submit" value="Order selected Primers" type="submit">&nbsp;
+};
+  
+     if ($hash->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DISPLAYMODE" ){
+         $formHTML .= qq{   <input name="Submit" value="Order selected Primers" type="submit" style="background: #83db7b;">&nbsp;
    <input name="Submit" value="Refresh" type="submit">&nbsp;
    <input value="Reset Form" type="reset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   <input name="Submit" value="Delete Mode" type="submit">
+   <input name="Submit" value="Delete Mode" type="submit">};
+     } else {
+     	 $formHTML .= qq{   <input name="Submit" value="Delete selected Primers" type="submit" style="background: #FF8040;">&nbsp;
+   <input name="Submit" value="Refresh" type="submit">&nbsp;
+   <input value="Reset Form" type="reset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   <input name="Submit" value="Order Mode" type="submit">};
+     }
+     $formHTML .= qq{
    <br>
    <br>
   </div>

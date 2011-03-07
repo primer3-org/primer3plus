@@ -283,12 +283,15 @@ return $primerNumber;
 # extractCompleteManagerHash: extract the manager Hash out $comp of $add  #
 ###########################################################################
 sub extractCompleteManagerHash {
-	my ( $comp, $add );
+	my ( $comp, $add, $swapSelect, $deleteSelected );
 	$comp = shift;
 	$add  = shift;
 	
 	my (@hashKeys, @nameKeyComplete);
 	my ($hashKey,$primerType, $counter, $outCounter);
+	
+	$swapSelect = 0;
+	$deleteSelected = 0;
 	
 	# First copy over basic information: 
     $comp->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = $add->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"};
@@ -310,6 +313,29 @@ sub extractCompleteManagerHash {
     } else {
         $comp->{"P3P_RDML_VERSION"} = "1.0";
     }
+
+    # Sort out Delete-Mode and Order-Mode:
+    if ((defined $add->{"SCRIPT_PRIMER_MANAGER"}) 
+         and ($add->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DELETEMODE")) {
+        $comp->{"SCRIPT_PRIMER_MANAGER"} = "PRIMER3MANAGER_DELETEMODE"; 
+    } else {
+        $comp->{"SCRIPT_PRIMER_MANAGER"} = "PRIMER3MANAGER_DISPLAYMODE";
+    }
+    if ((defined $add->{"Submit"}) 
+         and ($add->{"Submit"} eq "Delete Mode")) {
+        $comp->{"SCRIPT_PRIMER_MANAGER"} = "PRIMER3MANAGER_DELETEMODE";
+        $swapSelect = 1;
+    }
+    if ((defined $add->{"Submit"}) 
+         and ($add->{"Submit"} eq "Order Mode")) {
+        $comp->{"SCRIPT_PRIMER_MANAGER"} = "PRIMER3MANAGER_DISPLAYMODE";
+        $swapSelect = 1;
+    }
+    if ((defined $add->{"Submit"}) 
+         and ($add->{"Submit"} eq "Delete selected Primers")) {
+        $deleteSelected = 1;
+    }
+
 
     # Work on information from Primer3Plus:
     if ((defined $add->{"SCRIPT_PRIMER_MANAGER"}) 
@@ -419,20 +445,36 @@ sub extractCompleteManagerHash {
 
     # Work on information from Primer3Manager:
     if ((defined $add->{"SCRIPT_PRIMER_MANAGER"}) 
-         and ($add->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER" )) {
-$comp->{"Hallo"} = "HALLO " + $add->{"PRIMER_PAIR_NUM_RETURNED"};
+         and (($add->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DISPLAYMODE" )
+         or ($add->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DELETEMODE" ))) {
+
         # Now extract all information:
         for($counter = 0; $counter <= $add->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
-        # Only add the selected Primers
-            $comp->{"PRIMER_PAIR_$counter\_SELECT"} = $add->{"PRIMER_PAIR_$counter\_SELECT"};
-            $comp->{"PRIMER_PAIR_$counter\_DATE"} = $add->{"PRIMER_PAIR_$counter\_DATE"};
-            $comp->{"PRIMER_PAIR_$counter\_NAME"} = $add->{"PRIMER_PAIR_$counter\_NAME"}; 
-            $comp->{"PRIMER_PAIR_$counter\_AMPLICON"} = $add->{"PRIMER_PAIR_$counter\_AMPLICON"}; 
-            $comp->{"PRIMER_LEFT_$counter\_SEQUENCE"} = $add->{"PRIMER_LEFT_$counter\_SEQUENCE"}; 
-            $comp->{"PRIMER_INTERNAL_$counter\_SEQUENCE"} = $add->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}; 
-            $comp->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"} = $add->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"}; 
-            $comp->{"PRIMER_RIGHT_$counter\_SEQUENCE"} = $add->{"PRIMER_RIGHT_$counter\_SEQUENCE"}; 
-            $comp->{"PRIMER_PAIR_NUM_RETURNED"} = $counter;
+            # Only add the selected Primers
+        	if (!(($deleteSelected == 1) and ($add->{"PRIMER_PAIR_$counter\_SELECT"} == 1 ))) {
+        		$outCounter = getPrimerNumber();
+	        	if ($add->{"PRIMER_PAIR_$counter\_SELECT"} == 1 ) {
+	        		if ($swapSelect == 1){
+	        		    $comp->{"PRIMER_PAIR_$outCounter\_SELECT"} = 0;
+	        		} else {
+	        			$comp->{"PRIMER_PAIR_$outCounter\_SELECT"} = 1;
+	        		}
+	        	} else {
+	        		if ($swapSelect == 1){
+	        		    $comp->{"PRIMER_PAIR_$outCounter\_SELECT"} = 1;
+	        		} else {
+	        			$comp->{"PRIMER_PAIR_$outCounter\_SELECT"} = 0;
+	        		}        		
+	        	}
+	            $comp->{"PRIMER_PAIR_$outCounter\_DATE"} = $add->{"PRIMER_PAIR_$counter\_DATE"};
+	            $comp->{"PRIMER_PAIR_$outCounter\_NAME"} = $add->{"PRIMER_PAIR_$counter\_NAME"}; 
+	            $comp->{"PRIMER_PAIR_$outCounter\_AMPLICON"} = $add->{"PRIMER_PAIR_$counter\_AMPLICON"}; 
+	            $comp->{"PRIMER_LEFT_$outCounter\_SEQUENCE"} = $add->{"PRIMER_LEFT_$counter\_SEQUENCE"}; 
+	            $comp->{"PRIMER_INTERNAL_$outCounter\_SEQUENCE"} = $add->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}; 
+	            $comp->{"PRIMER_INTERNAL2_$outCounter\_SEQUENCE"} = $add->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"}; 
+	            $comp->{"PRIMER_RIGHT_$outCounter\_SEQUENCE"} = $add->{"PRIMER_RIGHT_$counter\_SEQUENCE"}; 
+	            $comp->{"PRIMER_PAIR_NUM_RETURNED"} = $outCounter;
+        	}
         } # Now extract the primer pairs and add the missing information
     
     
