@@ -44,23 +44,52 @@ use customPrimerOrder;
 
 my %parametersHTML;
 my %completeParameters;
+my %fileHash;
 my %resultsHash;
 my $primerUnitsCounter;
+my $cookieID;
+my $uniqueID;
+my $saveFile;
+my $cacheContent;
 
 $primerUnitsCounter = 0;
 
 # Get the HTML-Input and the default settings
 getParametersHTML(\%parametersHTML);
 
+# Get the ID which is used as filename from the cookie or make a new one
+$cookieID = getCookie();
+if (($cookieID ne "") && ($cookieID =~ /\d/)) {
+    $uniqueID = $cookieID;
+}
+else {
+    $uniqueID = makeUniqueID();
+}
+
+# Load the cache file
+getCacheFile(\$uniqueID, \$cacheContent);
+loadFile($cacheContent, \%fileHash, "1");
+
 #TODO: remove
+$parametersHTML{"SCRIPT_OLD_COOKIE"} = $cookieID;
+$parametersHTML{"SCRIPT_NEW_COOKIE"} = $uniqueID;
 $parametersHTML{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = 1;
+$parametersHTML{"SCRIPT_CACHE_CONTENT"} = $cacheContent;
+
 
 extractCompleteManagerHash(\%completeParameters, \%parametersHTML);
 
-if ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Save File")) {
+addToManagerHash(\%completeParameters, \%fileHash);
+
+
+## Save the final list in the cache file
+$saveFile = createFile(\%completeParameters, "A");
+setCacheFile(\$uniqueID, \$saveFile);
+
+if ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Save RDML File")) {
     my $fileDate = getDate("Y","_");	
     print "Content-disposition: attachment; filename=Primers_$fileDate.fas\n\n";
-    print "saveFile";
+    print $saveFile;
     writeStatistics("primer3manager");
 }
 elsif ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Order selected Primers")) {
@@ -69,8 +98,7 @@ elsif ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Order selecte
     writeStatistics("primer3manager");
 }
 else {
-#    $cookieID = setCookie($uniqueID);
-    print "Content-type: text/html\n\n";
+    $cookieID = setCookie($uniqueID);
     print createManagerDisplayHTML( \%completeParameters, \%parametersHTML), "\n";
     writeStatistics("primer3manager");
 }
