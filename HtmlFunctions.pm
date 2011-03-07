@@ -4317,7 +4317,8 @@ function hideTabs() {
 <div id="primer3plus_complete">
 
 <form action="$machineSettings{URL_PRIMER_MANAGER}" method="post" enctype="multipart/form-data">
-<input type="hidden" name="SCRIPT_PRIMER_MANAGER" value="DISPLAY">
+<input type="hidden" name="SCRIPT_PRIMER_MANAGER" value="PRIMER3MANAGER">
+<input type="hidden" name="PRIMER_PAIR_NUM_RETURNED" value="$hash->{"PRIMER_PAIR_NUM_RETURNED"}">
 };
   $formHTML .= divTopBar("Primer3Manager", "manage your primer library",0);
 

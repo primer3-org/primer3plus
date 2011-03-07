@@ -415,11 +415,29 @@ sub extractCompleteManagerHash {
             }
             $comp->{"PRIMER_PAIR_NUM_RETURNED"} = $outCounter;
         } # Now extract the primer pairs and add the missing information
-    
+    } # Work on information from Primer3Plus
+
+    # Work on information from Primer3Manager:
+    if ((defined $add->{"SCRIPT_PRIMER_MANAGER"}) 
+         and ($add->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER" )) {
+$comp->{"Hallo"} = "HALLO " + $add->{"PRIMER_PAIR_NUM_RETURNED"};
+        # Now extract all information:
+        for($counter = 0; $counter <= $add->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
+        # Only add the selected Primers
+            $comp->{"PRIMER_PAIR_$counter\_SELECT"} = $add->{"PRIMER_PAIR_$counter\_SELECT"};
+            $comp->{"PRIMER_PAIR_$counter\_DATE"} = $add->{"PRIMER_PAIR_$counter\_DATE"};
+            $comp->{"PRIMER_PAIR_$counter\_NAME"} = $add->{"PRIMER_PAIR_$counter\_NAME"}; 
+            $comp->{"PRIMER_PAIR_$counter\_AMPLICON"} = $add->{"PRIMER_PAIR_$counter\_AMPLICON"}; 
+            $comp->{"PRIMER_LEFT_$counter\_SEQUENCE"} = $add->{"PRIMER_LEFT_$counter\_SEQUENCE"}; 
+            $comp->{"PRIMER_INTERNAL_$counter\_SEQUENCE"} = $add->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}; 
+            $comp->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"} = $add->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"}; 
+            $comp->{"PRIMER_RIGHT_$counter\_SEQUENCE"} = $add->{"PRIMER_RIGHT_$counter\_SEQUENCE"}; 
+            $comp->{"PRIMER_PAIR_NUM_RETURNED"} = $counter;
+        } # Now extract the primer pairs and add the missing information
     
     
         
-    } # Work on information from Primer3Plus
+    } # Work on information from Primer3Manager
 
 	return;
 }
