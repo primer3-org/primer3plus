@@ -57,8 +57,26 @@ $parametersHTML{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = 1;
 
 extractCompleteManagerHash(\%completeParameters, \%parametersHTML);
 
-print "Content-type: text/html\n\n";
-print createManagerDisplayHTML( \%completeParameters, \%parametersHTML), "\n";
-writeStatistics("primer3manager");
+if ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Save File")) {
+    my $fileDate = getDate("Y","_");	
+    print "Content-disposition: attachment; filename=Primers_$fileDate.fas\n\n";
+    print "saveFile";
+    writeStatistics("primer3manager");
+}
+elsif ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Order selected Primers")) {
+    print "Content-type: text/html\n\n";
+    print customPrimerOrder(\%completeParameters),"\n";
+    writeStatistics("primer3manager");
+}
+else {
+#    $cookieID = setCookie($uniqueID);
+    print "Content-type: text/html\n\n";
+    print createManagerDisplayHTML( \%completeParameters, \%parametersHTML), "\n";
+    writeStatistics("primer3manager");
+}
+
+
+
+
 
 

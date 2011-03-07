@@ -34,10 +34,8 @@ our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
 $VERSION = "1.00";
 
 sub customPrimerOrder {
-  my (@sequences, @names, @toOrder) ; 
-  @sequences = @{(shift)};
-  @names = @{(shift)};
-  @toOrder = @{(shift)};
+  my ($hash, $counter, $name, $fullName) ; 
+  $hash = shift;
 
   my $templateText = getWrapper();
   my $formHTML;
@@ -57,11 +55,31 @@ sub customPrimerOrder {
       <textarea name="copy_out" cols="80" rows="20">
 };
 
-for (my $counter=0 ; $counter <= $#sequences ; $counter++) {
-   if ( $toOrder[$counter] =~ /1/ ) {
-       $names[$counter] =~ s/ /_/g;
-       $formHTML .= qq{$names[$counter] $sequences[$counter]};
-       $formHTML .= "\n";
+for($counter = 0; $counter <= $hash->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
+   if ($hash->{"PRIMER_PAIR_$counter\_SELECT"} == 1 ) {
+   	   $name = $hash->{"PRIMER_PAIR_$counter\_NAME"};
+       $name =~ s/ /_/g;
+       if ($hash->{"PRIMER_LEFT_$counter\_SEQUENCE"} ne "") {
+           $fullName = $name . $hash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} . $hash->{"P3P_PRIMER_NAME_ACRONYM_LEFT"};
+           $formHTML .= qq{$fullName $hash->{"PRIMER_LEFT_$counter\_SEQUENCE"}};
+           $formHTML .= "\n";
+       }
+       if ($hash->{"PRIMER_RIGHT_$counter\_SEQUENCE"} ne "") {
+           $fullName = $name . $hash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} . $hash->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
+           $formHTML .= qq{$fullName $hash->{"PRIMER_RIGHT_$counter\_SEQUENCE"}};
+           $formHTML .= "\n";
+       }
+       if ($hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"} ne "") {
+           $fullName = $name . $hash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} . $hash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"};
+           $formHTML .= qq{$fullName $hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}};
+           $formHTML .= "\n";
+       }
+       if ($hash->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"} ne "") {
+           $fullName = $name . $hash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} . $hash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL2"};
+           $formHTML .= qq{$fullName $hash->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"}};
+           $formHTML .= "\n";
+       }
+       
    }
 };
 
