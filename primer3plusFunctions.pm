@@ -39,7 +39,7 @@ our ( @ISA, @EXPORT, @EXPORT_OK, $VERSION );
 @EXPORT = qw(&getParametersHTML &constructCombinedHash &createFile
      &getSetCookie &getCookie &setCookie &getCacheFile &setCacheFile
      &loadManagerFile &loadFile &checkParameters &runPrimer3 &reverseSequence
-     &getParametersForManager &loadServerSettFile &extractCompleteManagerHash &addToManagerHash &addToArray
+     &loadServerSettFile &extractCompleteManagerHash &addToManagerHash
      &exportFastaForManager &loadFastaForManager &getDate &makeUniqueID &writeStatistics &readStatistics);
 
 $VERSION = "1.00";
@@ -95,67 +95,6 @@ sub getParametersHTML {
 		$value =~ tr/+/ /;
 		$value =~ s/%([\da-f][\da-f])/chr( hex($1) )/egi;
 		$dataTarget->{$name} = $value;
-	}
-
-	return;
-}
-
-###############################################################################
-# getParametersForManager: retrieve all paratemeters from the input HTML form #
-###############################################################################
-sub getParametersForManager {
-	my ( $sequencesHTML, $namesHTML, $toOrderHTML, $dateHTML);
-	my ( $name, $value,	$controlParameter, $fileContent, $File );
-	
-	$sequencesHTML    = shift;
-	$namesHTML        = shift;
-	$toOrderHTML      = shift;
-	$dateHTML         = shift;
-	$controlParameter = shift;
-	$fileContent      = shift;
-
-	$File = $cgi->param("DATABASE_FILE");
-
-	# Load the file in a string to read it later
-	if ( $File && $File ne "" ) {
-		binmode $File;
-		my $data;
-		while ( read $File, $data, 1024 ) {
-			${$fileContent} .= $data;
-		}
-	}
-
-	# Read from HTML in an array or a Hash
-	my @splitName;
-	foreach $name ( $cgi->param ) {
-		$value = $cgi->param($name);
-		$name  =~ tr/+/ /;
-		$name  =~ s/%([\da-f][\da-f])/chr( hex($1) )/egi;
-		$value =~ tr/+/ /;
-		$value =~ s/%([\da-f][\da-f])/chr( hex($1) )/egi;
-		
-		# Read the keys and put it in the correct array
-		# The primer number gives the position
-		if ( $name =~ /PRIMER_/ ) {
-			@splitName = split "_", $name;
-			if ( $splitName[2] =~ /NAME/ ) {
-				$value =~ s/\|/_/g;
-				$namesHTML->[ $splitName[1] ] = $value;
-			}
-			if ( $splitName[2] =~ /SEQUENCE/ ) {
-				$sequencesHTML->[ $splitName[1] ] = $value;
-			}
-			if ( $splitName[2] =~ /SELECT/ ) {
-				$toOrderHTML->[ $splitName[1] ] = $value;
-			}
-			if ( $splitName[2] =~ /DATE/ ) {
-				$dateHTML->[ $splitName[1] ] = $value;
-			}
-		}
-		# What is not a primer goes in the controlParameter-Hash
-		else {
-			$controlParameter->{$name} = $value;
-		}
 	}
 
 	return;
@@ -572,54 +511,6 @@ sub addToManagerHash {
         $comp->{"PRIMER_INTERNAL_$outCounter\_SEQUENCE"} = $add->{"PRIMER_INTERNAL_$counter\_SEQUENCE"};
         $comp->{"PRIMER_PAIR_NUM_RETURNED"} = $outCounter;
     }
-
-	return;
-}
-
-##################################################################################################
-# addToArray: extract the selected primers out of an array and add them at the end of array 2    #
-#             it compares each primer with all the already existing primers and only copies new  #
-##################################################################################################
-sub addToArray {
-	my ($sequences1, $names1, $selected1, $date1,
-		$sequences2, $names2, $selected2, $date2 );
-		
-	$sequences1 = shift;
-	$names1     = shift;
-	$selected1  = shift;
-	$date1      = shift;
-	$sequences2 = shift;
-	$names2     = shift;
-	$selected2  = shift;
-	$date2      = shift;
-
-	my ( $copy, $array2end, @nameArray1, @nameArray2 );
-
-	for ( my $counter1 = 0 ; $counter1 <= $#{$sequences1} ; $counter1++ ) {
-		$copy = 1;
-		@nameArray1 = split '\|', $names1->[$counter1];
-		
-		for ( my $counter2 = 0 ; $counter2 <= $#{$sequences2} ; $counter2++ ) {
-			@nameArray2 = split '\|', $names2->[$counter2];
-			if (    ( $sequences2->[$counter2] eq $sequences1->[$counter1] )
-				and ( $nameArray2[0] eq $nameArray1[0] ) ) {
-				$copy = 0;
-			}
-		}
-		
-		if ( $copy eq 1 ) {
-			$array2end                = $#{$sequences2} + 1;
-			$sequences2->[$array2end] = $sequences1->[$counter1];
-			$names2->[$array2end]     = $names1->[$counter1];
-			$selected2->[$array2end]   = $selected1->[$counter1];
-			if ( $date1->[$counter1] =~ /\d/ ) {
-				$date2->[$array2end] = $date1->[$counter1];
-			}
-			else {
-				$date2->[$array2end] = getDate( "D", "." );
-			}
-		}
-	}
 
 	return;
 }
