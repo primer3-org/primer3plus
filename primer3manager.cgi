@@ -44,7 +44,9 @@ use customPrimerOrder;
 
 my %parametersHTML;
 my %completeParameters;
-my %fileHash;
+my %cachedFileHash;
+my %rdmlFileHash;
+my %fastaFileHash;
 my %resultsHash;
 my $primerUnitsCounter;
 my $cookieID;
@@ -75,13 +77,22 @@ $parametersHTML{"SCRIPT_CACHE_CONTENT"} = $cacheContent;
 
 extractCompleteManagerHash(\%completeParameters, \%parametersHTML);
 
-# Load the cache file
+# Load the cache file if data come from P3P
 if (!((defined $parametersHTML{"SCRIPT_PRIMER_MANAGER"}) 
      and (($parametersHTML{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DISPLAYMODE" )
      or ($parametersHTML{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DELETEMODE" )))) {
     getCacheFile(\$uniqueID, \$cacheContent);
-    loadFile($cacheContent, \%fileHash, "1");
-    addToManagerHash(\%completeParameters, \%fileHash);
+    loadFile($cacheContent, \%cachedFileHash, "1");
+    addToManagerHash(\%completeParameters, \%cachedFileHash);
+} 
+# Load the provided files if data come from P3M
+else {
+#	$parametersHTML{"SCRIPT_SEQUENCE_FILE_CONTENT"};
+    if ((defined $parametersHTML{"SCRIPT_SETTINGS_FILE_CONTENT"}) 
+     and ($parametersHTML{"SCRIPT_SETTINGS_FILE_CONTENT"} ne "" )) {
+        loadFastaForManager(\%fastaFileHash, $parametersHTML{"SCRIPT_SETTINGS_FILE_CONTENT"});
+        addToManagerHash(\%completeParameters, \%fastaFileHash);
+    }
 }
 
 ## Save the final list in the cache file
@@ -97,7 +108,7 @@ if ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Save RDML File")
 elsif ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Export as Fasta")) {
     my $fileDate = getDate("Y","_");	
     print "Content-disposition: attachment; filename=Primers_$fileDate.fas\n\n";
-    print exportFasta(\%completeParameters);
+    print exportFastaForManager(\%completeParameters);
     writeStatistics("primer3manager");
 }
 elsif ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Order selected Primers")) {

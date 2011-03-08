@@ -4377,10 +4377,14 @@ function hideTabs() {
       $formHTML .= qq{     <tr>
        <td class="primer3plus_cell_no_border">&nbsp;&nbsp;<input id="PRIMER_PAIR_$counter\_SELECT" name="PRIMER_PAIR_$counter\_SELECT" value="1" };
 
-      if (defined $hash->{"PRIMER_PAIR_$counter\_SELECT"}) {
-          $formHTML .= ($hash->{"PRIMER_PAIR_$counter\_SELECT"} == 1) ? "checked=\"checked\" " : "";
+      if ($hash->{"PRIMER_PAIR_$counter\_SELECT"} == 1) {
+          if (!($hash->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DELETEMODE")) {
+              $formHTML .= "checked=\"checked\" ";          	
+          }
       } else {
-          $formHTML .= "";
+          if ($hash->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DELETEMODE") {
+              $formHTML .= "checked=\"checked\" ";          	
+          }
       }
 
       $formHTML .= qq{type="checkbox">&nbsp;&nbsp; Name: 
@@ -4478,12 +4482,12 @@ $formHTML .= qq{   </table>
        <col width="100%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border"><a id="SCRIPT_SEQUENCE_FILE_CONTENT_INPUT" name="SCRIPT_SEQUENCE_FILE_CONTENT_INPUT">To upload a RDML primer file from
+       <td class="primer3plus_cell_no_border"><a id="SCRIPT_SEQUENCE_FILE_INPUT" name="SCRIPT_SEQUENCE_FILE_INPUT">To upload a RDML primer file from
          your local computer, choose here:</a>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><input id="SCRIPT_SEQUENCE_FILE_CONTENT" name="SCRIPT_SEQUENCE_FILE_CONTENT" type="file">&nbsp;&nbsp;
+       <td class="primer3plus_cell_no_border"><input id="SCRIPT_SEQUENCE_FILE" name="SCRIPT_SEQUENCE_FILE" type="file">&nbsp;&nbsp;
 	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
        </td>
      </tr>
@@ -4492,12 +4496,12 @@ $formHTML .= qq{   </table>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><a id="SCRIPT_SETTINGS_FILE_CONTENT_INPUT" name="SCRIPT_SETTINGS_FILE_CONTENT_INPUT">To import a fasta primer file created by 
+       <td class="primer3plus_cell_no_border"><a id="SCRIPT_SETTINGS_FILE_INPUT" name="SCRIPT_SETTINGS_FILE_INPUT">To import a fasta primer file created by 
          Primer3Plus up to version 2.1 from your local computer, choose here:</a>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border"><input id="SCRIPT_SETTINGS_FILE_CONTENT" name="SCRIPT_SETTINGS_FILE_CONTENT" type="file">&nbsp;&nbsp;
+       <td class="primer3plus_cell_no_border"><input id="SCRIPT_SETTINGS_FILE" name="SCRIPT_SETTINGS_FILE" type="file">&nbsp;&nbsp;
 	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
        </td>
      </tr>

@@ -40,7 +40,7 @@ our ( @ISA, @EXPORT, @EXPORT_OK, $VERSION );
      &getSetCookie &getCookie &setCookie &getCacheFile &setCacheFile
      &loadManagerFile &loadFile &checkParameters &runPrimer3 &reverseSequence
      &getParametersForManager &loadServerSettFile &extractCompleteManagerHash &addToManagerHash &addToArray
-     &exportFasta &getDate &makeUniqueID &writeStatistics &readStatistics);
+     &exportFastaForManager &loadFastaForManager &getDate &makeUniqueID &writeStatistics &readStatistics);
 
 $VERSION = "1.00";
 
@@ -301,14 +301,13 @@ return $primerNumber;
 # extractCompleteManagerHash: extract the manager Hash out $comp of $add  #
 ###########################################################################
 sub extractCompleteManagerHash {
-	my ( $comp, $add, $swapSelect, $deleteSelected, $selectAll );
+	my ( $comp, $add, $deleteSelected, $selectAll );
 	$comp = shift;
 	$add  = shift;
 	
 	my (@hashKeys, @nameKeyComplete);
 	my ($hashKey,$primerType, $counter, $outCounter);
 	
-	$swapSelect = 0;
 	$deleteSelected = 0;
 	$selectAll = 0;
 	
@@ -343,12 +342,10 @@ sub extractCompleteManagerHash {
     if ((defined $add->{"Submit"}) 
          and ($add->{"Submit"} eq "Delete Mode")) {
         $comp->{"SCRIPT_PRIMER_MANAGER"} = "PRIMER3MANAGER_DELETEMODE";
-        $swapSelect = 1;
     }
     if ((defined $add->{"Submit"}) 
          and ($add->{"Submit"} eq "Order Mode")) {
         $comp->{"SCRIPT_PRIMER_MANAGER"} = "PRIMER3MANAGER_DISPLAYMODE";
-        $swapSelect = 1;
     }
     if ((defined $add->{"Submit"}) 
          and ($add->{"Submit"} eq "Delete selected Primers")) {
@@ -488,13 +485,15 @@ sub extractCompleteManagerHash {
         	if (!(($deleteSelected == 1) and ($add->{"PRIMER_PAIR_$counter\_SELECT"} == 1 ))) {
         		$outCounter = getPrimerNumber();
 	        	if ($add->{"PRIMER_PAIR_$counter\_SELECT"} == 1 ) {
-	        		if ($swapSelect == 1){
+	        		if ((defined $add->{"SCRIPT_PRIMER_MANAGER"}) 
+                         and ($add->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DELETEMODE")){
 	        		    $comp->{"PRIMER_PAIR_$outCounter\_SELECT"} = 0;
 	        		} else {
 	        			$comp->{"PRIMER_PAIR_$outCounter\_SELECT"} = 1;
 	        		}
 	        	} else {
-	        		if ($swapSelect == 1){
+	        		if ((defined $add->{"SCRIPT_PRIMER_MANAGER"}) 
+                         and ($add->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DELETEMODE")){
 	        		    $comp->{"PRIMER_PAIR_$outCounter\_SELECT"} = 1;
 	        		} else {
 	        			$comp->{"PRIMER_PAIR_$outCounter\_SELECT"} = 0;
@@ -666,9 +665,9 @@ sub createFile {
 }
 
 ##########################################################
-# exportFasta: Write Primers in Fasta format in a string #
+# exportFastaForManager: Write Primers in Fasta format in a string #
 ##########################################################
-sub exportFasta {
+sub exportFastaForManager {
     my ($hash, $counter, $name, $fullName, $selected) ; 
     $hash = shift;
 
@@ -678,17 +677,9 @@ sub exportFasta {
 
     for($counter = 0; $counter <= $hash->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
         if ($hash->{"PRIMER_PAIR_$counter\_SELECT"} == 1) {
-        	if ($hash->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DELETEMODE") {
-        	    $selected = "     |O|";
-            } else {
-        	    $selected = "     |X|";
-            }
+        	$selected = "     |X|";
         } else {
-        	if ($hash->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DELETEMODE") {
-        	    $selected = "     |X|";
-            } else {
-        	    $selected = "     |O|";
-            }
+        	$selected = "     |O|";
         }
         $selected .= $hash->{"PRIMER_PAIR_$counter\_DATE"};
         $selected .= "\r\n";
@@ -727,57 +718,51 @@ sub exportFasta {
 }
 
 ################################################################
-# loadManagerFile: Write Primers in Fasta format in a string #
+# loadFastaForManager: Write Primers in Fasta format in a string #
 ################################################################
-sub loadManagerFile {
-	my ( $fileString, $sequences, $names, $selected, $date );
+sub loadFastaForManager {
+	my ( $hash, $fileString);
+	$hash       = shift;
 	$fileString = shift;
-	$sequences  = shift;
-	$names      = shift;
-	$selected    = shift;
-	$date       = shift;
 	my ( @fileContent, @nameLine );
-	my ( $select,      $arrayCounter );
-
-	if (!${$fileString}) {
-		return;
-	}
+	my ( $select, $primerCounter );
 
 	# solve the newline problem with other platforms
-	if (${$fileString} =~ /\r\n/ ) {
-		${$fileString} =~ s/\r\n/\n/g;
+	if ($fileString =~ /\r\n/ ) {
+		$fileString =~ s/\r\n/\n/g;
 	}
-	if (${$fileString} =~ /\r/ ) {
-		${$fileString} =~ s/\r/\n/g;
+	if ($fileString =~ /\r/ ) {
+		$fileString =~ s/\r/\n/g;
 	}
 
-	@fileContent = split '\n', ${$fileString};
+	@fileContent = split '\n', $fileString;
 
-	$arrayCounter = 0;
-	for ( my $counter = 0 ; $counter <= $#fileContent ; $counter++ ) {
-		if ( $fileContent[$counter] =~ /^>/ ) {
-			$fileContent[$counter] =~ s/^>//;
-			$fileContent[$counter] =~ s/^\s +//;
+	$primerCounter = 0;
+	for ( my $lineCounter = 0 ; $lineCounter <= $#fileContent ; $lineCounter++ ) {
+		if ( $fileContent[$lineCounter] =~ /^>/ ) {
+			$fileContent[$lineCounter] =~ s/^>//;
+			$fileContent[$lineCounter] =~ s/^\s +//;
 
-			@nameLine = split '\|', $fileContent[$counter];
+			@nameLine = split '\|', $fileContent[$lineCounter];
 			$nameLine[0] =~ s/\s+$//;
-			$names->[$arrayCounter] = $nameLine[0];
+			$hash->{"PRIMER_PAIR_$primerCounter\_NAME"} = $nameLine[0];
 
-			$selected->[$arrayCounter] = 0;
 			if (defined $nameLine[1]) {
 				if ( $nameLine[1] eq "X" ) {
-					$selected->[$arrayCounter] = 1;
+					$hash->{"PRIMER_PAIR_$primerCounter\_SELECT"} = 1;
 				}
+			} else {
+					$hash->{"PRIMER_PAIR_$primerCounter\_SELECT"} = 0;
 			}
 
 			if (defined $nameLine[2]) {
-			$date->[$arrayCounter] = $nameLine[2];
+				$hash->{"PRIMER_PAIR_$primerCounter\_DATE"} = $nameLine[2];
 			}
 			
-			$counter++;
-			$sequences->[$arrayCounter] = $fileContent[$counter];
+			$lineCounter++;
+			$hash->{"PRIMER_LEFT_$primerCounter\_SEQUENCE"} = $fileContent[$lineCounter];
 
-			$arrayCounter++;
+			$primerCounter++;
 		}
 	}
 
