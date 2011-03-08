@@ -307,24 +307,44 @@ sub extractCompleteManagerHash {
 	
 	my (@hashKeys, @nameKeyComplete);
 	my ($hashKey,$primerType, $counter, $outCounter);
+	my %defHash;
+	
+	%defHash = getDefaultSettings();
 	
 	$deleteSelected = 0;
 	$selectAll = 0;
 	
 	# First copy over basic information: 
-    $comp->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = $add->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"};
-    $comp->{"P3P_PRIMER_NAME_ACRONYM_LEFT"}     = $add->{"P3P_PRIMER_NAME_ACRONYM_LEFT"};
-    $comp->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"} = $add->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"};
-    $comp->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"}    = $add->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
-    $comp->{"P3P_PRIMER_NAME_ACRONYM_SPACER"}   = $add->{"P3P_PRIMER_NAME_ACRONYM_SPACER"};
+    if ((defined $add->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"}) 
+         and ($add->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} ne "")) {
+        $comp->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = $add->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"}; 
+    } 
+    if ((defined $add->{"P3P_PRIMER_NAME_ACRONYM_LEFT"}) 
+         and ($add->{"P3P_PRIMER_NAME_ACRONYM_LEFT"} ne "")) {
+        $comp->{"P3P_PRIMER_NAME_ACRONYM_LEFT"} = $add->{"P3P_PRIMER_NAME_ACRONYM_LEFT"}; 
+    } else {
+        $comp->{"P3P_PRIMER_NAME_ACRONYM_LEFT"} = $defHash{"P3P_PRIMER_NAME_ACRONYM_LEFT"};
+    }
+    if ((defined $add->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"}) 
+         and ($add->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"} ne "")) {
+        $comp->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"} = $add->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"}; 
+    } else {
+        $comp->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"} = $defHash{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"};
+    }
+    if ((defined $add->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"}) 
+         and ($add->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"} ne "")) {
+        $comp->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"} = $add->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"}; 
+    } else {
+        $comp->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"} = $defHash{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
+    }
+    if ((defined $add->{"P3P_PRIMER_NAME_ACRONYM_SPACER"}) 
+         and ($add->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} ne "")) {
+        $comp->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} = $add->{"P3P_PRIMER_NAME_ACRONYM_SPACER"}; 
+    } else {
+        $comp->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} = $defHash{"P3P_PRIMER_NAME_ACRONYM_SPACER"};
+    }
     
     # Then set the RDML Values if they are not defined:
-    if ((defined $add->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL2"}) 
-         and ($add->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL2"} ne "")) {
-        $comp->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL2"} = $add->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL2"}; 
-    } else {
-        $comp->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL2"} = "IN2";
-    }
     if ((defined $add->{"P3P_RDML_VERSION"}) 
          and ($add->{"P3P_RDML_VERSION"} ne "")) {
         $comp->{"P3P_RDML_VERSION"} = $add->{"P3P_RDML_VERSION"}; 
@@ -410,8 +430,6 @@ sub extractCompleteManagerHash {
                     } else {
                         $comp->{"PRIMER_RIGHT_$outCounter\_SEQUENCE"} = "";
                     }
-                    
-                    $comp->{"PRIMER_INTERNAL2_$outCounter\_SEQUENCE"} = "";
                 
                 }
             }
@@ -434,7 +452,6 @@ sub extractCompleteManagerHash {
                         $comp->{"PRIMER_PAIR_$outCounter\_SELECT"} = 1;
                         $comp->{"PRIMER_PAIR_$outCounter\_AMPLICON"} = "";
                         $comp->{"PRIMER_PAIR_$outCounter\_DATE"} = getDate( "D", "." );
-                        $comp->{"PRIMER_INTERNAL2_$outCounter\_SEQUENCE"} = "";
                     
                         # Now the name has to be moved to pair
                         if ((defined $add->{"PRIMER_$primerType\_$counter\_NAME"}) 
@@ -487,7 +504,6 @@ sub extractCompleteManagerHash {
         		        and ($add->{"PRIMER_PAIR_$counter\_AMPLICON"} eq "") 
         		        and ($add->{"PRIMER_LEFT_$counter\_SEQUENCE"} eq "") 
         		        and ($add->{"PRIMER_INTERNAL_$counter\_SEQUENCE"} eq "") 
-        		        and ($add->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"} eq "") 
         		        and ($add->{"PRIMER_RIGHT_$counter\_SEQUENCE"} eq ""))) {
         		        	
         		$outCounter = getPrimerNumber();
@@ -511,7 +527,6 @@ sub extractCompleteManagerHash {
 	            $comp->{"PRIMER_PAIR_$outCounter\_AMPLICON"} = $add->{"PRIMER_PAIR_$counter\_AMPLICON"}; 
 	            $comp->{"PRIMER_LEFT_$outCounter\_SEQUENCE"} = $add->{"PRIMER_LEFT_$counter\_SEQUENCE"}; 
 	            $comp->{"PRIMER_INTERNAL_$outCounter\_SEQUENCE"} = $add->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}; 
-	            $comp->{"PRIMER_INTERNAL2_$outCounter\_SEQUENCE"} = $add->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"}; 
 	            $comp->{"PRIMER_RIGHT_$outCounter\_SEQUENCE"} = $add->{"PRIMER_RIGHT_$counter\_SEQUENCE"}; 
 	            $comp->{"PRIMER_PAIR_NUM_RETURNED"} = $outCounter;
         	}
@@ -555,7 +570,6 @@ sub addToManagerHash {
         $comp->{"PRIMER_LEFT_$outCounter\_SEQUENCE"} = $add->{"PRIMER_LEFT_$counter\_SEQUENCE"};
         $comp->{"PRIMER_RIGHT_$outCounter\_SEQUENCE"} = $add->{"PRIMER_RIGHT_$counter\_SEQUENCE"};
         $comp->{"PRIMER_INTERNAL_$outCounter\_SEQUENCE"} = $add->{"PRIMER_INTERNAL_$counter\_SEQUENCE"};
-        $comp->{"PRIMER_INTERNAL2_$outCounter\_SEQUENCE"} = $add->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"};
         $comp->{"PRIMER_PAIR_NUM_RETURNED"} = $outCounter;
     }
 
@@ -709,12 +723,6 @@ sub exportFastaForManager {
             $fullName = $name . $hash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} . $hash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"} . $selected;
             $returnString .= $fullName;
             $returnString .= $hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"};
-            $returnString .= "\r\n\r\n";
-        }
-        if ($hash->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"} ne "") {
-            $fullName = $name . $hash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} . $hash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL2"} . $selected;
-            $returnString .= $fullName;
-            $returnString .= $hash->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"};
             $returnString .= "\r\n\r\n";
         }
        

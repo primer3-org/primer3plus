@@ -73,13 +73,7 @@ for($counter = 0; $counter <= $hash->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
            $fullName = $name . $hash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} . $hash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"};
            $formHTML .= qq{$fullName $hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}};
            $formHTML .= "\n";
-       }
-       if ($hash->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"} ne "") {
-           $fullName = $name . $hash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} . $hash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL2"};
-           $formHTML .= qq{$fullName $hash->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"}};
-           $formHTML .= "\n";
-       }
-       
+       }       
    }
 };
 

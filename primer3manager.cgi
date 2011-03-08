@@ -33,7 +33,6 @@
 # After the realignment each pair will have a PRIMER_PAIR_4_NAME, 
 # a PRIMER_PAIR_4_SELECT, a PRIMER_PAIR_4_AMPLICON, a PRIMER_PAIR_4_DATE and
 # PRIMER_LEFT_4_SEQUENCE, PRIMER_INTERNAL_4_SEQUENCE, a PRIMER_RIGHT_4_SEQUENCE.
-# A PRIMER_INTERNAL2_4_SEQUENCE is introduced for RDML compartibility.
 # They will contain information or empty strings "".
 
 use strict;

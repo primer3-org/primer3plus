@@ -4407,8 +4407,8 @@ function hideTabs() {
      <tr>
        <td class="primer3plus_cell_no_border">Internal:</td>
        <td class="primer3plus_cell_no_border"><input id="PRIMER_INTERNAL_$counter\_SEQUENCE" name="PRIMER_INTERNAL_$counter\_SEQUENCE" value="$hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}" size="40"></td>
-       <td class="primer3plus_cell_no_border">Internal2:</td>
-       <td class="primer3plus_cell_no_border"><input id="PRIMER_INTERNAL2_$counter\_SEQUENCE" name="PRIMER_INTERNAL2_$counter\_SEQUENCE" value="$hash->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"}" size="40"></td>
+       <td class="primer3plus_cell_no_border"></td>
+       <td class="primer3plus_cell_no_border"></td>
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border">Amplicon: </td>
@@ -4553,10 +4553,9 @@ $formHTML .= qq{   </table>
 
         $formHTML .= qq{         </select>
        </td>
-       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_INTERNAL2_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_INTERNAL">
-       Internal Oligo 2 Acronym:</a>
+       <td class="primer3plus_cell_no_border">
        </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_INTERNAL2" value="$hash->{P3P_PRIMER_NAME_ACRONYM_INTERNAL2}" type="text">
+       <td class="primer3plus_cell_no_border">
        </td>
      </tr>
      <tr>
