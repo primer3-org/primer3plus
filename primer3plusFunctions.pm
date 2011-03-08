@@ -482,7 +482,14 @@ sub extractCompleteManagerHash {
         # Now extract all information:
         for($counter = 0; $counter <= $add->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
             # Only add the selected Primers
-        	if (!(($deleteSelected == 1) and ($add->{"PRIMER_PAIR_$counter\_SELECT"} == 1 ))) {
+        	if (!(($deleteSelected == 1) and ($add->{"PRIMER_PAIR_$counter\_SELECT"} == 1 ))
+        		and !(      ($add->{"PRIMER_PAIR_$counter\_NAME"} eq "") 
+        		        and ($add->{"PRIMER_PAIR_$counter\_AMPLICON"} eq "") 
+        		        and ($add->{"PRIMER_LEFT_$counter\_SEQUENCE"} eq "") 
+        		        and ($add->{"PRIMER_INTERNAL_$counter\_SEQUENCE"} eq "") 
+        		        and ($add->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"} eq "") 
+        		        and ($add->{"PRIMER_RIGHT_$counter\_SEQUENCE"} eq ""))) {
+        		        	
         		$outCounter = getPrimerNumber();
 	        	if ($add->{"PRIMER_PAIR_$counter\_SELECT"} == 1 ) {
 	        		if ((defined $add->{"SCRIPT_PRIMER_MANAGER"}) 
