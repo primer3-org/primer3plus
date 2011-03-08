@@ -40,7 +40,7 @@ our ( @ISA, @EXPORT, @EXPORT_OK, $VERSION );
      &createManagerFile &getSetCookie &getCookie &setCookie &getCacheFile &setCacheFile
      &loadManagerFile &loadFile &checkParameters &runPrimer3 &reverseSequence
      &getParametersForManager &loadServerSettFile &extractCompleteManagerHash &addToManagerHash &addToArray
-     &getDate &makeUniqueID &writeStatistics &readStatistics);
+     &exportFasta &getDate &makeUniqueID &writeStatistics &readStatistics);
 
 $VERSION = "1.00";
 
@@ -476,6 +476,12 @@ sub extractCompleteManagerHash {
          and (($add->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DISPLAYMODE" )
          or ($add->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DELETEMODE" ))) {
 
+        # If no primers need to be added, we finsish here
+        if ((defined $add->{"Submit"}) 
+             and ($add->{"Submit"} eq "Delete all Primers")) {
+            return;
+        }
+        
         # Now extract all information:
         for($counter = 0; $counter <= $add->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
             # Only add the selected Primers
@@ -520,15 +526,21 @@ sub addToManagerHash {
 	$comp = shift;
 	$add  = shift;
 	
-	my (@hashKeys, @nameKeyComplete);
+	my (@hashKeys, @nameKeyComplete, @counterKey, @sortCounterKey);
 	my ($hashKey,$primerType, $counter, $outCounter);
 
     @hashKeys = keys(%{$add});
     foreach $hashKey (@hashKeys) {
-    if ($hashKey =~ /_NAME$/) {
-        @nameKeyComplete = split "_", $hashKey;
-        $primerType = $nameKeyComplete[1];
-        $counter = $nameKeyComplete[2];
+        if ($hashKey =~ /_NAME$/) {
+            @nameKeyComplete = split "_", $hashKey;
+            $counter = $nameKeyComplete[2];
+			push(@counterKey,$counter);
+        }
+    }
+
+    @sortCounterKey = sort(@counterKey);
+            	
+    foreach $counter (@sortCounterKey) {        	
         $outCounter = getPrimerNumber();
         $comp->{"PRIMER_PAIR_$outCounter\_SELECT"} = $add->{"PRIMER_PAIR_$counter\_SELECT"};
         $comp->{"PRIMER_PAIR_$outCounter\_AMPLICON"} = $add->{"PRIMER_PAIR_$counter\_AMPLICON"};
@@ -539,8 +551,7 @@ sub addToManagerHash {
         $comp->{"PRIMER_INTERNAL_$outCounter\_SEQUENCE"} = $add->{"PRIMER_INTERNAL_$counter\_SEQUENCE"};
         $comp->{"PRIMER_INTERNAL2_$outCounter\_SEQUENCE"} = $add->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"};
         $comp->{"PRIMER_PAIR_NUM_RETURNED"} = $outCounter;
-        } # Now extract the primer pairs and add the missing information
-    } # Work on information from Primer3Plus
+    }
 
 	return;
 }
@@ -652,6 +663,59 @@ sub createFile {
 	$returnString .= "\r\n";
 
 	return $returnString;
+}
+
+##########################################################
+# exportFasta: Write Primers in Fasta format in a string #
+##########################################################
+sub exportFasta {
+    my ($hash, $counter, $name, $fullName, $selected) ; 
+    $hash = shift;
+
+    my $returnString;
+    
+    $returnString = "";
+
+    for($counter = 0; $counter <= $hash->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
+        if ($hash->{"PRIMER_PAIR_$counter\_SELECT"} == 1 ) {
+        	$selected = "     |X|";
+        } else {
+        	$selected = "     |O|";
+        }
+        $selected .= $hash->{"PRIMER_PAIR_$counter\_DATE"};
+        $selected .= "\r\n";
+        
+   	    $name = ">" . $hash->{"PRIMER_PAIR_$counter\_NAME"};
+
+        if ($hash->{"PRIMER_LEFT_$counter\_SEQUENCE"} ne "") {
+            $fullName = $name . $hash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} . $hash->{"P3P_PRIMER_NAME_ACRONYM_LEFT"} . $selected;
+            $returnString .= $fullName;
+            $returnString .= $hash->{"PRIMER_LEFT_$counter\_SEQUENCE"};
+            $returnString .= "\r\n\r\n";
+        }
+        if ($hash->{"PRIMER_RIGHT_$counter\_SEQUENCE"} ne "") {
+            $fullName = $name . $hash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} . $hash->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"} . $selected;
+            $returnString .= $fullName;
+            $returnString .= $hash->{"PRIMER_RIGHT_$counter\_SEQUENCE"};
+            $returnString .= "\r\n\r\n";
+        }
+        if ($hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"} ne "") {
+            $fullName = $name . $hash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} . $hash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"} . $selected;
+            $returnString .= $fullName;
+            $returnString .= $hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"};
+            $returnString .= "\r\n\r\n";
+        }
+        if ($hash->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"} ne "") {
+            $fullName = $name . $hash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} . $hash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL2"} . $selected;
+            $returnString .= $fullName;
+            $returnString .= $hash->{"PRIMER_INTERNAL2_$counter\_SEQUENCE"};
+            $returnString .= "\r\n\r\n";
+        }
+       
+    }
+
+  return $returnString;
+
 }
 
 ################################################################

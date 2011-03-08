@@ -4358,7 +4358,8 @@ function hideTabs() {
      	 $formHTML .= qq{   <input name="Submit" value="Delete selected Primers" type="submit" style="background: #FF8040;">&nbsp;
    <input name="Submit" value="Refresh" type="submit">&nbsp;
    <input value="Reset Form" type="reset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   <input name="Submit" value="Order Mode" type="submit">};
+   <input name="Submit" value="Order Mode" type="submit">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   <input name="Submit" value="Delete all Primers" type="submit" style="background: #FF8040;">};
      }
      $formHTML .= qq{
    <br>
@@ -4462,7 +4463,8 @@ $formHTML .= qq{   </table>
      	 $formHTML .= qq{   <input name="Submit" value="Delete selected Primers" type="submit" style="background: #FF8040;">&nbsp;
    <input name="Submit" value="Refresh" type="submit">&nbsp;
    <input value="Reset Form" type="reset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   <input name="Submit" value="Order Mode" type="submit">};
+   <input name="Submit" value="Order Mode" type="submit">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+   <input name="Submit" value="Delete all Primers" type="submit" style="background: #FF8040;">};
      }
      $formHTML .= qq{
    <br>

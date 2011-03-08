@@ -90,8 +90,14 @@ setCacheFile(\$uniqueID, \$saveFile);
 
 if ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Save RDML File")) {
     my $fileDate = getDate("Y","_");	
-    print "Content-disposition: attachment; filename=Primers_$fileDate.fas\n\n";
+    print "Content-disposition: attachment; filename=Primers_$fileDate.rdml\n\n";
     print $saveFile;
+    writeStatistics("primer3manager");
+}
+elsif ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Export as Fasta")) {
+    my $fileDate = getDate("Y","_");	
+    print "Content-disposition: attachment; filename=Primers_$fileDate.fas\n\n";
+    print exportFasta(\%completeParameters);
     writeStatistics("primer3manager");
 }
 elsif ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Order selected Primers")) {
