@@ -67,13 +67,13 @@ else {
     $uniqueID = makeUniqueID();
 }
 
-#TODO: remove
-$parametersHTML{"SCRIPT_OLD_COOKIE"} = $cookieID;
-$parametersHTML{"SCRIPT_NEW_COOKIE"} = $uniqueID;
-$parametersHTML{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = 1;
-$parametersHTML{"SCRIPT_CACHE_CONTENT"} = $cacheContent;
+# Handy for testing:
+# $parametersHTML{"SCRIPT_OLD_COOKIE"} = $cookieID;
+# $parametersHTML{"SCRIPT_NEW_COOKIE"} = $uniqueID;
+ $parametersHTML{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = 1;
 
-
+# Extract all useful parameters to the main hash
+# Here the main calculations happen:
 extractCompleteManagerHash(\%completeParameters, \%parametersHTML);
 
 # Load the cache file if data come from P3P
@@ -86,11 +86,15 @@ if (!((defined $parametersHTML{"SCRIPT_PRIMER_MANAGER"})
 } 
 # Load the provided files if data come from P3M
 else {
-#	$parametersHTML{"SCRIPT_SEQUENCE_FILE_CONTENT"};
     if ((defined $parametersHTML{"SCRIPT_SETTINGS_FILE_CONTENT"}) 
      and ($parametersHTML{"SCRIPT_SETTINGS_FILE_CONTENT"} ne "" )) {
         loadFastaForManager(\%fastaFileHash, $parametersHTML{"SCRIPT_SETTINGS_FILE_CONTENT"});
         addToManagerHash(\%completeParameters, \%fastaFileHash);
+    }
+    if ((defined $parametersHTML{"SCRIPT_SEQUENCE_FILE_CONTENT"}) 
+     and ($parametersHTML{"SCRIPT_SEQUENCE_FILE_CONTENT"} ne "" )) {
+        readRDMLForManager(\%rdmlFileHash, $parametersHTML{"SCRIPT_SEQUENCE_FILE_CONTENT"});
+        addToManagerHash(\%completeParameters, \%rdmlFileHash);
     }
 }
 
@@ -101,7 +105,7 @@ setCacheFile(\$uniqueID, \$saveFile);
 if ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Save RDML File")) {
     my $fileDate = getDate("Y","_");	
     print "Content-disposition: attachment; filename=Primers_$fileDate.rdml\n\n";
-    print $saveFile;
+    print saveRDMLForManager(\%completeParameters); #$saveFile;
     writeStatistics("primer3manager");
 }
 elsif ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Export as Fasta")) {

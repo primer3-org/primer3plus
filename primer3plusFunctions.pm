@@ -40,7 +40,8 @@ our ( @ISA, @EXPORT, @EXPORT_OK, $VERSION );
      &getSetCookie &getCookie &setCookie &getCacheFile &setCacheFile
      &loadManagerFile &loadFile &checkParameters &runPrimer3 &reverseSequence
      &loadServerSettFile &extractCompleteManagerHash &addToManagerHash
-     &exportFastaForManager &loadFastaForManager &getDate &makeUniqueID &writeStatistics &readStatistics);
+     &exportFastaForManager &loadFastaForManager &saveRDMLForManager &readRDMLForManager
+     &getDate &makeUniqueID &writeStatistics &readStatistics);
 
 $VERSION = "1.00";
 
@@ -576,9 +577,9 @@ sub createFile {
 	return $returnString;
 }
 
-##########################################################
+####################################################################
 # exportFastaForManager: Write Primers in Fasta format in a string #
-##########################################################
+####################################################################
 sub exportFastaForManager {
     my ($hash, $counter, $name, $fullName, $selected) ; 
     $hash = shift;
@@ -623,9 +624,9 @@ sub exportFastaForManager {
 
 }
 
-################################################################
+##################################################################
 # loadFastaForManager: Write Primers in Fasta format in a string #
-################################################################
+##################################################################
 sub loadFastaForManager {
 	my ( $hash, $fileString);
 	$hash       = shift;
@@ -663,6 +664,8 @@ sub loadFastaForManager {
 
 			if (defined $nameLine[2]) {
 				$hash->{"PRIMER_PAIR_$primerCounter\_DATE"} = $nameLine[2];
+			} else {
+				$hash->{"PRIMER_PAIR_$primerCounter\_DATE"} = "";
 			}
 			
 			$lineCounter++;
@@ -674,6 +677,178 @@ sub loadFastaForManager {
 
 	return;
 }
+
+#############################################################################
+# saveRDMLForManager: Write Primers in uncompressed RDML format in a string #
+#############################################################################
+sub saveRDMLForManager {
+    my ($hash, $counter) ; 
+    $hash = shift;
+
+    my $returnString;
+    
+    $returnString = qq{<rdml version='1.0' xmlns:rdml='http://www.rdml.org' xmlns='http://www.rdml.org'>\n};
+
+    for($counter = 0; $counter <= $hash->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
+    	$returnString .= qq{<target id='};
+    	$returnString .= xmlIt($hash->{"PRIMER_PAIR_$counter\_NAME"});
+    	$returnString .= qq{'>\n};
+    	
+    	$returnString .= qq{<description>};
+    	$returnString .= "Primer3Plus result from ";
+    	$returnString .= xmlIt($hash->{"PRIMER_PAIR_$counter\_DATE"});
+        if ($hash->{"PRIMER_PAIR_$counter\_SELECT"} == 1) {
+        	$returnString .= " - display as selected";
+        }
+    	$returnString .= qq{</description>\n};
+
+    	$returnString .= qq{<type>toi</type>\n};
+
+    	$returnString .= qq{<sequences>\n};
+
+        if ($hash->{"PRIMER_LEFT_$counter\_SEQUENCE"} ne "") {
+            $returnString .= qq{<forwardPrimer>\n<sequence>};
+            $returnString .= xmlIt($hash->{"PRIMER_LEFT_$counter\_SEQUENCE"});
+            $returnString .= qq{</sequence>\n</forwardPrimer>\n};
+        }
+        if ($hash->{"PRIMER_RIGHT_$counter\_SEQUENCE"} ne "") {
+            $returnString .= qq{<reversePrimer>\n<sequence>};
+            $returnString .= xmlIt($hash->{"PRIMER_RIGHT_$counter\_SEQUENCE"});
+            $returnString .= qq{</sequence>\n</reversePrimer>\n};
+        }
+        if ($hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"} ne "") {
+            $returnString .= qq{<probe1>\n<sequence>};
+            $returnString .= xmlIt($hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"});
+            $returnString .= qq{</sequence>\n</probe1>\n};
+        }
+        if ($hash->{"PRIMER_PAIR_$counter\_AMPLICON"} ne "") {
+            $returnString .= qq{<amplicon>\n<sequence>};
+            $returnString .= xmlIt($hash->{"PRIMER_PAIR_$counter\_AMPLICON"});
+            $returnString .= qq{</sequence>\n</amplicon>\n};
+        }
+
+    	$returnString .= qq{</sequences>\n};
+
+        $returnString .= qq{</target>\n};
+    }
+    $returnString .= qq{</rdml>\n};
+
+  return $returnString;
+
+}
+
+############################################################################
+# readRDMLForManager: Read Primers in uncompressed RDML format in a string #
+############################################################################
+sub readRDMLForManager {
+    my ($hash, $string, $counter) ; 
+    $hash = shift;
+    $string = shift;
+
+    my @targets;
+
+    # Check if the file is an RDML file and contains at least one target
+    if (!($string =~ /rdml version/)) {
+    	return;
+    }
+    if (!($string =~ /<\/target>/)) {
+    	return;
+    }
+    
+    # Now we only have to deal with ':
+    $string =~ s/"/'/g;
+    
+    # Split it in several probes
+    @targets = split '</target>', $string;
+    
+    # Extract the information for each probe
+    for($counter = 0; $counter < $#targets; $counter++) {
+    	
+        if ($targets[$counter] =~ /<target id='(.+)?'>/) {
+        	$hash->{"PRIMER_PAIR_$counter\_NAME"} = deXmlIt($1);
+        }else {
+        	$hash->{"PRIMER_PAIR_$counter\_NAME"} = "";
+        }
+        
+        if ($targets[$counter] =~ /- display as selected<\/description>/) {
+        	$hash->{"PRIMER_PAIR_$counter\_SELECT"} = 1;
+        } else {
+        	$hash->{"PRIMER_PAIR_$counter\_SELECT"} = 0;
+        }
+        
+        if ($targets[$counter] =~ /<description>Primer3Plus result from ([0-9\.]+)?/) {
+        	$hash->{"PRIMER_PAIR_$counter\_DATE"} = deXmlIt($1);
+        } else {
+        	$hash->{"PRIMER_PAIR_$counter\_DATE"} = "";
+        }
+        
+        if ($targets[$counter] =~ /<forwardPrimer>\s+<sequence>(.+)?<\/sequence>\s+<\/forwardPrimer>/) {
+        	$hash->{"PRIMER_LEFT_$counter\_SEQUENCE"} = deXmlIt($1);
+        }else {
+        	$hash->{"PRIMER_LEFT_$counter\_SEQUENCE"} = "";
+        }
+    	
+        if ($targets[$counter] =~ /<reversePrimer>\s+<sequence>(.+)?<\/sequence>\s+<\/reversePrimer>/) {
+        	$hash->{"PRIMER_RIGHT_$counter\_SEQUENCE"} = deXmlIt($1);
+        }else {
+        	$hash->{"PRIMER_RIGHT_$counter\_SEQUENCE"} = "";
+        }
+    	
+        if ($targets[$counter] =~ /<probe1>\s+<sequence>(.+)?<\/sequence>\s+<\/probe1>/) {
+        	$hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"} = deXmlIt($1);
+        }else {
+        	$hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"} = "";
+        }
+    	
+        if ($targets[$counter] =~ /<amplicon>\s+<sequence>(.+)?<\/sequence>\s+<\/amplicon>/) {
+        	$hash->{"PRIMER_PAIR_$counter\_AMPLICON"} = deXmlIt($1);
+        }else {
+        	$hash->{"PRIMER_PAIR_$counter\_AMPLICON"} = "";
+        }
+    	
+    }
+
+  return;
+
+}
+
+sub xmlIt {
+    my $string ; 
+    $string = shift;
+
+    my $returnString;
+    
+    $returnString = $string;
+    
+    $returnString =~ s/&/&amp;/g;
+    $returnString =~ s/>/&gt;/g;
+    $returnString =~ s/</&lt;/g;
+    $returnString =~ s/'/&apos;/g;
+    $returnString =~ s/"/&quot;/g;
+
+    return $returnString;
+
+}
+
+
+sub deXmlIt {
+    my $string ; 
+    $string = shift;
+
+    my $returnString;
+    
+    $returnString = $string;
+    
+    $returnString =~ s/&gt;/>/g;
+    $returnString =~ s/&lt;/</g;
+    $returnString =~ s/&apos;/'/g;
+    $returnString =~ s/&quot;/"/g;
+    $returnString =~ s/&amp;/&/g;
+
+    return $returnString;
+
+}
+
 
 #######################################################
 # loadFile: Loads a Primer3Plus-File back in the hash #

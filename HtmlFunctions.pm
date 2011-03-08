@@ -4482,6 +4482,21 @@ $formHTML .= qq{   </table>
        <col width="100%">
      </colgroup>
      <tr>
+       <td class="primer3plus_cell_no_border"><a id="SCRIPT_SAVE_FILE_INPUT" name="SCRIPT_SAVE_FILE_INPUT">To save a RDML file or
+         export as fasta on your local computer, choose here:</a>
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border">
+         <input name="Submit" value="Save RDML File" type="submit">&nbsp;&nbsp;
+         <input name="Submit" value="Export as Fasta" type="submit">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;
+       </td>
+     </tr>
+     <tr>
        <td class="primer3plus_cell_no_border"><a id="SCRIPT_SEQUENCE_FILE_INPUT" name="SCRIPT_SEQUENCE_FILE_INPUT">To upload a RDML primer file from
          your local computer, choose here:</a>
        </td>
@@ -4503,21 +4518,6 @@ $formHTML .= qq{   </table>
      <tr>
        <td class="primer3plus_cell_no_border"><input id="SCRIPT_SETTINGS_FILE" name="SCRIPT_SETTINGS_FILE" type="file">&nbsp;&nbsp;
 	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border"><a id="SCRIPT_SAVE_FILE_INPUT" name="SCRIPT_SAVE_FILE_INPUT">To save a RDML file or
-         export as fasta on your local computer, choose here:</a>
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border">
-         <input name="Submit" value="Save RDML File" type="submit">&nbsp;&nbsp;
-         <input name="Submit" value="Export as Fasta" type="submit">
        </td>
      </tr>
    </table>
