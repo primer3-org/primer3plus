@@ -37,7 +37,7 @@ use settings;
 our ( @ISA, @EXPORT, @EXPORT_OK, $VERSION );
 @ISA    = qw(Exporter);
 @EXPORT = qw(&getParametersHTML &constructCombinedHash &createFile
-     &createManagerFile &getSetCookie &getCookie &setCookie &getCacheFile &setCacheFile
+     &getSetCookie &getCookie &setCookie &getCacheFile &setCacheFile
      &loadManagerFile &loadFile &checkParameters &runPrimer3 &reverseSequence
      &getParametersForManager &loadServerSettFile &extractCompleteManagerHash &addToManagerHash &addToArray
      &exportFasta &getDate &makeUniqueID &writeStatistics &readStatistics);
@@ -677,10 +677,18 @@ sub exportFasta {
     $returnString = "";
 
     for($counter = 0; $counter <= $hash->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
-        if ($hash->{"PRIMER_PAIR_$counter\_SELECT"} == 1 ) {
-        	$selected = "     |X|";
+        if ($hash->{"PRIMER_PAIR_$counter\_SELECT"} == 1) {
+        	if ($hash->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DELETEMODE") {
+        	    $selected = "     |O|";
+            } else {
+        	    $selected = "     |X|";
+            }
         } else {
-        	$selected = "     |O|";
+        	if ($hash->{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DELETEMODE") {
+        	    $selected = "     |X|";
+            } else {
+        	    $selected = "     |O|";
+            }
         }
         $selected .= $hash->{"PRIMER_PAIR_$counter\_DATE"};
         $selected .= "\r\n";
@@ -716,36 +724,6 @@ sub exportFasta {
 
   return $returnString;
 
-}
-
-################################################################
-# createManagerFile: Write Primers in Fasta format in a string #
-################################################################
-sub createManagerFile {
-	my ( $sequences, $names, $selected, $date );
-	$sequences = shift;
-	$names     = shift;
-	$selected  = shift;
-	$date      = shift;
-	my $returnString = "";
-	my $select;
-
-	for ( my $counter = 0 ; $counter <= $#{$sequences} ; $counter++ ) {
-		$select = "O";
-		if (defined $selected->[$counter]) {
-			if ( $selected->[$counter] eq 1 ) {
-				$select = "X";
-			}
-		}
-		$returnString .=
-		  ">$names->[$counter]     |$select|$date->[$counter]\r\n";
-		$returnString .= "$sequences->[$counter]\r\n";
-		$returnString .= "\r\n";
-	}
-
-	$returnString .= "\r\n";
-
-	return $returnString;
 }
 
 ################################################################
