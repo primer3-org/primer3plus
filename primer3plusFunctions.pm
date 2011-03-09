@@ -720,13 +720,27 @@ sub saveRDMLForManager {
     my ($hash, $counter) ; 
     $hash = shift;
 
+    my %uniqueNames;
+    my ($name, $endName, $nameCount);
     my $returnString;
     
     $returnString = qq{<rdml version='1.0' xmlns:rdml='http://www.rdml.org' xmlns='http://www.rdml.org'>\n};
 
     for($counter = 0; $counter <= $hash->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
     	$returnString .= qq{<target id='};
-    	$returnString .= xmlIt($hash->{"PRIMER_PAIR_$counter\_NAME"});
+    	
+    	# RDML requires that an Id is unique
+    	$name = $hash->{"PRIMER_PAIR_$counter\_NAME"};
+    	$name =~ s/_DOUBLE_NAME_\d+$//g;
+    	$nameCount = 0;
+    	$endName = $name;
+    	while ((defined $uniqueNames{$endName}) and ($nameCount < 100)) {
+    		$nameCount++;
+    		$endName = $name . "_DOUBLE_NAME_" . $nameCount;
+    	} 
+    	$uniqueNames{$endName} = "1";
+    	
+    	$returnString .= xmlIt($endName);
     	$returnString .= qq{'>\n};
     	
     	$returnString .= qq{<description>};
