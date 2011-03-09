@@ -31,6 +31,7 @@ use FileHandle;
 use IPC::Open3;
 use Exporter;
 use File::Copy;
+use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 
 use settings;
 
@@ -40,7 +41,8 @@ our ( @ISA, @EXPORT, @EXPORT_OK, $VERSION );
      &getSetCookie &getCookie &setCookie &getCacheFile &setCacheFile
      &loadManagerFile &loadFile &checkParameters &runPrimer3 &reverseSequence
      &loadServerSettFile &extractCompleteManagerHash &addToManagerHash
-     &exportFastaForManager &loadFastaForManager &saveRDMLForManager &readRDMLForManager
+     &exportFastaForManager &loadFastaForManager &saveRDMLForManager 
+     &readRDMLForManager &zipAndCacheIt &unzipIt &printFile
      &getDate &makeUniqueID &writeStatistics &readStatistics);
 
 $VERSION = "1.00";
@@ -100,6 +102,7 @@ sub getParametersHTML {
 
 	return;
 }
+
 
 ################################################
 # Functions for loading and saving cookies :-) #
@@ -849,6 +852,89 @@ sub deXmlIt {
 
 }
 
+
+sub zipAndCacheIt {
+    my ($string, $uniqueID) ; 
+    $string = shift;
+    $uniqueID = shift;
+
+	my $zip = Archive::Zip->new();
+	
+    my $addFile = Archive::Zip::Member->newFromString( $string, "rdml_data.xml" ) 
+        or setMessage("Error adding content to the RDML-file.");
+        
+    $addFile->desiredCompressionMethod(COMPRESSION_DEFLATED);
+    $addFile->desiredCompressionLevel(COMPRESSION_LEVEL_BEST_COMPRESSION);
+    
+    $zip->addMember($addFile);
+    
+    my $status = $zip->writeToFileNamed(getMachineSetting("USER_CACHE_FILES_PATH"). $uniqueID . ".rdml");
+    if ($status != AZ_OK) {
+    	setMessage("Error writing RDML-file for caching.");
+    }
+
+    return;
+
+}
+
+# If $cachefile is 0 then $uniqueID specifies a name in cache, else it contains the file in a string;
+sub unzipIt {
+    my ($uniqueID, $cacheFile, $returnString, $status) ; 
+    $uniqueID = shift;
+    $cacheFile = shift;
+    
+    $returnString = "";
+
+	my $zip = Archive::Zip->new();
+	
+	if ($cacheFile eq "0") {
+	    $status = $zip->read(getMachineSetting("USER_CACHE_FILES_PATH"). $uniqueID . ".rdml");
+	} else {
+		my $fileName = getMachineSetting("USER_CACHE_FILES_PATH"). $uniqueID . "_UPLOAD.rdml";
+
+        ###### Create input file
+        my $openError = 0;
+        open( FILE, ">$fileName" ) or $openError = 1;
+        if ($openError == 0) {
+            print FILE $cacheFile;
+            print FILE "\0";
+            close(FILE);
+        } else {
+            setMessage("cannot write submitted RDML file");
+            return $returnString;
+        }
+
+		$status = $zip->read($fileName);   #$cgi->param("SCRIPT_SEQUENCE_FILE"));
+	}
+	
+	if ($status != AZ_OK) {
+		setMessage("Error reading the RDML-file.");
+		return $returnString;
+	}
+    
+    $returnString = $zip->contents("rdml_data.xml");
+    
+    return $returnString;
+
+}
+
+
+sub printFile {
+	my $uniqueID; 
+    $uniqueID = shift;
+    
+    my $fileName = getMachineSetting("USER_CACHE_FILES_PATH"). $uniqueID . ".rdml";
+
+	if ( ( -r $fileName ) and ( -e $fileName ) ) {
+		open( TEMPLATEFILE, "<$fileName" );
+		binmode(TEMPLATEFILE);
+		while (<TEMPLATEFILE>) {
+			print $_;
+		}
+		close(TEMPLATEFILE);
+	}
+	
+}
 
 #######################################################
 # loadFile: Loads a Primer3Plus-File back in the hash #

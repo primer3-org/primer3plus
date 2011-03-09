@@ -52,6 +52,7 @@ my $cookieID;
 my $uniqueID;
 my $saveFile;
 my $cacheContent;
+my $rdmlFileContent;
 
 $primerUnitsCounter = 0;
 
@@ -93,7 +94,8 @@ else {
     }
     if ((defined $parametersHTML{"SCRIPT_SEQUENCE_FILE_CONTENT"}) 
      and ($parametersHTML{"SCRIPT_SEQUENCE_FILE_CONTENT"} ne "" )) {
-        readRDMLForManager(\%rdmlFileHash, $parametersHTML{"SCRIPT_SEQUENCE_FILE_CONTENT"});
+     	$rdmlFileContent = unzipIt($uniqueID, $parametersHTML{"SCRIPT_SEQUENCE_FILE_CONTENT"});
+        readRDMLForManager(\%rdmlFileHash, $rdmlFileContent);
         addToManagerHash(\%completeParameters, \%rdmlFileHash);
     }
 }
@@ -102,10 +104,13 @@ else {
 $saveFile = createFile(\%completeParameters, "A");
 setCacheFile(\$uniqueID, \$saveFile);
 
+zipAndCacheIt(saveRDMLForManager(\%completeParameters), $uniqueID);
+
+
 if ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Save RDML File")) {
     my $fileDate = getDate("Y","_");	
     print "Content-disposition: attachment; filename=Primers_$fileDate.rdml\n\n";
-    print saveRDMLForManager(\%completeParameters); #$saveFile;
+    print printFile($uniqueID);
     writeStatistics("primer3manager");
 }
 elsif ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Export as Fasta")) {

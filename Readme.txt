@@ -2,6 +2,8 @@ Primer3plus is a webinterface for the primer3 program.
 
 It requires the primer3, PERL and Apache.
 
+Perl requires the module archive-zip from Adam Kennedy
+
 It should run unaltered on windows and linux systems if you 
 checkout from subversion.
 If you run encounter problems, please check the newlines to 
