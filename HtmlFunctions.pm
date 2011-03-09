@@ -4280,7 +4280,10 @@ sub createManagerDisplayHTML {
   $hash = shift;
   $cgiInput = shift;
 
+  my ($cgiName, $blastLinkUse, $blastSeq, $blastName);
+  
   my $templateText = getWrapper();
+  my $blastLink = getMachineSetting("URL_BLAST");
 
   my $formHTML = qq{
 <SCRIPT language=JavaScript>
@@ -4386,6 +4389,11 @@ function hideTabs() {
               $formHTML .= "checked=\"checked\" ";          	
           }
       }
+      
+      #QUERY=&amp;
+      $blastLinkUse = $blastLink;
+      $blastSeq = blastSequences($hash, $counter);
+      $blastLinkUse =~ s/;QUERY=/;QUERY=$blastSeq/;
 
       $formHTML .= qq{type="checkbox">&nbsp;&nbsp; Name: 
        </td>
@@ -4396,7 +4404,7 @@ function hideTabs() {
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
          <a href="$machineSettings{URL_FORM_ACTION}?SEQUENCE_ID=$hash->{"PRIMER_PAIR_$counter\_NAME"}&SEQUENCE_PRIMER=$hash->{"PRIMER_LEFT_$counter\_SEQUENCE"}&SEQUENCE_INTERNAL_OLIGO=$hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}&SEQUENCE_PRIMER_REVCOMP=$hash->{"PRIMER_RIGHT_$counter\_SEQUENCE"}&SEQUENCE_TEMPLATE=$hash->{"PRIMER_PAIR_$counter\_AMPLICON"}">Check!</a>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-         BLAST!</td>
+         $blastLinkUse</td>
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border">Left:</td>
@@ -4421,19 +4429,6 @@ function hideTabs() {
 
   };
   
-  $formHTML .= qq{     
-};
-#my ($cgiName, $blastLinkUse);
-#my $blastLink = getMachineSetting("URL_BLAST");
-
-#for (my $counter=0 ; $counter <= $#sequences ; $counter++) {
-#$primerNumber = getPrimerNumber();
-#$cgiName = $names[$counter];
-#$cgiName =~ tr/ /+/;
-#QUERY=&amp;
-#$blastLinkUse = $blastLink;
-#$blastLinkUse =~ s/;QUERY=/;QUERY=$sequences[$counter]/;
-
 #$formHTML .= qq{     <tr>
 #       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;<input id="PRIMER_$primerNumber\_SELECT" name="PRIMER_$primerNumber\_SELECT" value="1" };
 
@@ -4599,6 +4594,37 @@ $formHTML .= qq{   </table>
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
   return $returnString;
+}
+
+sub blastSequences {
+    my ($hash, $counter);
+    $hash = shift;
+    $counter = shift;
+    
+    my ($fullName, $formHTML, $name);
+	
+    $name = "%3E" . $hash->{"PRIMER_PAIR_$counter\_NAME"};
+
+    if ($hash->{"PRIMER_LEFT_$counter\_SEQUENCE"} ne "") {
+        $fullName = $name . $hash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} . $hash->{"P3P_PRIMER_NAME_ACRONYM_LEFT"};
+        $formHTML .= qq{$fullName};
+        $formHTML .= "%0D%0A". qq{$hash->{"PRIMER_LEFT_$counter\_SEQUENCE"}};
+        $formHTML .= "%0D%0A";
+    }
+    if ($hash->{"PRIMER_RIGHT_$counter\_SEQUENCE"} ne "") {
+        $fullName = $name . $hash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} . $hash->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
+        $formHTML .= qq{$fullName};
+        $formHTML .= "%0D%0A". qq{$hash->{"PRIMER_RIGHT_$counter\_SEQUENCE"}};
+        $formHTML .= "%0D%0A";;
+    }
+    if ($hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"} ne "") {
+        $fullName = $name . $hash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} . $hash->{"P3P_PRIMER_NAME_ACRONYM_INTERNAL"};
+        $formHTML .= qq{$fullName};
+        $formHTML .= "%0D%0A" . qq{$hash->{"PRIMER_INTERNAL_$counter\_SEQUENCE"}};
+        $formHTML .= "%0D%0A";
+    }       
+
+	return $formHTML;
 }
 
 
