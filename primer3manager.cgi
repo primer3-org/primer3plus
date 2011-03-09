@@ -52,12 +52,11 @@ my $cookieID;
 my $uniqueID;
 my $saveFile;
 my $cacheContent;
-my $rdmlFileContent;
 
 $primerUnitsCounter = 0;
 
 # Get the HTML-Input and the default settings
-getParametersHTML(\%parametersHTML);
+getParametersManagerHTML(\%parametersHTML);
 
 # Get the ID which is used as filename from the cookie or make a new one
 $cookieID = getCookie();
@@ -71,7 +70,7 @@ else {
 # Handy for testing:
 # $parametersHTML{"SCRIPT_OLD_COOKIE"} = $cookieID;
 # $parametersHTML{"SCRIPT_NEW_COOKIE"} = $uniqueID;
- $parametersHTML{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = 1;
+# $parametersHTML{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = 1;
 
 # Extract all useful parameters to the main hash
 # Here the main calculations happen:
@@ -81,8 +80,8 @@ extractCompleteManagerHash(\%completeParameters, \%parametersHTML);
 if (!((defined $parametersHTML{"SCRIPT_PRIMER_MANAGER"}) 
      and (($parametersHTML{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DISPLAYMODE" )
      or ($parametersHTML{"SCRIPT_PRIMER_MANAGER"} eq "PRIMER3MANAGER_DELETEMODE" )))) {
-    getCacheFile(\$uniqueID, \$cacheContent);
-    loadFile($cacheContent, \%cachedFileHash, "1");
+    $cacheContent = unzipItCache($uniqueID);
+    readRDMLForManager(\%cachedFileHash, $cacheContent);
     addToManagerHash(\%completeParameters, \%cachedFileHash);
 } 
 # Load the provided files if data come from P3M
@@ -94,16 +93,12 @@ else {
     }
     if ((defined $parametersHTML{"SCRIPT_SEQUENCE_FILE_CONTENT"}) 
      and ($parametersHTML{"SCRIPT_SEQUENCE_FILE_CONTENT"} ne "" )) {
-     	$rdmlFileContent = unzipIt($uniqueID, $parametersHTML{"SCRIPT_SEQUENCE_FILE_CONTENT"});
-        readRDMLForManager(\%rdmlFileHash, $rdmlFileContent);
+        readRDMLForManager(\%rdmlFileHash, $parametersHTML{"SCRIPT_SEQUENCE_FILE_CONTENT"});
         addToManagerHash(\%completeParameters, \%rdmlFileHash);
     }
 }
 
 ## Save the final list in the cache file
-$saveFile = createFile(\%completeParameters, "A");
-setCacheFile(\$uniqueID, \$saveFile);
-
 zipAndCacheIt(saveRDMLForManager(\%completeParameters), $uniqueID);
 
 

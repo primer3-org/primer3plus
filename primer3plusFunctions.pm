@@ -42,10 +42,12 @@ our ( @ISA, @EXPORT, @EXPORT_OK, $VERSION );
      &loadManagerFile &loadFile &checkParameters &runPrimer3 &reverseSequence
      &loadServerSettFile &extractCompleteManagerHash &addToManagerHash
      &exportFastaForManager &loadFastaForManager &saveRDMLForManager 
-     &readRDMLForManager &zipAndCacheIt &unzipIt &printFile
+     &readRDMLForManager &zipAndCacheIt &unzipItCache &printFile &getParametersManagerHTML
      &getDate &makeUniqueID &writeStatistics &readStatistics);
 
 $VERSION = "1.00";
+
+$CGI::POST_MAX = 1024 * 5000;
 
 my $cgi = new CGI;
 
@@ -78,6 +80,81 @@ sub getParametersHTML {
 		my $data;
 		while ( read $seqFile, $data, 1024 ) {
 			$dataTarget->{"SCRIPT_SEQUENCE_FILE_CONTENT"} .= $data;
+		}
+	}
+
+	# Load the settings file in a string to read it later
+	if ( $settFile ne "" ) {
+		binmode $settFile;
+		my $data;
+		while ( read $settFile, $data, 1024 ) {
+			$dataTarget->{"SCRIPT_SETTINGS_FILE_CONTENT"} .= $data;
+		}
+	}
+
+	# The usual things to read from the HTML
+	foreach $name ( $cgi->param ) {
+		$value = $cgi->param($name);
+		$name  =~ tr/+/ /;
+		$name  =~ s/%([\da-f][\da-f])/chr( hex($1) )/egi;
+		$value =~ tr/+/ /;
+		$value =~ s/%([\da-f][\da-f])/chr( hex($1) )/egi;
+		$dataTarget->{$name} = $value;
+	}
+
+	return;
+}
+
+
+sub getParametersManagerHTML {
+	my $dataTarget;
+	$dataTarget = shift;
+	my @radioButtonsList;
+	my ( $name, $value, $seqFile, $settFile, $radioButtons, $radioKey );
+
+	$seqFile      = $cgi->param("SCRIPT_SEQUENCE_FILE");
+	$settFile     = $cgi->param("SCRIPT_SETTINGS_FILE");
+	$radioButtons = $cgi->param("SCRIPT_RADIO_BUTTONS_FIX");
+
+    # unselected radiobuttons dont appear - this is a workaround
+    # it loads a 0 to all radiobuttons and overwrites later
+    # the selected ones with 1 
+	if ( $radioButtons ne "" ) {
+		@radioButtonsList = split ',', $radioButtons;
+		foreach $radioKey (@radioButtonsList) {
+			$dataTarget->{$radioKey} = 0;
+		}
+	}
+	
+	# Load the sequence file in a string to read it later
+	if ( $seqFile ne "" ) {
+		my $status = 0;
+		my $filehandle = $cgi->upload('SCRIPT_SEQUENCE_FILE');
+		binmode $filehandle;
+		my $fileName = getMachineSetting("USER_CACHE_FILES_PATH"). makeUniqueID() . "_UPLOAD.rdml";
+		
+		open(TARGET,">$fileName") or $status = 1;
+		
+		if ($status == 1) {
+			setMessage("Error opening submitted RDML-file on disk: $!");
+		} else {
+			binmode TARGET;
+			my ($buffer);
+			while(read $filehandle,$buffer,1024){
+				print TARGET $buffer;
+			}
+			close TARGET;
+			
+			my $zip = Archive::Zip->new();
+			
+			$status = $zip->read($fileName);
+			
+			if ($status != AZ_OK) {
+				setMessage("Error reading the RDML-file.");
+			} else {
+				$dataTarget->{"SCRIPT_SEQUENCE_FILE_CONTENT"} = $zip->contents("rdml_data.xml"); 
+			}
+			unlink $fileName;
 		}
 	}
 
@@ -148,51 +225,6 @@ sub getCookie {
 	return $returnValue;
 }
 
-###########################################
-# Functions to load and save a cache-file #
-###########################################
-sub getCacheFile {
-	my ( $uniqueID, $cacheContent );
-	$uniqueID     = shift;
-	$cacheContent = shift;
-
-	my $fileName = getMachineSetting("USER_CACHE_FILES_PATH"). ${$uniqueID} . ".fas";
-	my $fileContent;
-
-	if ( ( -r $fileName ) and ( -e $fileName ) ) {
-		open( TEMPLATEFILE, "<$fileName" );
-		binmode(TEMPLATEFILE);
-		while (<TEMPLATEFILE>) {
-			$fileContent .= $_;
-		}
-		close(TEMPLATEFILE);
-	}
-
-	if ($fileContent && $fileContent =~ /\w/ ) {
-		${$cacheContent} = $fileContent;
-	}
-	else {
-		${$cacheContent} = -1;
-	}
-
-	return;
-}
-
-sub setCacheFile {
-	my ( $uniqueID, $cacheContent );
-	$uniqueID     = shift;
-	$cacheContent = shift;
-
-	my $fileName    = getMachineSetting("USER_CACHE_FILES_PATH"). ${$uniqueID} . ".fas";
-	my $fileContent = ${$cacheContent};
-
-	open( TEMPLATEFILE, ">$fileName" );
-	binmode(TEMPLATEFILE);
-	print TEMPLATEFILE $fileContent;
-	close(TEMPLATEFILE);
-
-	return;
-}
 
 ##################################################
 # 
@@ -877,35 +909,23 @@ sub zipAndCacheIt {
 
 }
 
-# If $cachefile is 0 then $uniqueID specifies a name in cache, else it contains the file in a string;
-sub unzipIt {
+sub unzipItCache {
     my ($uniqueID, $cacheFile, $returnString, $status) ; 
     $uniqueID = shift;
-    $cacheFile = shift;
+    
+    my $fileName;
     
     $returnString = "";
+    
+    $fileName = getMachineSetting("USER_CACHE_FILES_PATH"). $uniqueID . ".rdml";
+    
+    if (!(( -r $fileName ) and ( -e $fileName ))) {
+    	return $returnString;
+    }
 
 	my $zip = Archive::Zip->new();
 	
-	if ($cacheFile eq "0") {
-	    $status = $zip->read(getMachineSetting("USER_CACHE_FILES_PATH"). $uniqueID . ".rdml");
-	} else {
-		my $fileName = getMachineSetting("USER_CACHE_FILES_PATH"). $uniqueID . "_UPLOAD.rdml";
-
-        ###### Create input file
-        my $openError = 0;
-        open( FILE, ">$fileName" ) or $openError = 1;
-        if ($openError == 0) {
-            print FILE $cacheFile;
-            print FILE "\0";
-            close(FILE);
-        } else {
-            setMessage("cannot write submitted RDML file");
-            return $returnString;
-        }
-
-		$status = $zip->read($fileName);   #$cgi->param("SCRIPT_SEQUENCE_FILE"));
-	}
+	$status = $zip->read($fileName);
 	
 	if ($status != AZ_OK) {
 		setMessage("Error reading the RDML-file.");
