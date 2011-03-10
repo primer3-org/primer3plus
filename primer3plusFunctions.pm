@@ -67,7 +67,7 @@ sub getParametersHTML {
     # unselected radiobuttons dont appear - this is a workaround
     # it loads a 0 to all radiobuttons and overwrites later
     # the selected ones with 1 
-	if ( $radioButtons ne "" ) {
+	if ((defined $radioButtons) and ($radioButtons ne "" )) {
 		@radioButtonsList = split ',', $radioButtons;
 		foreach $radioKey (@radioButtonsList) {
 			$dataTarget->{$radioKey} = 0;
@@ -75,7 +75,7 @@ sub getParametersHTML {
 	}
 	
 	# Load the sequence file in a string to read it later
-	if ( $seqFile ne "" ) {
+	if ((defined $seqFile) and ($seqFile ne "" )) {
 		binmode $seqFile;
 		my $data;
 		while ( read $seqFile, $data, 1024 ) {
@@ -84,7 +84,7 @@ sub getParametersHTML {
 	}
 
 	# Load the settings file in a string to read it later
-	if ( $settFile ne "" ) {
+	if ((defined $settFile) and ($settFile ne "" )) {
 		binmode $settFile;
 		my $data;
 		while ( read $settFile, $data, 1024 ) {
@@ -119,7 +119,7 @@ sub getParametersManagerHTML {
     # unselected radiobuttons dont appear - this is a workaround
     # it loads a 0 to all radiobuttons and overwrites later
     # the selected ones with 1 
-	if ( $radioButtons ne "" ) {
+	if ((defined $radioButtons) and ($radioButtons ne "" )) {
 		@radioButtonsList = split ',', $radioButtons;
 		foreach $radioKey (@radioButtonsList) {
 			$dataTarget->{$radioKey} = 0;
@@ -127,7 +127,7 @@ sub getParametersManagerHTML {
 	}
 	
 	# Load the sequence file in a string to read it later
-	if ( $seqFile ne "" ) {
+	if ((defined $seqFile) and ($seqFile ne "" )) {
 		my $status = 0;
 		my $filehandle = $cgi->upload('SCRIPT_SEQUENCE_FILE');
 		binmode $filehandle;
@@ -159,7 +159,7 @@ sub getParametersManagerHTML {
 	}
 
 	# Load the settings file in a string to read it later
-	if ( $settFile ne "" ) {
+	if ((defined $settFile) and ($settFile ne "" )) {
 		binmode $settFile;
 		my $data;
 		while ( read $settFile, $data, 1024 ) {
@@ -208,6 +208,10 @@ sub getCookie {
 	$oldValue = $cgi->cookie( -name => 'Primer3Manager' );
 	$returnValue = "";
 	
+	if (!(defined $oldValue)) {
+		return $returnValue;
+	}
+	
 	# Just to be sure there is no crap in the cookie (like commands)
 	$oldValue =~ s/ //g;
 	$oldValue =~ s/\///g;
@@ -215,7 +219,7 @@ sub getCookie {
 	$oldValue =~ s/\|//g;
 	$oldValue =~ s/\.//g;
 	
-	for (my $i; $i < length($oldValue); $i++) {
+	for (my $i = 0; $i < length($oldValue); $i++) {
 		$val = substr($oldValue, $i, 1);
 		if ($val =~ /[a-zA-Z0-9_]/) {
 			$returnValue .= $val;
@@ -724,7 +728,9 @@ sub saveRDMLForManager {
     my ($name, $endName, $nameCount);
     my $returnString;
     
-    $returnString = qq{<rdml version='1.0' xmlns:rdml='http://www.rdml.org' xmlns='http://www.rdml.org'>\n};
+    $returnString = qq{<rdml version='};
+    $returnString .= $hash->{"P3P_RDML_VERSION"};
+    $returnString .= qq{1.0' xmlns:rdml='http://www.rdml.org' xmlns='http://www.rdml.org'>\n};
 
     for($counter = 0; $counter <= $hash->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
     	$returnString .= qq{<target id='};
