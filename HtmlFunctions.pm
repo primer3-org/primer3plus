@@ -2275,7 +2275,7 @@ sub mainResultsHTML {
   $returnHTML .= divReturnToInput($completeParameters);
   
   # Display debug information
-  if ($results->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} eq 1){
+  if ((defined $results->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"}) and ($results->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} eq 1)){
       $returnHTML .= printDebugInfo($results, "The Primer3Plus results hash", 1);
   }
 
@@ -3134,7 +3134,11 @@ if (defined ($results->{"PRIMER_$type\_$counter\_SEQUENCE"})
   $primerGC = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_GC_PERCENT"}));
   $primerAny = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_SELF_ANY$thAdd"}));
   $primerEnd = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_SELF_END$thAdd"}));
-  $primerTemplateBinding = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_TEMPLATE_MISPRIMING$thAdd"}));
+  if (defined $results->{"PRIMER_$type\_$counter\_TEMPLATE_MISPRIMING$thAdd"}) {
+      $primerTemplateBinding = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_TEMPLATE_MISPRIMING$thAdd"}));
+  } else {
+      $primerTemplateBinding = "";
+  }
   if (($results->{"PRIMER_THERMODYNAMIC_ALIGNMENT"}) eq "1") {
       $primerHairpin = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_HAIRPIN_TH"}));
   }
