@@ -101,6 +101,9 @@ my %machineSettings = (
   # The maximal primer size primer3 can handle.
   "MAX_PRIMER_SIZE" =>  "36",
 
+  # The maximal sequence length for prefold.
+  "MAX_PREFOLD_SEQUENCE" =>  "2000",
+
   # The maximal number of primers primer3Manager can handle.
   "MAX_NUMBER_PRIMER_MANAGER" =>  "100000",
 

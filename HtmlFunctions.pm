@@ -4668,7 +4668,7 @@ function setRegion(tagOpen,tagClose) {
 <div id="primer3plus_results">
    <table class="primer3plus_table_no_border">
      <tr>
-       <td colspan=2 class="primer3plus_cell_no_border">
+       <td colspan="2" class="primer3plus_cell_no_border">
          <a name="SEQUENCE_ID_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_ID">Sequence Id:</a>
          <input name="SEQUENCE_ID" value="$hash->{SEQUENCE_ID}" type="text">
        </td>
@@ -4689,11 +4689,17 @@ function setRegion(tagOpen,tagClose) {
 
 $formHTML .= qq{
      <tr>
-       <td colspan=2 class="primer3plus_cell_no_border"> <textarea name="SEQUENCE_TEMPLATE" id="sequenceTextarea" rows="12" cols="90">$sequence</textarea>
+       <td colspan="2" class="primer3plus_cell_no_border"> <textarea name="SEQUENCE_TEMPLATE" id="sequenceTextarea" rows="12" cols="90">$sequence</textarea>
        </td>
 	</tr>
      <tr>
-       <td colspan=2 class="primer3plus_cell_no_border">
+       <td colspan="2" class="primer3plus_cell_no_border">
+         Due to performance reasons a sequence can be maximally $machineSettings{MAX_PREFOLD_SEQUENCE} bp long. If the 
+         submitted sequence is bigger, select an included region < $machineSettings{MAX_PREFOLD_SEQUENCE} bp. 
+       </td>
+	</tr>
+     <tr>
+       <td colspan="2" class="primer3plus_cell_no_border">
          <a name="SEQUENCE_INCLUDED_REGION_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_INCLUDED_REGION">Included Region:</a>
          &nbsp;{&nbsp;<input size="40" id="SEQUENCE_INCLUDED_REGION" name="SEQUENCE_INCLUDED_REGION" value="$hash->{SEQUENCE_INCLUDED_REGION}" type="text">&nbsp;}
          &nbsp;&nbsp;<input type=button name="includedRegion" onclick="setRegion('{','}');return false;" value="{ }">
@@ -4701,19 +4707,19 @@ $formHTML .= qq{
        </td>
 	</tr>
      <tr>
-       <td colspan=2 class="primer3plus_cell_no_border">
+       <td colspan="2" class="primer3plus_cell_no_border">
          &nbsp;
        </td>
 	</tr>
      <tr>
-       <td colspan=2 class="primer3plus_cell_no_border">
+       <td colspan="2" class="primer3plus_cell_no_border">
          &nbsp;<input name="Submit" value="Prefold Sequence" type="submit" style="background: #83db7b;">&nbsp;
          <input name="Submit" value="Refresh" type="submit">&nbsp;
          <input class="primer3plus_action_button" name="Default_Settings" value="Reset Form" type="submit">
        </td>
 	</tr>
      <tr>
-       <td colspan=2 class="primer3plus_cell_no_border">
+       <td colspan="2" class="primer3plus_cell_no_border">
          &nbsp;
        </td>
 	</tr>
@@ -4754,6 +4760,22 @@ $formHTML .= qq{
      </tr>
    </table>
   </div>
+
+  <table class="primer3plus_table_no_border">
+    <tr>
+       <td class="primer3plus_cell_no_border">
+         Primer3Prefold uses for folding the software UNAFold, a successor of mfold. 
+         License conditions require that you cite the following article:<br /><br />
+         Markham, N. R. &amp; Zuker, M. (2008) UNAFold: software for nucleic acid folding and hybriziation.
+         In Keith, J. M., editor, <i>Bioinformatics, Volume II. Structure, Function and Applications</i>, 
+         number 453 in <i>Methods in Molecular Biology</i>, chapter 1, pages 3&ndash;31.  
+         Humana Press, Totowa, NJ.  ISBN 978-1-60327-428-9.
+         <a href="http://www.springerprotocols.com/Abstract/doi/10.1007/978-1-60327-429-6_1">[Abstract]</a> 
+         <a href="http://www.springerprotocols.com/Full/doi/10.1007/978-1-60327-429-6_1?encCode=RklCOjFfNi05MjQtNzIzMDYtMS04Nzk=">[Full Text]</a>
+         <a href="http://www.springerprotocols.com/Pdf/doi/10.1007/978-1-60327-429-6_1?encCode=RklCOjFfNi05MjQtNzIzMDYtMS04Nzk=">[PDF]</a>         
+       </td>
+     </tr>
+   </table>
   
 </div>
 
