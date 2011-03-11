@@ -1367,7 +1367,7 @@ thermodynamical approach.</p>
 parameter files used by the thermodynamic approach. In Linux, there are two
 default locations that are tested if this tag is not defined: 
 <i>./primer3_config/</i> and <i>/opt/primer3_config/</i>.
-For Windows, there is only one default location: <i>.\primer3_config\</i>.</p>
+For Windows, there is only one default location: <i>.&#92;primer3_config&#92;</i>.</p>
 
 
 <h3><a name="PRIMER_MAX_SELF_ANY">PRIMER_MAX_SELF_ANY (decimal, 9999.99; default 8.00)</a></h3>
@@ -1648,13 +1648,13 @@ terminal mismatches have been considered. This parameter is calculated only
 if PRIMER_THERMODYNAMIC_ALIGNMENT=1. The by default value is 10 degrees
 lower than the default value of PRIMER_MIN_TM. For example the structure:</p>
 <pre>
-      -///------\\\-
+      -///------&#92;&#92;&#92;-
    5' ACGCTGTGCTGCGA 3'
 </pre>
 with melting temperature 53.7263 (calculated according to by
 default values of primer3) and
 <pre>
-      //////----\\\\\\
+      //////----&#92;&#92;&#92;&#92;&#92;&#92;
    5' CCGCAGTAAGCTGCGG 3'
 </pre>
 <p>
