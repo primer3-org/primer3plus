@@ -111,7 +111,7 @@ if ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Save RDML File")
 elsif ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Export as Fasta")) {
     my $fileDate = getDate("Y","_");	
     print "Content-disposition: attachment; filename=Primers_$fileDate.fas\n\n";
-    print exportFastaForManager(\%completeParameters);
+    print exportFastaForManager(\%completeParameters, \%parametersHTML);
     writeStatistics("primer3manager");
 }
 elsif ($parametersHTML{"Submit"} && ($parametersHTML{"Submit"} eq "Order selected Primers")) {

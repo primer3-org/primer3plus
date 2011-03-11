@@ -32,7 +32,7 @@ our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
 @ISA = qw(Exporter);
 @EXPORT = qw(&mainStartUpHTML &createHelpHTML &createAboutHTML 
              &createPackageHTML &mainResultsHTML &createManagerDisplayHTML 
-             &createCompareFileHTML &createResultCompareFileHTML
+             &createCompareFileHTML &createResultCompareFileHTML &createPrefoldHTML
              &getWrapper &createSelectSequence &createStatisticsHTML );
 $VERSION = "1.00";
 
@@ -3781,6 +3781,11 @@ $formHTML .= qq{
   <p>Primer3Manager allows to manage selected primers and to save them.
   </p>
 
+<h2><a name="primer3prefold" href="primer3prefold.cgi">Primer3Prefold</a></h2>
+  <p>Primer3Prefold allows to fold a sequence before primer selection to 
+     exclude regions with a secondary structure.
+  </p>
+
 <h2><a name="primer3compareFiles" href="primer3compareFiles.cgi">Primer3ComareFiles</a></h2>
   <p>Primer3ComareFiles allows to compare files with each other and the 
      default values to identify differences.
@@ -4432,26 +4437,6 @@ function hideTabs() {
      </tr>};
 
   };
-  
-#$formHTML .= qq{     <tr>
-#       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;<input id="PRIMER_$primerNumber\_SELECT" name="PRIMER_$primerNumber\_SELECT" value="1" };
-
-#if (defined $toOrder[$counter]) {
-#	$formHTML .= ($toOrder[$counter] == 1) ? "checked=\"checked\" " : "";
-#} else {
-#	$formHTML .= "";
-#}
-
-#$formHTML .= qq{type="checkbox"></td>
-#       <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_NAME" name="PRIMER_$primerNumber\_NAME" value="$names[$counter]" size="20"></td>
-#       <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_SEQUENCE" name="PRIMER_$primerNumber\_SEQUENCE" value="$sequences[$counter]" size="44"></td>
-#       <td class="primer3plus_cell_no_border"><input id="PRIMER_$primerNumber\_DATE" name="PRIMER_$primerNumber\_DATE" value="$date[$counter]" size="9"></td>
-#       <td class="primer3plus_cell_no_border">&nbsp;<a href="$machineSettings{URL_FORM_ACTION}?SEQUENCE_ID=$cgiName&SEQUENCE_PRIMER=$sequences[$counter]&PRIMER_TASK=Primer_Check">Check!</a></td>
-#       <td class="primer3plus_cell_no_border">&nbsp;$blastLinkUse</td>
-#     </tr>
-#};
-
-#};
 
 $formHTML .= qq{   </table>
    <br>
@@ -4591,6 +4576,190 @@ $formHTML .= qq{   </table>
   hideTabs();
   showTab('tab1','primer3plus_main_tab');
 </script>
+};
+
+  my $returnString = $templateText;
+
+  $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
+
+  return $returnString;
+}
+
+#####################
+# Form Prefold HTML #
+#####################
+sub createPrefoldHTML {
+  my ($hash, $cgiInput) ;
+  $hash = shift;
+  $cgiInput = shift;
+
+  my $templateText = getWrapper();
+
+  my $formHTML = qq{
+<SCRIPT language=JavaScript>
+function clearMarking() {
+        var txtarea = document.mainForm.sequenceTextarea;
+        txtarea.value = txtarea.value.replace(/[{}<>[\\]]/g,"");
+        document.getElementById("SEQUENCE_INCLUDED_REGION").value="";
+}
+
+function setRegion(tagOpen,tagClose) {
+        var txtarea = document.mainForm.sequenceTextarea;
+        if (document.selection && document.selection.type == 'Text') {
+                var theSelection = document.selection.createRange().text;
+                txtarea.focus();
+                if (theSelection.length > 0) {
+                        document.selection.createRange().text = tagOpen + theSelection + tagClose;
+                }
+                document.selection.empty();
+        // Mozilla
+        } else if(txtarea.selectionStart || txtarea.selectionStart == '0') {
+                var replaced = false;
+                var startPos = txtarea.selectionStart;
+                var endPos = txtarea.selectionEnd;
+                if (endPos-startPos)
+                        replaced = true;
+                var scrollTop = txtarea.scrollTop;
+                var myText = (txtarea.value).substring(startPos, endPos);
+                if (myText.length < 1) {
+                        return;
+                }
+                subst = tagOpen + myText + tagClose;
+
+                txtarea.value = txtarea.value.substring(0, startPos) + subst +
+                        txtarea.value.substring(endPos, txtarea.value.length);
+                txtarea.focus();
+                //set new selection
+                if (replaced) {
+                        var cPos = startPos+(tagOpen.length+myText.length+tagClose.length);
+                        txtarea.selectionStart = cPos;
+                        txtarea.selectionEnd = cPos;
+                } else {
+                        txtarea.selectionStart = startPos+tagOpen.length;
+                        txtarea.selectionEnd = startPos+tagOpen.length+myText.length;
+                }
+                txtarea.scrollTop = scrollTop;
+        }
+}
+</SCRIPT>  	
+	
+<div id="primer3plus_complete">
+
+<form name="mainForm" action="$machineSettings{URL_PREFOLD}" method="post" enctype="multipart/form-data">
+};
+  $formHTML .= divTopBar("Primer3Prefold", "avoid secondary structures",0);
+
+  $formHTML .= divMessages();
+  
+  # Display debug information
+  if ($hash->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} eq 1){
+  	  $formHTML .= qq{
+  <div id="primer3plus_manager">
+};
+  	
+      $formHTML .= printDebugInfo($cgiInput, "Provided input on CGI", 0);
+      $formHTML .= printDebugInfo($hash, "Merged Information", 0);
+  	  $formHTML .= qq{
+  </div>
+};
+  }
+
+  $formHTML .= qq{
+<div id="primer3plus_results">
+   <table class="primer3plus_table_no_border">
+     <tr>
+       <td colspan=2 class="primer3plus_cell_no_border">
+         <a name="SEQUENCE_ID_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_ID">Sequence Id:</a>
+         <input name="SEQUENCE_ID" value="$hash->{SEQUENCE_ID}" type="text">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border" valign="bottom">
+         <a name="SEQUENCE_TEMPLATE_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_TEMPLATE">Paste template sequence below</a>
+       </td>
+       <td class="primer3plus_cell_no_border" valign="bottom">
+         <a name="SCRIPT_SEQUENCE_FILE_INPUT">Or upload sequence file:</a>
+         <input name="SCRIPT_SEQUENCE_FILE" type="file">&nbsp;&nbsp;
+         <input name="Upload_File" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
+       </td>
+     </tr>};
+
+    my $sequence = $hash->{SEQUENCE_TEMPLATE};
+    $sequence =~ s/(\w{80})/$1\n/g;
+
+$formHTML .= qq{
+     <tr>
+       <td colspan=2 class="primer3plus_cell_no_border"> <textarea name="SEQUENCE_TEMPLATE" id="sequenceTextarea" rows="12" cols="90">$sequence</textarea>
+       </td>
+	</tr>
+     <tr>
+       <td colspan=2 class="primer3plus_cell_no_border">
+         <a name="SEQUENCE_INCLUDED_REGION_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_INCLUDED_REGION">Included Region:</a>
+         &nbsp;{&nbsp;<input size="40" id="SEQUENCE_INCLUDED_REGION" name="SEQUENCE_INCLUDED_REGION" value="$hash->{SEQUENCE_INCLUDED_REGION}" type="text">&nbsp;}
+         &nbsp;&nbsp;<input type=button name="includedRegion" onclick="setRegion('{','}');return false;" value="{ }">
+         <input type=button name="clearMarkings" onclick="clearMarking();return false;" value="Clear">
+       </td>
+	</tr>
+     <tr>
+       <td colspan=2 class="primer3plus_cell_no_border">
+         &nbsp;
+       </td>
+	</tr>
+     <tr>
+       <td colspan=2 class="primer3plus_cell_no_border">
+         &nbsp;<input name="Submit" value="Prefold Sequence" type="submit" style="background: #83db7b;">&nbsp;
+         <input name="Submit" value="Refresh" type="submit">&nbsp;
+         <input class="primer3plus_action_button" name="Default_Settings" value="Reset Form" type="submit">
+       </td>
+	</tr>
+     <tr>
+       <td colspan=2 class="primer3plus_cell_no_border">
+         &nbsp;
+       </td>
+	</tr>
+   </table>
+
+  <div class="primer3plus_section">
+   <table class="primer3plus_table_no_border">
+     <colgroup>
+       <col width="30%">
+       <col width="10%">
+       <col width="15%">
+       <col width="10%">
+       <col width="35%">
+     </colgroup>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_SALT_MONOVALENT_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SALT_MONOVALENT">Concentration of monovalent cations:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SALT_MONOVALENT" value="$hash->{PRIMER_SALT_MONOVALENT}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_OPT_TM">Opt Primer Tm:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_OPT_TM" value="$hash->{PRIMER_OPT_TM}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border">&nbsp;
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"><a name="PRIMER_SALT_DIVALENT_INPUT" href="$machineSettings{URL_HELP}#PRIMER_SALT_DIVALENT">Concentration of divalent cations:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SALT_DIVALENT" value="$hash->{PRIMER_SALT_DIVALENT}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border">&nbsp;
+       </td>
+       <td class="primer3plus_cell_no_border">&nbsp;
+       </td>
+       <td class="primer3plus_cell_no_border">&nbsp;
+       </td>
+     </tr>
+   </table>
+  </div>
+  
+</div>
+
+</form>
+
+</div>  
 };
 
   my $returnString = $templateText;

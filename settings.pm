@@ -34,7 +34,7 @@ our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
              &getServerParameterFiles &getServerParameterFilesList 
              &setMessage &getMessages &getTranslateOldVersion);
 
-$VERSION = "2.0.2";
+$VERSION = "1.00";
 
 # Here it stores all the messages from within the functions
 my @messages;
@@ -53,6 +53,10 @@ my %machineSettings = (
   "WIN_PRIMER_BIN" =>  "primer3_core.exe",   # for Windows
   "PRIMER_BIN"     =>  "./primer3_core",     # for Linux
 
+  # The location of the primer3_core executable. \ and " need to be masked by \:
+  "WIN_UNAFOLD_BIN" =>  "c:\\\"Program Files\"\\UNAFold\\bin\\hybrid-ss-min.exe",   # for Windows
+  "UNAFOLD_BIN"     =>  "./primer3_core",     # for Linux
+
   # Parameters which are handed in with the programm call.
   "WIN_PRIMER_RUNTIME" =>  " -strict_tags", # for Windows
   "PRIMER_RUNTIME"     =>  " -strict_tags", # for Linux
@@ -65,6 +69,9 @@ my %machineSettings = (
 
   # The URL for the result action (were primer3plus sends his found primer to) 
   "URL_PRIMER_MANAGER" => "primer3manager.cgi",
+
+  # The URL for the result action (were primer3plus sends his found primer to) 
+  "URL_PREFOLD" => "primer3prefold.cgi",
 
   # The URL for the compare file action (which will normally be the filename of the script)
   "URL_COMPARE_FILE" => "primer3compareFiles.cgi",
@@ -104,7 +111,7 @@ my %machineSettings = (
   "STATISTICS" =>  "Y",
 
   # The version number of primer3plus.
-  "P3P_VERSION" =>  "2.0.0",
+  "P3P_VERSION" =>  "2.2.0",
 
 );
 
@@ -112,6 +119,7 @@ my %machineSettings = (
 if ($^O eq 'MSWin32') {
   $machineSettings{PRIMER_BIN} = $machineSettings{WIN_PRIMER_BIN};
   $machineSettings{PRIMER_RUNTIME} = $machineSettings{WIN_PRIMER_RUNTIME};
+  $machineSettings{UNAFOLD_BIN} = $machineSettings{WIN_UNAFOLD_BIN};
 }
 
 # Add mispriming / mishybing libraries; 
