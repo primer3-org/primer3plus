@@ -1668,7 +1668,7 @@ sub runUnafold ($$$) {
 
     my ($sequence, $openError, $temp, $seqSize);
     my (@excl, @readTheLine, @lineArray, $readLine);
-    my ($regStart, $regLength);
+    my ($regStart, $regLength, $ionsDiv, $ionsMono);
         
     my $unafoldBIN = getMachineSetting("UNAFOLD_BIN");
     my $inputFile = getMachineSetting("USER_UNAFOLD_CACHE_PATH");
@@ -1701,10 +1701,26 @@ sub runUnafold ($$$) {
         return;
     }
     
-    $temp = $completeHash->{PRIMER_OPT_TM};
+    # To avoid crap like commands on the command line:
+    if ($completeHash->{PRIMER_OPT_TM} =~ /^[\.\d]+$/) {
+    	$temp = $completeHash->{PRIMER_OPT_TM};
+    } else {
+    	$temp = $defaultHash->{PRIMER_OPT_TM};
+    }
+    if ($completeHash->{PRIMER_SALT_DIVALENT} =~ /^[\.\d]+$/) {
+    	$ionsDiv = $completeHash->{PRIMER_SALT_DIVALENT};
+    } else {
+    	$ionsDiv = $defaultHash->{PRIMER_SALT_DIVALENT};
+    }
+    if ($completeHash->{PRIMER_SALT_MONOVALENT} =~ /^[\.\d]+$/) {
+    	$ionsMono = $completeHash->{PRIMER_SALT_MONOVALENT};
+    } else {
+    	$ionsMono = $defaultHash->{PRIMER_SALT_MONOVALENT};
+    }
+
     $unafoldParameters  = "-n DNA -M";
-    $unafoldParameters .= " -M " . ($completeHash->{PRIMER_SALT_DIVALENT} / 1000);
-    $unafoldParameters .= " -N " . ($completeHash->{PRIMER_SALT_MONOVALENT} / 1000);
+    $unafoldParameters .= " -M " . ($ionsDiv / 1000);
+    $unafoldParameters .= " -N " . ($ionsMono / 1000);
     $unafoldParameters .= " -t " . $temp;
     $unafoldParameters .= " -T " . $temp;
     $unafoldParameters .= " -o " . $inputFile;
