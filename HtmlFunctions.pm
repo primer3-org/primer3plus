@@ -4713,7 +4713,7 @@ $formHTML .= qq{
 	</tr>
      <tr>
        <td colspan="2" class="primer3plus_cell_no_border">
-         &nbsp;<input name="Submit" value="Prefold Sequence" type="submit" style="background: #83db7b;">&nbsp;
+         &nbsp;<input name="Prefold_Sequence" value="Prefold Sequence" type="submit" style="background: #83db7b;">&nbsp;
          <input name="Submit" value="Refresh" type="submit">&nbsp;
          <input class="primer3plus_action_button" name="Default_Settings" value="Reset Form" type="submit">
        </td>

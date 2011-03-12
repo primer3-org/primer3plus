@@ -39,7 +39,7 @@ our ( @ISA, @EXPORT, @EXPORT_OK, $VERSION );
 @ISA    = qw(Exporter);
 @EXPORT = qw(&getParametersHTML &constructCombinedHash &createFile
      &getSetCookie &getCookie &setCookie &getCacheFile &setCacheFile
-     &loadManagerFile &loadFile &checkParameters &runPrimer3 &reverseSequence
+     &loadManagerFile &loadFile &checkParameters &runPrimer3 &runUnafold &reverseSequence
      &loadServerSettFile &extractCompleteManagerHash &addToManagerHash
      &exportFastaForManager &loadFastaForManager &saveRDMLForManager 
      &readRDMLForManager &zipAndCacheIt &unzipItCache &printFile &getParametersManagerHTML
@@ -1654,6 +1654,156 @@ sub runPrimer3 ($$$) {
             $resultsHash->{"PRIMER_PAIR_$primerPairCount\_AMPLICON"} = $ampliconSequence;
         }
 	}
+    return;
+}
+
+##################################################
+# runUnafold: run primer3 and interprete results #
+##################################################
+sub runUnafold ($$$) {
+    my ( $completeHash, $defaultHash, $resultsHash );
+    $completeHash = shift;
+    $defaultHash = shift;
+    $resultsHash  = shift;
+
+    my ($sequence, $openError, $temp, $seqSize);
+    my (@excl, @readTheLine, @lineArray, $readLine);
+    my ($regStart, $regLength);
+        
+    my $unafoldBIN = getMachineSetting("UNAFOLD_BIN");
+    my $inputFile = getMachineSetting("USER_UNAFOLD_CACHE_PATH");
+    my $unafoldParameters = "";
+    my $unafoldOutput = "";
+    my $unafoldResults = "";
+    
+    $inputFile .= "Input_";
+    $inputFile .= makeUniqueID();
+    $inputFile .= ".txt";
+    
+###### First check if it makes sense to run primer3
+
+    ## Do not run if there is not any sequence information
+    if ( $completeHash->{"SEQUENCE_TEMPLATE"} eq "" ) {
+        setMessage("ERROR: you must supply a source sequence to evaluate");
+        return;
+    }
+
+###### Create input
+    $sequence = $completeHash->{"SEQUENCE_TEMPLATE"};
+
+    $openError = 0;
+    open( FILE, ">$inputFile" ) or $openError = 1;
+    if ($openError == 0) {
+        print FILE qq{$sequence\n};
+        close(FILE);
+    } else {
+        setMessage("Error: Cannot write $inputFile");
+        return;
+    }
+    
+    $temp = $completeHash->{PRIMER_OPT_TM};
+    $unafoldParameters  = "-n DNA -M";
+    $unafoldParameters .= " -M " . ($completeHash->{PRIMER_SALT_DIVALENT} / 1000);
+    $unafoldParameters .= " -N " . ($completeHash->{PRIMER_SALT_MONOVALENT} / 1000);
+    $unafoldParameters .= " -t " . $temp;
+    $unafoldParameters .= " -T " . $temp;
+    $unafoldParameters .= " -o " . $inputFile;
+    
+    
+    $resultsHash->{"SEQUENCE_ID"} = $completeHash->{"SEQUENCE_ID"};
+    $resultsHash->{"PRIMER_FIRST_BASE_INDEX"} =  "1";
+    
+    $resultsHash->{"SCRIPT_UNAFOLD_COMMANDLINE_INPUT"} = $unafoldParameters;
+    $resultsHash->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = $completeHash->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"};
+    
+###### Really run UNAFold
+    open(UNAFOLDOUTPUT, "$unafoldBIN $inputFile $unafoldParameters 2>&1 |")
+        or setMessage("Error: Could not run UNAFold");
+    while (<UNAFOLDOUTPUT>) {
+        $unafoldOutput .= $_;
+    }
+    close UNAFOLDOUTPUT;
+    unlink $inputFile;
+    
+    $resultsHash->{"SCRIPT_UNAFOLD_COMMANDLINE_OUTPUT"} = $unafoldOutput;
+    
+###### Clean up
+    if (-e "$inputFile.run") {
+    	unlink "$inputFile.run";
+    }
+
+    if (-e "$inputFile.dG") {
+    	unlink "$inputFile.dG";
+    }
+    
+    if ($unafoldOutput =~ /t = (\d+)/) {
+    	$temp = $1;
+    }
+
+    if (-e "$inputFile.$temp.ext") {
+    	unlink "$inputFile.$temp.ext";
+    }
+
+    if (-e "$inputFile.$temp.plot") {
+    	unlink "$inputFile.$temp.plot";
+    }
+
+###### Interprete the output
+    open( OUTFILE, "<$inputFile.ct" ) or $openError = 1;
+    if ($openError == 0) {
+        while (<OUTFILE>) {
+            $unafoldResults .= $_;
+        }
+        close(OUTFILE);
+        unlink "$inputFile.ct";
+    } else {
+        setMessage("Error: Cannot write $inputFile");
+        return;
+    }
+    
+#   $resultsHash->{"SCRIPT_UNAFOLD_RESULTS"} = $unafoldResults;
+
+###### Extract the excluded regions
+    $seqSize = length($sequence);
+    
+    # Set the array to 0
+    for (my $i = 0; $i < $seqSize; $i++) {
+    	$excl[$i] = 0;
+    }
+    
+    # Read the output
+    @readTheLine = split "\n", $unafoldResults;
+    foreach $readLine (@readTheLine) {
+        @lineArray = split "\t", $readLine;
+        if (!($lineArray[1] =~ /^dG/)) {
+        	if ($lineArray[4] != 0) {
+        		$excl[($lineArray[0] - 1)] = 1;
+        	}
+        }
+    }
+
+    # Build an excluded region list
+    $regStart = 0;
+    $regLength = 0;
+    for (my $i = 0; $i < $seqSize; $i++) {
+        if ($excl[$i] == 1) {
+            if ($regStart == 0) {
+                $regStart = $i;
+            }
+            if ($regStart != 0) {
+                $regLength++;
+            }
+        }
+        if ($excl[$i] == 0) {
+            if ($regStart != 0) {
+                $resultsHash->{"SEQUENCE_EXCLUDED_REGION"} .= ($regStart + 1) . ",";
+                $resultsHash->{"SEQUENCE_EXCLUDED_REGION"} .= $regLength . " ";
+                $regStart = 0;
+                $regLength = 0;
+            }
+        }
+    }
+    
     return;
 }
 

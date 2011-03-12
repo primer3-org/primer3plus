@@ -53,10 +53,10 @@ checkParameters(%completeParameters);
 
 # do the selected job
 if ( defined $parametersHTML{"Default_Settings"} ) {
-	print "Content-type: text/html\n\n";
 	# Required for the hidden example sequence
     $defaultSettings{"SEQUENCE_TEMPLATE"} = $completeParameters{"SEQUENCE_TEMPLATE"};
     $defaultSettings{"SEQUENCE_ID"} = $completeParameters{"SEQUENCE_ID"};
+	print "Content-type: text/html\n\n";
 	print createPrefoldHTML( \%completeParameters, \%parametersHTML ), "\n";
 }
 
@@ -67,19 +67,14 @@ elsif ( defined $parametersHTML{"Upload_File"} ) {
 	}
 	if ( $parametersHTML{"SCRIPT_SEQUENCE_COUNTER"} > 1 ) {
         setMessage("Multiple Sequences uploaded");
-        
-    	print "Content-type: text/html\n\n";
-	    print createSelectSequence( \%completeParameters ), "\n";
 	}
-	else {
-		print "Content-type: text/html\n\n";
-		print createPrefoldHTML( \%completeParameters, \%parametersHTML ), "\n";
-		writeStatistics("primer3plus_main_start");
-	}
+	print "Content-type: text/html\n\n";
+	print createPrefoldHTML( \%completeParameters, \%parametersHTML ), "\n";
+	writeStatistics("primer3plus_main_start");
 }
 
-elsif ( defined $parametersHTML{"Pick_Primers"} ) {
-	runPrimer3( \%completeParameters, \%defaultSettings, \%resultsHash );
+elsif ( defined $parametersHTML{"Prefold_Sequence"} ) {
+	runUnafold( \%completeParameters, \%defaultSettings, \%resultsHash );
 	print "Content-type: text/html\n\n";
 	print mainResultsHTML( \%completeParameters, \%resultsHash ), "\n";
     writeStatistics("primer3plus_run_primer3");

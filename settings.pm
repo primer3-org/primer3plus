@@ -89,6 +89,9 @@ my %machineSettings = (
   # The path were Primer3Manager stores its cached files.
   "USER_CACHE_FILES_PATH" =>  "./cached_data/",
 
+  # The path were Primer3Prefold stores its cached files.
+  "USER_UNAFOLD_CACHE_PATH" =>  "./unafold_cache/",
+
   # The path were Primer3Manager stores its error files.
   "USER_ERROR_FILES_PATH" =>  "./error_files/",
 
