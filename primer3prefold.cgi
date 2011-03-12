@@ -36,7 +36,7 @@ getParametersHTML(\%parametersHTML);
 %defaultSettings = getDefaultSettings();
 
 # Handy for testing:
- $defaultSettings{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = 1;
+# $defaultSettings{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} = 1;
 
 
 # Load the Sequence- and Settings-File in %parametersHTML
@@ -76,7 +76,7 @@ elsif ( defined $parametersHTML{"Upload_File"} ) {
 elsif ( defined $parametersHTML{"Prefold_Sequence"} ) {
 	runUnafold( \%completeParameters, \%defaultSettings, \%resultsHash );
 	print "Content-type: text/html\n\n";
-	print mainResultsHTML( \%completeParameters, \%resultsHash ), "\n";
+	print createResultsPrefoldHTML(\%completeParameters, \%resultsHash ), "\n";
     writeStatistics("primer3plus_run_primer3");
 }
 

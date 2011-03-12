@@ -30,7 +30,7 @@ use settings;
 our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
 
 @ISA = qw(Exporter);
-@EXPORT = qw(&mainStartUpHTML &createHelpHTML &createAboutHTML 
+@EXPORT = qw(&mainStartUpHTML &createHelpHTML &createAboutHTML &createResultsPrefoldHTML
              &createPackageHTML &mainResultsHTML &createManagerDisplayHTML 
              &createCompareFileHTML &createResultCompareFileHTML &createPrefoldHTML
              &getWrapper &createSelectSequence &createStatisticsHTML );
@@ -2307,6 +2307,83 @@ sub mainResultsHTML {
 
 # Close the complete and the results div
 $returnHTML .= qq{
+</div>
+</div>
+};
+
+  # Embedd the created HTML code into the loaded template file
+  my $returnString = $templateText;
+  $returnString =~ s/<!-- Primer3plus will include code here -->/$returnHTML/;
+
+  return $returnString;
+}
+
+###########################################################################
+# createResultsPrefoldHTML: Will select the function to write a HTML-Form #
+###########################################################################
+sub createResultsPrefoldHTML {
+  my ($completeParameters, $results); 
+  $completeParameters = shift;
+  $results = shift;
+
+  my $returnHTML = "";
+
+  # Get the frame for the webpage
+  my $templateText = getWrapper();
+
+  # Now work out the HTML code
+  #---------------------------
+  
+  $returnHTML = qq{
+<div id="primer3plus_complete">
+};
+  # Write the top bar
+  $returnHTML .= divTopBar("Primer3Prefold","avoid secondary structures",0);
+  # Write the error messages
+  $returnHTML .= divMessages();
+
+  # Start the primer3plus results section
+  $returnHTML .= qq{
+<div id="primer3plus_results">
+};
+  # Display debug information
+  if ((defined $results->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"}) and ($results->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} eq 1)){
+      $returnHTML .= printDebugInfo($results, "The Primer3Plus results hash", 1);
+  }
+
+$returnHTML .= qq{
+<form action="$machineSettings{URL_FORM_ACTION}" method="post" enctype="multipart/form-data">
+
+<input type="hidden" name="SEQUENCE_ID" value="$results->{"SEQUENCE_ID"}">
+<input type="hidden" name="SEQUENCE_TEMPLATE" value="$results->{"SEQUENCE_TEMPLATE"}">
+<input type="hidden" name="PRIMER_FIRST_BASE_INDEX" value="$results->{"PRIMER_FIRST_BASE_INDEX"}">
+<input type="hidden" name="PRIMER_SALT_MONOVALENT" value="$results->{"PRIMER_SALT_MONOVALENT"}">
+<input type="hidden" name="PRIMER_SALT_DIVALENT" value="$results->{"PRIMER_SALT_DIVALENT"}">
+<input type="hidden" name="PRIMER_OPT_TM" value="$results->{"PRIMER_OPT_TM"}">
+<input type="hidden" name="SEQUENCE_EXCLUDED_REGION" value="$results->{"SEQUENCE_EXCLUDED_REGION"}">
+<input type="hidden" name="SCRIPT_DISPLAY_DEBUG_INFORMATION" value="$results->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"}">
+
+<h2>Regions with secondary structures are displayed red:</h2>
+
+<div class="primer3plus_submit">
+<input name="Submit" value="Send to Primer3Plus" type="submit">
+</div>
+
+<br /><br /><br />
+};
+
+$returnHTML .= divHTMLsequence($results, "-1");
+
+# Close the complete and the results div
+$returnHTML .= qq{
+
+<div class="primer3plus_submit">
+<br /><br />
+<input name="Submit" value="Send to Primer3Plus" type="submit">
+</div>
+	
+</form>
+
 </div>
 </div>
 };

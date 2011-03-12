@@ -1727,6 +1727,10 @@ sub runUnafold ($$$) {
     
     
     $resultsHash->{"SEQUENCE_ID"} = $completeHash->{"SEQUENCE_ID"};
+    $resultsHash->{"SEQUENCE_TEMPLATE"} = $completeHash->{"SEQUENCE_TEMPLATE"};
+    $resultsHash->{"PRIMER_SALT_MONOVALENT"} = $completeHash->{"PRIMER_SALT_MONOVALENT"};
+    $resultsHash->{"PRIMER_SALT_DIVALENT"} = $completeHash->{"PRIMER_SALT_DIVALENT"};
+    $resultsHash->{"PRIMER_OPT_TM"} = $completeHash->{"PRIMER_OPT_TM"};
     $resultsHash->{"PRIMER_FIRST_BASE_INDEX"} =  "1";
     
     $resultsHash->{"SCRIPT_UNAFOLD_COMMANDLINE_INPUT"} = $unafoldParameters;
