@@ -55,7 +55,7 @@ my %machineSettings = (
 
   # The location of the primer3_core executable. \ and " need to be masked by \:
   "WIN_UNAFOLD_BIN" =>  "c:\\\"Program Files\"\\UNAFold\\bin\\hybrid-ss-min.exe",   # for Windows
-  "UNAFOLD_BIN"     =>  "./primer3_core",     # for Linux
+  "UNAFOLD_BIN"     =>  "/usr/local/bin/hybrid-ss-min",     # for Linux
 
   # Parameters which are handed in with the programm call.
   "WIN_PRIMER_RUNTIME" =>  " -strict_tags", # for Windows
