@@ -57,6 +57,7 @@ if ( defined $parametersHTML{"Default_Settings"} ) {
     $defaultSettings{"SEQUENCE_ID"} = $completeParameters{"SEQUENCE_ID"};
 	print "Content-type: text/html\n\n";
 	print createPrefoldHTML( \%completeParameters, \%parametersHTML ), "\n";
+	writeStatistics("primer3prefold");
 }
 
 elsif ( defined $parametersHTML{"Upload_File"} ) {
@@ -69,25 +70,25 @@ elsif ( defined $parametersHTML{"Upload_File"} ) {
 	}
 	print "Content-type: text/html\n\n";
 	print createPrefoldHTML( \%completeParameters, \%parametersHTML ), "\n";
-	writeStatistics("primer3plus_main_start");
+    writeStatistics("primer3prefold");
 }
 
 elsif ( checkPrefold(\%completeParameters) == 1 ) {
 	print "Content-type: text/html\n\n";
 	print createPrefoldHTML( \%completeParameters, \%parametersHTML ), "\n";
-	writeStatistics("primer3plus_main_start");
+    writeStatistics("primer3prefold");
 }
 
 elsif ( defined $parametersHTML{"Prefold_Sequence"} ) {
 	runUnafold( \%completeParameters, \%defaultSettings, \%resultsHash );
 	print "Content-type: text/html\n\n";
 	print createResultsPrefoldHTML(\%completeParameters, \%resultsHash ), "\n";
-    writeStatistics("primer3plus_run_primer3");
+    writeStatistics("primer3prefold_runs");
 }
 
 else {
 	print "Content-type: text/html\n\n";
 	print createPrefoldHTML( \%completeParameters, \%parametersHTML ), "\n";
-    writeStatistics("primer3plus_main_start");
+    writeStatistics("primer3prefold");
 }
 

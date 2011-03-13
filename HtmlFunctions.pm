@@ -3655,36 +3655,13 @@ Source code is available at http://sourceforge.net/projects/primer3/.
 </a>
 </p>
 
-<h3>Primer3Plus - Copyright Notice and Disclaimer</h3>
-<p>
-Copyright (c) 2006, 2007<br>
-by Andreas Untergasser and Harm Nijveen<br>
-All rights reserved.<br>
-<br>
-The Primer3Plus is free software; you can redistribute it and/or modify<br>
-it under the terms of the GNU General Public License as published by<br>
-the Free Software Foundation; either version 2 of the License, or<br>
-(at your option) any later version.<br>
-<br>
-Primer3Plus is distributed in the hope that it will be useful,<br>
-but WITHOUT ANY WARRANTY; without even the implied warranty of<br>
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br>
-GNU General Public License for more details.<br>
-<br>
-To received a copy of the GNU General Public License<br>
-write to the Free Software Foundation, Inc., 51 Franklin St,<br>
-Fifth Floor, Boston, MA  02110-1301  USA<br>
-<br>
-
 <h3>Citing Primer3Plus</h3>
+<p>
+We request that use of this software be cited in publications as
+</p>
 <p>
 Andreas Untergasser, Harm Nijveen, Xiangyu Rao, Ton Bisseling, Ren&eacute; Geurts, and Jack A.M. Leunissen: 
 <b>Primer3Plus, an enhanced web interface to Primer3</b> Nucleic Acids Research 2007 35: W71-W74; doi:10.1093/nar/gkm306
-</p>
-
-<h3>Acknowledgments of Primer3Plus</h3>
-<p>
-We thank Gerben Bijl for extensive beta-testing.
 </p>
 
 <h2>Primer3</h2>
@@ -3700,43 +3677,6 @@ We thank Gerben Bijl for extensive beta-testing.
 Source code available at http://sourceforge.net/projects/primer3/.
 </a>
 </p>
-
-<h3>Primer3 - Copyright Notice and Disclaimer</h3>
-<p>
-Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006<br>
-Whitehead
-Institute for Biomedical Research, 
-<a href="http://jura.wi.mit.edu/rozen/">Steve Rozen</a>, and Helen Skaletsky<br>
-All rights reserved.
-</p>
-<pre>
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the names of the copyright holders nor contributors may
-be used to endorse or promote products derived from this software
-without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-</pre>
-
 
 <h3>Citing Primer3</h3>
 <p>
@@ -3767,13 +3707,6 @@ under grants R01-HG00257
 </p>
 
 <p>
-We thank
-<a href="http://www.centerline.com">
-Centerline Software, Inc.,
-</a>
-for use of their TestCenter memory-error, -leak, and test-coverage checker.
-</p>
-<p>
 Primer3 was a complete re-implementation
 of an earlier program:
 Primer 0.5 (<em>Steve Lincoln, Mark Daly, and Eric S. Lander</em>).
@@ -3781,6 +3714,27 @@ Primer 0.5 (<em>Steve Lincoln, Mark Daly, and Eric S. Lander</em>).
 idea of making Primer3 a software component suitable for high-throughput
 primer design.
 </p>
+
+<h3>Copyright Notice and Disclaimer</h3>
+<p>
+Copyright (c) 2006 - 2011<br>
+by Andreas Untergasser, Harm Nijveen, Steve Rozen and Helen Skaletsky<br>
+All rights reserved.<br>
+<br>
+Primer3 and Primer3Plus are free software; you can redistribute it and/or modify<br>
+it under the terms of the GNU General Public License as published by<br>
+the Free Software Foundation; either version 2 of the License, or<br>
+(at your option) any later version.<br>
+<br>
+Primer3 and Primer3Plus are distributed in the hope that it will be useful,<br>
+but WITHOUT ANY WARRANTY; without even the implied warranty of<br>
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br>
+GNU General Public License for more details.<br>
+<br>
+To received a copy of the GNU General Public License<br>
+write to the Free Software Foundation, Inc., 51 Franklin St,<br>
+Fifth Floor, Boston, MA  02110-1301  USA<br>
+<br>
 
 </div>
 
@@ -3888,10 +3842,12 @@ $formHTML .= qq{
 ##############################################################
 # createStatisticsHTML: Creates an HTML-Page with Statistics #
 ##############################################################
-sub createStatisticsHTML ($$$$$) {
+sub createStatisticsHTML {
   my %startUps = %{(shift)};
   my %primer3Runs = %{(shift)};
   my %managerRuns = %{(shift)};
+  my %prefoldStartUps = %{(shift)};
+  my %prefoldRuns = %{(shift)};
   my %staticticsViews = %{(shift)};
   my $printStats = shift;
 
@@ -3901,10 +3857,14 @@ sub createStatisticsHTML ($$$$$) {
   my $startUpsVal;
   my $primer3RunsVal;
   my $managerRunsVal;
+  my $prefoldStartUpsVal;
+  my $prefoldRunsVal;
   my $staticticsViewsVal;
   my %startUpsMonth;
   my %primer3RunsMonth;
   my %managerRunsMonth;
+  my %prefoldStartUpsMonth;
+  my %prefoldRunsMonth;
   my %staticticsViewsMonth;
   my %allDates;
   my %allMonth;
@@ -3946,6 +3906,30 @@ sub createStatisticsHTML ($$$$$) {
           $allMonth{$monthKey} = 1;
       }
   }
+  foreach $theKey (keys(%prefoldStartUps)) {
+      $allDates{$theKey} = 1;
+      # Add to the month
+      $monthKey = $theKey;
+      $monthKey =~ s/\.\d+$// ;
+      if (defined $prefoldStartUpsMonth{$monthKey}) {
+          $prefoldStartUpsMonth{$monthKey} += $prefoldStartUps{$theKey};
+      } else {
+          $prefoldStartUpsMonth{$monthKey} = $prefoldStartUps{$theKey};
+          $allMonth{$monthKey} = 1;
+      }
+  }
+  foreach $theKey (keys(%prefoldRuns)) {
+      $allDates{$theKey} = 1;
+      # Add to the month
+      $monthKey = $theKey;
+      $monthKey =~ s/\.\d+$// ;
+      if (defined $prefoldRunsMonth{$monthKey}) {
+          $prefoldRunsMonth{$monthKey} += $prefoldRuns{$theKey};
+      } else {
+          $prefoldRunsMonth{$monthKey} = $prefoldRuns{$theKey};
+          $allMonth{$monthKey} = 1;
+      }
+  }
   foreach $theKey (keys(%staticticsViews)) {
       $allDates{$theKey} = 1;
       # Add to the month
@@ -3975,18 +3959,22 @@ if ($printStats eq "Y") {
 <h2>Usage per month:</h2>
   <table class="primer3plus_table_with_border">
      <colgroup>
-       <col width="20%">
-       <col width="20%">
-       <col width="20%">
-       <col width="20%">
-       <col width="20%">
+       <col width="15%">
+       <col width="14%">
+       <col width="14%">
+       <col width="14%">
+       <col width="14%">
+       <col width="14%">
+       <col width="15%">
      </colgroup>
      <tr>
        <td><strong>Date</strong></td>
-       <td><strong>Primer3Plus start ups</strong></td>
+       <td><strong>P3Plus</strong></td>
        <td><strong>Primer3 runs</strong></td>
-       <td><strong>Primer3Manager runs</strong></td>
-       <td><strong>Primer3Statistics views</strong></td>
+       <td><strong>P3Manager</strong></td>
+       <td><strong>P3Prefold</strong></td>
+       <td><strong>UNAFold runs</strong></td>
+       <td><strong>P3Statistics</strong></td>
      </tr>
 };
 
@@ -4006,6 +3994,16 @@ if ($printStats eq "Y") {
       } else {
           $managerRunsVal = "---";
       }
+      if (defined $prefoldStartUpsMonth{$theKey}) {
+          $prefoldStartUpsVal = $prefoldStartUpsMonth{$theKey};
+      } else {
+          $prefoldStartUpsVal = "---";
+      }
+      if (defined $prefoldRunsMonth{$theKey}) {
+          $prefoldRunsVal = $prefoldRunsMonth{$theKey};
+      } else {
+          $prefoldRunsVal = "---";
+      }
       if (defined $staticticsViewsMonth{$theKey}) {
           $staticticsViewsVal = $staticticsViewsMonth{$theKey};
       } else {
@@ -4017,6 +4015,8 @@ if ($printStats eq "Y") {
        <td>$startUpsVal</td>
        <td>$primer3RunsVal</td>
        <td>$managerRunsVal</td>
+       <td>$prefoldStartUpsVal</td>
+       <td>$prefoldRunsVal</td>
        <td>$staticticsViewsVal</td>
      </tr>
 };
@@ -4027,18 +4027,22 @@ $formHTML .= qq{
 <h2>Usage per day:</h2>
   <table class="primer3plus_table_with_border">
      <colgroup>
-       <col width="20%">
-       <col width="20%">
-       <col width="20%">
-       <col width="20%">
-       <col width="20%">
+       <col width="15%">
+       <col width="14%">
+       <col width="14%">
+       <col width="14%">
+       <col width="14%">
+       <col width="14%">
+       <col width="15%">
      </colgroup>
      <tr>
        <td><strong>Date</strong></td>
-       <td><strong>Primer3Plus start ups</strong></td>
+       <td><strong>P3Plus</strong></td>
        <td><strong>Primer3 runs</strong></td>
-       <td><strong>Primer3Manager runs</strong></td>
-       <td><strong>Primer3Statistics views</strong></td>
+       <td><strong>P3Manager</strong></td>
+       <td><strong>P3Prefold</strong></td>
+       <td><strong>UNAFold runs</strong></td>
+       <td><strong>P3Statistics</strong></td>
      </tr>
 };
 
@@ -4058,6 +4062,16 @@ $formHTML .= qq{
       } else {
           $managerRunsVal = "---";
       }
+      if (defined $prefoldStartUps{$theKey}) {
+          $prefoldStartUpsVal = $prefoldStartUps{$theKey};
+      } else {
+          $prefoldStartUpsVal = "---";
+      }
+      if (defined $prefoldRuns{$theKey}) {
+          $prefoldRunsVal = $prefoldRuns{$theKey};
+      } else {
+          $prefoldRunsVal = "---";
+      }
       if (defined $staticticsViews{$theKey}) {
           $staticticsViewsVal = $staticticsViews{$theKey};
       } else {
@@ -4069,6 +4083,8 @@ $formHTML .= qq{
        <td>$startUpsVal</td>
        <td>$primer3RunsVal</td>
        <td>$managerRunsVal</td>
+       <td>$prefoldStartUpsVal</td>
+       <td>$prefoldRunsVal</td>
        <td>$staticticsViewsVal</td>
      </tr>
 };
@@ -4841,8 +4857,11 @@ $formHTML .= qq{
   <table class="primer3plus_table_no_border">
     <tr>
        <td class="primer3plus_cell_no_border">
+         Please visit <a class="primer3plus_top_bar_link" href="primer3plusAbout.cgi">About</a> for
+         Primer3 and Primer3Plus citation requests.<br /><br />
          Primer3Prefold uses for folding the software UNAFold, a successor of mfold. 
-         License conditions require that you cite the following article:<br /><br />
+         License conditions require that you cite the following article if you use Primer3Prefold:
+         <br /><br />
          Markham, N. R. &amp; Zuker, M. (2008) UNAFold: software for nucleic acid folding and hybriziation.
          In Keith, J. M., editor, <i>Bioinformatics, Volume II. Structure, Function and Applications</i>, 
          number 453 in <i>Methods in Molecular Biology</i>, chapter 1, pages 3&ndash;31.  

@@ -33,6 +33,8 @@ my $printStats = "Y";
 my %startUps;
 my %primer3Runs;
 my %managerRuns;
+my %prefoldStartUps;
+my %prefoldRuns;
 my %staticticsViews;
 
 
@@ -44,10 +46,15 @@ if ((getMachineSetting("STATISTICS") eq "N")
 %startUps = readStatistics("primer3plus_main_start");
 %primer3Runs = readStatistics("primer3plus_run_primer3");
 %managerRuns = readStatistics("primer3manager");
+%prefoldStartUps = readStatistics("primer3prefold");
+%prefoldRuns = readStatistics("primer3prefold_runs");
 %staticticsViews = readStatistics("primer3plus_statistics");
 
+
 print "Content-type: text/html\n\n";
-print createStatisticsHTML(\%startUps, \%primer3Runs, \%managerRuns, \%staticticsViews, $printStats), "\n";
+print createStatisticsHTML(\%startUps, \%primer3Runs, \%managerRuns, 
+                           \%prefoldStartUps, \%prefoldRuns, \%staticticsViews,
+                           $printStats), "\n";
 
 writeStatistics("primer3plus_statistics");
 

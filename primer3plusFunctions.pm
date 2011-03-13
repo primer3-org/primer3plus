@@ -1747,7 +1747,6 @@ sub runUnafold ($$$) {
 		$leng = 0;
 	}
     if ( ($leng == 0) or (($pos + $leng + 1) > $seqLength)) {
-    	# TODO: Check
         $leng = $seqLength - $pos;
 	}
 	
