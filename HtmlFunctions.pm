@@ -4777,7 +4777,7 @@ $formHTML .= qq{
 	</tr>
      <tr>
        <td colspan="2" class="primer3plus_cell_no_border">
-         <a name="SEQUENCE_INCLUDED_REGION_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_INCLUDED_REGION">Included Region:</a>
+         <a name="SEQUENCE_INCLUDED_REGION_INPUT" href="$machineSettings{URL_HELP}#SEQUENCE_INCLUDED_REGION">Included Region (start,length):</a>
          &nbsp;{&nbsp;<input size="40" id="SEQUENCE_INCLUDED_REGION" name="SEQUENCE_INCLUDED_REGION" value="$hash->{SEQUENCE_INCLUDED_REGION}" type="text">&nbsp;}
          &nbsp;&nbsp;<input type=button name="includedRegion" onclick="setRegion('{','}');return false;" value="{ }">
          <input type=button name="clearMarkings" onclick="clearMarking();return false;" value="Clear">

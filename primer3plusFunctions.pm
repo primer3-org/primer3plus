@@ -37,7 +37,7 @@ use settings;
 
 our ( @ISA, @EXPORT, @EXPORT_OK, $VERSION );
 @ISA    = qw(Exporter);
-@EXPORT = qw(&getParametersHTML &constructCombinedHash &createFile
+@EXPORT = qw(&getParametersHTML &constructCombinedHash &createFile &checkPrefold
      &getSetCookie &getCookie &setCookie &getCacheFile &setCacheFile
      &loadManagerFile &loadFile &checkParameters &runPrimer3 &runUnafold &reverseSequence
      &loadServerSettFile &extractCompleteManagerHash &addToManagerHash
@@ -1375,6 +1375,44 @@ sub checkParameters (\%) {
 	return;
 }
 
+#####################################################################
+# checkPrefold: Checks the Size of the sequence and Included Region #
+#####################################################################
+sub checkPrefold {
+	my ($dataStorage);
+	$dataStorage = shift;
+	
+	my ($pos, $leng, $seqLength);
+	
+	my $sizeLimit = getMachineSetting("MAX_PREFOLD_SEQUENCE");
+	
+	if (defined $dataStorage->{"SEQUENCE_TEMPLATE"}) {
+	    $seqLength = length $dataStorage->{"SEQUENCE_TEMPLATE"};
+	} else {
+		$seqLength = 0;
+	}
+	
+	if (!($seqLength > $sizeLimit )) {
+        return 0;
+	} else {
+		if ((defined $dataStorage->{"SEQUENCE_INCLUDED_REGION"})
+             and ($dataStorage->{"SEQUENCE_INCLUDED_REGION"} =~ /,/)) {
+            ($pos, $leng) = split "," , $dataStorage->{"SEQUENCE_INCLUDED_REGION"};
+		} else {
+			$leng = $sizeLimit + 10;
+		}	
+        if ($leng < $sizeLimit) {
+        	return 0;
+        } else {
+            setMessage("ERROR: Sequence length is over $sizeLimit bp. ".
+			       "Select an Included Region < $sizeLimit bp.");
+			return 1;
+        }
+	}
+
+	return;
+}
+
 ##########################################################
 # Functions for the region functionality from primer3web #
 ##########################################################
@@ -1666,7 +1704,8 @@ sub runUnafold ($$$) {
     $defaultHash = shift;
     $resultsHash  = shift;
 
-    my ($sequence, $openError, $temp, $seqSize);
+    my ($sequence, $seqLength, $openError, $temp, $seqSize);
+    my ($cut, $pos, $leng);
     my (@excl, @readTheLine, @lineArray, $readLine);
     my ($regStart, $regLength, $ionsDiv, $ionsMono);
         
@@ -1680,16 +1719,39 @@ sub runUnafold ($$$) {
     $inputFile .= makeUniqueID();
     $inputFile .= ".txt";
     
-###### First check if it makes sense to run primer3
+###### First check if it makes sense to run UNAFold
 
     ## Do not run if there is not any sequence information
     if ( $completeHash->{"SEQUENCE_TEMPLATE"} eq "" ) {
-        setMessage("ERROR: you must supply a source sequence to evaluate");
+        setMessage("ERROR: You must supply a source sequence to evaluate");
         return;
     }
 
 ###### Create input
-    $sequence = $completeHash->{"SEQUENCE_TEMPLATE"};
+    $seqLength = length $completeHash->{"SEQUENCE_TEMPLATE"};
+
+    if ((defined $completeHash->{"SEQUENCE_INCLUDED_REGION"})
+         and ($completeHash->{"SEQUENCE_INCLUDED_REGION"} =~ /,/)) {
+        ($pos, $leng) = split "," , $completeHash->{"SEQUENCE_INCLUDED_REGION"};
+        $pos--;
+        $cut = 1;
+    } else {
+		$cut = 0;
+		$pos = 0;
+	}
+	
+	if ($pos < 0){
+		$pos = 0;
+	} 
+	if ($leng < 0) {
+		$leng = 0;
+	}
+    if ( ($leng == 0) or (($pos + $leng + 1) > $seqLength)) {
+    	# TODO: Check
+        $leng = $seqLength - $pos;
+	}
+	
+    $sequence = substr($completeHash->{"SEQUENCE_TEMPLATE"}, $pos, $leng);
 
     $openError = 0;
     open( FILE, ">$inputFile" ) or $openError = 1;
@@ -1803,6 +1865,10 @@ sub runUnafold ($$$) {
     }
 
     # Build an excluded region list
+    if (($cut == 1) and ($pos != 0)) {
+    	$resultsHash->{"SEQUENCE_EXCLUDED_REGION"} .= "1,$pos ";
+    }
+    
     $regStart = 0;
     $regLength = 0;
     for (my $i = 0; $i < $seqSize; $i++) {
@@ -1816,12 +1882,17 @@ sub runUnafold ($$$) {
         }
         if ($excl[$i] == 0) {
             if ($regStart != 0) {
-                $resultsHash->{"SEQUENCE_EXCLUDED_REGION"} .= ($regStart + 1) . ",";
+                $resultsHash->{"SEQUENCE_EXCLUDED_REGION"} .= ($regStart + $pos + 1) . ",";
                 $resultsHash->{"SEQUENCE_EXCLUDED_REGION"} .= $regLength . " ";
                 $regStart = 0;
                 $regLength = 0;
             }
         }
+    }
+    if ($cut == 1) {
+    	$resultsHash->{"SEQUENCE_EXCLUDED_REGION"} .= ($pos + $leng + 1);
+    	$resultsHash->{"SEQUENCE_EXCLUDED_REGION"} .= ",";
+    	$resultsHash->{"SEQUENCE_EXCLUDED_REGION"} .= ($seqLength - $pos - $leng);
     }
     
     return;

@@ -50,7 +50,6 @@ if ( defined $parametersHTML{SCRIPT_SEQUENCE_FILE_CONTENT} ) {
 # check for parameters which make no sense and correct them
 checkParameters(%completeParameters);
 
-
 # do the selected job
 if ( defined $parametersHTML{"Default_Settings"} ) {
 	# Required for the hidden example sequence
@@ -68,6 +67,12 @@ elsif ( defined $parametersHTML{"Upload_File"} ) {
 	if ( $parametersHTML{"SCRIPT_SEQUENCE_COUNTER"} > 1 ) {
         setMessage("Multiple Sequences uploaded");
 	}
+	print "Content-type: text/html\n\n";
+	print createPrefoldHTML( \%completeParameters, \%parametersHTML ), "\n";
+	writeStatistics("primer3plus_main_start");
+}
+
+elsif ( checkPrefold(\%completeParameters) == 1 ) {
 	print "Content-type: text/html\n\n";
 	print createPrefoldHTML( \%completeParameters, \%parametersHTML ), "\n";
 	writeStatistics("primer3plus_main_start");
