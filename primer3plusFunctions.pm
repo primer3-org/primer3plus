@@ -1779,7 +1779,7 @@ sub runUnafold ($$$) {
     	$ionsMono = $defaultHash->{PRIMER_SALT_MONOVALENT};
     }
 
-    $unafoldParameters  = "-n DNA -M";
+    $unafoldParameters  = "-n DNA";
     $unafoldParameters .= " -M " . ($ionsDiv / 1000);
     $unafoldParameters .= " -N " . ($ionsMono / 1000);
     $unafoldParameters .= " -t " . $temp;
