@@ -2567,7 +2567,7 @@ $formHTML .= qq{
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TM">Tm:</a></td>
-       <td class="primer3plus_cell_no_border">$primerTM &deg;C </td>
+       <td class="primer3plus_cell_no_border">$primerTM C </td>
      </tr>
      <tr>
        <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_GC_PERCENT">GC:</a></td>
@@ -3048,13 +3048,13 @@ sub divPrimerBox {
         and (($results->{"PRIMER_PAIR_$counter\_PRODUCT_TM"}) ne "")) {
       $productTM .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_PRODUCT_TM">Tm:</a> };
       $productTM .= sprintf ("%.1f",($results->{"PRIMER_PAIR_$counter\_PRODUCT_TM"}));
-      $productTM .= qq{ &deg;C};
+      $productTM .= qq{ C};
   }
   if (defined ($results->{"PRIMER_PAIR_$counter\_PRODUCT_TM_OLIGO_TM_DIFF"}) 
         and (($results->{"PRIMER_PAIR_$counter\_PRODUCT_TM_OLIGO_TM_DIFF"}) ne "")) {
       $productOligDiff .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_PAIR_4_PRODUCT_TM_OLIGO_TM_DIFF">dT:</a> };
       $productOligDiff .= sprintf ("%.1f",($results->{"PRIMER_PAIR_$counter\_PRODUCT_TM_OLIGO_TM_DIFF"}));
-      $productOligDiff .= qq{ &deg;C};
+      $productOligDiff .= qq{ C};
   }
   if ((defined ($results->{"PRIMER_PAIR\_$counter\_COMPL_ANY"})) 
         and (($results->{"PRIMER_PAIR\_$counter\_COMPL_ANY"}) ne "")) {
@@ -3233,7 +3233,7 @@ $formHTML .= qq{     <tr class="primer3plus_$cssName">
      <tr>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4">Start:</a> $primerStart</td>
        <td colspan="2" class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4">Length:</a> $primerLength bp</td>
-       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TM">Tm:</a> $primerTM &deg;C </td>
+       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TM">Tm:</a> $primerTM C </td>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_GC_PERCENT">GC:</a> $primerGC %</td>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_ANY$thAdd">Any:</a> $primerAny</td>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_END$thAdd">End:</a> $primerEnd</td>
