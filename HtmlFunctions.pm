@@ -1270,9 +1270,9 @@ $formHTML .= qq{</div>
        </td>
        <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_MAX_HAIRPIN_TH" value="$settings{PRIMER_MAX_HAIRPIN_TH}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_PAIR_MAX_HAIRPIN_TH_INPUT" href="$machineSettings{URL_HELP}#PRIMER_PAIR_MAX_HAIRPIN_TH">TH: Max Pair Hairpin:</a>
+       <td class="primer3plus_cell_no_border">
        </td>
-       <td class="primer3plus_cell_no_border_th"><input size="4" name="PRIMER_PAIR_MAX_HAIRPIN_TH" value="$settings{PRIMER_PAIR_MAX_HAIRPIN_TH}" type="text">
+       <td class="primer3plus_cell_no_border">
        </td>
      </tr>
      <tr>
