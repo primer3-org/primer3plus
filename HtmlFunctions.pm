@@ -280,7 +280,7 @@ function showTopic(id) {
         } else if (id == "primer3plus_explain_pick_cloning_primers") {
              setSelection("none","none","inline","none","none","none");
         } else if (id == "primer3plus_explain_pick_discriminative_primers") {
-             setSelection("none","none","inline","none","none","none");
+             setSelection("none","inline","none","none","none","none");
         } else if (id == "primer3plus_explain_pick_primer_list") {
              setSelection("inline","inline","inline","inline","inline","none");
         }
@@ -535,7 +535,7 @@ $formHTML .= qq{
      <a>Mark an included region to pick primers 5' fixed at its the boundaries. The quality of the primers might be low.</a>
    </div>
    <div id="primer3plus_explain_pick_discriminative_primers" style="display: none;">
-     <a>Mark an included region to pick primers 3' fixed at its the boundaries. The quality of the primers might be low.</a>
+     <a>Mark an target to pick primers 3' fixed at its the boundaries. The quality of the primers might be low.</a>
    </div>
    <div id="primer3plus_explain_pick_sequencing_primers" style="display: none;">
      <a>Pick a series of primers on both strands for sequencing. Optionally the regions of interest can be marked using targets.</a>
