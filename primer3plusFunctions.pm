@@ -1371,6 +1371,13 @@ sub checkParameters (\%) {
 			       "bp. Additional bases were removed on the 3' end");
 		$dataStorage->{"SEQUENCE_PRIMER_REVCOMP"} = $cutRight;
 	}
+	
+	## Rename the Task "pick_detection_primers" to "generic"
+    if ( defined( $dataStorage->{"PRIMER_TASK"} ) and ($dataStorage->{"PRIMER_TASK"} eq "pick_detection_primers")) {
+        $dataStorage->{"PRIMER_TASK"} = "generic";
+    }
+
+
 
 	return;
 }

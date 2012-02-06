@@ -194,7 +194,7 @@ my %defaultSettings = (
   "SEQUENCE_FORCE_RIGHT_START"               => "", #"-1000000",
   "SEQUENCE_FORCE_RIGHT_END"                 => "", #"-1000000",
 # Primer3 "Global" Input Tags
-  "PRIMER_TASK"                              => "pick_detection_primers",
+  "PRIMER_TASK"                              => "generic",
   "PRIMER_THERMODYNAMIC_ALIGNMENT"           => "1",
   "PRIMER_PICK_LEFT_PRIMER"                  => "1",
   "PRIMER_PICK_INTERNAL_OLIGO"               => "0",
@@ -353,7 +353,7 @@ my %defaultSettings = (
 
 # Array for the tasks Primer3plus can do (needed to build the HTML)
 my @scriptTasks = (
-  "pick_detection_primers",
+  "generic",
   "pick_cloning_primers",
   "pick_discriminative_primers",
   "pick_sequencing_primers",

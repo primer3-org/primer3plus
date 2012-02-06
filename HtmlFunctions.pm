@@ -273,7 +273,7 @@ function showTopic(id) {
         if (id == "primer3plus_explain_check_primers") {
 			setSelection("none","none","none","none","none","inline")
 			document.getElementById("primer3plus_pick_primers_button").value = "Check Primer";             
-        } else if (id == "primer3plus_explain_pick_detection_primers") {
+        } else if (id == "primer3plus_explain_generic") {
              setSelection("inline","inline","inline","inline","inline","inline");
         } else if (id == "primer3plus_explain_pick_sequencing_primers") {
              setSelection("none","inline","none","none","none","none");
@@ -528,7 +528,7 @@ $formHTML .= qq{
        </td>
 
         <td class="primer3plus_cell_no_border_explain">
-   <div id="primer3plus_explain_pick_detection_primers" style="display: none;">
+   <div id="primer3plus_explain_generic" style="display: none;">
      <a>Select primer pairs to detect the given template sequence. Optionally targets and included/excluded regions can be specified.</a>
    </div>
    <div id="primer3plus_explain_pick_cloning_primers" style="display: none;">
