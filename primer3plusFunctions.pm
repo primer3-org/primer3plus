@@ -727,12 +727,17 @@ sub saveRDMLForManager {
     my %uniqueNames;
     my ($name, $endName, $nameCount);
     my $returnString;
+    my $primerCount = 0;
     
     $returnString = qq{<rdml version='};
     $returnString .= $hash->{"P3P_RDML_VERSION"};
     $returnString .= qq{1.0' xmlns:rdml='http://www.rdml.org' xmlns='http://www.rdml.org'>\n};
+    
+    if (defined $hash->{"PRIMER_PAIR_NUM_RETURNED"}) {
+    	$primerCount = $hash->{"PRIMER_PAIR_NUM_RETURNED"};
+    }
 
-    for($counter = 0; $counter <= $hash->{"PRIMER_PAIR_NUM_RETURNED"}; $counter++) {
+    for($counter = 0; $counter <= $primerCount; $counter++) {
     	$returnString .= qq{<target id='};
     	
     	# RDML requires that an Id is unique

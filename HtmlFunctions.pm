@@ -2959,7 +2959,11 @@ sub divLongList {
       $primerGC = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_GC_PERCENT"}));
       $primerSelf = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_SELF_ANY$thAdd"}));
       $primerEnd = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_SELF_END$thAdd"}));
-      $primerTemplateBinding = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_TEMPLATE_MISPRIMING$thAdd"}));
+      if (defined $results->{"PRIMER_$primerType\_$counter\_TEMPLATE_MISPRIMING$thAdd"}) {
+          $primerTemplateBinding = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_TEMPLATE_MISPRIMING$thAdd"}));
+      } else {
+          $primerTemplateBinding = "";
+      }   
       $primerEndStability = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_END_STABILITY"}));
       $primerPenalty = sprintf ("%.3f",($results->{"PRIMER_$primerType\_$counter\_PENALTY"}));
 
