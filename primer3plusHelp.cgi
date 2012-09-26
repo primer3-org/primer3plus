@@ -38,26 +38,29 @@ my $helpHTML = qq{
 <a href="#copyrightLicense">1. COPYRIGHT AND LICENSE</a><br>
 <a href="#introduction">2. INTRODUCTION</a><br>
 <a href="#citationRequest">3. CITING PRIMER3</a><br>
-<a href="#pickAdvice">4. ADVICE FOR PICKING PRIMERS</a><br>
-<a href="#cautions">5. CAUTIONS</a><br>
-<a href="#findNoPrimers">6. WHAT TO DO IF PRIMER3 CANNOT FIND ANY PRIMERS?</a><br>
-<a href="#sequenceTags">7. "SEQUENCE" INPUT TAGS</a><br>
-<a href="#globalTags">8. "GLOBAL" INPUT TAGS</a><br>
-<a href="#outputHelp">9. OUTPUT HELP</a><br>
-<a href="#providedMisprimingLibs">10. PROVIDED MISPRIMING LIBRARIES</a><br>
-<a href="#calculatePenalties">11. HOW PRIMER3 CALCULATES THE PENALTY VALUE</a><br>
-<a href="#webInterface">12. PRIMER3 WWW INTERFACES</a><br>
-<a href="#acknowledgments">13. ACKNOWLEDGMENTS</a><br>
+<a href="#licenseExplain">4. FAIR USE OF PRIMER3</a><br>
+<a href="#pickAdvice">5. ADVICE FOR PICKING PRIMERS</a><br>
+<a href="#cautions">6. CAUTIONS</a><br>
+<a href="#findNoPrimers">7. WHAT TO DO IF PRIMER3 CANNOT FIND ANY PRIMERS?</a><br>
+<a href="#sequenceTags">8. "SEQUENCE" INPUT TAGS</a><br>
+<a href="#globalTags">9. "GLOBAL" INPUT TAGS</a><br>
+<a href="#outputTags">10. OUTPUT TAGS</a><br>
+<a href="#providedMisprimingLibs">11. PROVIDED MISPRIMING LIBRARIES</a><br>
+<a href="#calculatePenalties">12. HOW PRIMER3 CALCULATES THE PENALTY VALUE</a><br>
+<a href="#webInterface">13. PRIMER3 WWW INTERFACES</a><br>
+<a href="#acknowledgments">14. ACKNOWLEDGMENTS</a><br>
 </p>
-<h2><a name="copyrightLicenseP3P">1. COPYRIGHT AND LICENSE</a></h2>
+<h2><a name="copyrightLicense">1. COPYRIGHT AND LICENSE</a></h2>
 
-<pre>Copyright (c) 2006,2007,2008,2009
-Andreas Untergasser and Harm Nijveen.
-All rights reserved.
+<pre>Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,2010
+              2011,2012
+Whitehead Institute for Biomedical Research, Steve Rozen
+(<a href="http://purl.com/STEVEROZEN/">http://purl.com/STEVEROZEN/</a>), Andreas Untergasser and Helen Skaletsky. All rights
+reserved.
 
-    This file is part of the primer3plus suite and libraries.
+    This file is part of the primer3 suite and libraries.
 
-    The primer3plus suite and libraries are free software;
+    The primer3 suite and libraries are free software;
     you can redistribute them and/or modify them under the terms
     of the GNU General Public License as published by the Free
     Software Foundation; either version 2 of the License, or (at
@@ -105,28 +108,74 @@ All of these criteria are user-specifiable as constraints, and
 some are specifiable as terms in an objective function that
 characterizes an optimal primer pair.<br>
 
-<h2><a name="citationRequestP3P">3. CITING PRIMER3PLUS</a></h2>
+<h2><a name="citationRequest">3. CITING PRIMER3</a></h2>
 
 <p>We request but do not require that use of this software be cited in
 publications as<br>
 <br>
-Andreas Untergasser, Harm Nijveen, Xiangyu Rao, Ton Bisseling, Rene Geurts and 
-Jack A.M. Leunissen: Primer3Plus, an enhanced web interface to Primer3 Nucleic 
-Acids Research 2007 35: W71-W74; doi:10.1093/nar/gkm306<br>
+Untergasser A, Cutcutache I, Koressaar T, Ye J, Faircloth BC, Remm M and Rozen SG.<br>
+Primer3--new capabilities and interfaces.<br>
+Nucleic Acids Res. 2012 Aug 1;40(15):e115. 
+<br>
 <br>
 The paper is available at
-<a href="http://nar.oxfordjournals.org/cgi/content/abstract/gkm306v1">http://nar.oxfordjournals.org/cgi/content/abstract/gkm306v1</a><br>
-<br>  
+<a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3424584/">http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3424584/</a><br>
+<br>	
 Source code available at <a href="http://sourceforge.net/projects/primer3/">http://sourceforge.net/projects/primer3/</a>.</p>
 
-<h2><a name="pickAdvice">4. ADVICE FOR PICKING PRIMERS</a></h2>
+<h2><a name="licenseExplain">4. FAIR USE OF PRIMER3</a></h2>
+
+<p>
+The development of primer3 is promoted by a small group of 
+enthusiastic scientists mainly in their free time.They do not gain 
+any financial profit with primer3.<br>
+<br>
+There are two groups of primer3 users: end users, who run 
+primer3 to pick their primers and programmers, who use primer3 
+in their scripts or software packages. We encourage both to use 
+primer3.
+<br>
+<br>
+If you are an end user, we request but do not
+require that use of this software be cited in publications
+as listed above under CITING PRIMER3.
+<br>
+<br>
+If you are a programmer, you  will see that primer3 is now 
+distributed under the GNU  General Public License, version 2 or 
+(at  your option) any later version of the License (GPL2). 
+
+As we understand it, if you include parts of the primer3 source 
+code in your source code or link to primer3 binary libraries in 
+your executable, you have to release your software also under 
+GPL2. If you only call primer3 from your software and interpret 
+its output, you can use any license you want for your software. 
+If you modify primer3 and then release your modified software, 
+you have to release your modifications in source code under 
+GPL2 as well.
+<br>
+<br>
+We chose GPL2 because we wanted primer3 to evolve and for the 
+improvements to find their way back into the main distribution. 
+
+If you are programming a new web interface which runs primer3, 
+please include in the about page of the tool the sentence 
+"&lt;your software name&gt; uses primer3 version ...". 
+Please consider releasing your software under GPL2 as well, 
+especially if you do not want to maintain it in the future. 
+<br>
+<br>
+There is no need to ask us for permission to include primer3 
+in your tools.
+
+<h2><a name="pickAdvice">5. ADVICE FOR PICKING PRIMERS</a></h2>
 
 <p>We suggest consulting: Wojciech Rychlik (1993) "Selection of
 Primers for Polymerase Chain Reaction" in BA White, Ed., "Methods
 in Molecular Biology, Vol. 15: PCR Protocols: Current Methods and
 Applications", pp 31-40, Humana Press, Totowa NJ.</p>
 
-<h2><a name="cautions">5. CAUTIONS</a></h2>
+<h2><a name="cautions">6. CAUTIONS</a></h2>
 
 <p>Some of the most important issues in primer picking can be
 addressed only before using primer3. These are sequence quality 
@@ -160,7 +209,7 @@ In addition, primer3 takes as input a <a href="#SEQUENCE_QUALITY">SEQUENCE_QUALI
 use with those base calling programs (e.g. Phred)
 that output this information.</p>
 
-<h2><a name="findNoPrimers">6. WHAT TO DO IF PRIMER3 CANNOT FIND ANY PRIMERS?</a></h2>
+<h2><a name="findNoPrimers">7. WHAT TO DO IF PRIMER3 CANNOT FIND ANY PRIMERS?</a></h2>
 
 <p>Try relaxing various parameters, including the
 self-complementarity parameters and max and min oligo melting
@@ -176,7 +225,7 @@ at that position.<br>
 <br>
 Try setting the <a href="#PRIMER_EXPLAIN_FLAG">PRIMER_EXPLAIN_FLAG</a> input tag.</p>
 
-<h2><a name="sequenceTags">7. "SEQUENCE" INPUT TAGS</a></h2>
+<h2><a name="sequenceTags">8. "SEQUENCE" INPUT TAGS</a></h2>
 
 <p>"Sequence" input tags start with SEQUENCE_... and describe a 
 particular input sequence to primer3. They are reset after every 
@@ -469,7 +518,7 @@ constraints. The default value indicates that the end of the right primer
 can be anywhere.</p>
 
 
-<h2><a name="globalTags">8. "GLOBAL" INPUT TAGS</a></h2>
+<h2><a name="globalTags">9. "GLOBAL" INPUT TAGS</a></h2>
 
 <p>"Global" input tags start with PRIMER_... and describe the 
 general parameters that primer3 should use in its searches. 
@@ -1273,13 +1322,10 @@ Tm(C) = 323.704 - 273.15 = 50.554 C
 <p>The millimolar (mM) concentration of monovalent salt cations (usually KCl) in the PCR.
 Primer3 uses this argument to calculate oligo and primer melting
 temperatures. 
-<font color="red">
-(Triinu)
 Use tag <a href="#PRIMER_SALT_DIVALENT">PRIMER_SALT_DIVALENT</a> and 
 <a href="#PRIMER_INTERNAL_SALT_DIVALENT">PRIMER_INTERNAL_SALT_DIVALENT</a> to specify the concentrations
 of divalent cations (in which case you also should also set tag <a href="#PRIMER_DNTP_CONC">PRIMER_DNTP_CONC</a> to
 a reasonable value).
-</font>
 </p>
 
 
@@ -1308,13 +1354,12 @@ is larger than the concentration of divalent cations (<a href="#PRIMER_SALT_DIVA
 then the effect of the divalent cations is not considered. The
 concentration of dNTPs is considered in the formula above 
 because of some magnesium is bound by the dNTP.
-<font color="red">(Triinu)
 The adjusted concentration of monovalent cations is used in the
 calculation of oligo/primer
 melting temperature, PCR product melting temperature,
 and the stability of secondary structures (when <a href="#PRIMER_THERMODYNAMIC_ALIGNMENT">PRIMER_THERMODYNAMIC_ALIGNMENT</a> is 1).
 If <a href="#PRIMER_SALT_DIVALENT">PRIMER_SALT_DIVALENT</a> > 0.0, be sure to
-set tag <a href="#PRIMER_DNTP_CONC">PRIMER_DNTP_CONC</a> to specify the concentration of dNTPs.</font>
+set tag <a href="#PRIMER_DNTP_CONC">PRIMER_DNTP_CONC</a> to specify the concentration of dNTPs.
 </p>
 
 
@@ -1328,11 +1373,12 @@ set tag <a href="#PRIMER_DNTP_CONC">PRIMER_DNTP_CONC</a> to specify the concentr
 <p>The millimolar concentration of the sum of all 
 deoxyribonucleotide triphosphates. A reaction mix containing 
 0.2 mM ATP, 0.2 mM CTP, 0.2 mM GTP and 0.2 mM TTP would have a 
-PRIMER_DNTP_CONC=0.8. <font color="red">(Triinu) This argument is considered for oligo and
+PRIMER_DNTP_CONC=0.8. 
+This argument is considered for oligo and
 primer melting temperatures, for
 PCR product melting temperature, or for secondary 
 structure calculations only if 
-<a href="#PRIMER_SALT_DIVALENT">PRIMER_SALT_DIVALENT</a> is > 0.0.</font>
+<a href="#PRIMER_SALT_DIVALENT">PRIMER_SALT_DIVALENT</a> is > 0.0.
 See <a href="#PRIMER_SALT_DIVALENT">PRIMER_SALT_DIVALENT</a>.</p>
 
 
@@ -1371,14 +1417,12 @@ salt correction algorithms for Tm prediction-recommendations for Primer3
 usage. Brief Bioinform 12, 514 <a href="http://dx.doi.org/10.1093/bib/bbq081">http://dx.doi.org/10.1093/bib/bbq081</a>]. 
 <br>
 <br>
-<font color="red"> (Triinu)
 For all values of <a href="#PRIMER_SALT_CORRECTIONS">PRIMER_SALT_CORRECTIONS</a>,
 Primer3 also considers the values of the
 tags <a href="#PRIMER_SALT_DIVALENT">PRIMER_SALT_DIVALENT</a>, 
 <a href="#PRIMER_INTERNAL_SALT_DIVALENT">PRIMER_INTERNAL_SALT_DIVALENT</a>,
 <a href="#PRIMER_DNTP_CONC">PRIMER_DNTP_CONC</a>, and
 <a href="#PRIMER_INTERNAL_DNTP_CONC">PRIMER_INTERNAL_DNTP_CONC</a>.
-</font>
 </p>
 
 
@@ -2246,7 +2290,7 @@ both sides in which primer3plus picks the best primer. Value only used if
 <p> </p>
 
 
-<h2><a name="outputTags">9. OUTPUT TAGS</a></h2>
+<h2><a name="outputTags">10. OUTPUT TAGS</a></h2>
 
 <p>For each Boulder-IO record passed into primer3 via stdin, exactly
 one Boulder-IO record comes out of primer3 on stdout.
@@ -2682,7 +2726,7 @@ non-default value is supplied.</p>
 position.</p>
 
 
-<h2><a name="providedMisprimingLibs">10. PROVIDED MISPRIMING LIBRARIES</a></h2>
+<h2><a name="providedMisprimingLibs">11. PROVIDED MISPRIMING LIBRARIES</a></h2>
 
 <p>This selection indicates what mispriming library (if any) Primer3 
 should use to screen for interspersed repeats or for other 
@@ -2719,7 +2763,7 @@ The contents of the libraries can be viewed at the following links:<br>
 </ul>
 <br>
 
-<h2><a name="calculatePenalties">11. HOW PRIMER3 CALCULATES THE PENALTY VALUE</a></h2>
+<h2><a name="calculatePenalties">12. HOW PRIMER3 CALCULATES THE PENALTY VALUE</a></h2>
 
 <p>
 In essense, the penalty values define what is the best primer
@@ -3146,12 +3190,12 @@ this point. If primer pairs have to be selected, a
 still fulfill all necessary requirements like non-redundancy or
 product size limits.</p>
 
-<h2><a name="webInterface">12. PRIMER3 WWW INTERFACES</a></h2>
+<h2><a name="webInterface">13. PRIMER3 WWW INTERFACES</a></h2>
 
 <p>There are two web interfaces available :<br>
 The Whitehead Institute for Biomedical Research provides a basic
 web-based front end to primer3 named primer3web at
-<a href="http://frodo.wi.mit.edu/">http://frodo.wi.mit.edu/</a><br>
+<a href="http://primer3.wi.mit.edu/">http://primer3.wi.mit.edu/</a><br>
 <br>
 A Primer3plus web services is at
 <a href="http://primer3plus.com">http://primer3plus.com</a><br>
@@ -3161,7 +3205,7 @@ This distribution does not contain the Primer3 WWW interfaces.<br>
 Web interface code is available at
 <a href="http://sourceforge.net/projects/primer3/">http://sourceforge.net/projects/primer3/</a>.</p>
 
-<h2><a name="acknowledgments">13. ACKNOWLEDGMENTS</a></h2>
+<h2><a name="acknowledgments">14. ACKNOWLEDGMENTS</a></h2>
 
 <p>Initial development of Primer3 was funded by Howard Hughes Medical
 Institute and by the National Institutes of Health, National Human
@@ -3178,8 +3222,8 @@ based on the design of earlier versions, notably Primer 0.5
 The original web interface was designed by Richard Resnick.  Lincoln
 Stein designed the Boulder-IO format in the days before XML and RDF, and
 championed the idea of making primer3 a software component, which
-has been key to its wide utility.
-
+has been key to its wide utility.<br>
+<br>
 In addition, among others, Ernst Molitor, Carl Foeller, and James Bonfield
 contributed to the early
 design of primer3. Brant Faircloth has helped with 
@@ -3196,8 +3240,11 @@ in 2.2.0, including performance enhancements, modern
 command line arguments, and new input tags to 
 control primer location (with the "overlap junction"
 tags initially implemented by Andreas Untergasser).
-Jian Ye patiently provided new requirements.
-
+Jian Ye patiently provided new requirements.<br>
+<br>
+Harm Nijveen and Andreas Untergasser developed the webinterface 
+Primer3Plus in 2006-2009. Currently Primer3Plus is maintained by 
+Andreas Untergasser.
 <br>
 <br>
 Primer3 is an open software development project hosted

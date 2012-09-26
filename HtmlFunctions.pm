@@ -3651,94 +3651,158 @@ $formHTML .= qq{
    <br>
 </p>
 
-<h2>Primer3Plus</h2>
-<h3>Primer3Plus - Download Primer3Plus Program and Source Code</h3>
+<h2>Download Program and Source Code</h2>
 <p>
 <a href="http://sourceforge.net/projects/primer3/">
 Source code is available at http://sourceforge.net/projects/primer3/.
 </a>
 </p>
 
-<h3>Citing Primer3Plus</h3>
-<p>
-We request that use of this software be cited in publications as
-</p>
-<p>
-Andreas Untergasser, Harm Nijveen, Xiangyu Rao, Ton Bisseling, Ren&eacute; Geurts, and Jack A.M. Leunissen: 
-<b>Primer3Plus, an enhanced web interface to Primer3</b> Nucleic Acids Research 2007 35: W71-W74; doi:10.1093/nar/gkm306
-</p>
+<h2>Citing Primer3 and Primer3Plus</h2>
 
-<h2>Primer3</h2>
-
-<h3>Primer3 - Alternative Web Interface</h3>
-<p>
-<a href="http://primer3.sourceforge.net/webif.php">http://primer3.sourceforge.net/webif.php</a>
-</p>
-
-<h3>Primer3 - Download Primer3 Program and Source Code</h3>
-<p>
-<a href="http://sourceforge.net/projects/primer3/">
-Source code available at http://sourceforge.net/projects/primer3/.
-</a>
-</p>
-
-<h3>Citing Primer3</h3>
-<p>
-We request that use of this software be cited in publications as
-</p>
-<p>
-<a href="http://jura.wi.mit.edu/rozen/">Steve Rozen</a>
-and Helen J. Skaletsky (2000)
-<a href="http://jura.wi.mit.edu/rozen/papers/rozen-and-skaletsky-2000-primer3.pdf">
-Primer3 on the WWW for general users and for biologist programmers.
-</a>
-In: Krawetz S, Misener S (eds)
-<i>Bioinformatics Methods and Protocols: Methods in Molecular Biology.</i>
-Humana Press, Totowa, NJ, pp 365-386<br>
-</p>
-
-<h3>Acknowledgments of Primer3</h3>
-<p>
-The development of Primer3 and the Primer3
-web site was funded by 
-Howard Hughes Medical Institute
-and by the 
-National Institutes of Health,
-<a href="http://www.nhgri.nih.gov/">
-National Human Genome Research Institute.</a>
-under grants R01-HG00257
-(to David C. Page) and P50-HG00098 (to Eric S. Lander).
-</p>
-
-<p>
-Primer3 was a complete re-implementation
-of an earlier program:
-Primer 0.5 (<em>Steve Lincoln, Mark Daly, and Eric S. Lander</em>).
-<em>Lincoln Stein</em> championed the 
-idea of making Primer3 a software component suitable for high-throughput
-primer design.
-</p>
-
-<h3>Copyright Notice and Disclaimer</h3>
-<p>
-Copyright (c) 2006 - 2011<br>
-by Andreas Untergasser, Harm Nijveen, Steve Rozen and Helen Skaletsky<br>
-All rights reserved.<br>
+<p>We request but do not require that use of this software be cited in
+publications as<br>
 <br>
-Primer3 and Primer3Plus are free software; you can redistribute it and/or modify<br>
-it under the terms of the GNU General Public License as published by<br>
-the Free Software Foundation; either version 2 of the License, or<br>
-(at your option) any later version.<br>
+Untergasser A, Cutcutache I, Koressaar T, Ye J, Faircloth BC, Remm M and Rozen SG.<br>
+Primer3--new capabilities and interfaces.<br>
+Nucleic Acids Res. 2012 Aug 1;40(15):e115. 
 <br>
-Primer3 and Primer3Plus are distributed in the hope that it will be useful,<br>
-but WITHOUT ANY WARRANTY; without even the implied warranty of<br>
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br>
-GNU General Public License for more details.<br>
 <br>
-To received a copy of the GNU General Public License<br>
-write to the Free Software Foundation, Inc., 51 Franklin St,<br>
-Fifth Floor, Boston, MA  02110-1301  USA<br>
+The paper is available at
+<a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3424584/">http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3424584/</a><br>
+<br>	
+Source code available at <a href="http://sourceforge.net/projects/primer3/">http://sourceforge.net/projects/primer3/</a>.</p>
+
+<h2>Fair use of Primer3 and Primer3Plus</h2>
+
+<p>
+The development of primer3 is promoted by a small group of 
+enthusiastic scientists mainly in their free time.They do not gain 
+any financial profit with primer3.<br>
 <br>
+There are two groups of primer3 users: end users, who run 
+primer3 to pick their primers and programmers, who use primer3 
+in their scripts or software packages. We encourage both to use 
+primer3.
+<br>
+<br>
+If you are an end user, we request but do not
+require that use of this software be cited in publications
+as listed above under CITING PRIMER3.
+<br>
+<br>
+If you are a programmer, you  will see that primer3 is now 
+distributed under the GNU  General Public License, version 2 or 
+(at  your option) any later version of the License (GPL2). 
+
+As we understand it, if you include parts of the primer3 source 
+code in your source code or link to primer3 binary libraries in 
+your executable, you have to release your software also under 
+GPL2. If you only call primer3 from your software and interpret 
+its output, you can use any license you want for your software. 
+If you modify primer3 and then release your modified software, 
+you have to release your modifications in source code under 
+GPL2 as well.
+<br>
+<br>
+We chose GPL2 because we wanted primer3 to evolve and for the 
+improvements to find their way back into the main distribution. 
+
+If you are programming a new web interface which runs primer3, 
+please include in the about page of the tool the sentence 
+"&lt;your software name&gt; uses primer3 version ...". 
+Please consider releasing your software under GPL2 as well, 
+especially if you do not want to maintain it in the future. 
+<br>
+<br>
+There is no need to ask us for permission to include primer3 
+in your tools.
+
+
+<h2>Acknowledgments</h2>
+
+<p>Initial development of Primer3 was funded by Howard Hughes Medical
+Institute and by the National Institutes of Health, National Human
+Genome Research Institute under grants R01-HG00257 (to David C. Page)
+and P50-HG00098 (to Eric S. Lander),
+but ongoing development and maintenance are not currently funded.
+<br>
+<br>
+Primer3 was originally written by Helen J. Skaletsky (Howard Hughes
+Medical Institute, Whitehead Institute) and Steve Rozen (Duke-NUS
+Graduate Medical School Singapore, formerly at Whitehead Institute)
+based on the design of earlier versions, notably Primer 0.5
+(Steve Lincoln, Mark Daly, and Eric S. Lander).
+The original web interface was designed by Richard Resnick.  Lincoln
+Stein designed the Boulder-IO format in the days before XML and RDF, and
+championed the idea of making primer3 a software component, which
+has been key to its wide utility.<br>
+<br>
+In addition, among others, Ernst Molitor, Carl Foeller, and James Bonfield
+contributed to the early
+design of primer3. Brant Faircloth has helped with 
+ensuring that primer3 runs on Windows and MacOS and with the
+primer3 web site. 
+Triinu Koressaar and Maido Remm modernized the melting 
+temperature calculations in 2008.  
+Triinu Koressaar added secondary structure, 
+primer-dimer, and template mispriming based on a thermodynamic
+model in 2.2.0.
+Ioana Cutcutache is responsible for most of the 
+remaining improvements
+in 2.2.0, including performance enhancements, modern
+command line arguments, and new input tags to 
+control primer location (with the "overlap junction"
+tags initially implemented by Andreas Untergasser).
+Jian Ye patiently provided new requirements.<br>
+<br>
+Harm Nijveen and Andreas Untergasser developed the webinterface 
+Primer3Plus in 2006-2009. Currently Primer3Plus is maintained by 
+Andreas Untergasser.
+<br>
+<br>
+Primer3 is an open software development project hosted
+on SourceForge: <a href="http://sourceforge.net/projects/primer3/">http://sourceforge.net/projects/primer3/</a>
+.</p>
+
+<h2>COPYRIGHT AND LICENSE</h2>
+
+<pre>Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,2010
+              2011,2012
+Whitehead Institute for Biomedical Research, Steve Rozen
+(<a href="http://purl.com/STEVEROZEN/">http://purl.com/STEVEROZEN/</a>), Andreas Untergasser and Helen Skaletsky. All rights
+reserved.
+
+    This file is part of the primer3 suite and libraries.
+
+    The primer3 suite and libraries are free software;
+    you can redistribute them and/or modify them under the terms
+    of the GNU General Public License as published by the Free
+    Software Foundation; either version 2 of the License, or (at
+    your option) any later version.
+
+    This software is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this software (file gpl-2.0.txt in the source
+    distribution); if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+</pre>
 
 </div>
 
