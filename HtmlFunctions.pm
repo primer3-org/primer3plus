@@ -496,7 +496,7 @@ $formHTML .= qq{
 	<tr>
 	<td class="primer3plus_cell_no_border">
 	
-<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,PRIMER_PICK_ANYWAY,PRIMER_LIBERAL_BASE,PRIMER_LOWERCASE_MASKING,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS,PRIMER_THERMODYNAMIC_ALIGNMENT,SCRIPT_DISPLAY_DEBUG_INFORMATION" type="hidden">
+<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,PRIMER_PICK_ANYWAY,PRIMER_LIBERAL_BASE,PRIMER_LOWERCASE_MASKING,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS,PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT,PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT,SCRIPT_DISPLAY_DEBUG_INFORMATION" type="hidden">
 
          <a name="SCRIPT_SERVER_PARAMETER_FILE_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_SERVER_PARAMETER_FILE">
          Load server settings:</a>&nbsp;&nbsp;
@@ -1101,9 +1101,9 @@ $formHTML .= qq{</div>
    <table class="primer3plus_table_no_border">
      <colgroup>
        <col width="25%">
-       <col width="15%">
-       <col width="27%">
-       <col width="33%">
+       <col width="10%">
+       <col width="34%">
+       <col width="31%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_POLY_X_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_POLY_X">Max Poly-X:</a>
@@ -1170,12 +1170,12 @@ $formHTML .= qq{</div>
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_GC_CLAMP" value="$settings{PRIMER_GC_CLAMP}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_THERMODYNAMIC_ALIGNMENT_INPUT" href="$machineSettings{URL_HELP}#PRIMER_THERMODYNAMIC_ALIGNMENT">
-       Use Thermodynamic Alignment:</a>
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT_INPUT" href="$machineSettings{URL_HELP}#PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT">
+       Use Thermodynamic Primer Alignment:</a>
        </td>
-       <td class="primer3plus_cell_no_border_th"><input name="PRIMER_THERMODYNAMIC_ALIGNMENT"  value="1" };
+       <td class="primer3plus_cell_no_border_th"><input name="PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"  value="1" };
 
-	$formHTML .= ($settings{PRIMER_THERMODYNAMIC_ALIGNMENT}) ? "checked=\"checked\" " : "";
+	$formHTML .= ($settings{PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT}) ? "checked=\"checked\" " : "";
  
 	$formHTML .= qq{type="checkbox"><a>&nbsp;&nbsp;Activates Settings Starting with TH:</a>
        </td>
@@ -1185,9 +1185,14 @@ $formHTML .= qq{</div>
        </td>
        <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_MAX_END_GC" value="$settings{PRIMER_MAX_END_GC}" type="text">
        </td>
-       <td class="primer3plus_cell_no_border">
+       <td class="primer3plus_cell_no_border_th"><a name="PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT_INPUT" href="$machineSettings{URL_HELP}#PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT">
+       Use Thermodynamic Template Alignment:</a>
        </td>
-       <td class="primer3plus_cell_no_border">
+       <td class="primer3plus_cell_no_border_th"><input name="PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT"  value="1" };
+
+	$formHTML .= ($settings{PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT}) ? "checked=\"checked\" " : "";
+ 
+	$formHTML .= qq{type="checkbox"><a>&nbsp;&nbsp;Activates Settings Starting with TH:</a>
        </td>
      </tr>
      <tr>
@@ -2515,8 +2520,12 @@ sub createResultsPrimerCheck {
   my $primerPenalty;
   
   my $thAdd = "";
-  if (($results->{"PRIMER_THERMODYNAMIC_ALIGNMENT"}) eq "1") {
+  if (($results->{"PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"}) eq "1") {
   	  $thAdd = "_TH";
+  }
+  my $thTmAdd = "";
+  if (($results->{"PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT"}) eq "1") {
+  	  $thTmAdd = "_TH";
   }
 
   ## Figure out which primer to return
@@ -2582,18 +2591,18 @@ $formHTML .= qq{
        <td class="primer3plus_cell_no_border">$primerAny</td>
      </tr>};
 
-  if (defined ($results->{"PRIMER_$type\_0_TEMPLATE_MISPRIMING$thAdd"}) 
-        and (($results->{"PRIMER_$type\_0_TEMPLATE_MISPRIMING$thAdd"}) ne "")) {
-      my   $primerTempMispr = sprintf ("%.1f",($results->{"PRIMER_$type\_0_TEMPLATE_MISPRIMING$thAdd"}));
+  if (defined ($results->{"PRIMER_$type\_0_TEMPLATE_MISPRIMING$thTmAdd"}) 
+        and (($results->{"PRIMER_$type\_0_TEMPLATE_MISPRIMING$thTmAdd"}) ne "")) {
+      my   $primerTempMispr = sprintf ("%.1f",($results->{"PRIMER_$type\_0_TEMPLATE_MISPRIMING$thTmAdd"}));
 
       $formHTML .= qq{     <tr>
-       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TEMPLATE_MISPRIMING$thAdd">Template Mispriming:</a></td>
+       <td class="primer3plus_cell_no_border"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TEMPLATE_MISPRIMING$thTmAdd">Template Mispriming:</a></td>
        <td class="primer3plus_cell_no_border">$primerTempMispr</td>
      </tr>
 };
   }
 
-  if (($results->{"PRIMER_THERMODYNAMIC_ALIGNMENT"}) eq "1") {
+  if (($results->{"PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"}) eq "1") {
       $primerHairpin = sprintf ("%.1f",($results->{"PRIMER_$type\_0_HAIRPIN_TH"}));
       
       $formHTML .= qq{     <tr>
@@ -2917,8 +2926,12 @@ sub divLongList {
   my $stopLoop;
   
   my $thAdd = "";
-  if (($results->{"PRIMER_THERMODYNAMIC_ALIGNMENT"}) eq "1") {
+  if (($results->{"PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"}) eq "1") {
   	  $thAdd = "_TH";
+  }
+  my $thTmAdd = "";
+  if (($results->{"PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT"}) eq "1") {
+  	  $thTmAdd = "_TH";
   }
   
   $formHTML = qq{
@@ -2959,8 +2972,8 @@ sub divLongList {
       $primerGC = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_GC_PERCENT"}));
       $primerSelf = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_SELF_ANY$thAdd"}));
       $primerEnd = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_SELF_END$thAdd"}));
-      if (defined $results->{"PRIMER_$primerType\_$counter\_TEMPLATE_MISPRIMING$thAdd"}) {
-          $primerTemplateBinding = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_TEMPLATE_MISPRIMING$thAdd"}));
+      if (defined $results->{"PRIMER_$primerType\_$counter\_TEMPLATE_MISPRIMING$thTmAdd"}) {
+          $primerTemplateBinding = sprintf ("%.1f",($results->{"PRIMER_$primerType\_$counter\_TEMPLATE_MISPRIMING$thTmAdd"}));
       } else {
           $primerTemplateBinding = "";
       }   
@@ -3188,9 +3201,14 @@ sub partPrimerData {
   my $writeName;
   
   my $thAdd = "";
-  if (($results->{"PRIMER_THERMODYNAMIC_ALIGNMENT"}) eq "1") {
+  if (($results->{"PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"}) eq "1") {
   	  $thAdd = "_TH";
   }
+  my $thTmAdd = "";
+  if (($results->{"PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT"}) eq "1") {
+  	  $thTmAdd = "_TH";
+  }
+
   if ($type eq "LEFT") {
 		$cssName = "left_primer";
 		$writeName = "Left Primer";
@@ -3215,12 +3233,12 @@ if (defined ($results->{"PRIMER_$type\_$counter\_SEQUENCE"})
   $primerGC = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_GC_PERCENT"}));
   $primerAny = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_SELF_ANY$thAdd"}));
   $primerEnd = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_SELF_END$thAdd"}));
-  if (defined $results->{"PRIMER_$type\_$counter\_TEMPLATE_MISPRIMING$thAdd"}) {
-      $primerTemplateBinding = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_TEMPLATE_MISPRIMING$thAdd"}));
+  if (defined $results->{"PRIMER_$type\_$counter\_TEMPLATE_MISPRIMING$thTmAdd"}) {
+      $primerTemplateBinding = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_TEMPLATE_MISPRIMING$thTmAdd"}));
   } else {
       $primerTemplateBinding = "";
   }
-  if (($results->{"PRIMER_THERMODYNAMIC_ALIGNMENT"}) eq "1") {
+  if (($results->{"PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"}) eq "1") {
       $primerHairpin = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_HAIRPIN_TH"}));
   }
   $primerEndStability = sprintf ("%.1f",($results->{"PRIMER_$type\_$counter\_END_STABILITY"}));
@@ -3241,10 +3259,10 @@ $formHTML .= qq{     <tr class="primer3plus_$cssName">
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_GC_PERCENT">GC:</a> $primerGC %</td>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_ANY$thAdd">Any:</a> $primerAny</td>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_END$thAdd">End:</a> $primerEnd</td>
-       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TEMPLATE_MISPRIMING$thAdd">TB:</a> $primerAny</td>
+       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TEMPLATE_MISPRIMING$thTmAdd">TB:</a> $primerAny</td>
        <td class="primer3plus_cell_primer_pair_box">};
        
-if (($results->{"PRIMER_THERMODYNAMIC_ALIGNMENT"}) eq "1") {
+if (($results->{"PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"}) eq "1") {
        $formHTML .= qq{<a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_HAIRPIN_TH">HP:</a> $primerHairpin};
 }
 
