@@ -3259,7 +3259,7 @@ $formHTML .= qq{     <tr class="primer3plus_$cssName">
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_GC_PERCENT">GC:</a> $primerGC %</td>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_ANY$thAdd">Any:</a> $primerAny</td>
        <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_SELF_END$thAdd">End:</a> $primerEnd</td>
-       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TEMPLATE_MISPRIMING$thTmAdd">TB:</a> $primerAny</td>
+       <td class="primer3plus_cell_primer_pair_box"><a href="$machineSettings{URL_HELP}#PRIMER_RIGHT_4_TEMPLATE_MISPRIMING$thTmAdd">TB:</a> $primerTemplateBinding</td>
        <td class="primer3plus_cell_primer_pair_box">};
        
 if (($results->{"PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"}) eq "1") {
