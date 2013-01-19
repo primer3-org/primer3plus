@@ -1102,8 +1102,8 @@ $formHTML .= qq{</div>
      <colgroup>
        <col width="25%">
        <col width="10%">
-       <col width="34%">
-       <col width="31%">
+       <col width="33%">
+       <col width="32%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a name="PRIMER_MAX_POLY_X_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MAX_POLY_X">Max Poly-X:</a>
@@ -1192,7 +1192,7 @@ $formHTML .= qq{</div>
 
 	$formHTML .= ($settings{PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT}) ? "checked=\"checked\" " : "";
  
-	$formHTML .= qq{type="checkbox"><a>&nbsp;&nbsp;Activates Settings Starting with TH:</a>
+	$formHTML .= qq{type="checkbox"><a>&nbsp;&nbsp;Activates TH: Settings-VERY SLOW</a>
        </td>
      </tr>
      <tr>
