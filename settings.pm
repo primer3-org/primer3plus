@@ -117,7 +117,7 @@ my %machineSettings = (
   "STATISTICS" =>  "Y",
 
   # The version number of primer3plus.
-  "P3P_VERSION" =>  "2.3.5",
+  "P3P_VERSION" =>  "2.3.6",
 
 );
 
@@ -205,6 +205,10 @@ my %defaultSettings = (
   "PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION"   => "4",
   "PRIMER_PRODUCT_SIZE_RANGE"                => "501-600 601-700 401-500 701-850 851-1000 1001-1500 1501-3000 3001-5000",
   "PRIMER_PRODUCT_OPT_SIZE"                  => "",
+  "PRIMER_MUST_MATCH_FIVE_PRIME"             => "",
+  "PRIMER_MUST_MATCH_THREE_PRIME"            => "",
+  "PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME"    => "",
+  "PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME"   => "",
   "PRIMER_PAIR_WT_PRODUCT_SIZE_LT"           => "0.0",
   "PRIMER_PAIR_WT_PRODUCT_SIZE_GT"           => "0.0",
   "PRIMER_MIN_SIZE"                          => "18",

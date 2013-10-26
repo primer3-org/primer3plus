@@ -1315,6 +1315,30 @@ $formHTML .= qq{</div>
        </td>
      </tr>
      <tr>
+       <td class="primer3plus_cell_no_border"> <a name="PRIMER_MUST_MATCH_FIVE_PRIME_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MUST_MATCH_FIVE_PRIME">
+       Primer Must Match 5 Prime:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_MUST_MATCH_FIVE_PRIME" value="$settings{PRIMER_MUST_MATCH_FIVE_PRIME}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"> <a name="PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME">
+       Internal Must Match 5 Prime:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME" value="$settings{PRIMER_INTERNAL_MUST_MATCH_FIVE_PRIME}" type="text">
+       </td>
+     </tr>
+     <tr>
+       <td class="primer3plus_cell_no_border"> <a name="PRIMER_MUST_MATCH_THREE_PRIME_INPUT" href="$machineSettings{URL_HELP}#PRIMER_MUST_MATCH_THREE_PRIME">
+       Primer Must Match 3 Prime:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_MUST_MATCH_THREE_PRIME" value="$settings{PRIMER_MUST_MATCH_THREE_PRIME}" type="text">
+       </td>
+       <td class="primer3plus_cell_no_border"> <a name="PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME_INPUT" href="$machineSettings{URL_HELP}#PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME">
+       Internal Must Match 3 Prime:</a>
+       </td>
+       <td class="primer3plus_cell_no_border"> <input size="4" name="PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME" value="$settings{PRIMER_INTERNAL_MUST_MATCH_THREE_PRIME}" type="text">
+       </td>
+     </tr>
+     <tr>
        <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_LEFT_INPUT" href="$machineSettings{URL_HELP}#P3P_PRIMER_NAME_ACRONYM_LEFT">
        Left Primer Acronym:</a>
        </td>
