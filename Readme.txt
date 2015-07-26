@@ -9,7 +9,7 @@ It should run unaltered on windows and linux systems if you
 checkout from subversion (read only):
 svn checkout svn://svn.code.sf.net/p/primer3/code/primer3plus/trunk primer3plus
 (read and write):
-svn checkout http://svn.code.sf.net/p/primer3/code/primer3plus/trunk primer3plus
+svn checkout https://svn.code.sf.net/p/primer3/code/primer3plus/trunk primer3plus
 
 To install copy the folder in the cgi-folder. Obtain a copy
 of primer3 and install it into this folder. Adjust the 
