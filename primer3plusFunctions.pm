@@ -1642,6 +1642,11 @@ sub runPrimer3 ($$$) {
     $resultsHash->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"} = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_RIGHT"};
     $resultsHash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"} = $completeHash->{"P3P_PRIMER_NAME_ACRONYM_SPACER"};
 
+    #Copy Genome Browser infos
+    $resultsHash->{"GENBRO_RETURN_PATH"} = $completeHash->{"GENBRO_RETURN_PATH"};
+    $resultsHash->{"GENBRO_DB"} = $completeHash->{"GENBRO_DB"};
+    $resultsHash->{"GENBRO_POSITION"} = $completeHash->{"GENBRO_POSITION"};
+
 
 ###### Really run primer3
     open(PRIMER3OUTPUT, "$callPrimer3 $inputFile 2>&1 |")
@@ -1688,9 +1693,49 @@ sub runPrimer3 ($$$) {
 	        return;
 	    }
 		
-	}
-    # Calculate the Amplicon to hand it over to Primer3Manager  
-	if (defined($resultsHash->{"PRIMER_PAIR_NUM_RETURNED"})) {
+	} else {
+            # Here we prepare the File for Genome Browser
+            if ($resultsHash->{"GENBRO_RETURN_PATH"} ne "" ) {
+                my $geneFile = getMachineSetting("USER_GENE_BRO_FILES_PATH");
+                my $uniqueFile = makeUniqueID();
+                $geneFile .= $uniqueFile;
+                $openError = 0;
+                open( GENEFILE, ">$geneFile" ) or $openError = 1;
+                if ($openError == 0) {
+                    my $chrom = $resultsHash->{"GENBRO_POSITION"};
+                    my $chrPos = $resultsHash->{"GENBRO_POSITION"};
+                    $chrom =~ s/:.+//g;
+                    $chrPos =~ s/.+://g;
+                    $chrPos =~ s/-.+//g;
+                    for (my $k = 0; $k < $resultsHash->{"PRIMER_LEFT_NUM_RETURNED"} ; $k++ ) {
+                        my @geneAr = split ("," , $resultsHash->{"PRIMER_LEFT_$k"} );
+                        my $geneStart = $chrPos + $geneAr[0] - 2;
+                        my $geneEnd = $chrPos + $geneAr[0] + $geneAr[1] - 2;
+                        my $genK = $k + 1;
+                        print GENEFILE "$chrom\t$geneStart\t$geneEnd\tLeft_Primer_$genK\t0\t+\n";
+                    }
+                    for (my $k = 0; $k < $resultsHash->{"PRIMER_INTERNAL_NUM_RETURNED"} ; $k++ ) {
+                        my @geneAr = split ("," , $resultsHash->{"PRIMER_INTERNAL_$k"} );
+                        my $geneStart = $chrPos + $geneAr[0] - 2;
+                        my $geneEnd = $chrPos + $geneAr[0] + $geneAr[1] - 2;
+                        my $genK = $k + 1;
+                        print GENEFILE "$chrom\t$geneStart\t$geneEnd\tInternal_Primer_$genK\t0\t+\n";
+                    }
+                    for (my $k = 0; $k < $resultsHash->{"PRIMER_RIGHT_NUM_RETURNED"} ; $k++ ) {
+                        my @geneAr = split ("," , $resultsHash->{"PRIMER_RIGHT_$k"} );
+                        my $geneStart = $chrPos + $geneAr[0] - $geneAr[1] - 1;
+                        my $geneEnd = $chrPos + $geneAr[0] - 1;
+                        my $genK = $k + 1;
+                        print GENEFILE "$chrom\t$geneStart\t$geneEnd\tRight_Primer_$genK\t0\t-\n";
+                    }
+                    close(GENEFILE);
+                    $completeHash->{"GENBRO_FILE"} = getMachineSetting("USER_GENE_BRO_HTML_PATH") . $uniqueFile;
+                } else {
+                    setMessage("cannot write $geneFile for Genome Browser");
+                }
+            }
+        }
+        if (defined($resultsHash->{"PRIMER_PAIR_NUM_RETURNED"})) {
         for($primerPairCount = 0; $primerPairCount < $resultsHash->{"PRIMER_PAIR_NUM_RETURNED"}; $primerPairCount++) {
             ($ampliconLeft, $ampliconDel) = split ",", $resultsHash->{"PRIMER_LEFT_$primerPairCount"};
             ($ampliconRight, $ampliconDel) = split ",", $resultsHash->{"PRIMER_RIGHT_$primerPairCount"};

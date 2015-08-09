@@ -49,6 +49,13 @@ my %machineSettings = (
   # Who the end user will complain to:
   "MAINTAINER" =>"user&#host.com",
 
+  # The path were Primer3plus stores its the files for Genome Browser.
+  "USER_GENE_BRO_HTML_PATH" =>  "http://primer3plus.com/geneBro/",
+
+  # The path were Primer3plus stores its the files for Genome Browser.
+  "USER_GENE_BRO_FILES_PATH" =>  "/srv/primer3plus/page/geneBro/",
+
+
   # The location of the primer3_core executable.
   "WIN_PRIMER_BIN" =>  "primer3_core.exe",   # for Windows
   "PRIMER_BIN"     =>  "./primer3_core",     # for Linux
@@ -352,7 +359,14 @@ my %defaultSettings = (
   "SCRIPT_DISPLAY_DEBUG_INFORMATION"         => "0",
   "SCRIPT_PRODUCT_MIN_SIZE"                  => "",
   "SCRIPT_PRODUCT_MAX_SIZE"                  => "",
-  "SCRIPT_SERVER_PARAMETER_FILE"             => "DEFAULT"
+  "SCRIPT_SERVER_PARAMETER_FILE"             => "DEFAULT",
+
+# Genome Browser
+
+  "GENBRO_FILE"                              => "",
+  "GENBRO_RETURN_PATH"                       => "",
+  "GENBRO_DB"                                => "",
+  "GENBRO_POSITION"                          => ""
 
 );
 
@@ -605,6 +619,10 @@ SCRIPT_DETECTION_PICK_LEFT => "PRIMER_PICK_LEFT_PRIMER",
 SCRIPT_DETECTION_PICK_HYB_PROBE => "PRIMER_PICK_INTERNAL_OLIGO",
 SCRIPT_DETECTION_PICK_RIGHT => "PRIMER_PICK_RIGHT_PRIMER",
 
+GENBRO_FILE => "GENBRO_FILE",
+GENBRO_RETURN_PATH => "GENBRO_RETURN_PATH",
+GENBRO_DB => "GENBRO_DB",
+GENBRO_POSITION => "GENBRO_POSITION"
 );
 
 

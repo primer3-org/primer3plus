@@ -33,7 +33,7 @@ our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
 @EXPORT = qw(&mainStartUpHTML &createHelpHTML &createAboutHTML &createResultsPrefoldHTML
              &createPackageHTML &mainResultsHTML &createManagerDisplayHTML 
              &createCompareFileHTML &createResultCompareFileHTML &createPrefoldHTML
-             &getWrapper &createSelectSequence &createStatisticsHTML );
+             &getWrapper &createSelectSequence &createStatisticsHTML &geneBroHTML);
 $VERSION = "1.00";
 
 ##########################################################################
@@ -2245,6 +2245,35 @@ foreach $HashKeys (sort(keys(%settings))){
   return $returnString;
 }
 
+#######################################################
+# geneBroHTML: Writes the jump page to genome Browser #
+#######################################################
+sub geneBroHTML {
+  my ($completeParameters, $results); 
+  $completeParameters = shift;
+
+  my $jumpPath = "http://genome.ucsc.edu/cgi-bin/hgTracks?db=";
+  $jumpPath .= $completeParameters->{GENBRO_DB};
+  $jumpPath .= "&position=";
+  $jumpPath .= $completeParameters->{GENBRO_POSITION};
+  $jumpPath .= "&hgct_customText=";
+  $jumpPath .= $completeParameters->{GENBRO_FILE};
+
+  my $returnHTML = qq{<html>
+<head>
+   <meta http-equiv="refresh"
+   content="10; url=$jumpPath">
+</head>
+<body>
+   <p>Please go back to Genome Browser to:
+   <a href="$jumpPath">$jumpPath</a></p>
+</body>
+</html>};
+
+  return $returnHTML;
+}
+
+
 
 ##################################################################
 # mainResultsHTML: Will select the function to write a HTML-Form #
@@ -2791,7 +2820,13 @@ foreach $HashKeys (sort(keys(%settings))){
 
 $formHTML .= qq{
 <input id="primer3plus_return_to_pick_primers_button" class="primer3plus_action_button" name="Return_To_Pick_Primers" value="< Back" type="submit">
-</form>
+};
+
+if ( $settings{"GENBRO_RETURN_PATH"} ne "") {
+    $formHTML .= qq{<input id="primer3plus_return_to_genome_browser_button" class="primer3plus_action_button" name="Return_To_Genome_Browser" value="Return to Genome Browser" type="submit">};
+}
+
+$formHTML .= qq{</form>
 
 </div>	
 };
