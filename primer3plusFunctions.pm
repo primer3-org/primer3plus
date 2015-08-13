@@ -93,6 +93,8 @@ sub getParametersHTML {
 	}
 
 	# The usual things to read from the HTML
+        # open( DEBFILE, ">cached_data/DEBUG_CGI_INPUT.txt" ) or die "Cant write cached_data/DEBUG_CGI_INPUT.txt";
+
 	foreach $name ( $cgi->param ) {
 		$value = $cgi->param($name);
 		$name  =~ tr/+/ /;
@@ -100,7 +102,12 @@ sub getParametersHTML {
 		$value =~ tr/+/ /;
 		$value =~ s/%([\da-f][\da-f])/chr( hex($1) )/egi;
 		$dataTarget->{$name} = $value;
+
+                # For debugging 
+                # print DEBFILE "$name = $value\n";
 	}
+
+        # close (DEBFILE);
 
 	return;
 }
@@ -1703,6 +1710,7 @@ sub runPrimer3 ($$$) {
                 open( GENEFILE, ">$geneFile" ) or $openError = 1;
                 if ($openError == 0) {
                     my $chrom = $resultsHash->{"GENBRO_POSITION"};
+                    print GENEFILE "track name=\"Primer3Plus\" description\"Primers by Primer3Plus in region $chrom\"  color=255,0,0 visibility=pack\n";
                     my $chrPos = $resultsHash->{"GENBRO_POSITION"};
                     $chrom =~ s/:.+//g;
                     $chrPos =~ s/.+://g;

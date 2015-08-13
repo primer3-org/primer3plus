@@ -498,6 +498,12 @@ $formHTML .= qq{
 	
 <input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,PRIMER_PICK_ANYWAY,PRIMER_LIBERAL_BASE,PRIMER_LOWERCASE_MASKING,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS,PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT,PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT,SCRIPT_DISPLAY_DEBUG_INFORMATION" type="hidden">
 
+	<input id="GENBRO_RETURN_PATH" name="GENBRO_RETURN_PATH" value="$settings{GENBRO_RETURN_PATH}" type="hidden">
+        <input id="GENBRO_DB" name="GENBRO_DB" value="$settings{GENBRO_DB}" type="hidden">
+        <input id="GENBRO_POSITION" name="GENBRO_POSITION" value="$settings{GENBRO_POSITION}" type="hidden">
+        <input id="GENBRO_FILE" name="GENBRO_FILE" value="" type="hidden">
+
+
          <a name="SCRIPT_SERVER_PARAMETER_FILE_INPUT" href="$machineSettings{URL_HELP}#SCRIPT_SERVER_PARAMETER_FILE">
          Load server settings:</a>&nbsp;&nbsp;
          <select name="SCRIPT_SERVER_PARAMETER_FILE">
@@ -2252,7 +2258,9 @@ sub geneBroHTML {
   my ($completeParameters, $results); 
   $completeParameters = shift;
 
-  my $jumpPath = "http://genome.ucsc.edu/cgi-bin/hgTracks?db=";
+  my $jumpPath = "";
+  $jumpPath .= $completeParameters->{GENBRO_RETURN_PATH};
+  $jumpPath .= "?db=";
   $jumpPath .= $completeParameters->{GENBRO_DB};
   $jumpPath .= "&position=";
   $jumpPath .= $completeParameters->{GENBRO_POSITION};
@@ -2262,10 +2270,10 @@ sub geneBroHTML {
   my $returnHTML = qq{<html>
 <head>
    <meta http-equiv="refresh"
-   content="10; url=$jumpPath">
+   content="0; url=$jumpPath">
 </head>
 <body>
-   <p>Please go back to Genome Browser to:
+   <p>You are being redirected to Genome Browser:
    <a href="$jumpPath">$jumpPath</a></p>
 </body>
 </html>};
