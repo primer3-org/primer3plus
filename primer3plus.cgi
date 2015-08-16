@@ -113,13 +113,6 @@ elsif ( defined $parametersHTML{Save_Settings} ) {
     writeStatistics("primer3plus_main_start");
 }
 
-elsif ( defined $parametersHTML{Return_To_Genome_Browser} ) {
-        print "Content-type: text/html\n\n";
-        print geneBroHTML( \%completeParameters ), "\n";
-        print "$completeParameters{GENBRO_FILE}";
-        print "$completeParameters{GENBRO_POSITION}";
-}
-
 elsif ( defined $parametersHTML{Pick_Primers} ) {
 	runPrimer3( \%completeParameters, \%defaultSettings, \%resultsHash );
 	print "Content-type: text/html\n\n";

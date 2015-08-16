@@ -2339,7 +2339,12 @@ sub mainResultsHTML {
 };
   # Write the back button
   $returnHTML .= divReturnToInput($completeParameters);
-  
+
+  # Link to Genome Browser if possible
+  if ($completeParameters->{"GENBRO_RETURN_PATH"} ne "") {
+      $returnHTML .= divGenomeBrowser($completeParameters); 
+  }
+ 
   # Display debug information
   if ((defined $results->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"}) and ($results->{"SCRIPT_DISPLAY_DEBUG_INFORMATION"} eq 1)){
       $returnHTML .= printDebugInfo($results, "The Primer3Plus results hash", 1);
@@ -2828,15 +2833,32 @@ foreach $HashKeys (sort(keys(%settings))){
 
 $formHTML .= qq{
 <input id="primer3plus_return_to_pick_primers_button" class="primer3plus_action_button" name="Return_To_Pick_Primers" value="< Back" type="submit">
-};
-
-if ( $settings{"GENBRO_RETURN_PATH"} ne "") {
-    $formHTML .= qq{<input id="primer3plus_return_to_genome_browser_button" class="primer3plus_action_button" name="Return_To_Genome_Browser" value="Return to Genome Browser" type="submit">};
-}
-
-$formHTML .= qq{</form>
+</form>
 
 </div>	
+};
+
+  return $formHTML;
+}
+
+#####################################################################
+# divGenomeBrowser: Create a return to Genome Browser screen Button #
+#####################################################################
+sub divGenomeBrowser {
+  my %settings;
+  %settings = %{(shift)};
+
+  my $formHTML = qq{
+<div id="primer3plus_return_to_input_button">
+<form action="$machineSettings{URL_GENE_BRO_ACTION}" method="post" enctype="multipart/form-data" target="genomeBrowser">
+<input id="GENBRO_RETURN_PATH" name="GENBRO_RETURN_PATH" value="$settings{GENBRO_RETURN_PATH}" type="hidden">
+<input id="GENBRO_DB" name="GENBRO_DB" value="$settings{GENBRO_DB}" type="hidden">
+<input id="GENBRO_POSITION" name="GENBRO_POSITION" value="$settings{GENBRO_POSITION}" type="hidden">
+<input id="GENBRO_FILE" name="GENBRO_FILE" value="$settings{GENBRO_FILE}" type="hidden">
+<input id="primer3plus_return_to_genome_browser_button" class="primer3plus_action_button" name="Return_To_Genome_Browser" value="Return to Genome Browser" type="submit">
+<input id="primer3plus_return_to_genome_browser_button" class="primer3plus_action_button" name="Save_BED" value="Save BED File" type="submit">
+</form>
+</div>
 };
 
   return $formHTML;

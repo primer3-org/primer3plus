@@ -77,6 +77,9 @@ my %machineSettings = (
   # The URL for the result action (were primer3plus sends his found primer to) 
   "URL_PRIMER_MANAGER" => "primer3manager.cgi",
 
+  # The URL for the Genome Browser result action
+  "URL_GENE_BRO_ACTION" => "primer3genomeBrowser.cgi",
+
   # The URL for the result action (were primer3plus sends his found primer to) 
   "URL_PREFOLD" => "primer3prefold.cgi",
 
@@ -210,7 +213,7 @@ my %defaultSettings = (
   "PRIMER_NUM_RETURN"                        => "5",
   "PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION"   => "7",
   "PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION"   => "4",
-  "PRIMER_PRODUCT_SIZE_RANGE"                => "501-600 601-700 401-500 701-850 851-1000 1001-1500 1501-3000 3001-5000",
+  "PRIMER_PRODUCT_SIZE_RANGE"                => "501-600 601-700 401-500 701-850 851-1000 1001-1500 1501-3000 3001-5000 401-500 301-400 201-300 101-200",
   "PRIMER_PRODUCT_OPT_SIZE"                  => "",
   "PRIMER_MUST_MATCH_FIVE_PRIME"             => "",
   "PRIMER_MUST_MATCH_THREE_PRIME"            => "",
@@ -356,7 +359,7 @@ my %defaultSettings = (
   "P3P_PRIMER_NAME_ACRONYM_SPACER"           => "_",
 
 # Script Parameters
-  "SCRIPT_DISPLAY_DEBUG_INFORMATION"         => "1",
+  "SCRIPT_DISPLAY_DEBUG_INFORMATION"         => "0",
   "SCRIPT_PRODUCT_MIN_SIZE"                  => "",
   "SCRIPT_PRODUCT_MAX_SIZE"                  => "",
   "SCRIPT_SERVER_PARAMETER_FILE"             => "DEFAULT",

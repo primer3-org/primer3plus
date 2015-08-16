@@ -1710,31 +1710,35 @@ sub runPrimer3 ($$$) {
                 open( GENEFILE, ">$geneFile" ) or $openError = 1;
                 if ($openError == 0) {
                     my $chrom = $resultsHash->{"GENBRO_POSITION"};
-                    print GENEFILE "track name=\"Primer3Plus\" description\"Primers by Primer3Plus in region $chrom\"  color=255,0,0 visibility=pack\n";
+                    print GENEFILE "browser position $chrom\n";
+                    print GENEFILE "track name=\"Primer3Plus\" description\"Primers by Primer3Plus in region $chrom\" visibility=2 itemRgb=\"On\"\n";
                     my $chrPos = $resultsHash->{"GENBRO_POSITION"};
                     $chrom =~ s/:.+//g;
                     $chrPos =~ s/.+://g;
+                    my $chrEnd = $chrPos;
                     $chrPos =~ s/-.+//g;
+                    $chrEnd =~ s/.+-//g;
+                    print GENEFILE "$chrom\t$chrPos\t$chrEnd\tinput_range\t0\t+\t$chrPos\t$chrEnd\t100,100,100\n";
                     for (my $k = 0; $k < $resultsHash->{"PRIMER_LEFT_NUM_RETURNED"} ; $k++ ) {
                         my @geneAr = split ("," , $resultsHash->{"PRIMER_LEFT_$k"} );
                         my $geneStart = $chrPos + $geneAr[0] - 2;
                         my $geneEnd = $chrPos + $geneAr[0] + $geneAr[1] - 2;
                         my $genK = $k + 1;
-                        print GENEFILE "$chrom\t$geneStart\t$geneEnd\tLeft_Primer_$genK\t0\t+\n";
+                        print GENEFILE "$chrom\t$geneStart\t$geneEnd\tLeft_Primer_$genK\t0\t+\t$geneStart\t$geneEnd\t204,204,255\n";
                     }
                     for (my $k = 0; $k < $resultsHash->{"PRIMER_INTERNAL_NUM_RETURNED"} ; $k++ ) {
                         my @geneAr = split ("," , $resultsHash->{"PRIMER_INTERNAL_$k"} );
                         my $geneStart = $chrPos + $geneAr[0] - 2;
                         my $geneEnd = $chrPos + $geneAr[0] + $geneAr[1] - 2;
                         my $genK = $k + 1;
-                        print GENEFILE "$chrom\t$geneStart\t$geneEnd\tInternal_Primer_$genK\t0\t+\n";
+                        print GENEFILE "$chrom\t$geneStart\t$geneEnd\tInternal_Primer_$genK\t0\t+\t$geneStart\t$geneEnd\t0,0,0\n";
                     }
                     for (my $k = 0; $k < $resultsHash->{"PRIMER_RIGHT_NUM_RETURNED"} ; $k++ ) {
                         my @geneAr = split ("," , $resultsHash->{"PRIMER_RIGHT_$k"} );
                         my $geneStart = $chrPos + $geneAr[0] - $geneAr[1] - 1;
                         my $geneEnd = $chrPos + $geneAr[0] - 1;
                         my $genK = $k + 1;
-                        print GENEFILE "$chrom\t$geneStart\t$geneEnd\tRight_Primer_$genK\t0\t-\n";
+                        print GENEFILE "$chrom\t$geneStart\t$geneEnd\tRight_Primer_$genK\t0\t-\t$geneStart\t$geneEnd\t250,240,75\n";
                     }
                     close(GENEFILE);
                     $completeHash->{"GENBRO_FILE"} = getMachineSetting("USER_GENE_BRO_HTML_PATH") . $uniqueFile;
