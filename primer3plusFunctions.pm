@@ -1711,7 +1711,7 @@ sub runPrimer3 ($$$) {
                 if ($openError == 0) {
                     my $chrom = $resultsHash->{"GENBRO_POSITION"};
                     print GENEFILE "browser position $chrom\n";
-                    print GENEFILE "track name=\"Primer3Plus\" description\"Primers by Primer3Plus in region $chrom\" visibility=2 itemRgb=\"On\"\n";
+                    print GENEFILE "track name=\"Primer3Plus\" description=\"Primers by Primer3Plus in region $chrom\" visibility=\"pack\" itemRgb=\"On\"\n";
                     my $chrPos = $resultsHash->{"GENBRO_POSITION"};
                     $chrom =~ s/:.+//g;
                     $chrPos =~ s/.+://g;
