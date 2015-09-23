@@ -49,6 +49,13 @@ my %machineSettings = (
   # Who the end user will complain to:
   "MAINTAINER" =>"user&#host.com",
 
+  # The path were Primer3plus stores its the files for Genome Browser.
+  "USER_GENE_BRO_HTML_PATH" =>  "http://primer3plus.com/geneBro/",
+
+  # The path were Primer3plus stores its the files for Genome Browser.
+  "USER_GENE_BRO_FILES_PATH" =>  "/srv/primer3plus/page/geneBro/",
+
+
   # The location of the primer3_core executable.
   "WIN_PRIMER_BIN" =>  "primer3_core.exe",   # for Windows
   "PRIMER_BIN"     =>  "./primer3_core",     # for Linux
@@ -69,6 +76,9 @@ my %machineSettings = (
 
   # The URL for the result action (were primer3plus sends his found primer to) 
   "URL_PRIMER_MANAGER" => "primer3manager.cgi",
+
+  # The URL for the Genome Browser result action
+  "URL_GENE_BRO_ACTION" => "primer3genomeBrowser.cgi",
 
   # The URL for the result action (were primer3plus sends his found primer to) 
   "URL_PREFOLD" => "primer3prefold.cgi",
@@ -117,7 +127,7 @@ my %machineSettings = (
   "STATISTICS" =>  "Y",
 
   # The version number of primer3plus.
-  "P3P_VERSION" =>  "2.3.6",
+  "P3P_VERSION" =>  "2.4.0",
 
 );
 
@@ -203,7 +213,7 @@ my %defaultSettings = (
   "PRIMER_NUM_RETURN"                        => "5",
   "PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION"   => "7",
   "PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION"   => "4",
-  "PRIMER_PRODUCT_SIZE_RANGE"                => "501-600 601-700 401-500 701-850 851-1000 1001-1500 1501-3000 3001-5000",
+  "PRIMER_PRODUCT_SIZE_RANGE"                => "501-600 601-700 401-500 701-850 851-1000 1001-1500 1501-3000 3001-5000 401-500 301-400 201-300 101-200",
   "PRIMER_PRODUCT_OPT_SIZE"                  => "",
   "PRIMER_MUST_MATCH_FIVE_PRIME"             => "",
   "PRIMER_MUST_MATCH_THREE_PRIME"            => "",
@@ -352,7 +362,14 @@ my %defaultSettings = (
   "SCRIPT_DISPLAY_DEBUG_INFORMATION"         => "0",
   "SCRIPT_PRODUCT_MIN_SIZE"                  => "",
   "SCRIPT_PRODUCT_MAX_SIZE"                  => "",
-  "SCRIPT_SERVER_PARAMETER_FILE"             => "DEFAULT"
+  "SCRIPT_SERVER_PARAMETER_FILE"             => "DEFAULT",
+
+# Genome Browser
+
+  "GENBRO_FILE"                              => "",
+  "GENBRO_RETURN_PATH"                       => "",
+  "GENBRO_DB"                                => "",
+  "GENBRO_POSITION"                          => ""
 
 );
 
@@ -605,6 +622,10 @@ SCRIPT_DETECTION_PICK_LEFT => "PRIMER_PICK_LEFT_PRIMER",
 SCRIPT_DETECTION_PICK_HYB_PROBE => "PRIMER_PICK_INTERNAL_OLIGO",
 SCRIPT_DETECTION_PICK_RIGHT => "PRIMER_PICK_RIGHT_PRIMER",
 
+GENBRO_FILE => "GENBRO_FILE",
+GENBRO_RETURN_PATH => "GENBRO_RETURN_PATH",
+GENBRO_DB => "GENBRO_DB",
+GENBRO_POSITION => "GENBRO_POSITION"
 );
 
 

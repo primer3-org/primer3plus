@@ -18,6 +18,13 @@ settings in settings.pl to match your configuration.
 To set the proper rights on linux call on commandline:
 ./primer3setLinuxRights.sh
 
+Genome browser support needs a folder to store downloadable file:
+- create folder genBro in the pages section.
+- update the settingsfile to this path and also to have the correct html path
+- do:
+    chmod g+w geneBro
+    chgrp www-data geneBro
+
 
 Problems you may encounter:
 If you run encounter problems, please check the newlines to 
