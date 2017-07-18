@@ -2145,6 +2145,9 @@ initPage();
 
   $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - Pick Primers<\/title>/;
 
+  my $metaDesc = qq{<meta name="description" content="Primer3Plus picks primers from a DNA sequence using Primer3. This is the latest version straight from the developers with all the new features.">};
+  $returnString =~ s/<meta name="description" content=".+?">/$metaDesc/;
+
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
   return $returnString;
@@ -3739,6 +3742,9 @@ $formHTML .= $helpHTML;
 
   $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - Help<\/title>/;
 
+  my $metaDesc = qq{<meta name="description" content="The Help section explains all Primer3 and Primer3Plus tags and provides information on the primer selection behind the scenes.">};
+  $returnString =~ s/<meta name="description" content=".+?">/$metaDesc/;
+
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
   return $returnString;
@@ -3940,6 +3946,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - About<\/title>/;
 
+  my $metaDesc = qq{<meta name="description" content="Find out about the fair usage and citing Primer3Plus. The licence information is available here.">};
+  $returnString =~ s/<meta name="description" content=".+?">/$metaDesc/;
+
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
   return $returnString;
@@ -4037,6 +4046,9 @@ $formHTML .= qq{
   $returnString =~ s/<\/head>/$canon/;
 
   $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - More...<\/title>/;
+
+  my $metaDesc = qq{<meta name="description" content="Primer3Plus is not only primer selection - Primer3Manager organizes primers and Primer3Prefold avoids secondary structures in the DNA template.">};
+  $returnString =~ s/<meta name="description" content=".+?">/$metaDesc/;
 
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
@@ -4319,6 +4331,9 @@ $formHTML .= qq{
 
   $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - Statistics<\/title>/;
 
+  my $metaDesc = qq{<meta name="description" content="The statistics page allows you to see Primer3Plus usage. Watch our servers glow...">};
+  $returnString =~ s/<meta name="description" content=".+?">/$metaDesc/;
+
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
   return $returnString;
@@ -4388,6 +4403,9 @@ sub createCompareFileHTML () {
   $returnString =~ s/<\/head>/$canon/;
 
   $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - Compare Files<\/title>/;
+
+  my $metaDesc = qq{<meta name="description" content="The Compare Files tool analyzes Primer3 settings files for differences.">};
+  $returnString =~ s/<meta name="description" content=".+?">/$metaDesc/;
 
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
@@ -4896,7 +4914,10 @@ $formHTML .= qq{   </table>
 
   $returnString =~ s/<\/head>/$canon/;
 
-  $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - Primer Manager<\/title>/;
+  $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - Primer3Manager<\/title>/;
+
+  my $metaDesc = qq{<meta name="description" content="Primer3Manager organizes primer collections and exports them in the RDML format.">};
+  $returnString =~ s/<meta name="description" content=".+?">/$metaDesc/;
 
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
@@ -5112,7 +5133,10 @@ $formHTML .= qq{
 
   $returnString =~ s/<\/head>/$canon/;
 
-  $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - Prefold<\/title>/;
+  $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - Primer3Prefold<\/title>/;
+
+  my $metaDesc = qq{<meta name="description" content="Primer3Prefold uses UNAFold to find stable secondary structures in template DNA and avoids them in Primer3Plus.">};
+  $returnString =~ s/<meta name="description" content=".+?">/$metaDesc/;
 
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
