@@ -2137,6 +2137,13 @@ initPage();
 };
 
   my $returnString = $templateText;
+  
+  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3plus.cgi" />
+</head>};
+
+  $returnString =~ s/<\/head>/$canon/;
+
+  $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - Pick Primers<\/title>/;
 
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
@@ -2461,6 +2468,7 @@ $returnHTML .= qq{
 
   # Embedd the created HTML code into the loaded template file
   my $returnString = $templateText;
+
   $returnString =~ s/<!-- Primer3plus will include code here -->/$returnHTML/;
 
   return $returnString;
@@ -3723,6 +3731,13 @@ $formHTML .= divMessages;
 $formHTML .= $helpHTML;
 
   my $returnString = $templateText;
+  
+  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3plusHelp.cgi" />
+</head>};
+
+  $returnString =~ s/<\/head>/$canon/;
+
+  $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - Help<\/title>/;
 
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
@@ -3918,6 +3933,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   my $returnString = $templateText;
 
+  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3plusAbout.cgi" />
+</head>};
+
+  $returnString =~ s/<\/head>/$canon/;
+
+  $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - About<\/title>/;
+
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
   return $returnString;
@@ -4008,6 +4030,13 @@ $formHTML .= qq{
 };
 
   my $returnString = $templateText;
+
+  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3plusPackage.cgi" />
+</head>};
+
+  $returnString =~ s/<\/head>/$canon/;
+
+  $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - More...<\/title>/;
 
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
@@ -4283,6 +4312,13 @@ $formHTML .= qq{
 
   my $returnString = $templateText;
 
+  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3statistics.cgi" />
+</head>};
+
+  $returnString =~ s/<\/head>/$canon/;
+
+  $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - Statistics<\/title>/;
+
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
   return $returnString;
@@ -4345,6 +4381,13 @@ sub createCompareFileHTML () {
 };
 
   my $returnString = $templateText;
+
+  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3compareFiles.cgi" />
+</head>};
+
+  $returnString =~ s/<\/head>/$canon/;
+
+  $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - Compare Files<\/title>/;
 
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
@@ -4848,6 +4891,13 @@ $formHTML .= qq{   </table>
 
   my $returnString = $templateText;
 
+  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3manager.cgi" />
+</head>};
+
+  $returnString =~ s/<\/head>/$canon/;
+
+  $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - Primer Manager<\/title>/;
+
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
   return $returnString;
@@ -5056,6 +5106,13 @@ $formHTML .= qq{
 };
 
   my $returnString = $templateText;
+
+  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3prefold.cgi" />
+</head>};
+
+  $returnString =~ s/<\/head>/$canon/;
+
+  $returnString =~ s/<title>Primer3Plus<\/title>/<title>Primer3Plus - Prefold<\/title>/;
 
   $returnString =~ s/<!-- Primer3plus will include code here -->/$formHTML/;
 
