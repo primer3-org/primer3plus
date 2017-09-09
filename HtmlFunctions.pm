@@ -204,6 +204,8 @@ sub mainStartUpHTML {
 
   my $templateText = getWrapper();
 
+  my $footer = getHTMLFooter(); 
+
   my $formHTML = qq{
 
 <DIV id=toolTipLayer style="VISIBILITY: hidden; POSITION: absolute; z-index: 1">will be replace by tooltip text
@@ -837,6 +839,9 @@ $formHTML .= qq{
   </table>
 </div>
 </div>
+<div id="primer3plus_footer">
+$footer
+</div>
 </div>
 };
 
@@ -939,6 +944,9 @@ $formHTML .= qq{<div id="primer3plus_advanced_sequence" class="primer3plus_tab_p
        </td>
      </tr>
    </table>
+   <div id="primer3plus_footer">
+   $footer
+   </div>
 </div>
 };
 
@@ -1098,6 +1106,9 @@ $formHTML .= qq{
      </tr>
      </tbody>	
      </table>
+</div>
+<div id="primer3plus_footer">
+$footer
 </div>
 
 };
@@ -1482,7 +1493,11 @@ $formHTML .= qq{</div>
       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SEQUENCING_INTERVAL" value="$settings{PRIMER_SEQUENCING_INTERVAL}" type="text">
        </td>
      </tr> 
-   </table></div>
+   </table>
+   </div>
+<div id="primer3plus_footer">
+$footer
+</div>
 </div>
 };
 
@@ -1681,6 +1696,9 @@ $formHTML .= qq{         </select>
        </td>
      </tr>
    </table>
+  </div>
+  <div id="primer3plus_footer">
+  $footer
   </div>
 </div>
 };
@@ -2120,6 +2138,11 @@ $formHTML .= qq{
        </td>
      </tr>
    </table>
+
+<div id="primer3plus_footer">
+$footer
+</div>
+
 </div>
 
 </form>
@@ -2138,7 +2161,7 @@ initPage();
 
   my $returnString = $templateText;
   
-  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3plus.cgi" />
+  my $canon = qq{  <link rel="canonical" href="https://primer3plus.com/cgi-bin/dev/primer3plus.cgi" />
 </head>};
 
   $returnString =~ s/<\/head>/$canon/;
@@ -2164,6 +2187,8 @@ sub createSelectSequence {
   my $sequenceCounter = $settings{SCRIPT_SEQUENCE_COUNTER};
   
   my $templateText = getWrapper();
+
+  my $footer = getHTMLFooter(); 
 
   my $formHTML = qq{
 <div id="primer3plus_complete">
@@ -2250,6 +2275,9 @@ foreach $HashKeys (sort(keys(%settings))){
     $formHTML .= qq{ <input id="primer3plus_select_sequence_button" class="primer3plus_action_button"
    name="SelectOneSequence" value="Select Sequence" type="submit"><br>
  <br>
+ <div id="primer3plus_footer">
+ $footer
+ </div>
  </from>
 </div>
     };
@@ -2308,6 +2336,8 @@ sub mainResultsHTML {
 
   # Get the frame for the webpage
   my $templateText = getWrapper();
+
+  my $footer = getHTMLFooter(); 
 
   # Push all errors to the messages array
   if (defined ($results->{PRIMER_ERROR}) and (($results->{PRIMER_ERROR}) ne "")) {
@@ -2388,6 +2418,10 @@ sub mainResultsHTML {
 
 # Close the complete and the results div
 $returnHTML .= qq{
+<div id="primer3plus_footer">
+$footer
+</div>
+	
 </div>
 </div>
 };
@@ -2411,6 +2445,8 @@ sub createResultsPrefoldHTML {
 
   # Get the frame for the webpage
   my $templateText = getWrapper();
+
+  my $footer = getHTMLFooter(); 
 
   # Now work out the HTML code
   #---------------------------
@@ -2464,6 +2500,9 @@ $returnHTML .= qq{
 </div>
 	
 </form>
+<div id="primer3plus_footer">
+$footer
+</div>
 
 </div>
 </div>
@@ -3722,6 +3761,10 @@ sub createHelpHTML ($) {
   my $helpHTML = shift;
   my $templateText = getWrapper();
 
+  my $footer = getHTMLFooter();
+  
+  $footer .= "\n</div>\n"; 
+
   my $formHTML = qq{
 <div id="primer3plus_complete">
 
@@ -3733,9 +3776,11 @@ $formHTML .= divMessages;
 
 $formHTML .= $helpHTML;
 
+  $formHTML =~ s/<\/div>\n+$/$footer/;
+
   my $returnString = $templateText;
   
-  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3plusHelp.cgi" />
+  my $canon = qq{  <link rel="canonical" href="https://primer3plus.com/cgi-bin/dev/primer3plusHelp.cgi" />
 </head>};
 
   $returnString =~ s/<\/head>/$canon/;
@@ -3756,6 +3801,8 @@ $formHTML .= $helpHTML;
 
 sub createAboutHTML {
   my $templateText = getWrapper();
+
+  my $footer = getHTMLFooter(); 
 
   my $formHTML = qq{
 <div id="primer3plus_complete">
@@ -3932,6 +3979,9 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 </pre>
 
+<div id="primer3plus_footer">
+$footer
+</div>
 </div>
 
 </div>  
@@ -3939,7 +3989,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   my $returnString = $templateText;
 
-  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3plusAbout.cgi" />
+  my $canon = qq{  <link rel="canonical" href="https://primer3plus.com/cgi-bin/dev/primer3plusAbout.cgi" />
 </head>};
 
   $returnString =~ s/<\/head>/$canon/;
@@ -3998,6 +4048,8 @@ sub getPrimer3Version () {
 sub createPackageHTML {
   my $templateText = getWrapper();
 
+  my $footer = getHTMLFooter(); 
+
   my $formHTML = qq{
 <div id="primer3plus_complete">
 
@@ -4010,28 +4062,50 @@ $formHTML .= divMessages;
 $formHTML .= qq{
 <div id="primer3plus_results">
 
-<h2><a name="primer3plus" href="primer3plus.cgi">Primer3Plus</a></h2>
+<h3><a name="primer3plus" href="primer3plus.cgi">Primer3Plus</a></h3>
   <p>Primer3Plus is the module which runs primer3 to pick primers.
   </p>
 
-<h2><a name="primer3manager" href="primer3manager.cgi">Primer3Manager</a></h2>
+<h3><a name="primer3manager" href="primer3manager.cgi">Primer3Manager</a></h3>
   <p>Primer3Manager allows to manage selected primers and to save them.
   </p>
 
-<h2><a name="primer3prefold" href="primer3prefold.cgi">Primer3Prefold</a></h2>
+<h3><a name="primer3prefold" href="primer3prefold.cgi">Primer3Prefold</a></h3>
   <p>Primer3Prefold allows to fold a sequence before primer selection to 
      exclude regions with a secondary structure.
   </p>
 
-<h2><a name="primer3compareFiles" href="primer3compareFiles.cgi">Primer3ComareFiles</a></h2>
+<h3><a name="primer3compareFiles" href="primer3compareFiles.cgi">Primer3ComareFiles</a></h3>
   <p>Primer3ComareFiles allows to compare files with each other and the 
      default values to identify differences.
   </p>
 
-<h2><a name="primer3statistics" href="primer3statistics.cgi">Primer3Statistics</a></h2>
+<h3><a name="primer3statistics" href="primer3statistics.cgi">Primer3Statistics</a></h3>
   <p>Primer3Statistics prints statistics about primer3plus usage.
   </p>
 
+<h2><a>Other Web Resources</a></h2>
+
+<h3><a name="primer3manager" href="http://primer3.ut.ee/">Primer3Web at the University of Tartu</a></h3>
+  <p>The latest version of Primer3Web running at the University of Tartu.
+  </p>
+
+<h3><a name="primer3manager" href="http://primer3.sourceforge.net/releases.php">Download Primer3</a></h3>
+  <p>Get your own copy of Primer3, the command line program.
+  </p>
+
+<h3><a name="WilyDNAEditor" href="https://wily-dna-editor.com">Wily-DNA-Editor</a></h3>
+  <p>A DNA Editor to master DNA sequences, plasmids and restriction enzyme digests in your browser.
+  </p>
+
+<h3><a name="GEARatEMBL" href="http://gear.embl.de">GEAR at EMBL</a></h3>
+  <p>Tools for heuristic barcode generation, Rapid InDel Discovery in Sanger Chromatograms and more...
+  </p>
+
+
+<div id="primer3plus_footer">
+$footer
+</div>
 
 </div>
 
@@ -4040,7 +4114,7 @@ $formHTML .= qq{
 
   my $returnString = $templateText;
 
-  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3plusPackage.cgi" />
+  my $canon = qq{  <link rel="canonical" href="https://primer3plus.com/cgi-bin/dev/primer3plusPackage.cgi" />
 </head>};
 
   $returnString =~ s/<\/head>/$canon/;
@@ -4068,6 +4142,7 @@ sub createStatisticsHTML {
   my $printStats = shift;
 
   my $templateText = getWrapper();
+  my $footer = getHTMLFooter(); 
   my $theKey;
   my $monthKey;
   my $startUpsVal;
@@ -4307,7 +4382,11 @@ $formHTML .= qq{
   }
 
 $formHTML .= qq{
-  </table></div>
+  </table>
+  <div id="primer3plus_footer">
+  $footer
+  </div>
+  </div>
 
 </div>  
 };
@@ -4324,7 +4403,7 @@ $formHTML .= qq{
 
   my $returnString = $templateText;
 
-  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3statistics.cgi" />
+  my $canon = qq{  <link rel="canonical" href="https://primer3plus.com/cgi-bin/dev/primer3statistics.cgi" />
 </head>};
 
   $returnString =~ s/<\/head>/$canon/;
@@ -4344,6 +4423,8 @@ $formHTML .= qq{
 ####################################################
 sub createCompareFileHTML () {
   my $templateText = getWrapper();
+
+  my $footer = getHTMLFooter(); 
 
   my $formHTML = qq{
 <div id="primer3plus_complete">
@@ -4389,6 +4470,9 @@ sub createCompareFileHTML () {
      </form>
   </p>
 
+<div id="primer3plus_footer">
+$footer
+</div>
 
 </div>
 
@@ -4397,7 +4481,7 @@ sub createCompareFileHTML () {
 
   my $returnString = $templateText;
 
-  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3compareFiles.cgi" />
+  my $canon = qq{  <link rel="canonical" href="https://primer3plus.com/cgi-bin/dev/primer3compareFiles.cgi" />
 </head>};
 
   $returnString =~ s/<\/head>/$canon/;
@@ -4425,6 +4509,7 @@ sub createResultCompareFileHTML {
   my %resDiffFiles = %{(shift)};
 
   my $templateText = getWrapper();
+  my $footer = getHTMLFooter(); 
   my $theKey;
   
   my $tableStartA = qq{
@@ -4598,6 +4683,9 @@ sub createResultCompareFileHTML {
 
   $formHTML .= qq{</table>
 <br>
+<div id="primer3plus_footer">
+$footer
+</div>
 </div>
 
 </div>  
@@ -4621,6 +4709,7 @@ sub createManagerDisplayHTML {
   my ($cgiName, $blastLinkUse, $blastSeq, $blastName);
   
   my $templateText = getWrapper();
+  my $footer = getHTMLFooter(); 
   my $blastLink = getMachineSetting("URL_BLAST");
 
   my $formHTML = qq{
@@ -4786,6 +4875,11 @@ $formHTML .= qq{   </table>
      $formHTML .= qq{
    <br>
    <br>
+
+   <div id="primer3plus_footer">
+   $footer
+   </div>
+
   </div>
 
   <div id="primer3plus_load_and_save" class="primer3plus_tab_page">
@@ -4834,6 +4928,11 @@ $formHTML .= qq{   </table>
        </td>
      </tr>
    </table>
+   
+   <div id="primer3plus_footer">
+   $footer
+   </div>
+
   </div>
 
 
@@ -4896,9 +4995,13 @@ $formHTML .= qq{   </table>
        </td>
      </tr>
    </table>
-  </div>
-
+   
+   <div id="primer3plus_footer">
+   $footer
+   </div>
  
+   </div>
+
 </form>
 </div>
 <script type="text/javascript">
@@ -4909,7 +5012,7 @@ $formHTML .= qq{   </table>
 
   my $returnString = $templateText;
 
-  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3manager.cgi" />
+  my $canon = qq{  <link rel="canonical" href="https://primer3plus.com/cgi-bin/dev/primer3manager.cgi" />
 </head>};
 
   $returnString =~ s/<\/head>/$canon/;
@@ -4933,6 +5036,7 @@ sub createPrefoldHTML {
   $cgiInput = shift;
 
   my $templateText = getWrapper();
+  my $footer = getHTMLFooter(); 
 
   my $formHTML = qq{
 <SCRIPT language=JavaScript>
@@ -5119,6 +5223,10 @@ $formHTML .= qq{
      </tr>
    </table>
   
+<div id="primer3plus_footer">
+$footer
+</div>
+
 </div>
 
 </form>
@@ -5128,7 +5236,7 @@ $formHTML .= qq{
 
   my $returnString = $templateText;
 
-  my $canon = qq{  <link rel=canonical href="https://primer3plus.com/cgi-bin/dev/primer3prefold.cgi" />
+  my $canon = qq{  <link rel="canonical" href="https://primer3plus.com/cgi-bin/dev/primer3prefold.cgi" />
 </head>};
 
   $returnString =~ s/<\/head>/$canon/;

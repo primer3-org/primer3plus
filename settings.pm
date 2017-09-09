@@ -31,7 +31,7 @@ our (@ISA, @EXPORT, @EXPORT_OK, $VERSION);
 @ISA = qw(Exporter);
 @EXPORT = qw(&getDefaultSettings &getMachineSetting &setDoNotPick &getDoNotPick
              &getMisLibrary &getMachineSettings &getScriptTask &getLibraryList
-             &getServerParameterFiles &getServerParameterFilesList 
+             &getServerParameterFiles &getServerParameterFilesList &getHTMLFooter
              &setMessage &getMessages &getTranslateOldVersion);
 
 $VERSION = "1.00";
@@ -48,6 +48,9 @@ my $doNotPick = 0;
 my %machineSettings = (
   # Who the end user will complain to:
   "MAINTAINER" =>"user&#host.com",
+
+  # The Line in the bottom of each page:
+  "FOOTER" => qq{<a>&copy; by A. Untergasser et al.</a>},
 
   # The path were Primer3plus stores its the files for Genome Browser.
   "USER_GENE_BRO_HTML_PATH" =>  "http://primer3plus.com/geneBro/",
@@ -127,7 +130,7 @@ my %machineSettings = (
   "STATISTICS" =>  "Y",
 
   # The version number of primer3plus.
-  "P3P_VERSION" =>  "2.4.1",
+  "P3P_VERSION" =>  "2.4.2",
 
 );
 
@@ -648,6 +651,10 @@ sub getMachineSetting {
 
 sub getMachineSettings {
   return %machineSettings;
+}
+
+sub getHTMLFooter {
+  return $machineSettings{"FOOTER"};
 }
 
 sub getMisLibrary {

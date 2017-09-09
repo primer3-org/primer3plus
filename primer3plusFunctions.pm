@@ -1788,6 +1788,16 @@ sub runUnafold ($$$) {
     $inputFile .= makeUniqueID();
     $inputFile .= ".txt";
     
+###### Check if UNAfold can be run
+    if ( !( -e $unafoldBIN ) ) {
+        setMessage("Configuration Error: $unafoldBIN ".
+                   "can not be found!");
+    }
+    if ( !( -x $unafoldBIN ) ) {
+        setMessage("Configuration Error: $unafoldBIN ".
+                   "is not executable!");
+    }
+
 ###### First check if it makes sense to run UNAFold
 
     ## Do not run if there is not any sequence information

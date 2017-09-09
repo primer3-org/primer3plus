@@ -47,7 +47,7 @@ sub customPrimerOrder {
 # bock do not have to be made available as open source    #
 ###########################################################
 
-  $formHTML = qq{<div id="primer3plus_order">
+  $formHTML = qq{<br><div id="primer3plus_order">
    <h1>Primers to order:</h1>
    <a>Please copy this message and send it via e-mail to your order address:</a><br>
    <br>
