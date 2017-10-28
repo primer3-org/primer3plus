@@ -2,6 +2,10 @@
 
 chmod +x *.cgi
 
+mkdir unafold_cache
+mkdir statistics_files
+mkdir error_files
+
 chgrp www-data cached_data
 chgrp www-data error_files
 chgrp www-data statistics_files
