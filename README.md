@@ -1,18 +1,18 @@
-Primer3plus is a webinterface for the primer3 program.
+Primer3Plus is a webinterface for Primer3
+-----------------------------------------
 
 It requires the primer3, PERL and Apache.
 
 Perl requires the module archive-zip from Adam Kennedy
-by calling (on Debian): aptitude install libarchive-zip-perl
+by calling (on Debian): 
+`aptitude install libarchive-zip-perl`
 
 It should run unaltered on windows and linux systems if you 
-checkout from subversion (read only):
-svn checkout svn://svn.code.sf.net/p/primer3/code/primer3plus/trunk primer3plus
-(read and write):
-svn checkout https://svn.code.sf.net/p/primer3/code/primer3plus/trunk primer3plus
+checkout from GitHub:
+`git clone https://github.com/primer3-org/primer3plus.git primer3plus`
 
 To install copy the folder in the cgi-folder. Obtain a copy
-of primer3 and install it into this folder. Adjust the 
+of [Primer3](https://github.com/primer3-org) and install it into this folder. Adjust the 
 settings in settings.pl to match your configuration.
 
 To set the proper rights on linux call on commandline:
@@ -24,7 +24,6 @@ Genome browser support needs a folder to store downloadable file:
 - do:
     chmod g+w geneBro
     chgrp www-data geneBro
-
 
 Problems you may encounter:
 If you run encounter problems, please check the newlines to 

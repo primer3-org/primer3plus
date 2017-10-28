@@ -595,7 +595,7 @@ sub createFile {
 	my (@saveSettingsKeys) = keys %$settings;
 	my @sortkeys = sort @saveSettingsKeys;
 
-	$returnString  = "Primer3 File - http://primer3.sourceforge.net\r\n";
+	$returnString  = "Primer3 File - http://primer3.org\r\n";
 
     if ($type eq "S") {
         $returnString .= "P3_FILE_TYPE=settings\r\n";

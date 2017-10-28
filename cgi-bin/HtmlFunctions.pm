@@ -148,7 +148,7 @@ sub divTopBar {
        </td>
        <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="primer3plusPackage.cgi">More...</a>
        </td>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://sourceforge.net/projects/primer3/">Source Code</a>
+       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="https://github.com/primer3-org">Source Code</a>
        </td>
      </tr>
      <tr>
@@ -3828,8 +3828,8 @@ $formHTML .= qq{
 
 <h2>Download Program and Source Code</h2>
 <p>
-<a href="http://sourceforge.net/projects/primer3/">
-Source code is available at http://sourceforge.net/projects/primer3/.
+<a href="https://github.com/primer3-org">
+Source code is available at https://github.com/primer3-org.
 </a>
 </p>
 
@@ -3846,7 +3846,7 @@ Nucleic Acids Res. 2012 Aug 1;40(15):e115.
 The paper is available at
 <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3424584/">http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3424584/</a><br>
 <br>	
-Source code available at <a href="http://sourceforge.net/projects/primer3/">http://sourceforge.net/projects/primer3/</a>.</p>
+Source code available at <a href="https://github.com/primer3-org">https://github.com/primer3-org</a>.</p>
 
 <h2>Fair use of Primer3 and Primer3Plus</h2>
 
@@ -3937,7 +3937,7 @@ Andreas Untergasser.
 <br>
 <br>
 Primer3 is an open software development project hosted
-on SourceForge: <a href="http://sourceforge.net/projects/primer3/">http://sourceforge.net/projects/primer3/</a>
+on GitHub: <a href="https://github.com/primer3-org">https://github.com/primer3-org</a>
 .</p>
 
 <h2>COPYRIGHT AND LICENSE</h2>
@@ -4085,6 +4085,11 @@ $formHTML .= qq{
   </p>
 
 <h2><a>Other Web Resources</a></h2>
+
+<h3><a name="primer3manager" href="http://primer3.org">Primer3.org</a> and 
+    <a name="primer3manager" href="https://github.com/primer3-org">https://github.com/primer3-org</a></h3>
+  <p>Our Webpage and the latest versions of Primer3, Primer3Plus and Primer3Web.
+  </p>
 
 <h3><a name="primer3manager" href="http://primer3.ut.ee/">Primer3Web at the University of Tartu</a></h3>
   <p>The latest version of Primer3Web running at the University of Tartu.
