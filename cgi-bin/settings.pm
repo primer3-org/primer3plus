@@ -130,7 +130,7 @@ my %machineSettings = (
   "STATISTICS" =>  "Y",
 
   # The version number of primer3plus.
-  "P3P_VERSION" =>  "2.4.2",
+  "P3P_VERSION" =>  "2.5.0",
 
 );
 
