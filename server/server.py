@@ -20,7 +20,7 @@ app.config['UPLOAD_FOLDER'] = os.path.join(app.config['PRIMER3PLUS'], "data")
 app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024   #maximum of 8MB
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in set(['scf','abi','ab1','ab!','ab', 'json', 'fa'])
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in set(['json', 'fa'])
 
 @app.route('/api/v1/upload', methods=['POST'])
 def upload_file():
@@ -76,6 +76,10 @@ def upload_file():
             return jsonify(errors = [{"title": "Error in running Primer3Plus" + errInfo}]), 400
         return jsonify(data = json.loads(open(outfile).read()))
     return jsonify(errors = [{"title": "Error in handling POST request!"}]), 400
+
+@app.route('/api/v1/defaultsettings', methods=['POST'])
+def defaultsettings():
+    return send_from_directory(os.path.join(P3PWS, "settings_files"),"default_settings.json"), 200
 
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', port=3300, debug = True, threaded=True)

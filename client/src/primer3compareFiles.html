@@ -1,261 +1,69 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-       "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!doctype html>
+<html lang="en">
+
 <head>
   <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
   <meta name="viewport" content="width==1034px, initial-scale=1.0">
-  <meta name="description" content="The Compare Files tool analyzes Primer3 settings files for differences.">
+  <meta name="description" content="Primer3Plus picks primers from a DNA sequence using Primer3. This is the latest version straight from the developers with all the new features.">
   <title>Primer3Plus - Compare Files</title>
-  <style type="text/css">
-	body {
-		color: black;
-		background-color: white;
-		font-size: 100.01%;
-		margin: 1em;
-		padding: 0;
-		text-align: center
-	}
-
-	div#primer3plus_task_bar {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-  	div#primer3plus_messages { 
-        width:900px;
-        border: 2px solid #ccccff;
-        margin: 4px 0px 0px 0px;
-        clear: left;
-        float: left;
-        background-color: rgb(255, 0, 0);
-        overflow:hidden;
-        padding: 0px;
-	}
-
-	div#primer3plus_no_javascript {
-        width:900px;
-        border: 2px solid #ccccff;
-        margin: 4px 0px 0px 0px;
-        clear: left;
-        float: left;
-        background-color: rgb(255, 0, 0);
-        overflow:hidden;
-        padding: 0px;	
-	}
-
-	div#primer3plus_results {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-	div#primer3plus_footer {
-		margin: 12px 0px 3px 0px;
-		font-size: 80%;
-		font-family: Arial;
-		font-weight: bold;
-		color: rgb(75, 75, 75);
-		text-align: center;
-	}
-	
-	div#primer3plus_news {
-		float: left;
-        width:800px;
-        padding: 2px;
-        margin: 8px 0 0 8px;
-        line-height:normal;
-        text-align: center; 
-	}
-
-	div#primer3plus_select_sequence {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-	div#primer3plus_manager {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-	.primer3plus_tab_page {
-		width:900px;
-		border: 2px solid #ccccff;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 10px 0px 10px 0px;
-	}
-	
-	.primer3plus_tab_page_no_border {
-		width:900px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-	}	
-	
-	.primer3plus_submit {
-		width: 900px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-	}
-
-	div#menuBar { float: left; width:900px; padding: 0px; margin: 8px 0 0 8px; line-height:normal; text-align: left; }
-	div#menuBar ul { margin:0px; padding: 0px; list-style:none; }
-	div#menuBar li { float:left; margin:0; border: 2px solid #ccccff; border-bottom-width: 0; }
-	div#menuBar a { top: 2px; display:block; padding: 0.24em 1em; font-weight: bold; cursor: pointer; }
-
-  div#page { text-align: left;
-             margin: auto;
-             width: 1024px;
-        }
-
-  div#primer3plus_top_bar { width: 900px; padding: 0px; border: 2px solid #ccccff;}
-  div#primer3plus_footer { width: 900px; padding: 0px; clear: left;}
-  .primer3plus_background { background-color:#ccccff; }
-  .primer3plus_top_bar_table { border:0; width:100%; }
-  .primer3plus_top_bar_cell { border:0; padding:0.4em;background-color:#ccccff; }
-  .primer3plus_top_bar_explain_cell { border:0; font-style: italic; font-size: 0.9em; background: rgb(255, 255, 230);}
-  .primer3plus_top_bar_title { font-size: 2.2em; font-weight:700; }
-  .primer3plus_top_bar_explain { font-size: 1.0em; font-weight:500 }
-  .primer3plus_top_bar_link { font-weight:bold }
-  .primer3plus_task {font-size: 0.9em}
-  .primer3plus_table_no_border { border:0; width:100%; empty-cells:show; }
-  .primer3plus_cell_no_border { border:0; padding:0.15em; }
-  .primer3plus_cell_no_border_problem { border:0; padding:0.15em;background-color:rgb(255,120,60); }
-  .primer3plus_cell_no_border_explain { border:0; font-style: italic; font-size: smaller;}
-  .primer3plus_cell_no_border_bg { border:0; padding:0.2em; background-color:#ccccff; }
-  .primer3plus_cell_no_border_uli_bd { border:0; padding:0.15em; font-weight:bold; text-decoration:underline; }
-  .primer3plus_cell_no_border_right { border:0; padding:0.15em; text-align:right;}
-  .primer3plus_cell_no_border_th { border:0; padding:0.15em;background-color:rgb(230,230,205); }
-  .primer3plus_table_with_border { border:1px solid #000; width:100%; empty-cells:show; border-collapse:collapse; }
-  .primer3plus_cell_with_border { border:1px solid #000; padding:0.2em; }
-  .primer3plus_table_penalties { border:0; width:100%; empty-cells:show; border-collapse:collapse; }
-  .primer3plus_cell_penalties { border:0; padding-top:0.15em; padding-bottom:0.15em; }
-  .primer3plus_cell_penalties_th { border:0; padding-top:0.15em; padding-bottom:0.15em;background-color:rgb(230,230,205); }
-  .primer3plus_table_primer_pair_box { border:0; width:100%; empty-cells:show; border-collapse:collapse; }
-  .primer3plus_cell_primer_pair_box { padding:0.2em; }
-  .primer3plus_action_button {font-size: 0.9em}
-
-  .primer3plus_note { background-color:rgb(255,120,60); padding:0px; }
-  .primer3plus_excluded_region { background-color:rgb(255,80,60); color:rgb(0,0,0); }
-  .primer3plus_target { background-color:rgb(160,250,130); color:rgb(0,0,0); }
-  .primer3plus_included_region { background-color:rgb(110,210,90); color:rgb(0,0,0); }
-  .primer3plus_left_primer { background-color:#ccccff; color:rgb(0,0,0); }
-  .primer3plus_internal_oligo { background-color:rgb(0,0,0); color:rgb(255,255,255); }
-  .primer3plus_right_primer { background-color:rgb(250,240,75); color:rgb(0,0,0); }
-  .primer3plus_left_right_primer { background-color:rgb(140,225,0); color:rgb(0,0,0); }
-  .primer3plus_primer_overlap_pos { background-color:rgb(160,160,160); color:rgb(0,0,0); }
-  .primer3plus_warning { background-color:rgb(255,120,60); }
-  .primer3plus_primer_pair { background-color:rgb(200,200,200); color:rgb(0,0,0); }
-  .primer3plus_primer_pair_box { margin: 4px; border: 2px solid #ccccff; clear: left; float: left; width: 870px; }
-  .primer3plus_long_list {}
-  .primer3plus_long_list_table { text-align:left; width:100%; table-layout:fixed; border:0; border-collapse:collapse }
-  div#primer3plus_result_sequence { float: left; font-size:1.0em; font-family:Courier,monospace; }
-  div#primer3plus_result_sequence_id  { float: left; font-size:1.0em; font-weight:bold;}
-  .primer3plus_select_all { width: 100%; clear: left; float: left;background-color: rgb(255, 255, 230);}
-  .region_button { width: 25px; }
-  textarea#sequenceTextarea { font-family:Courier,monospace; width:95%; }
-  a#PRIMER_TASK_INPUT {font-weight:bold; font-size: 1.1em}
-  .primer3plus_section {margin: 4px; border: 1px dashed #ccccff;}
-
-  </style>
-  <link rel="canonical" href="https://primer3plus.com/cgi-bin/dev/primer3compareFiles.cgi" />
+  <link rel="stylesheet" href="static/css/primer3plus.css">
+  <link rel="canonical" href="https://primer3plus.com/cgi-bin/dev/primer3compareFiles.html" />
 </head>
 
-
 <body>
+  <div id="page">
 
-<div id="page">
+    <div id="primer3plus_complete">
 
-<div id="primer3plus_news">
-<b>News:</b> Try out our new tool: <a href="https://wily-dna-editor.com/index.html">Wiley-DNA-Editor</a> - A DNA/Plasmid editor running in your browser!
-</div>
+    <div id="primer3plus_top_bar">
+      <table class="primer3plus_top_bar_table">
+        <colgroup>
+          <col width="60%" class="primer3plus_background">
+          <col width="20%" class="primer3plus_background">
+          <col width="20%" class="primer3plus_background">
+        </colgroup>
+        <tr>
+          <td class="primer3plus_top_bar_cell" rowspan="2"><a class="primer3plus_top_bar_title">Primer3CompareFiles</a><br>
+            <a class="primer3plus_top_bar_explain" id="top">find the difference</a>
+          </td>
+          <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://primer3plusPackage.cgi">More...</a>
+          </td>
+          <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://sourceforge.net/projects/primer3/">Source Code</a>
+          </td>
+        </tr>
+        <tr>
+          <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://primer3plusHelp.cgi">Help</a>
+          </td>
+          <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://primer3plusAbout.cgi">About</a>
+          </td>
+        </tr>
+      </table>
+    </div>
 
-
-
-<div id="primer3plus_complete">
-
-
-<div id="primer3plus_top_bar">
-   <table class="primer3plus_top_bar_table">
-     <colgroup>
-       <col width="60%" class="primer3plus_background">
-       <col width="20%" class="primer3plus_background">
-       <col width="20%" class="primer3plus_background">
-     </colgroup>
-     <tr>
-       <td class="primer3plus_top_bar_cell" rowspan="2"><a class="primer3plus_top_bar_title">Primer3CompareFiles</a><br>
-       <a class="primer3plus_top_bar_explain" id="top">find the difference</a>
-       </td>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="primer3plusPackage.cgi">More...</a>
-       </td>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://sourceforge.net/projects/primer3/">Source Code</a>
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="primer3plusHelp.cgi">Help</a>
-       </td>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="primer3plusAbout.cgi">About</a>
-       </td>
-     </tr>
-   </table>
-</div>
-
-
-<div id="primer3plus_results">
-
-  <p>&nbsp;&nbsp;Primer3ComareFiles allows to compare files with each other and the 
-     default values to identify differences.<br>
-     <br>
-     <form name="mainForm" action="primer3compareFiles.cgi" method="post" enctype="multipart/form-data">
-     &nbsp;&nbsp;<a name="SCRIPT_SEQUENCE_FILE_INPUT">File 1:</a>
-     <input name="SCRIPT_SEQUENCE_FILE" type="file"><br>
-     <br>
-     &nbsp;&nbsp;<a name="SCRIPT_SEQUENCE_FILE_INPUT">File 2:</a>
-     <input name="SCRIPT_SETTINGS_FILE" type="file"><br>
-     <br>
-     &nbsp;&nbsp;<a name="SCRIPT_SERVER_PARAMETER_FILE_INPUT">
-     Server settings:</a>&nbsp;&nbsp;
-     <select name="SCRIPT_SERVER_PARAMETER_FILE">
-     <option>None</option>
-     <option selected="selected">Default</option>
-     <option>qPCR</option>
-     <option>Probe</option>
-     <option>p3web v0.4.0 Def</option>
-     <option>p3 v1.1.4 Def</option>
-     </select>&nbsp;
-     <br>
-     <br>
-     &nbsp;&nbsp;<input name="Compare_Files" value="Compare Files" type="submit">
-     </form>
-  </p>
+    <div id="primer3plus_results">
+      <p>&nbsp;&nbsp;Primer3ComareFiles allows to compare files with each other and the 
+        default values to identify differences.<br>
+        <br>
+        &nbsp;&nbsp;<a id="SCRIPT_SEQUENCE_FILE_INPUT">File 1:</a>
+        &nbsp;&nbsp;<input id="P3P_COMPARE_FILE_ONE" type="file"><br>
+        <br>
+        &nbsp;&nbsp;<a id="SCRIPT_SEQUENCE_FILE_INPUT">File 2:</a>
+        &nbsp;&nbsp;<input id="P3P_COMPARE_FILE_TWO" type="file"><br>
+        <br>
+        &nbsp;&nbsp;<a>Server settings:</a>&nbsp;&nbsp;
+        <select id="P3P_COMPARE_SERVER_SETTINGS_FILE">
+          <option>None</option>
+          <option selected="selected">Default</option>
+          <option>qPCR</option>
+          <option>Probe</option>
+          <option>p3web v0.4.0 Def</option>
+          <option>p3 v1.1.4 Def</option>
+        </select>&nbsp;
+        <br>
+        <br>
+        &nbsp;&nbsp;
+        <input id="P3P_COMPARE_RUN" type="submit">
+      </p>
 
 <div id="primer3plus_footer">
 <a>&copy; by A. Untergasser</a>
@@ -267,12 +75,10 @@
 <a href="http://www.untergasser.de/data/impressum.html">Impressum</a>
 </div>
 
-</div>
+    </div>
 
-</div>  
-
-
-</div>
+  </div>  
+  </div>
 
 </body>
 </html>
