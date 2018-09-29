@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
   <meta name="viewport" content="width==1034px, initial-scale=1.0">
   <meta name="description" content="Primer3Plus picks primers from a DNA sequence using Primer3. This is the latest version straight from the developers with all the new features.">
   <title>Primer3Plus - Pick Primers</title>
@@ -22,7 +22,7 @@
     <div id=toolTipLayer style="VISIBILITY: hidden; POSITION: absolute; z-index: 1">will be replace by tooltip text
     </div>
 
-<SCRIPT language=JavaScript>
+<SCRIPT>
 var prevTabPage = "primer3plus_main_tab";
 var prevTab = "tab1";
 
@@ -264,9 +264,9 @@ function setRegion(tagOpen,tagClose) {
     <div id="primer3plus_top_bar">
       <table class="primer3plus_top_bar_table">
         <colgroup>
-          <col width="60%" class="primer3plus_background">
-          <col width="20%" class="primer3plus_background">
-          <col width="20%" class="primer3plus_background">
+          <col style="width: 60%" class="primer3plus_background">
+          <col style="width: 20%" class="primer3plus_background">
+          <col style="width: 20%" class="primer3plus_background">
         </colgroup>
         <tr>
           <td class="primer3plus_top_bar_cell" rowspan="2"><a class="primer3plus_top_bar_title">Primer3Plus</a><br>
@@ -274,7 +274,7 @@ function setRegion(tagOpen,tagClose) {
           </td>
           <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://primer3plusPackage.cgi">More...</a>
           </td>
-          <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://sourceforge.net/projects/primer3/">Source Code</a>
+          <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="https://github.com/primer3-org/primer3plus">Source Code</a>
           </td>
         </tr>
         <tr>
@@ -290,9 +290,9 @@ function setRegion(tagOpen,tagClose) {
     <div id="primer3plus_task_bar">
       <table class="primer3plus_table_no_border">
         <colgroup>
-          <col width="50%">
-          <col width="30%">
-          <col width="20%">
+          <col style="width: 50%">
+          <col style="width: 30%">
+          <col style="width: 20%">
         </colgroup>
 	<tr>
           <td class="primer3plus_cell_no_border">
@@ -305,7 +305,7 @@ function setRegion(tagOpen,tagClose) {
 <input id="GENBRO_FILE" value="" type="hidden">
 
 
-            <a name="SCRIPT_SERVER_PARAMETER_FILE_HELP">
+            <a id="SCRIPT_SERVER_PARAMETER_FILE_HELP">
             Load server settings:</a>&nbsp;&nbsp;
             <select name="SCRIPT_SERVER_PARAMETER_FILE">
               <option>Default</option>
@@ -314,7 +314,7 @@ function setRegion(tagOpen,tagClose) {
               <option>p3web v0.4.0 Def</option>
               <option>p3 v1.1.4 Def</option>
             </select>&nbsp;
-            <input name="Activate_Settings" value="Activate Settings" type="submit"><br>
+            <input id="Activate_Settings" value="Activate Settings" type="submit"><br>
               <a id="PRIMER_TASK_HELP">Task:</a>&nbsp;
             <select id="PRIMER_TASK" class="primer3plus_task" onchange="showSelection(this);" onkeyup="showSelection(this)">
               <option class="primer3plus_task" selected="selected">generic</option>
@@ -346,7 +346,7 @@ function setRegion(tagOpen,tagClose) {
               <a>Evaluate a primer of known sequence with the given settings.</a>
             </div>
           </td>
-	  <td class="primer3plus_cell_no_border" align="right">
+	  <td class="primer3plus_cell_no_border"  style="text-align: right">
             <table>
               <tr>
                 <td><input id="primer3plus_pick_primers_button" class="primer3plus_action_button" value="Pick Primers" type="submit" style="background: #83db7b;"></td>
@@ -359,7 +359,7 @@ function setRegion(tagOpen,tagClose) {
       </table>
     </div>
 
-<script type="text/javascript">
+<script>
 	document.write("<style type=\"text/css\">div#primer3plus_no_javascript { display: none; }</style>");
 </script>
 
@@ -367,7 +367,7 @@ function setRegion(tagOpen,tagClose) {
       <table class="primer3plus_table_no_border">
         <tr>
           <td class="primer3plus_note">
-            JavaScript is not enabled, please enable JavaScript and refresh the browser.</a>.
+            <a>JavaScript is not enabled, please enable JavaScript and refresh the browser.</a>.
           </td>
         </tr>
       </table>
@@ -389,14 +389,16 @@ function setRegion(tagOpen,tagClose) {
       <div id="primer3plus_name_lib">
         <table class="primer3plus_table_no_border">
           <colgroup>
-            <col width="45%">
-            <col width="55%">
+            <col style="width: 45%">
+            <col style="width: 55%">
           </colgroup>
           <tr>
             <td class="primer3plus_cell_no_border">
               <a onmouseover="toolTip('A name to identify your output.');" onmouseout="toolTip();" 
-                name="SEQUENCE_ID_HELP">Sequence Id:</a>
-              <input name="SEQUENCE_ID" type="text">
+                id="SEQUENCE_ID_HELP">Sequence Id:</a>
+              <input id="SEQUENCE_ID" type="text">
+            </td>
+            <td>
             </td>
           </tr>
         </table>
@@ -405,11 +407,11 @@ function setRegion(tagOpen,tagClose) {
 <div id="primer3plus_sequence">
    <table class="primer3plus_table_no_border">
      <tr>
-       <td class="primer3plus_cell_no_border" valign="bottom">
+       <td class="primer3plus_cell_no_border" style="vertical-align: bottom">
          <a onmouseover="toolTip('5 -&gt;3 , as ACGTNacgtn -- other letters treated as N -- numbers and blanks ignored FASTA format ok.');"
-         onmouseout="toolTip();" name="SEQUENCE_TEMPLATE_HELP">Paste template sequence below</a>
+         onmouseout="toolTip();" id="SEQUENCE_TEMPLATE_HELP">Paste template sequence below</a>
        </td>
-       <td class="primer3plus_cell_no_border" valign="bottom">
+       <td class="primer3plus_cell_no_border" style="vertical-align: bottom">
          <a>Or upload sequence file:</a>
          <input id="SCRIPT_SEQUENCE_FILE" type="file">&nbsp;&nbsp;
 	 <input id="SCRIPT_SEQUENCE_Upload_File" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
@@ -459,9 +461,9 @@ function setRegion(tagOpen,tagClose) {
 <div id="primer3plus_excluded_region_box">
   <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="20%">
-       <col width="2%">
-       <col width="78%">
+       <col style="width: 20%">
+       <col style="width: 2%">
+       <col style="width: 78%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border">
@@ -478,13 +480,13 @@ function setRegion(tagOpen,tagClose) {
 <div id="primer3plus_target_region_box">
   <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="20%">
-       <col width="2%">
-       <col width="78%">
+       <col style="width: 20%">
+       <col style="width: 2%">
+       <col style="width: 78%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('If one or more Targets is specified then a legal primer pair must flank at least one of them. The value should be a space-separated list of start,length pairs.<br>E.g. 50,2 requires primers to surround the 2 bases at positions 50 and 51.<br> Or mark the template sequence with [ and ]: e.g. ...ATCT[CCCC]TCAT..<br> means that primers must flank the central CCCC.');"
-         onmouseout="toolTip();" name="SEQUENCE_TARGET_HELP">Targets:</a>
+         onmouseout="toolTip();" id="SEQUENCE_TARGET_HELP">Targets:</a>
        </td>
        <td class="primer3plus_cell_no_border">[
        </td>
@@ -496,13 +498,13 @@ function setRegion(tagOpen,tagClose) {
 <div id="primer3plus_included_region_box">
   <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="20%">
-       <col width="2%">
-       <col width="78%">
+       <col style="width: 20%">
+       <col style="width: 2%">
+       <col style="width: 78%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('A sub-region of the given sequence in which to pick primers. For example, often the first dozen or so bases of a sequence are vector, and should be excluded from consideration.<br>The value for this parameter has the form start,length.<br>E.g. 20,400: only pick primers in the 400 base region starting at position 20.<br> Or use { and } in the template sequence to mark the beginning and end of the included<br> region: e.g. in ATC{TTC...TCT}AT the included region is TTC...TCT.');"
-         onmouseout="toolTip();"  name="SEQUENCE_INCLUDED_REGION_HELP">Included Region:</a>
+         onmouseout="toolTip();"  id="SEQUENCE_INCLUDED_REGION_HELP">Included Region:</a>
        </td>
        <td class="primer3plus_cell_no_border">{
        </td>
@@ -514,13 +516,13 @@ function setRegion(tagOpen,tagClose) {
 <div id="primer3plus_primer_overlap_pos_box">
   <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="20%">
-       <col width="2%">
-       <col width="78%">
+       <col style="width: 20%">
+       <col style="width: 2%">
+       <col style="width: 78%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('A list of positions in the given sequence. The value for this parameter has the form position.<br>E.g. 120: only pick primers overlaping the position 120.<br> Or use - in the template sequence to mark the position.<br>Primer3 tries to pick primer pairs were the forward or the reverse primer overlaps one of these positions.');"
-         onmouseout="toolTip();"  name="SEQUENCE_OVERLAP_JUNCTION_LIST_HELP">Primer overlap positions:</a>
+         onmouseout="toolTip();"  id="SEQUENCE_OVERLAP_JUNCTION_LIST_HELP">Primer overlap positions:</a>
        </td>
        <td class="primer3plus_cell_no_border">-
        </td>
@@ -532,12 +534,12 @@ function setRegion(tagOpen,tagClose) {
 <div id="primer3plus_pair_ok_reg_box">
   <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="20%">
-       <col width="2%">
-       <col width="78%">
+       <col style="width: 20%">
+       <col style="width: 2%">
+       <col style="width: 78%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border"><a name="SEQUENCE_PRIMER_PAIR_OK_REGION_LIST_HELP">Pair OK Region List:</a>
+       <td class="primer3plus_cell_no_border"><a id="SEQUENCE_PRIMER_PAIR_OK_REGION_LIST_HELP">Pair OK Region List:</a>
        </td>
        <td class="primer3plus_cell_no_border">
        </td>
@@ -550,18 +552,18 @@ function setRegion(tagOpen,tagClose) {
 <div id="primer3plus_primer_selection">
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="32%">
-       <col width="32%">
-       <col width="36%">
+       <col style="width: 32%">
+       <col style="width: 32%">
+       <col style="width: 36%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border_bg" valign="top">
+       <td class="primer3plus_cell_no_border_bg" style="vertical-align: top">
          <input id="PRIMER_PICK_LEFT_PRIMER" value="1" checked="checked"  type="checkbox"><a id="PRIMER_PICK_LEFT_PRIMER_HELP">Pick left primer</a>
        </td>
-       <td class="primer3plus_cell_no_border_bg" valign="top">
+       <td class="primer3plus_cell_no_border_bg" style="vertical-align: top">
          <input id="PRIMER_PICK_INTERNAL_OLIGO" value="1" type="checkbox"><a id="PRIMER_PICK_INTERNAL_OLIGO_HELP">Pick hybridization probe</a><br>
        </td>
-       <td class="primer3plus_cell_no_border_bg" valign="top">
+       <td class="primer3plus_cell_no_border_bg" style="vertical-align: top">
          <input id="PRIMER_PICK_RIGHT_PRIMER" value="1" checked="checked"  type="checkbox"><a id="PRIMER_PICK_RIGHT_PRIMER_HELP">Pick right primer</a>
        </td>
      </tr>
@@ -570,18 +572,18 @@ function setRegion(tagOpen,tagClose) {
 <div id="primer3plus_pick_which">
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="32%">
-       <col width="32%">
-       <col width="36%">
+       <col style="width: 32%">
+       <col style="width: 32%">
+       <col style="width: 36%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border_bg" valign="top">
+       <td class="primer3plus_cell_no_border_bg" style="vertical-align: top">
          or use <a id="SEQUENCE_PRIMER_HELP">left primer</a> below.
        </td>
-       <td class="primer3plus_cell_no_border_bg" valign="top">
+       <td class="primer3plus_cell_no_border_bg" style="vertical-align: top">
          (internal oligo) or use <a id="SEQUENCE_INTERNAL_OLIGO_HELP">oligo</a> below.
        </td>
-       <td class="primer3plus_cell_no_border_bg" valign="top">
+       <td class="primer3plus_cell_no_border_bg" style="vertical-align: top">
          or use <a href="SEQUENCE_PRIMER_REVCOMP_HELP">right primer</a><br>
          below (5'-&gt;3' on opposite strand).
        </td>
@@ -597,24 +599,16 @@ function setRegion(tagOpen,tagClose) {
   </table>
 </div>
 </div>
-<div id="primer3plus_footer">
-<a>&copy; by A. Untergasser</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/contact_e.html">Contact</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/datenschutzerklaerung.html">Datenschutzerkl&auml;rung</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/impressum.html">Impressum</a>
 </div>
-</div>
+
 <div id="primer3plus_advanced_sequence" class="primer3plus_tab_page">
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="30%">
-       <col width="10%">
-       <col width="30%">
-       <col width="10%">
-       <col width="20%">
+       <col style="width: 30%">
+       <col style="width: 10%">
+       <col style="width: 30%">
+       <col style="width: 10%">
+       <col style="width: 20%">
      </colgroup>
     <tr>
        <td class="primer3plus_cell_no_border"><a id="SEQUENCE_FORCE_LEFT_START_HELP">
@@ -686,15 +680,6 @@ function setRegion(tagOpen,tagClose) {
        </td>
      </tr>
    </table>
-   <div id="primer3plus_footer">
-   <a>&copy; by A. Untergasser</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/contact_e.html">Contact</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/datenschutzerklaerung.html">Datenschutzerkl&auml;rung</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/impressum.html">Impressum</a>
-   </div>
 </div>
 
 <div id="primer3plus_general_primer_picking" class="primer3plus_tab_page">
@@ -711,11 +696,11 @@ function setRegion(tagOpen,tagClose) {
   <div class="primer3plus_section">
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="18%">
-       <col width="14%">
-       <col width="14%">
-       <col width="14%">
-       <col width="40%">
+       <col style="width: 18%">
+       <col style="width: 14%">
+       <col style="width: 14%">
+       <col style="width: 14%">
+       <col style="width: 40%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a id="PRIMER_OPT_SIZE_HELP">Primer Size</a>
@@ -767,11 +752,11 @@ function setRegion(tagOpen,tagClose) {
    </table>
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="30%">
-       <col width="10%">
-       <col width="25%">
-       <col width="10%">
-       <col width="25%">
+       <col style="width: 30%">
+       <col style="width: 10%">
+       <col style="width: 25%">
+       <col style="width: 10%">
+       <col style="width: 25%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a id="PRIMER_SALT_MONOVALENT_HELP">Concentration of monovalent cations:</a>
@@ -804,7 +789,7 @@ function setRegion(tagOpen,tagClose) {
 <br>
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="100%">
+       <col style="width: 100%">
      </colgroup>
       <tbody><tr>
        <td class="primer3plus_cell_no_border">
@@ -827,7 +812,7 @@ function setRegion(tagOpen,tagClose) {
    <b>Load and Save</b>
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="100%">
+       <col style="width: 100%">
      </colgroup>
       <tbody><tr>
        <td class="primer3plus_cell_no_border"><a id="SCRIPT_SETTINGS_FILE_HELP">To upload or save a settings file from
@@ -843,24 +828,15 @@ function setRegion(tagOpen,tagClose) {
      </tbody>	
      </table>
 </div>
-<div id="primer3plus_footer">
-<a>&copy; by A. Untergasser</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/contact_e.html">Contact</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/datenschutzerklaerung.html">Datenschutzerkl&auml;rung</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/impressum.html">Impressum</a>
 </div>
 
-</div>
 <div id="primer3plus_advanced_primer_picking" class="primer3plus_tab_page">
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="25%">
-       <col width="10%">
-       <col width="33%">
-       <col width="32%">
+       <col style="width: 25%">
+       <col style="width: 10%">
+       <col style="width: 33%">
+       <col style="width: 32%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a id="PRIMER_MAX_POLY_X_HELP">Max Poly-X:</a>
@@ -1066,11 +1042,11 @@ function setRegion(tagOpen,tagClose) {
    <br>
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="17%">
-       <col width="15%">
-       <col width="15%">
-       <col width="15%">
-       <col width="38%">
+       <col style="width: 17%">
+       <col style="width: 15%">
+       <col style="width: 15%">
+       <col style="width: 15%">
+       <col style="width: 38%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a id="PRIMER_PRODUCT_TM_HELP">Product Tm</a>
@@ -1125,10 +1101,10 @@ function setRegion(tagOpen,tagClose) {
    <b>Sequencing</b>
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="25%">
-       <col width="15%">
-       <col width="27%">
-       <col width="33%">
+       <col style="width: 25%">
+       <col style="width: 15%">
+       <col style="width: 27%">
+       <col style="width: 33%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a onmouseover="toolTip('Space between primer binding site and the start of readable sequencing');" onmouseout="toolTip();" id="PRIMER_SEQUENCING_LEAD_HELP">Lead</a>
@@ -1153,23 +1129,14 @@ function setRegion(tagOpen,tagClose) {
      </tr> 
    </table>
    </div>
-<div id="primer3plus_footer">
-<a>&copy; by A. Untergasser</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/contact_e.html">Contact</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/datenschutzerklaerung.html">Datenschutzerkl&auml;rung</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/impressum.html">Impressum</a>
-</div>
 </div>
 
 <div id="primer3plus_internal_oligo" class="primer3plus_tab_page">
   <div class="primer3plus_section">
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="32%">
-       <col width="68%">
+       <col style="width: 32%">
+       <col style="width: 68%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a id="internal_oligo_generic_HELP" name="SEQUENCE_INTERNAL_EXCLUDED_REGION_HELP">Excluded Region:</a>
@@ -1182,11 +1149,11 @@ function setRegion(tagOpen,tagClose) {
   <div class="primer3plus_section"> 
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="20%">
-       <col width="15%">
-       <col width="15%">
-       <col width="15%">
-       <col width="35%">
+       <col style="width: 20%">
+       <col style="width: 15%">
+       <col style="width: 15%">
+       <col style="width: 15%">
+       <col style="width: 35%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a id="PRIMER_INTERNAL_OLIGO_SIZE_HELP">Hyb Oligo Size:</a>
@@ -1237,10 +1204,10 @@ function setRegion(tagOpen,tagClose) {
 
    <table class="primer3plus_table_no_border">
      <colgroup>
-       <col width="38%">
-       <col width="12%">
-       <col width="38%">
-       <col width="12%">
+       <col style="width: 38%">
+       <col style="width: 12%">
+       <col style="width: 38%">
+       <col style="width: 12%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_no_border"><a id="PRIMER_INTERNAL_SALT_MONOVALENT_HELP">Hyb Oligo Monovalent Cations Concentration:</a>
@@ -1327,23 +1294,14 @@ function setRegion(tagOpen,tagClose) {
      </tr>
    </table>
   </div>
-  <div id="primer3plus_footer">
-  <a>&copy; by A. Untergasser</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/contact_e.html">Contact</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/datenschutzerklaerung.html">Datenschutzerkl&auml;rung</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/impressum.html">Impressum</a>
-  </div>
 </div>
 
 <div id="primer3plus_penalties" class="primer3plus_tab_page">
    <table class="primer3plus_table_penalties">
      <colgroup>
-       <col width="33%">
-       <col width="34%">
-       <col width="33%">
+       <col style="width: 33%">
+       <col style="width: 34%">
+       <col style="width: 33%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_penalties">
@@ -1359,21 +1317,21 @@ function setRegion(tagOpen,tagClose) {
    </table>
    <table class="primer3plus_table_penalties">
      <colgroup>
-       <col width="10%">
-       <col width="3%">
-       <col width="8%">
-       <col width="3%">
-       <col width="9%">
-       <col width="11%">
-       <col width="3%">
-       <col width="8%">
-       <col width="3%">
-       <col width="9%">
-       <col width="10%">
-       <col width="3%">
-       <col width="8%">
-       <col width="3%">
-       <col width="9%">
+       <col style="width: 10%">
+       <col style="width: 3%">
+       <col style="width: 8%">
+       <col style="width: 3%">
+       <col style="width: 9%">
+       <col style="width: 11%">
+       <col style="width: 3%">
+       <col style="width: 8%">
+       <col style="width: 3%">
+       <col style="width: 9%">
+       <col style="width: 10%">
+       <col style="width: 3%">
+       <col style="width: 8%">
+       <col style="width: 3%">
+       <col style="width: 9%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_penalties"><a id="PRIMER_WT_SIZE_HELP">Size</a>
@@ -1474,12 +1432,12 @@ function setRegion(tagOpen,tagClose) {
    </table>
    <table class="primer3plus_table_penalties">
      <colgroup>
-       <col width="24%">
-       <col width="9%">
-       <col width="25%">
-       <col width="9%">
-       <col width="24%">
-       <col width="9%">
+       <col style="width: 24%">
+       <col style="width: 9%">
+       <col style="width: 25%">
+       <col style="width: 9%">
+       <col style="width: 24%">
+       <col style="width: 9%">
      </colgroup>
      <tr>
        <td class="primer3plus_cell_penalties"><a id="PRIMER_WT_TEMPLATE_MISPRIMING_HELP">Template Mispriming</a>
@@ -1706,20 +1664,27 @@ function setRegion(tagOpen,tagClose) {
      </tr>
    </table>
 
-<div id="primer3plus_footer">
-<a>&copy; by A. Untergasser</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/contact_e.html">Contact</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/datenschutzerklaerung.html">Datenschutzerkl&auml;rung</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/impressum.html">Impressum</a>
 </div>
 
+
+<div id="primer3plus_footer_bar">
+<div id="primer3plus_footer_l">
+GEAR + Primer3 ~
+<a target="_blank" class="primer3plus_footer_link" href="https://gear.embl.de"> Home </a> ·
+<a target="_blank" class="primer3plus_footer_link" href="https://github.com/gear-genomics"> GEAR-GitHub </a> ·
+<a target="_blank" class="primer3plus_footer_link" href="https://github.com/primer3-org"> Primer3-GitHub </a> ·
+<a target="_blank" class="primer3plus_footer_link" href="https://gear.embl.de/terms"> Terms of Use </a> ·
+<a target="_blank" class="primer3plus_footer_link" href="https://gear.embl.de/contact"> Contact Us </a>
 </div>
+<div id="primer3plus_footer_r">
+Hosted with love by 
+<a target="_blank" class="primer3plus_footer_link" href="https://www.embl.de">EMBL</a>
+</div>
+</div>
+
 
 </div>	
-<script type="text/javascript">
+<script>
 function initPage() {
     hideTabs();
 	showTab('tab1','primer3plus_main_tab');

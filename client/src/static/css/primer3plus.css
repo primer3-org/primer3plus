@@ -16,6 +16,33 @@
 		overflow:hidden;
 		padding: 0px;
 	}
+
+div#primer3plus_footer_bar {
+    float:left; 
+    width: 900px; 
+    padding: 0px;
+    margin: 8px 0 8px 0;
+    border: 2px solid #ccccff;
+    text-align: left;
+}
+div#primer3plus_footer_l {
+    float: left;
+    margin: 8px;
+    font-size: 80%;
+    font-family: Arial;
+    font-weight: bold;
+    text-align: left;
+}
+div#primer3plus_footer_r {
+    float: right;
+    margin: 8px;
+    font-size: 80%;
+    font-family: Arial;
+    font-weight: bold;
+    text-align: left;
+}
+
+
   	div#primer3plus_messages { 
         width:900px;
         border: 2px solid #ccccff;
@@ -45,14 +72,6 @@
 		background-color: rgb(255, 255, 230);
 		overflow:hidden;
 		padding: 0px;
-	}
-	div#primer3plus_footer {
-		margin: 12px 0px 3px 0px;
-		font-size: 80%;
-		font-family: Arial;
-		font-weight: bold;
-		color: rgb(75, 75, 75);
-		text-align: center;
 	}
 	
 	div#primer3plus_news {

@@ -52,13 +52,68 @@ async function handleSuccess(res) {
 
 async function setDefaultParameters() {
 //  console.log(defSet)
+  var alles = "";
   for (var tag in defSet) {
     if (defSet.hasOwnProperty(tag)) {
-      console.log(tag + " -> " + defSet[tag]);
+      var  value = getHtmlTagValue(tag);
+      if (value !== null) {
+	if (value == defSet[tag][0]) {
+//           console.log("EQUAL: " + tag );
+	} else {
+           alles += "Difference: " + tag + "\n      HP:" + value + "\n    JSON:" + defSet[tag][0] + "\n";
+	}
+      } else {
+           alles += "ABSENT: " + tag + "\n";
+      }
+
     }
+  }
+  var out = document.getElementById('sequenceTextarea');  
+  out.innerHTML = alles;
+}
+
+function getHtmlTagValue(tag) {
+  var pageElement = document.getElementById(tag);
+  if (pageElement !== null) {
+    if (pageElement.getAttribute('type') == 'checkbox') {
+      if (pageElement.checked == true) {
+        return "1";
+      } else {
+        return "0";
+      }
+    }
+    if (pageElement.getAttribute('type') == 'text') {
+        return pageElement.value;
+    }
+//    alert("Unknown Type by " + tag + ": " + pageElement.getAttribute('type'));
+  } else {
+    return null;
+  }
+}
+
+function setHtmlTagValue(tag, value) {
+  var pageElement = document.getElementById(tag);
+  if (pageElement !== null) {
+    if (pageElement.getAttribute('type') == 'checkbox') {
+      var uVal = parseInt(value);
+      if (uVal != 0) {
+        pageElement.checked = true;
+        return true;
+      } else {
+        pageElement.checked = false;
+        return true;
+      }
+    }
+    if (pageElement.getAttribute('type') == 'text') {
+        pageElement.value = str(value);
+        return true;
+    }
+    return false;
+//    alert("Unknown Type by " + tag + ": " + pageElement.getAttribute('type'));
+  } else {
+    return false;
   }
 
 }
-
 
 
