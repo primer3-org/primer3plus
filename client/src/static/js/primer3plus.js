@@ -1,4 +1,5 @@
 const API_URL = process.env.API_URL
+const HELP_LINK_URL = process.env.HELP_LINK_URL
 
 // The default Settings loded from the server
 var defSet;
@@ -23,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (res.status === 200) {
           defSet = res.data["def"];
           repOld = res.data["replace"];
-          setDefaultParameters();
+          setDefaultParameters(defSet);
       }
     })
     .catch(err => {
@@ -37,20 +38,21 @@ document.addEventListener("DOMContentLoaded", function() {
     })
 });
 
-async function handleSuccess(res) {
-  var rhtml = '<select class="form-control" id="genome-select">\n'
-  for (var i = 0; i < res.length; i++) {
-    rhtml += '  <option value="' + res[i].file + '"'
-    if (res[i].preselect == true) {
-      rhtml += ' selected'
+function linkHelpTags() {
+  var linkRoot = `${HELP_LINK_URL}#`;
+  for (var tag in defSet) {
+    if (defSet.hasOwnProperty(tag)) {
+      var pageElement = document.getElementById(tag + '_HELP');
+      if (pageElement !== null) {
+        pageElement.href = linkRoot + tag;
+        pageElement.target = "p3p_help";
+      }
     }
-    rhtml += '>' + res[i].name + '</option>\n'
   }
-  rhtml += '</select>\n'
 //  targetGenomes.innerHTML = rhtml
 }
 
-async function setDefaultParameters() {
+async function blaParameters() {
 //  console.log(defSet)
   var alles = "";
   for (var tag in defSet) {
@@ -91,6 +93,15 @@ function getHtmlTagValue(tag) {
   }
 }
 
+async function setDefaultParameters(para) {
+  for (var tag in para) {
+    if (para.hasOwnProperty(tag)) {
+      setHtmlTagValue(tag, para[tag][0]);	     
+    }
+  }
+  linkHelpTags();
+}
+
 function setHtmlTagValue(tag, value) {
   var pageElement = document.getElementById(tag);
   if (pageElement !== null) {
@@ -105,7 +116,7 @@ function setHtmlTagValue(tag, value) {
       }
     }
     if (pageElement.getAttribute('type') == 'text') {
-        pageElement.value = str(value);
+        pageElement.value = value;
         return true;
     }
     return false;
