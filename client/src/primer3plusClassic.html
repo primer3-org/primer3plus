@@ -3,7 +3,7 @@
 
 <head>
   <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-  <meta name="viewport" content="width==1034px, initial-scale=1.0">
+  <meta name="viewport" content="width=1034, initial-scale=1.0">
   <meta name="description" content="Primer3Plus picks primers from a DNA sequence using Primer3. This is the latest version straight from the developers with all the new features.">
   <title>Primer3Plus - Pick Primers</title>
   <link rel="stylesheet" href="static/css/primer3plus.css">
@@ -60,13 +60,13 @@ function showTopic(id) {
     if (id != "" && document.getElementById(id)) {
         prevSelectedid = id;
         document.getElementById(id).style.display="inline";
-		document.getElementById("primer3plus_pick_primers_button").value = "Pick Primers";
+	document.getElementById("P3P_ACTION_RUN_PRIMER3").value = "Pick Primers";
 
         if (id == "primer3plus_explain_check_primers") {
-			setSelection("none","none","none","none","none","inline")
-			document.getElementById("primer3plus_pick_primers_button").value = "Check Primer";             
+             setSelection("none","none","none","none","none","inline")
+             document.getElementById("P3P_ACTION_RUN_PRIMER3").value = "Check Primer";             
         } else if (id == "primer3plus_explain_generic") {
-             setSelection("inline","inline","inline","inline","inline","inline");
+             setSelection("table","table","table","table","inline","inline");
         } else if (id == "primer3plus_explain_pick_sequencing_primers") {
              setSelection("none","inline","none","none","none","none");
         } else if (id == "primer3plus_explain_pick_cloning_primers") {
@@ -89,6 +89,7 @@ function setSelection(excludedState,targetState,includedState,regionState,okPair
         document.getElementById("primer3plus_primer_overlap_pos_box").style.display=regionState;
         document.getElementById("primer3plus_pair_ok_reg_box").style.display=okPairState;
         document.getElementById("primer3plus_pick_which").style.display=pickwhichState;
+//	document.getElementById("P3P_VIS_TARGET_BOX").style.visibility="hidden";
 }
 
 var prevSequence = 0;
@@ -254,7 +255,7 @@ function setRegion(tagOpen,tagClose) {
       - A DNA/Plasmid editor running in your browser!
     </div>
 
-    <div id=toolTipLayer style="VISIBILITY: hidden; POSITION: absolute; z-index: 1">will be replace by tooltip text
+    <div id="toolTipLayer" style="VISIBILITY: hidden; POSITION: absolute; z-index: 1">will be replace by tooltip text
     </div>
 
     <div class="p3p_top_bar">
@@ -341,8 +342,8 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
           <td  style="text-align: right">
             <table>
               <tr>
-                <td><input id="P3P_RUN_PRIMER3" value="Pick Primers" type="submit" style="font-size: 0.9em; background: #83db7b;"></td>
-                <td><input id="P3P_RESET_DEFAULT" value="Reset Default" type="submit"  style="font-size: 0.9em;"></td>
+                <td><input id="P3P_ACTION_RUN_PRIMER3" value="Pick Primers" type="submit" style="font-size: 0.9em; background: #83db7b;"></td>
+                <td><input id="P3P_ACTION_RESET_DEFAULT" value="Reset Default" type="submit"  style="font-size: 0.9em;"></td>
               </tr>
             </table>
           </td>
@@ -371,27 +372,17 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
 
     <div id="primer3plus_main_tab" class="p3p_tab_page">
       <div class="p3p_fit_to_table">
-        <a onmouseover="toolTip('A name to identify your output.');" onmouseout="toolTip();" id="SEQUENCE_ID_HELP">Sequence Id:</a>
+        <a id="SEQUENCE_ID_HELP">Sequence Id:</a>&nbsp;&nbsp;
         <input id="SEQUENCE_ID" type="text">
+	<br /><br />
+        <a onmouseover="toolTip('5 -&gt;3 , as ACGTNacgtn -- other letters treated as N -- numbers and blanks ignored FASTA format ok.');"
+          onmouseout="toolTip();" id="SEQUENCE_TEMPLATE_HELP">Paste template sequence below</a>
+        <a> or upload sequence file:</a>&nbsp;&nbsp;
+        <input id="P3P_SELECT_SEQ_FILE" type="file">&nbsp;&nbsp;
+        <input id="P3P_ACTION_LOAD_EXAMPLE" value="Load Example" type="submit">&nbsp;&nbsp;&nbsp;
+	<br /><br />
+        <textarea id="SEQUENCE_TEMPLATE" rows="12" cols="90"></textarea>
       </div>
-      <table>
-        <tr>
-          <td style="vertical-align: bottom">
-            <a onmouseover="toolTip('5 -&gt;3 , as ACGTNacgtn -- other letters treated as N -- numbers and blanks ignored FASTA format ok.');"
-               onmouseout="toolTip();" id="SEQUENCE_TEMPLATE_HELP">Paste template sequence below</a>
-          </td>
-          <td style="vertical-align: bottom">
-            <a>Or upload sequence file:</a>
-            <input id="SCRIPT_SEQUENCE_FILE" type="file">&nbsp;&nbsp;
-	        <input id="SCRIPT_SEQUENCE_Upload_File" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
-          </td>
-        </tr>
-        <tr>
-          <td colspan=2>
-            <textarea id="sequenceTextarea" rows="12" cols="90"></textarea>
-          </td>
-	    </tr>
-      </table>
       <table>
         <colgroup>
           <col style="width: 20%">
@@ -402,48 +393,51 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
           <col style="width: 30%">
           <col style="width: 25%">
         </colgroup>
-	    <tr>
+        <tr>
           <td>
             Mark selected region:
           </td>
           <td>
-            <div id="primer3plus_excluded_region_button">
-			  <input type=button name="excludedRegion" onclick="setRegion('<','>');return false;" value ="&lt; &gt;"
-                onmouseover="toolTip('Excluded Region');"  onmouseout="toolTip();">
-            </div>
+            <input type=button id="primer3plus_excluded_region_button" onclick="setRegion('<','>')" value ="&lt; Excluded  &gt;">
           </td>
           <td>
-            <div id="primer3plus_target_region_button">
-              <input type=button name="targetRegion" onclick="setRegion('[',']');return false;" value="[ ]"
-                onmouseover="toolTip('Targets Region');"  onmouseout="toolTip();">
-			</div>
+            <input type=button id="primer3plus_target_region_button" onclick="setRegion('[',']')" value="[ Target ]">
           </td>
           <td>
-            <div id="primer3plus_included_region_button">
-              <input type=button name="includedRegion" onclick="setRegion('{','}');return false;" value="{ }"
-                onmouseover="toolTip('Included Region');"  onmouseout="toolTip();">
-			</div>
+            <input type=button id="primer3plus_included_region_button" onclick="setRegion('{','}')" value="{ Included }">
           </td>
           <td>
-            <div id="primer3plus_clear_markings_button">
-              <input type=button name="clearMarkings" onclick="clearMarking();return false;" value="Clear">
-			</div>
+            <input type=button id="primer3plus_clear_markings_button" onclick="clearMarking()" value="Clear">
           </td>
           <td>
           </td>
-	      <td>
-            <input id="P3P_SAVE_SEQUENCE" value="Save Sequence" type="submit">
+          <td>
+            <input type=button id="P3P_SAVE_SEQUENCE" value="Save Sequence">
           </td>
         </tr>
       </table>
-      <br>
       <table>
         <colgroup>
           <col style="width: 20%">
           <col style="width: 2%">
-          <col style="width: 78%">
+          <col style="width: 44%">
+          <col style="width: 30%">
+          <col style="width: 4%">
         </colgroup>
-        <tr id="primer3plus_excluded_region_box">
+        <tr>
+          <td>
+            <a>&nbsp;</a>
+          </td>
+          <td>
+          </td>
+          <td>
+          </td>
+	  <td rowspan="6" id="P3P_SEQ_BOX_HELP">Primer oligos may not overlap any region specified in this tag. The associated value must be a space-separated list of start,length.<br>E.g. 401,7 68,3 forbids selection of primers in the 7 bases starting at 401 and the 3 bases at 68.<br> Or mark the template sequence with &lt; and &gt;
+          </td>
+          <td rowspan="6">
+          </td>
+        </tr>
+        <tr id="P3P_EXCLUDED_BOX">
           <td>
             <a onmouseover="toolTip('Primer oligos may not overlap any region specified in this tag. The associated value must be a space-separated list of start,length.<br>E.g. 401,7 68,3 forbids selection of primers in the 7 bases starting at 401 and the 3 bases at 68.<br> Or mark the template sequence with &lt; and &gt;:<br> e.g. ...ATCT&amp;lt;CCCC&amp;gt;TCAT.. forbids primers in the central CCCC.');"
               onmouseout="toolTip();" id="SEQUENCE_EXCLUDED_REGION_HELP">Excluded Regions:</a>
@@ -455,7 +449,7 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
             <input size="40" id="SEQUENCE_EXCLUDED_REGION" type="text">&nbsp;&gt;
           </td>
         </tr>
-        <tr id="primer3plus_target_region_box">
+        <tr id="P3P_VIS_TARGET_BOX">
           <td>
             <a onmouseover="toolTip('If one or more Targets is specified then a legal primer pair must flank at least one of them. The value should be a space-separated list of start,length pairs.<br>E.g. 50,2 requires primers to surround the 2 bases at positions 50 and 51.<br> Or mark the template sequence with [ and ]: e.g. ...ATCT[CCCC]TCAT..<br> means that primers must flank the central CCCC.');"
               onmouseout="toolTip();" id="SEQUENCE_TARGET_HELP">Targets:</a>
@@ -467,7 +461,7 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
             <input size="40" id="SEQUENCE_TARGET" type="text" />&nbsp;]
           </td>
         </tr>
-        <tr id="primer3plus_included_region_box">
+        <tr id="P3P_VIS_INCLUDED_BOX">
           <td>
            <a onmouseover="toolTip('A sub-region of the given sequence in which to pick primers. For example, often the first dozen or so bases of a sequence are vector, and should be excluded from consideration.<br>The value for this parameter has the form start,length.<br>E.g. 20,400: only pick primers in the 400 base region starting at position 20.<br> Or use { and } in the template sequence to mark the beginning and end of the included<br> region: e.g. in ATC{TTC...TCT}AT the included region is TTC...TCT.');"
              onmouseout="toolTip();"  id="SEQUENCE_INCLUDED_REGION_HELP">Included Region:</a>
@@ -479,7 +473,7 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
             <input size="40" id="SEQUENCE_INCLUDED_REGION" type="text">&nbsp;}
           </td>
         </tr>
-        <tr id="primer3plus_primer_overlap_pos_box">
+        <tr id="P3P_VIS_OVERLAP_BOX">
           <td>
             <a onmouseover="toolTip('A list of positions in the given sequence. The value for this parameter has the form position.<br>E.g. 120: only pick primers overlaping the position 120.<br> Or use - in the template sequence to mark the position.<br>Primer3 tries to pick primer pairs were the forward or the reverse primer overlaps one of these positions.');"
               onmouseout="toolTip();"  id="SEQUENCE_OVERLAP_JUNCTION_LIST_HELP">Primer overlap positions:</a>
@@ -491,7 +485,7 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
             <input size="40" id="SEQUENCE_OVERLAP_JUNCTION_LIST" type="text">
           </td>
         </tr>
-        <tr id="primer3plus_pair_ok_reg_box">
+        <tr id="P3P_VIS_PAIR_OK_BOX">
           <td>
             <a id="SEQUENCE_PRIMER_PAIR_OK_REGION_LIST_HELP">Pair OK Region List:</a>
           </td>
@@ -511,16 +505,19 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
         </colgroup>
         <tr>
           <td class="p3p_more_space p3p_blue" style="vertical-align: top">
-            <input id="PRIMER_PICK_LEFT_PRIMER" type="checkbox"><a id="PRIMER_PICK_LEFT_PRIMER_HELP">Pick left primer</a>
+            <input id="PRIMER_PICK_LEFT_PRIMER" type="checkbox">
+            <a id="PRIMER_PICK_LEFT_PRIMER_HELP">Pick left primer</a>
           </td>
           <td class="p3p_more_space p3p_blue" style="vertical-align: top">
-            <input id="PRIMER_PICK_INTERNAL_OLIGO" type="checkbox"><a id="PRIMER_PICK_INTERNAL_OLIGO_HELP">Pick hybridization probe</a><br>
+            <input id="PRIMER_PICK_INTERNAL_OLIGO" type="checkbox">
+            <a id="PRIMER_PICK_INTERNAL_OLIGO_HELP">Pick hybridization probe</a><br>
           </td>
           <td class="p3p_more_space p3p_blue" style="vertical-align: top">
-            <input id="PRIMER_PICK_RIGHT_PRIMER" type="checkbox"><a id="PRIMER_PICK_RIGHT_PRIMER_HELP">Pick right primer</a>
+            <input id="PRIMER_PICK_RIGHT_PRIMER" type="checkbox">
+            <a id="PRIMER_PICK_RIGHT_PRIMER_HELP">Pick right primer</a>
           </td>
         </tr>
-        <tr>
+        <tr id="P3P_VIS_PRIMER_EXPLAIN">
           <td class="p3p_more_space p3p_blue" style="vertical-align: top">
             or use <a id="SEQUENCE_PRIMER_HELP">left primer</a> below.
           </td>
@@ -532,7 +529,7 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
             below (5'-&gt;3' on opposite strand).
           </td>
         </tr>
-        <tr>
+        <tr id="P3P_VIS_PRIMER_BOXES">
           <td class="p3p_more_space p3p_blue">
             &nbsp;&nbsp;<input size="30" id="SEQUENCE_PRIMER" type="text">
           </td>

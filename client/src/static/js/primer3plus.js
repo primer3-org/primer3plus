@@ -24,7 +24,8 @@ document.addEventListener("DOMContentLoaded", function() {
         if (res.status === 200) {
           defSet = res.data["def"];
           repOld = res.data["replace"];
-          setDefaultParameters(defSet);
+          setHTMLParameters(defSet);
+          initElements();
       }
     })
     .catch(err => {
@@ -37,6 +38,14 @@ document.addEventListener("DOMContentLoaded", function() {
       alert("Error loading default settings from server:\n" + errorMessage);
     })
 });
+
+function initElements(){
+  linkHelpTags();
+  initResetDefautl();
+  initLoadSeqFile();
+  initLoadExample();
+//  document.getElementById("P3P_VIS_TARGET_BOX").style.visibility="hidden";
+}
 
 function linkHelpTags() {
   var linkRoot = `${HELP_LINK_URL}#`;
@@ -77,54 +86,197 @@ async function blaParameters() {
 function getHtmlTagValue(tag) {
   var pageElement = document.getElementById(tag);
   if (pageElement !== null) {
-    if (pageElement.getAttribute('type') == 'checkbox') {
-      if (pageElement.checked == true) {
-        return "1";
-      } else {
-        return "0";
+    var tagName = pageElement.tagName.toLowerCase();
+    if (tagName === 'textarea') {
+      return pageElement.innerHTML;
+    }
+    if (tagName === 'input') {
+      var type = pageElement.getAttribute('type').toLowerCase();
+      if (type == 'checkbox') {
+        if (pageElement.checked == true) {
+          return "1";
+        } else {
+          return "0";
+        }
       }
-    }
-    if (pageElement.getAttribute('type') == 'text') {
+      if (type == 'text') {
         return pageElement.value;
-    }
+      }
 //    alert("Unknown Type by " + tag + ": " + pageElement.getAttribute('type'));
-  } else {
-    return null;
+    }
   }
+  return null;
 }
 
-async function setDefaultParameters(para) {
+async function setHTMLParameters(para) {
   for (var tag in para) {
     if (para.hasOwnProperty(tag)) {
       setHtmlTagValue(tag, para[tag][0]);	     
     }
   }
-  linkHelpTags();
 }
 
 function setHtmlTagValue(tag, value) {
   var pageElement = document.getElementById(tag);
   if (pageElement !== null) {
-    if (pageElement.getAttribute('type') == 'checkbox') {
-      var uVal = parseInt(value);
-      if (uVal != 0) {
-        pageElement.checked = true;
-        return true;
+    var tagName = pageElement.tagName.toLowerCase();
+    if (tagName === 'textarea') {
+      pageElement.innerHTML = value;
+    }
+    if (tagName === 'input') {
+      var type = pageElement.getAttribute('type').toLowerCase();
+      if (type == 'checkbox') {
+        var uVal = parseInt(value);
+        if (uVal != 0) {
+          pageElement.checked = true;
+          return true;
+        } else {
+          pageElement.checked = false;
+          return true;
+        }
+      }
+      if (type == 'text') {
+          pageElement.value = value;
+          return true;
+      }
+//    alert("Unknown Type by " + tag + ": " + pageElement.getAttribute('type'));
+    }
+  }
+  return false;
+}
+
+function initLoadSeqFile() {
+  var pButton = document.getElementById('P3P_SELECT_SEQ_FILE');
+  if (pButton !== null) {
+    pButton.addEventListener('change', runLoadSeqFile, false);
+  }
+}
+function runLoadSeqFile(f) {
+  var file = f.target.files[0];
+  if (file) { // && file.type.match("text/*")) {
+    var reader = new FileReader();
+    reader.onload = function(event) {
+      var txt = event.target.result;
+      loadSeqFile(txt);
+    }
+    reader.readAsText(file);
+    document.getElementById("P3P_SELECT_SEQ_FILE").value = "";
+  } else {
+    alert("Error opening file");
+  }
+}
+function loadSeqFile(txt) {
+  var regEx1 = /\r\n/g;
+  txt = txt.replace(regEx1, "\n");
+  var regEx2 = /\r/g;
+  txt = txt.replace(regEx2, "\n");
+  var regEx3 = /^\s*/;
+  txt = txt.replace(regEx3, "");
+
+  // Read Fasta
+  var regEx4 = /^>/;
+  if (txt.match(regEx4) != null) {
+    var fileLines = txt.split('\n');	  
+    setHtmlTagValue("SEQUENCE_ID", fileLines[0].replace(regEx4, ""));
+    var seq = "";
+    var add = true;
+    var regEx5 = /\s+/g;
+    for (var i = 1; i < fileLines.length; i++) {
+      if ((fileLines[i].match(regEx4) == null) && (add == true)){
+	      seq += fileLines[i].replace(regEx5, "");
       } else {
-        pageElement.checked = false;
-        return true;
+	      add = false;
       }
     }
-    if (pageElement.getAttribute('type') == 'text') {
-        pageElement.value = value;
-        return true;
-    }
-    return false;
-//    alert("Unknown Type by " + tag + ": " + pageElement.getAttribute('type'));
-  } else {
-    return false;
+    setHtmlTagValue("SEQUENCE_TEMPLATE", seq);
   }
 
 }
 
+
+function initResetDefautl() { 
+  var pButton = document.getElementById('P3P_ACTION_RESET_DEFAULT');
+  if (pButton !== null) {
+    pButton.addEventListener('click', buttonResetDefault);
+  }
+}
+function buttonResetDefault() {
+  setHTMLParameters(defSet);
+}
+
+
+function initLoadExample() {
+  var pButton = document.getElementById('P3P_ACTION_LOAD_EXAMPLE');
+  if (pButton !== null) {
+    pButton.addEventListener('click', runLoadExample);
+  }
+}
+function runLoadExample() {
+  var seq = 'acaatattgtattggtgagatcatataagatttgatgtcaacatcttcgtaaaggtctcagatt' +
+    'cgattctccccggtatcaatttaagtgagctaatttagcttcttaaaaaataaaatcaaacaacttttacataaactca' +
+    'gtgaaaacttggatataaagtatccttatactactctttagtcttgattagtctctgcaaagatatttatatgtacttt' +
+    'gtattatcataagaacattcattgacattttaagttaatgaattactaacatgtcaactcttattctagccaacagtta' +
+    'ctttgttccctccacattctctttgaaatagtcaaacgtatccaatcatgcatgtctgttctgatcataacagcaaaag' +
+    'catgtgtatagaaaattgatagttgaattagagtcattttccataaaaaaatattcaataagtgtgacattatttttcg' +
+    'tatgaattaatccattttttgctgatttgagattctttctttctttgcttcttgctttccttcatcagccatttttttt' +
+    'gttttctctttctctctctcttcttgattcaatgaatctcaaaaatggattactattgttcattctgtttctggattgt' +
+    'gtttttttcaaagttgaatccaaatgtgtaaaagggtgtgatgtagctttagcttcctactatattataccatcaattc' +
+    'aactcagaaatatatcaaactttatgcaatcaaagattgttcttaccaattcctttgatgttataatgagctacaatag' +
+    'agacgtagtattcgataaatctggtcttatttcctatactagaatcaacgttccgttcccatgtgaatgtattggaggt' +
+    'gaatttctaggacatgtgtttgaatatacaacaaaagaaggagacgattatgatttaattgcaaatacttattacgcaa' +
+    'gtttgacaactgttgagttattgaaaaagttcaacagctatgatccaaatcatatacctgttaaggctaagattaatgt' +
+    'cactgtaatttgttcatgtgggaatagccagatttcaaaagattatggcttgtttgttacctatccactcaggtctgat' +
+    'gatactcttgcgaaaattgcgaccaaagctggtcttgatgaagggttgatacaaaatttcaatcaagatgccaatttca' +
+    'gcataggaagtgggatagtgttcattccaggaagaggtatgtattttctcattttctgccaactgtggttggcacagat' +
+    'ggtttgaacttctgtcacatccgttgtaactttgataagtctgaaattccgcagtttgtagattactggtaaattccat' +
+    'tataaatgtttaatgtgatttggtgattcttatcaaaagtacttgtataagtatgcgagttagataaaaaaaattatga' +
+    'ccatcttgttctcgtggaaatggactctgataattcataaagtctagccagtgattgtaacaaccaggctttgaacttg' +
+    'gtacttccaatcaacttgaccttcaccagacctcattgaccacttgagtcgaaccctttaatttcagttagagtatatt' +
+    'taaatgctaagttactctattatttttcaaagtatatacatggtataaattttgaagttttatgtagttattgtttact' +
+    'ttgcagatcaaaatggacatttttttcctttgtattctaggtaagtaacattgattatctcaattttcatttttgaatg' +
+    'atttatagaagaagtaaatattgcttcatataatttggttatatttttctaactttcattttctttttatttttccatt' +
+    'cttgcagaacaggtttgtcttttgctattaagatgattatttgttagcttgttcacaaaaatatgagaatggacaaaag' +
+    'gtcaatgcttcctgtgagcttaaatttggttcaatataagcaggtattgctaagggttcagctgttggtatagctatgg' +
+    'caggaatatttggacttctattatttgttatctatatatatgccaaatacttccaaaagaaggaagaagagaaaactaa' +
+    'acttccacaaacttctagggcattttcaactcaagatggtaatatttttaaacattcatattctaagttcttattaaaa' +
+    'atatttcttttaacctatcttatgatataagtatttatttcagtatttgagagagcttgcgaaaatagcttataacatg' +
+    'tttgtttcattaaactgtatttatttcattaaatagtttatacttgctgatttttgtttatgttattggtgaagcctca' +
+    'ggtagtgcagaatatgaaacttcaggatccagtgggcatgctactggtagtgctgccggccttacaggcattatggtgg' +
+    'caaagtcgacagagtttacgtatcaagaattagccaaggcgacaaataatttcagcttggataataaaattggtcaagg' +
+    'tggatttggagctgtctattatgcagaacttagaggcgaggtacgaaactacatgaatttgtttaatagagtgtacttt' +
+    'gattttagttttgaacaagttctataaaatattttcaaaaaacttttattttttgtcataacttggaaagaaagtaaag' +
+    'ccatttttttttccttcacgttttcattgatttcctctcatgcaacttattgtatgcagaaaacagcaattaagaagat' +
+    'ggatgtacaagcatcgtccgaatttctctgtgagttgaaggtcttaacacatgttcatcacttgaatctggtataccat' +
+    'ccttttaaaaatcttaagccatatataatatatttaggagatataatcatttatttttatatatggtttgaagaatcat' +
+    'cgtttaactacaaagcaaataaccagtgttagttttgagaacataagaactctataactatcaagcaaaacataatctg' +
+    'tagtagctgtttacaattatctgtcctacacagttagcgaataatttgaaacacactgcagaacattatttgtatgtac' +
+    'ttcttgattttgtacatgtttgtatactttttgtataatcagttttgtatttgttctagatattactctgaatttgcct' +
+    'aaattttatgaacaatgtaggtgcggttgattggatattgcgttgaagggtcacttttcctcgtatatgaacatattga' +
+    'caatggaaacttgggtcaatatttacatggtataggtaagattaacaaaaatgtgctaatatttttatgtgattttaca' +
+    'atattgtcaaacagtcattaatgatggttagatgatttcaggtacagaaccattaccatggtctagtagagtgcagatt' +
+    'gctctagattcagccagaggcctagaatacattcatgaacacactgtgcctgtttatatccatcgcgacgtaaaatcag' +
+    'caaatatattgatagacaaaaatttgcgtggaaaggttgcaatttgaccaatcttaatgatctatattataaattttaa' +
+    'tttatcacttcttcttttacattaattaactctatgaatggttttgaattcaggttgctgattttggcttgaccaaact' +
+    'tattgaagttggaaactcgacacttcacactcgtcttgtgggaacatttggatacatgccaccagagtatgattcgttt' +
+    'gtattaaattttgagtttaatattagtacaaaaagtacaacaaaaattcagtgattcattcacatttcacaatacatat' +
+    'gtcactttgttatattataaaatgggatatgaccagatgattgtacaattttttttataacaaatgatatttgtataac' +
+    'ccttttagtatgtccatggattataaactatcttcaactttcttaattgtagaaaacatgtttgtttattagctgtttt' +
+    'ttttctctgttgcagatatgctcaatatggcgatgtttctccaaaaatagatgtatatgcttttggcgttgttctttat' +
+    'gaacttattactgcaaagaatgctgtcctgaagacaggtgaatctgttgcagaatcaaagggtcttgtacaattggtag' +
+    'gtctagataccatatttattaagaaaacactcatttcatgtatatttttagtaaaatatttttaagttagtaattatgt' +
+    'acattttaaattcagtaaactgaatgcattcacttaaaccagaacaaaagttatccttgattattttgtattgcagttt' +
+    'gaagaagcacttcatcgaatggatcctttagaaggtcttcgaaaattggtggatcctaggcttaaagaaaactatccca' +
+    'ttgattctgttctcaaggtgggaagcattttttcttagcaaaaaattgaatgttatttctttttcttctcaatttgcat' +
+    'tatataccaacaaaaaaaaaatgcatatttatgtggtatagcctttcaaatcattgtagtacataagcaaagttcatgt' +
+    'tattaaaatataattaaatgtatgcaaaagtgtatagtttgtaaagttactaaactcatttgttttagcactagatttt' +
+    'gtcattgaacataacttaagatatgtgaatatttgaattgcagatggctcaacttgggagagcatgtacgagagacaat' +
+    'ccgctactacgcccaagcatgagatctatagttgttgctcttatgacactttcatcaccaactgaagattgtgatgatg' +
+    'actcttcatatgaaaatcaatctctcataaatctgttgtcaactagatgaagattttgtgtgacaaattgaattgtgtt' +
+    'tgttaaaacatgtagaaagcatacaacaaatggtttgtactttacttgtatatgaaatattgcagttggagagttttta' +
+    'cttttcttacctcaattatccatcttgaacattgttttgtatgtggcaagagttcaaacactggtgtactcattgaaaa' +
+    'gttatggtgagaaaatcactgatcagatgattcttgagaaagataatgagaactctgtcacc';
+  setHTMLParameters(defSet);
+  setHtmlTagValue("SEQUENCE_ID", "Medicago Lyk3");
+  setHtmlTagValue("SEQUENCE_TEMPLATE", seq);
+}
 
