@@ -45,8 +45,10 @@ function initElements(){
   initResetDefautl();
   initTaskFunctionality();
   initLoadSeqFile();
+  initSaveFile();
   initLoadExample();
   initExplainSeqRegions();
+  initLoadSetFile();
 //  document.getElementById("P3P_VIS_TARGET_BOX").style.visibility="hidden";
 }
 
@@ -91,7 +93,7 @@ function getHtmlTagValue(tag) {
   if (pageElement !== null) {
     var tagName = pageElement.tagName.toLowerCase();
     if (tagName === 'textarea') {
-      return pageElement.innerHTML;
+      return pageElement.value;
     }
     if (tagName === 'input') {
       var type = pageElement.getAttribute('type').toLowerCase();
@@ -121,10 +123,11 @@ async function setHTMLParameters(para) {
 
 function setHtmlTagValue(tag, value) {
   var pageElement = document.getElementById(tag);
+  value = value.replace(/\s*$/, "");
   if (pageElement !== null) {
     var tagName = pageElement.tagName.toLowerCase();
     if (tagName === 'textarea') {
-      pageElement.innerHTML = value;
+      pageElement.value = value;
     }
     if (tagName === 'input') {
       var type = pageElement.getAttribute('type').toLowerCase();
@@ -148,6 +151,42 @@ function setHtmlTagValue(tag, value) {
   return false;
 }
 
+function detectBorwser() {
+    var browser = window.navigator.userAgent.toLowerCase();
+    if (browser.indexOf("edge") != -1) {
+        return "edge";
+    }
+    if (browser.indexOf("firefox") != -1) {
+        return "firefox";
+    }
+    if (browser.indexOf("chrome") != -1) {
+        return "chrome";
+    }
+    if (browser.indexOf("safari") != -1) {
+        return "safari";
+    }
+    alert("Unknown Browser: Functionality may be impaired!\n\n" +browser);
+    return browser;
+}
+function saveFile(fileName,content) {
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style.display = "none";
+    var blob = new Blob([content], {type: "text/plain"});
+    var browser = detectBorwser();
+    if (browser != "edge") {
+            var url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            window.URL.revokeObjectURL(url);
+    } else {
+        window.navigator.msSaveBlob(blob, fileName);
+    }
+    return;
+};
+
+// Functions to load the sequence and settings files
 function initLoadSeqFile() {
   var pButton = document.getElementById('P3P_SELECT_SEQ_FILE');
   if (pButton !== null) {
@@ -220,7 +259,8 @@ function loadSeqFile(txt) {
     }
   } else if ((txt.match(/Primer3 File/) != null) || (txt.match(/\n=\n/) != null)) {
     // Read Primer3Plus and Primer3
-    loadP3File(txt);
+    loadP3File("file",txt);
+    return;
   } else {
     // Read file plain txt
     seq = txt;
@@ -232,17 +272,42 @@ function loadSeqFile(txt) {
   seq = seq.replace(/\W+/g, "");
   setHtmlTagValue("SEQUENCE_TEMPLATE", seq);
 }
-function loadP3File(txt) {
+function initLoadSetFile() {
+  var pButton = document.getElementById('P3P_SELECT_SETTINGS_FILE');
+  if (pButton !== null) {
+    pButton.addEventListener('change', runLoadSetFile, false);
+  }
+}
+function runLoadSetFile(f) {
+  var file = f.target.files[0];
+  if (file) { // && file.type.match("text/*")) {
+    var reader = new FileReader();
+    reader.onload = function(event) {
+      var txt = event.target.result;
+      loadP3File("set", txt);
+    }
+    reader.readAsText(file);
+    document.getElementById("P3P_SELECT_SETTINGS_FILE").value = "";
+  } else {
+    alert("Error opening file");
+  }
+}
+function loadP3File(limit,txt) {
   txt = txt.replace(/\r\n/g, "\n");
   txt = txt.replace(/\r/g, "\n");
   txt = txt.replace(/^\s*/, "");
   var fileLines = txt.split('\n');
-  var sel = "all";
-  if (txt.match(/P3_FILE_TYPE=sequence/) != null) {
-    sel = "seq";
-  }
-  if (txt.match(/P3_FILE_TYPE=settings/) != null) {
-    sel = "set";
+  var sel;
+  if (limit == "file") {
+    if (txt.match(/P3_FILE_TYPE=sequence/) != null) {
+      sel = "seq";
+    } else if (txt.match(/P3_FILE_TYPE=settings/) != null) {
+      sel = "set";
+    } else {
+      sel = "all";
+    }
+  } else {
+    sel = limit;
   }
   for (var i = 0; i < fileLines.length; i++) {
     if ((fileLines[i].match(/=/) != null) && (fileLines[i] != "") && (fileLines[i] != "=")) {
@@ -264,6 +329,79 @@ function loadP3File(txt) {
       }
     }
   }
+}
+// Functions to load the sequence and settings files
+function initSaveFile() {
+  var pButtonSeq = document.getElementById('P3P_ACTION_SEQUENCE_SAVE');
+  if (pButtonSeq !== null) {
+    pButtonSeq.addEventListener('click', function(){runSaveFile('seq','Primer3plus_Sequence.txt');});
+  }
+  var pButtonSet = document.getElementById('P3P_ACTION_SETTINGS_SAVE');
+  if (pButtonSet !== null) {
+    pButtonSet.addEventListener('click', function(){runSaveFile('set','Primer3plus_Settings.txt');});
+  }
+  var pButtonAll = document.getElementById('P3P_ACTION_ALL_SAVE');
+  if (pButtonAll !== null) {
+    pButtonAll.addEventListener('click', function(){runSaveFile('all','Primer3plus_Complete.txt');});
+  }
+  var pButtonP3 = document.getElementById('P3P_ACTION_ALL_P3_SAVE');
+  if (pButtonP3 !== null) {
+    pButtonP3.addEventListener('click', function(){runSaveFile('primer3','Primer3_Input.txt');});
+  }
+}
+
+function runSaveFile(sel, fileName) {
+  var con = createSaveFileString(sel);
+  saveFile(fileName,con);
+}
+
+// This function creates the files to save 
+// and the Primer3 input file!!
+function createSaveFileString(sel) {
+  var usedTags = [];
+  var wValues = {};
+  var ret = "";
+  // Extract the used tags with values
+  for (var tag in defSet) {
+    if (defSet.hasOwnProperty(tag)) {
+      var val = getHtmlTagValue(tag);
+      if (val != null) {
+	if (((sel == "seq") && tag.startsWith("SEQUENCE_")) ||
+	    ((sel == "set") && tag.startsWith("PRIMER_")) ||
+            ((sel == "set") && tag.startsWith("P3P_")) ||
+            ((sel == "all")) ||
+            ((sel == "primer3") && !(tag.startsWith("P3P_")))) {
+          usedTags.push(tag);
+          wValues[tag] = val;
+        }
+      }
+    }
+  }
+  // Write the headers
+  if (sel != "primer3") {
+    ret += "Primer3 File - http://primer3.org\n";
+  }  
+  if (sel == "seq") {
+    ret += "P3_FILE_TYPE=sequence\n\nP3_FILE_ID=User sequence\n";
+  }  
+  if (sel == "set") {
+    ret += "P3_FILE_TYPE=settings\n\nP3_FILE_ID=User settings\n";
+  }  
+  if (sel == "all") {
+    ret += "P3_FILE_TYPE=all\nP3_FILE_ID=User data\n";
+  }  
+
+  //Print the array data
+  usedTags.sort();
+  for (var i = 0; i < usedTags.length; i++) {
+    ret += usedTags[i] + "=" + wValues[usedTags[i]] + "\n"; 
+  }
+
+  // Add the lonley "=" for Primer3
+  if (sel == "primer3") {
+    ret += "=\n";
+  }
+  return ret;
 }
 
 // Explain sequence Regions help functionality
