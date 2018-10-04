@@ -169,31 +169,101 @@ function runLoadSeqFile(f) {
   }
 }
 function loadSeqFile(txt) {
-  var regEx1 = /\r\n/g;
-  txt = txt.replace(regEx1, "\n");
-  var regEx2 = /\r/g;
-  txt = txt.replace(regEx2, "\n");
-  var regEx3 = /^\s*/;
-  txt = txt.replace(regEx3, "");
+  txt = txt.replace(/\r\n/g, "\n");
+  txt = txt.replace(/\r/g, "\n");
+  txt = txt.replace(/^\s*/, "");
+  var fileLines = txt.split('\n');
+  var id = "";
+  var seq = "";
 
-  // Read Fasta
-  var regEx4 = /^>/;
-  if (txt.match(regEx4) != null) {
-    var fileLines = txt.split('\n');	  
-    setHtmlTagValue("SEQUENCE_ID", fileLines[0].replace(regEx4, ""));
-    var seq = "";
+  if (txt.match(/^>/) != null) {
+    // Read Fasta
+    id = fileLines[0].replace(/^>/, "");
     var add = true;
-    var regEx5 = /\s+/g;
     for (var i = 1; i < fileLines.length; i++) {
-      if ((fileLines[i].match(regEx4) == null) && (add == true)){
-	      seq += fileLines[i].replace(regEx5, "");
+      if ((fileLines[i].match(/^>/) == null) && (add == true)){
+        seq += fileLines[i];
       } else {
-	      add = false;
+        add = false;
       }
     }
-    setHtmlTagValue("SEQUENCE_TEMPLATE", seq);
+  } else if (txt.match(/^\^\^/) != null) {
+    // Read SeqEdit (not tested!)
+    seq = txt.replace(/^\^\^/, "");
+  } else if ((txt.match(/ORIGIN/) != null) && (txt.match(/LOCUS/) != null)) {
+    // Read GeneBank
+    var add = false;
+    for (var i = 0; i < fileLines.length; i++) {
+      if (fileLines[i].match(/^DEFINITION/) != null) {
+        id = fileLines[i].replace(/^DEFINITION/, "");
+      } else if (fileLines[i].match(/^ORIGIN/) != null) {
+        add = true;
+      } else if (fileLines[i].match(/^\/\//) != null) {
+        add = false;
+      } else if (add == true) {
+        seq += fileLines[i].replace(/\d+/g, "");
+      }
+    }
+  } else if ((txt.match(/Sequence/) != null) && (txt.match(/SQ/) != null)) {
+    // Read EMBL
+    var add = false;
+    for (var i = 0; i < fileLines.length; i++) {
+      if (fileLines[i].match(/^DE/) != null) {
+        id = fileLines[i].replace(/^DE/, "");
+      } else if (fileLines[i].match(/^SQ/) != null) {
+        add = true;
+      } else if (fileLines[i].match(/^\/\//) != null) {
+        add = false; 
+      } else if (add == true) {
+        seq += fileLines[i].replace(/\d+/g, "");
+      }
+    }
+  } else if ((txt.match(/Primer3 File/) != null) || (txt.match(/\n=\n/) != null)) {
+    // Read Primer3Plus and Primer3
+    loadP3File(txt);
+  } else {
+    // Read file plain txt
+    seq = txt;
   }
-
+  // cleanup input
+  id = id.replace(/^\s+/g, "");
+  setHtmlTagValue("SEQUENCE_ID",id);
+  seq = seq.replace(/\d+/g, "");
+  seq = seq.replace(/\W+/g, "");
+  setHtmlTagValue("SEQUENCE_TEMPLATE", seq);
+}
+function loadP3File(txt) {
+  txt = txt.replace(/\r\n/g, "\n");
+  txt = txt.replace(/\r/g, "\n");
+  txt = txt.replace(/^\s*/, "");
+  var fileLines = txt.split('\n');
+  var sel = "all";
+  if (txt.match(/P3_FILE_TYPE=sequence/) != null) {
+    sel = "seq";
+  }
+  if (txt.match(/P3_FILE_TYPE=settings/) != null) {
+    sel = "set";
+  }
+  for (var i = 0; i < fileLines.length; i++) {
+    if ((fileLines[i].match(/=/) != null) && (fileLines[i] != "") && (fileLines[i] != "=")) {
+      var pair = fileLines[i].split('=');
+      if ((pair.length > 1) && (defSet.hasOwnProperty(pair[0]))){
+        if (sel == "seq") {
+          if (pair[0].startsWith("SEQUENCE_")) {
+            setHtmlTagValue(pair[0], pair[1]);
+          }
+        } else if (sel == "set") {
+          if (pair[0].startsWith("PRIMER_") || pair[0].startsWith("P3P_")) {
+            setHtmlTagValue(pair[0], pair[1]);
+          }
+        } else {
+          setHtmlTagValue(pair[0], pair[1]);
+        }
+      } else {
+        alert("Unable to load: " + fileLines[i]);
+      }
+    }
+  }
 }
 
 // Explain sequence Regions help functionality
@@ -378,6 +448,14 @@ function browseTabSelect(sel,btn,tab) {
 function initTaskFunctionality() {
   var task = document.getElementById('PRIMER_TASK');
   if (task === null) {
+    return;
+  }
+  var btn = document.getElementById('P3P_SEL_REG_ALL_BT');
+  if (btn === null) {
+    return;
+  }
+  var inp = document.getElementById('P3P_SEL_REG_ALL_IN');
+  if (inp === null) {
     return;
   }
   task.addEventListener('change', showTaskSelection);
