@@ -68,8 +68,24 @@ td {
   font-style: italic;
   font-size: smaller;
 }
+.p3_prop {
+  font-family: monospace;
+  white-space: pre;
+  margin: 1em 0;
+}
+.p3p_tab_help_table {
+  font-family: monospace;
+  font-size: 12px;
+}
+
+div#P3P_TAB_HELP{
+  padding: 10px;
+  width: 880px;
+  margin: 4px 0px 0px 0px;
+}
+
 div#p3p_no_javascript {
-  width:880px;
+  width: 880px;
   border: 2px solid #ccccff;
   margin: 4px 0px 0px 0px;
   clear: left;
