@@ -79,6 +79,39 @@ div#p3p_no_javascript {
   padding: 10px;	
 }
 
+div#P3P_TOP_MESSAGE_ERROR {
+  width:880px;
+  border: 2px solid #ccccff;
+  margin: 4px 0px 0px 0px;
+  clear: left;
+  float: left;
+  background-color: red;
+  overflow:hidden;
+  padding: 10px;
+}
+
+div#P3P_TOP_MESSAGE_WARNING {
+  width:880px;
+  border: 2px solid #ccccff;
+  margin: 4px 0px 0px 0px;
+  clear: left;
+  float: left;
+  background-color: #ffff66;
+  overflow:hidden;
+  padding: 10px;
+}
+
+div#P3P_TOP_MESSAGE_MESSAGE {
+  width:880px;
+  border: 2px solid #ccccff;
+  margin: 4px 0px 0px 0px;
+  clear: left;
+  float: left;
+  background-color: #33cc33;
+  overflow:hidden;
+  padding: 10px;
+}
+
     div#menuBar { float: left; width:900px; padding: 0px; margin: 8px 0 0 8px; line-height:normal; text-align: left; }
 	div#menuBar ul { margin:0px; padding: 0px; list-style:none; }
 	div#menuBar li { float:left; margin:0; border: 2px solid #ccccff; border-bottom-width: 0; }
