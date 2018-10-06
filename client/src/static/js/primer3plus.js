@@ -21,55 +21,12 @@ var p3p_errors = [];
 var p3p_warnings = [];
 var p3p_messages = [];
 
-function del_all_messages () {
-  del_message(p3p_errors);
-  del_message(p3p_warnings);
-  del_message(p3p_messages);
-}
-function del_message(arr) {
-  arr = [];
-  refresh_message(arr);
-}
-function add_message(arr,message) {
-  arr.push(message);
-  refresh_message(arr);
-}
-function refresh_message(arr) {
-  var el = null;
-  if (arr === p3p_errors) {
-    el = document.getElementById('P3P_TOP_MESSAGE_ERROR');
-  }
-  if (arr === p3p_warnings) {
-    el = document.getElementById('P3P_TOP_MESSAGE_WARNING');
-  }
-  if (arr === p3p_messages) {
-    el = document.getElementById('P3P_TOP_MESSAGE_MESSAGE');
-  }
-  if (el == null) {
-    return;
-  }
-  if (arr.length == 0) {
-    el.innerHTML = "\n";
-    el.style.display="none";
-  } else {
-    var txt = "";
-    for (var i = 0; i < arr.length; i++) {
-      txt += arr[i] + "<br />";
-    }
-    el.innerHTML = txt;
-    el.style.display="inline";
-  }
-}
-
-
-
-
 document.addEventListener("DOMContentLoaded", function() {
   // Send different data to avoid caching
   var dt = new Date();
   var utcDate = dt.toUTCString();
   const formData = new FormData();
-  formData.append('stufferData', formData);
+  formData.append('stufferData', utcDate);
   axios
     .post(`${API_URL}/defaultsettings`, formData)
     .then(res => {
@@ -89,9 +46,104 @@ document.addEventListener("DOMContentLoaded", function() {
   //      .map(error => error.title)
    //     .join('; ')
   //    }
-      alert("Error loading default settings from server:\n" + errorMessage);
+      add_message("err","Error loading default settings from server: " + errorMessage);
     })
 });
+
+function loadSetFileFromServer() {
+  del_all_messages ();
+  // Send different data to avoid caching
+  var fileName = getHtmlTagValue("P3P_SERVER_SETTINGS_FILE");
+  if ((fileName == "Default") || (fileName == "")) {
+    setHTMLParameters(defSet);
+    add_message("mess","Default settings loaded!");
+    return;	  
+  }
+  const formData = new FormData();
+  formData.append('P3P_SERVER_SETTINGS_FILE', fileName);
+  axios
+    .post(`${API_URL}/settingsFile`, formData)
+    .then(res => {
+        if (res.status === 200) {
+          loadP3File("seq",res.data);
+      }
+    })
+    .catch(err => {
+      let errorMessage = err
+  //    if (err.response) {
+  //      errorMessage = err.response.data.errors
+  //      .map(error => error.title)
+   //     .join('; ')
+  //    }
+      add_message("err","Error loading server settings file " + fileName + ": " + errorMessage);
+    })
+}
+
+function del_all_messages () {
+  del_message("err");
+  del_message("warn");
+  del_message("mess");
+}
+function del_message(level) {
+  if (level == "err") {
+    p3p_errors = [];
+  }
+  if (level == "warn") {
+    p3p_warnings = [];
+  }
+  if (level == "mess") {
+    p3p_messages = [];
+  }
+  refresh_message(level);
+}
+function add_message(level,message) {
+  var arr = get_message_arr(level);
+  if (arr == null) {
+    return;
+  }
+  arr.push(message);
+  refresh_message(level);
+}
+function get_message_arr(level) {
+  if (level == "err") {
+    return p3p_errors;
+  }
+  if (level == "warn") {
+    return p3p_warnings;
+  }
+  if (level == "mess") {
+    return p3p_messages;
+  }
+  return null;
+}
+
+function refresh_message(level) {
+  var el = null;
+  if (level == "err") {
+    el = document.getElementById('P3P_TOP_MESSAGE_ERROR');
+  }
+  if (level == "warn") {
+    el = document.getElementById('P3P_TOP_MESSAGE_WARNING');
+  }
+  if (level == "mess") {
+    el = document.getElementById('P3P_TOP_MESSAGE_MESSAGE');
+  }
+  var arr = get_message_arr(level);
+  if ((arr === null) || (el == null)) {
+    return;
+  }
+  if (arr.length == 0) {
+    el.innerHTML = "\n";
+    el.style.display="none";
+  } else {
+    var txt = "";
+    for (var i = 0; i < arr.length; i++) {
+      txt += arr[i] + "<br />";
+    }
+    el.innerHTML = txt;
+    el.style.display="inline";
+  }
+}
 
 function initElements(){
   addServerFiles();
@@ -148,6 +200,10 @@ function addServerFiles() {
       set.add(option);
     } 
   }
+  var btn = document.getElementById('P3P_ACTION_SERVER_SETTINGS');
+  if (btn !== null) {
+    btn.addEventListener('click', loadSetFileFromServer);
+  }
 }
 
 async function blaParameters() {
@@ -191,7 +247,7 @@ function getHtmlTagValue(tag) {
           return "0";
         }
       }
-      if (type == 'text') {
+      if ((type == 'text') || (type == 'hidden')) {
         return pageElement.value;
       }
 //    alert("Unknown Type by " + tag + ": " + pageElement.getAttribute('type'));
@@ -217,13 +273,18 @@ function setHtmlTagValue(tag, value) {
       pageElement.value = value;
     }
     if (tagName === 'select') {
-      for (var i = 0; i < pageElement.options.length; i++) {
-        if (pageElement.options[i].value == value) {
-          pageElement.selectedIndex = i;
-          return true;
+      if (value == "") {
+        pageElement.selectedIndex = 0;
+	return true;
+      } else {
+        for (var i = 0; i < pageElement.options.length; i++) {
+          if (pageElement.options[i].value == value) {
+            pageElement.selectedIndex = i;
+            return true;
+          }
         }
       }
-    return false;
+      return false;
     }
     if (tagName === 'input') {
       var type = pageElement.getAttribute('type').toLowerCase();
@@ -237,7 +298,7 @@ function setHtmlTagValue(tag, value) {
           return true;
         }
       }
-      if (type == 'text') {
+      if ((type == 'text') || (type == 'hidden')) {
           pageElement.value = value;
           return true;
       }
@@ -261,7 +322,7 @@ function detectBorwser() {
     if (browser.indexOf("safari") != -1) {
         return "safari";
     }
-    alert("Unknown Browser: Functionality may be impaired!\n\n" +browser);
+    add_message("warn","Unknown Browser: Functionality may be impaired!\n\n" +browser);
     return browser;
 }
 function saveFile(fileName,content) {
@@ -300,7 +361,7 @@ function runLoadSeqFile(f) {
     reader.readAsText(file);
     document.getElementById("P3P_SELECT_SEQ_FILE").value = "";
   } else {
-    alert("Error opening file");
+    add_message("err","Error opening file");
   }
 }
 function loadSeqFile(txt) {
@@ -373,7 +434,8 @@ function loadSeqFile(txt) {
   seq = seq.replace(/\d+/g, "");
   seq = seq.replace(/\W+/g, "");
   setHtmlTagValue("SEQUENCE_TEMPLATE", seq);
-  add_message(p3p_messages,message);
+  del_all_messages();
+  add_message("mess",message);
 }
 function initLoadSetFile() {
   var pButton = document.getElementById('P3P_SELECT_SETTINGS_FILE');
@@ -392,7 +454,7 @@ function runLoadSetFile(f) {
     reader.readAsText(file);
     document.getElementById("P3P_SELECT_SETTINGS_FILE").value = "";
   } else {
-    alert("Error opening file");
+    add_message("err","Error opening file");
   }
 }
 function loadP3File(limit,txt) {
@@ -437,7 +499,7 @@ function loadP3File(limit,txt) {
         }
       } else {
 	if (!(pair[0].startsWith('P3_FILE_TYPE'))) {
-          add_message(p3p_warnings,"Primer3Plus is unable to load: " + fileLines[i]);
+          add_message("warn","Primer3Plus is unable to load: " + fileLines[i]);
         }
       }
     }
@@ -447,7 +509,8 @@ function loadP3File(limit,txt) {
   } else {
     message += "!";
   }
-  add_message(p3p_messages,message);
+  del_all_messages();
+  add_message("mess",message);
 }
 // Functions to load the sequence and settings files
 function initSaveFile() {
@@ -803,7 +866,9 @@ function initResetDefautl() {
   }
 }
 function buttonResetDefault() {
+  del_all_messages ();	
   setHTMLParameters(defSet);
+  add_message("mess","Default settings loaded!");
 }
 
 function initLoadExample() {

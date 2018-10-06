@@ -77,6 +77,14 @@ def upload_file():
         return jsonify(data = json.loads(open(outfile).read()))
     return jsonify(errors = [{"title": "Error in handling POST request!"}]), 400
 
+@app.route('/api/v1/settingsFile', methods=['POST'])
+def loadsettingsfile():
+    if request.method == 'POST':
+        if 'P3P_SERVER_SETTINGS_FILE' in request.form.keys():
+            filename = secure_filename(request.form['P3P_SERVER_SETTINGS_FILE'])
+            return send_from_directory(os.path.join(P3PWS, "settings_files"),filename), 200
+    return jsonify(errors = [{"title": "Could not find file on server!"}]), 400
+
 @app.route('/api/v1/defaultsettings', methods=['POST'])
 def defaultsettings():
     return send_from_directory(os.path.join(P3PWS, "settings_files"),"default_settings.json"), 200

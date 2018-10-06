@@ -45,7 +45,7 @@
 <a href="#findNoPrimers">7. WHAT TO DO IF PRIMER3 CANNOT FIND ANY PRIMERS?</a><br>
 <a href="#sequenceTags">8. "SEQUENCE" INPUT TAGS</a><br>
 <a href="#globalTags">9. "GLOBAL" INPUT TAGS</a><br>
-<a href="#p3pTags">10. Primer3Plus Input Tags</a><br>
+<a href="#p3pTags">10. PRIMER3PLUS INPUT TAGS</a><br>
 <a href="#outputTags">11. OUTPUT TAGS</a><br>
 <a href="#providedMisprimingLibs">12. PROVIDED MISPRIMING LIBRARIES</a><br>
 <a href="#calculatePenalties">13. HOW PRIMER3 CALCULATES THE PENALTY VALUE</a><br>
@@ -1941,7 +1941,7 @@ both sides in which Primer3Plus picks the best primer. Value only used if
 <p> </p>
 <h3><a id="PRIMER_INTERNAL_WT_END_QUAL">PRIMER_INTERNAL_WT_END_QUAL (float; default 0.0)</a></h3>
 <p> </p>
-<h2><a id="p3pTags">10. Primer3Plus Input Tags</a></h2>
+<h2><a id="p3pTags">10. PRIMER3PLUS INPUT TAGS</a></h2>
 <p>Primer3Plus input tags start with P3P_... and describe the
 general parameters that Primer3Plus may use in its interface.
 <br>Primer3 cannot use this tags and ignores them.</p>
@@ -1954,9 +1954,12 @@ general parameters that Primer3Plus may use in its interface.
 	  <tr>
 	    <td><a href="#P3P_PRIMER_NAME_ACRONYM_INTERNAL">P3P_PRIMER_NAME_ACRONYM_INTERNAL</a></td>
 	    <td><a href="#P3P_PRIMER_NAME_ACRONYM_RIGHT">P3P_PRIMER_NAME_ACRONYM_RIGHT</a></td>
-	    <td>&nbsp;</td>
+	    <td><a href="#P3P_SERVER_SETTINGS_FILE">P3P_SERVER_SETTINGS_FILE</a></td>
 	  </tr>
 </table>
+<h3><a id="P3P_SERVER_SETTINGS_FILE">P3P_SERVER_SETTINGS_FILE (string; default F)</a></h3>
+<p>Specifies a settings file stored on the server. It
+can be loaded by hitting the "Activate Settings" Button.</p>
 <h3><a id="P3P_PRIMER_NAME_ACRONYM_LEFT">P3P_PRIMER_NAME_ACRONYM_LEFT (string; default F)</a></h3>
 <p>Primer3Plus creates a name for each Primer. This tag
 is added to left primers.</p>
