@@ -1791,7 +1791,10 @@ Repbase (J. Jurka, A.F.A. Smit, C. Pethiyagoda, and
 others, 1995-1996, <a href="ftp://ftp.ncbi.nih.gov/repository/repbase/">ftp://ftp.ncbi.nih.gov/repository/repbase/</a>)
 is an excellent source of repeat sequences and pointers to the
 literature. (The Repbase files need to be converted to Fasta
-format before they can be used by Primer3.)</p>
+format before they can be used by Primer3.)<br>
+<br>
+See <a href="#PROVIDED MISPRIMING LIBRARIES">PROVIDED MISPRIMING LIBRARIES</a> for the sequence
+libraries available on this server.</p>
 <h3><a id="PRIMER_INTERNAL_MISHYB_LIBRARY">PRIMER_INTERNAL_MISHYB_LIBRARY (string; default empty)</a></h3>
 <p>Similar to <a href="#PRIMER_MISPRIMING_LIBRARY">PRIMER_MISPRIMING_LIBRARY</a>, except that the event we
 seek to avoid is hybridization of the internal oligo to sequences
@@ -2315,9 +2318,10 @@ http://www.fruitfly.org/sequence/sequence_db/na_re.dros</a>.
 Both were downloaded 6/23/04.<br>
 The contents of the libraries can be viewed at the following links:<br>
 <ul>
-<li><a href="https://show_humrep_and_simple.cgi">HUMAN</a> (contains microsatellites)</li>
-<li><a href="https://show_rodent_ref.cgi">RODENT</a> (does not contain microsatellites)</li>
-<li><a href="https://show_drosophila_w_transposons.cgi">DROSOPHILA</a></li>
+<li><a href="https://raw.githubusercontent.com/primer3-org/primer3plus/master/server/mispriming_lib/humrep_and_simple.txt">HUMAN + SIMPLE</a> (contains microsatellites)</li>
+<li><a href="https://raw.githubusercontent.com/primer3-org/primer3plus/master/server/mispriming_lib/rodent_ref.txt">RODENT</a> (does not contain microsatellites)</li>
+<li><a href="https://raw.githubusercontent.com/primer3-org/primer3plus/master/server/mispriming_lib/rodrep_and_simple.txt">RODENT + SIMPLE</a> (contains microsatellites)</li>
+<li><a href="https://raw.githubusercontent.com/primer3-org/primer3plus/master/server/mispriming_lib/drosophila_w_transposons.txt">DROSOPHILA</a> (ontains transposons)</li>
 </ul>
 <br>
 <h2><a id="calculatePenalties">13. HOW PRIMER3 CALCULATES THE PENALTY VALUE</a></h2>

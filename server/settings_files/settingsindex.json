@@ -1,8 +1,0 @@
-[
-{"name":"qPCR","preselect":false,"file":"qPCR.txt"},
-{"name":"Probe","preselect":false,"file":"probe.txt"},
-{"name":"Primer3Plus v.2.4.2 default settings","preselect":false,"file":"primer3plus_2_4_2_defaelt_settings.txt"},
-{"name":"Primer3Web v0.4.0 default settings","preselect":false,"file":"primer3web_v0_4_0_default_settings.txt"},
-{"name":"Primer3 v1.1.4 default settings","preselect":false,"file":"primer3_v1_1_4_default_settings.txt"},
-]
-

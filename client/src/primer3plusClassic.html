@@ -101,7 +101,7 @@ function setRegion(tagOpen,tagClose) {
           </td>
         </tr>
         <tr>
-          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="http://primer3plusHelp.cgi">Help</a>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusHelp.html">Help</a>
           </td>
           <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="http://primer3plusAbout.cgi">About</a>
           </td>
@@ -125,23 +125,19 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
         </colgroup>
         <tr>
           <td>
-            <a id="SCRIPT_SERVER_PARAMETER_FILE_HELP">Load server settings:</a>&nbsp;&nbsp;
-            <select name="SCRIPT_SERVER_PARAMETER_FILE">
+            <a id="P3P_SERVER_PARAMETER_FILE_HELP">Load server settings:</a>&nbsp;&nbsp;
+            <select id="P3P_SERVER_SETTINGS_FILE">
               <option>Default</option>
-              <option>qPCR</option>
-              <option>Probe</option>
-              <option>p3web v0.4.0 Def</option>
-              <option>p3 v1.1.4 Def</option>
             </select>&nbsp;
             <input id="Activate_Settings" value="Activate Settings" type="submit"><br>
             <a id="PRIMER_TASK_HELP" style="font-weight: bold; font-size: 1.1em">Task:</a>&nbsp;
             <select id="PRIMER_TASK" style="font-size: 0.9em">
-              <option style="font-size: 0.9em" selected="selected">generic</option>
-              <option style="font-size: 0.9em">pick_cloning_primers</option>
-              <option style="font-size: 0.9em">pick_discriminative_primers</option>
-              <option style="font-size: 0.9em">pick_sequencing_primers</option>
-              <option style="font-size: 0.9em">pick_primer_list</option>
-              <option style="font-size: 0.9em">check_primers</option>
+              <option value="generic" style="font-size: 0.9em" selected="selected">generic</option>
+              <option value="pick_cloning_primers" style="font-size: 0.9em">pick cloning primers</option>
+              <option value="pick_discriminative_primers" style="font-size: 0.9em">pick discriminative primers</option>
+              <option value="pick_sequencing_primers" style="font-size: 0.9em">pick sequencing primers</option>
+              <option value="pick_primer_list" style="font-size: 0.9em">pick primer list</option>
+              <option value="check_primers" style="font-size: 0.9em">check primers</option>
             </select>
           </td>
 
@@ -530,11 +526,7 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
         <a id="PRIMER_MISPRIMING_LIBRARY_HELP">
           Mispriming/Repeat Library:</a>
         <select id="PRIMER_MISPRIMING_LIBRARY">
-          <option selected="selected">NONE</option>
-          <option>HUMAN</option>
-          <option>RODENT_AND_SIMPLE</option>
-          <option>RODENT</option>
-          <option>DROSOPHILA</option>
+          <option value="NONE" selected="selected">NONE</option>
         </select>
       </div>
       <br>
@@ -543,8 +535,8 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
           <b>Load and Save</b>
         </div>
         <div class="p3p_fit_to_table">
-          <a id="SCRIPT_SETTINGS_FILE_HELP">To upload or save a settings file from
-            your local computer, choose here:</a>
+          To upload or save a settings file from
+          your local computer, choose here:
         </div>
         <div class="p3p_fit_to_table">
            Load only Settings from file:&nbsp;&nbsp;
@@ -579,7 +571,7 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
           <td>         
             <select id="PRIMER_TM_FORMULA">
               <option value="0">Breslauer et al. 1986</option>
-              <option selected="selected" value="1">SantaLucia 1998</option>
+              <option value="1" selected="selected">SantaLucia 1998</option>
             </select>
           </td>         
         </tr>
@@ -596,7 +588,7 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
           <td>         
             <select id="PRIMER_SALT_CORRECTIONS">
               <option value="0"> Schildkraut and Lifson 1965</option>
-              <option selected="selected" value="1">SantaLucia 1998</option>
+              <option value="1" selected="selected">SantaLucia 1998</option>
               <option value="2">Owczarzy et. 2004</option>
             </select>
           </td>         
@@ -1140,11 +1132,7 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
             </td>
             <td colspan="3">
               <select id="PRIMER_INTERNAL_MISHYB_LIBRARY">
-                <option selected="selected">NONE</option>
-                <option>HUMAN</option>
-                <option>RODENT_AND_SIMPLE</option>
-                <option>RODENT</option>
-                <option>DROSOPHILA</option>
+                <option value="NONE" selected="selected">NONE</option>
               </select>
             </td>
           </tr>

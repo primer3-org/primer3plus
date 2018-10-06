@@ -4,6 +4,7 @@
 "P3P_PRIMER_NAME_ACRONYM_LEFT":["F","string"],
 "P3P_PRIMER_NAME_ACRONYM_RIGHT":["IN","string"],
 "P3P_PRIMER_NAME_ACRONYM_SPACER":["_","string"],
+"P3P_SERVER_SETTINGS_FILE":["F","string"],
 "P3_COMMENT":["","string"],
 "P3_FILE_FLAG":["0","boolean"],
 "P3_FILE_ID":["","string"],
@@ -241,5 +242,18 @@
 "PRIMER_FILE_FLAG":"P3_FILE_FLAG",
 "PRIMER_COMMENT":"P3_COMMENT",
 "COMMENT":"P3_COMMENT"
-}
+},
+"server_setting_files":[
+{"name":"qPCR","file":"qPCR.txt"},
+{"name":"Probe","file":"probe.txt"},
+{"name":"P3P v.2.4.2 Def","file":"primer3plus_2_4_2_default_settings.txt"},
+{"name":"P3W v0.4.0 Def","file":"primer3web_v0_4_0_default_settings.txt"},
+{"name":"P3 v1.1.4 Def","file":"primer3_v1_1_4_default_settings.txt"}
+],
+"misspriming_lib_files":[
+{"name":"HUMAN","file":"humrep_and_simple.txt"},
+{"name":"RODENT_AND_SIMPLE","file":"rodrep_and_simple.txt"},
+{"name":"RODENT","file":"rodent_ref.txt"},
+{"name":"DROSOPHILA","file":"drosophila_w_transposons.txt"}
+]
 }

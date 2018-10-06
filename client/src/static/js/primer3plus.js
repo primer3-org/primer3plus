@@ -9,6 +9,12 @@ var defSet;
 var repOld;
 // "OLD TAG":"NEW TAG"
 
+// The available server settings files
+var server_setting_files;
+
+// The available misspriming library files
+var misspriming_lib_files;
+
 var debug = 1;
 
 var p3p_errors = [];
@@ -70,6 +76,8 @@ document.addEventListener("DOMContentLoaded", function() {
         if (res.status === 200) {
           defSet = res.data["def"];
           repOld = res.data["replace"];
+          server_setting_files = res.data["server_setting_files"];
+          misspriming_lib_files = res.data["misspriming_lib_files"];
           setHTMLParameters(defSet);
           initElements();
       }
@@ -86,6 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function initElements(){
+  addServerFiles();
   linkHelpTags();
   initTabFunctionality();
   initResetDefautl();
@@ -109,6 +118,36 @@ function linkHelpTags() {
     }
   }
 //  targetGenomes.innerHTML = rhtml
+}
+
+function addServerFiles() {
+  var mis = document.getElementById('PRIMER_MISPRIMING_LIBRARY');
+  if (mis !== null) {
+    for (var i = 0; i < misspriming_lib_files.length; i++) {
+      var option = document.createElement("option");
+      option.text = misspriming_lib_files[i].name;
+      option.value = misspriming_lib_files[i].file;
+      mis.add(option);
+    }	  
+  }
+  var misOl = document.getElementById('PRIMER_INTERNAL_MISHYB_LIBRARY');
+  if (misOl !== null) {
+    for (var i = 0; i < misspriming_lib_files.length; i++) {
+      var option = document.createElement("option");
+      option.text = misspriming_lib_files[i].name;
+      option.value = misspriming_lib_files[i].file;
+      misOl.add(option);
+    }     
+  }
+  var set = document.getElementById('P3P_SERVER_SETTINGS_FILE');
+  if (set !== null) {
+    for (var i = 0; i < server_setting_files.length; i++) {
+      var option = document.createElement("option");
+      option.text = server_setting_files[i].name;
+      option.value = server_setting_files[i].file;
+      set.add(option);
+    } 
+  }
 }
 
 async function blaParameters() {
@@ -139,6 +178,9 @@ function getHtmlTagValue(tag) {
     var tagName = pageElement.tagName.toLowerCase();
     if (tagName === 'textarea') {
       return pageElement.value;
+    }
+    if (tagName === 'select') {
+      return pageElement.options[pageElement.selectedIndex].value;
     }
     if (tagName === 'input') {
       var type = pageElement.getAttribute('type').toLowerCase();
@@ -173,6 +215,15 @@ function setHtmlTagValue(tag, value) {
     var tagName = pageElement.tagName.toLowerCase();
     if (tagName === 'textarea') {
       pageElement.value = value;
+    }
+    if (tagName === 'select') {
+      for (var i = 0; i < pageElement.options.length; i++) {
+        if (pageElement.options[i].value == value) {
+          pageElement.selectedIndex = i;
+          return true;
+        }
+      }
+    return false;
     }
     if (tagName === 'input') {
       var type = pageElement.getAttribute('type').toLowerCase();
