@@ -21,7 +21,8 @@ var p3p_errors = [];
 var p3p_warnings = [];
 var p3p_messages = [];
 
-var ignore_tags = ["PRIMER_EXPLAIN_FLAG","PRIMER_THERMODYNAMIC_PARAMETERS_PATH","PRIMER_MIN_THREE_PRIME_DISTANCE",
+var ignore_tags = ["PRIMER_EXPLAIN_FLAG","PRIMER_THERMODYNAMIC_PARAMETERS_PATH",
+      "PRIMER_MIN_THREE_PRIME_DISTANCE","P3P_SERVER_SETTINGS_FILE",
       "PRIMER_MASK_3P_DIRECTION","PRIMER_MASK_5P_DIRECTION","PRIMER_MASK_FAILURE_RATE",
       "PRIMER_MASK_KMERLIST_PATH","PRIMER_MASK_KMERLIST_PREFIX","PRIMER_MASK_TEMPLATE",
       "PRIMER_WT_MASK_FAILURE_RATE"];
@@ -69,7 +70,7 @@ function loadSetFileFromServer() {
     .post(`${API_URL}/settingsFile`, formData)
     .then(res => {
         if (res.status === 200) {
-          loadP3File("seq",res.data);
+          loadP3File("set",res.data);
       }
     })
     .catch(err => {
@@ -245,7 +246,7 @@ async function blaParameters() {
   for (var tag in defSet) {
     if (defSet.hasOwnProperty(tag)) {
       var  value = getHtmlTagValue(tag);
-      if (value) {
+      if (value !== null) {
         if (value == defSet[tag][0]) {
 //           console.log("EQUAL: " + tag );
         } else {
@@ -261,6 +262,9 @@ async function blaParameters() {
 }
 
 function getHtmlTagValue(tag) {
+  if (tag.startsWith("P3_")) {
+    return null;
+  }
   var pageElement = document.getElementById(tag);
   if (pageElement !== null) {
     var tagName = pageElement.tagName.toLowerCase();
@@ -582,32 +586,44 @@ function initSaveFile() {
 }
 
 function runSaveFile(sel, fileName) {
-  var con = createSaveFileString(sel);
+  var dat = getDataFromHtml(sel);	
+  var con = createSaveFileString(sel,dat);
   saveFile(fileName,con);
 }
 
-// This function creates the files to save 
-// and the Primer3 input file!!
-function createSaveFileString(sel) {
-  var usedTags = [];
-  var wValues = {};
-  var ret = "";
+function getDataFromHtml(sel) {
+  var data = {};
   // Extract the used tags with values
   for (var tag in defSet) {
     if (defSet.hasOwnProperty(tag)) {
+      if (ignore_tags.includes(tag)) {
+        continue;
+      }
       var val = getHtmlTagValue(tag);
-      if (val) {
+      if (val !== null) {
         if (((sel == "seq") && tag.startsWith("SEQUENCE_")) ||
             ((sel == "set") && tag.startsWith("PRIMER_")) ||
             ((sel == "set") && tag.startsWith("P3P_")) ||
             ((sel == "all")) ||
             ((sel == "primer3") && !(tag.startsWith("P3P_")))) {
-          usedTags.push(tag);
-          wValues[tag] = val;
+              data[tag] = val;
         }
       }
     }
   }
+  return data;
+}
+
+// This function creates the files to save 
+// and the Primer3 input file!!
+function createSaveFileString(sel, data) {
+  var usedTags = [];
+  var ret = "";
+  // Fix data for Primer3
+  if (sel == "primer3") {
+    data["PRIMER_EXPLAIN_FLAG"] = 1;
+  } 
+
   // Write the headers
   if (sel != "primer3") {
     ret += "Primer3 File - http://primer3.org\n";
@@ -623,9 +639,12 @@ function createSaveFileString(sel) {
   }  
 
   //Print the array data
+  for (var tag in data) {
+    usedTags.push(tag);
+  }
   usedTags.sort();
   for (var i = 0; i < usedTags.length; i++) {
-    ret += usedTags[i] + "=" + wValues[usedTags[i]] + "\n"; 
+    ret += usedTags[i] + "=" + data[usedTags[i]] + "\n"; 
   }
 
   // Add the lonley "=" for Primer3
@@ -949,7 +968,6 @@ function initResetDefautl() {
 function buttonResetDefault() {
   del_all_messages ();	
   setHTMLParameters(defSet);
-  add_message("mess","Default settings loaded!");
 }
 
 function initLoadExample() {

@@ -1,7 +1,7 @@
 Primer3 File - http://primer3.org
 P3_FILE_TYPE=settings
 
-P3_FILE_ID=Default settings of primer3web version 0.4.0
+P3_FILE_ID=Default settings of Primer3Web v0.4.0
 P3P_PRIMER_NAME_ACRONYM_INTERNAL=IN
 P3P_PRIMER_NAME_ACRONYM_LEFT=F
 P3P_PRIMER_NAME_ACRONYM_RIGHT=R

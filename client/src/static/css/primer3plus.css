@@ -19,6 +19,9 @@ td {
   border:0;
   padding:0.15em;
 }
+a:visited { 
+  color: blue; 
+}
 .p3p_shaded {
   background-color:#e6e6cd;
 }
