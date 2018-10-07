@@ -1,6 +1,8 @@
 const API_URL = process.env.API_URL
 const HELP_LINK_URL = process.env.HELP_LINK_URL
 
+var primer3plus_version = "3.0.0";
+
 // The default Settings loded from the server
 var defSet;
 // "TAG":["default setting","data type"]
@@ -84,6 +86,79 @@ function loadSetFileFromServer() {
     })
 }
 
+function runPrimer3() {
+  var p3file = createSaveFileString("primer3");
+  var p3in = document.getElementById('P3P_DEBUG_TXT_INPUT');
+  var p3out = document.getElementById('P3P_DEBUG_TXT_OUTPUT');
+  if (p3in) {
+    if (debugMode > 0) {
+      p3in.value = p3file;
+    } else {
+      p3in.value = "";
+    }
+  }
+  const formData = new FormData();
+  formData.append('P3_INPUT_FILE', p3file);
+  axios
+    .post(`${API_URL}/runprimer3`, formData)
+    .then(res => {
+        if (res.status === 200) {
+          processPimer3Data(res.data);
+      }
+    })
+    .catch(err => {
+      let errorMessage = err
+  //    if (err.response) {
+  //      errorMessage = err.response.data.errors
+  //      .map(error => error.title)
+   //     .join('; ')
+  //    }
+      add_message("err","Error running Primer3: " + errorMessage);
+    })
+}
+
+function initRunPrimer3() {
+  var pButton = document.getElementById('P3P_ACTION_RUN_PRIMER3');
+  if (pButton !== null) {
+    pButton.addEventListener('click', runPrimer3);
+  }
+}
+
+function processPimer3Data(data){
+  alert("success\n" + data);
+}
+
+function init_primer3_versions() {
+  var p3pVer = document.getElementById('P3P_ST_P3P_VERSION');
+  if (p3pVer !== null) {
+    p3pVer.innerHTML = primer3plus_version;
+  }
+  var p3Ver = document.getElementById('P3P_ST_P3_VERSION');
+  if (p3Ver !== null) {
+    // Send different data to avoid caching
+    var dt = new Date();
+    var utcDate = dt.toUTCString();
+    const formData = new FormData();
+    formData.append('stufferData', utcDate);
+    axios
+      .post(`${API_URL}/primer3version`, formData)
+      .then(res => {
+          if (res.status === 200) {
+            p3Ver.innerHTML = res.data;
+        }
+      })
+      .catch(err => {
+        let errorMessage = err
+    //    if (err.response) {
+    //      errorMessage = err.response.data.errors
+    //      .map(error => error.title)
+     //     .join('; ')
+    //    }
+        p3Ver.innerHTML = "---";
+      })
+  }
+	
+}
 
 function init_message_buttons() {
   var err = document.getElementById('P3P_ACTION_RESET_ERROR');
@@ -182,6 +257,7 @@ function initElements(){
   linkHelpTags();
   initTabFunctionality();
   initResetDefautl();
+  initRunPrimer3();
   initTaskFunctionality();
   initLoadSeqFile();
   initSaveFile();
@@ -190,6 +266,7 @@ function initElements(){
   initLoadSetFile();
   init_message_buttons();
   initDebug();
+  init_primer3_versions();
 }
 
 function linkHelpTags() {
@@ -586,13 +663,16 @@ function initSaveFile() {
 }
 
 function runSaveFile(sel, fileName) {
-  var dat = getDataFromHtml(sel);	
-  var con = createSaveFileString(sel,dat);
+  var con = createSaveFileString(sel);
   saveFile(fileName,con);
 }
 
-function getDataFromHtml(sel) {
+// This function creates the files to save 
+// and the Primer3 input file!!
+function createSaveFileString(sel) {
   var data = {};
+  var usedTags = [];
+  var ret = "";
   // Extract the used tags with values
   for (var tag in defSet) {
     if (defSet.hasOwnProperty(tag)) {
@@ -611,17 +691,9 @@ function getDataFromHtml(sel) {
       }
     }
   }
-  return data;
-}
-
-// This function creates the files to save 
-// and the Primer3 input file!!
-function createSaveFileString(sel, data) {
-  var usedTags = [];
-  var ret = "";
   // Fix data for Primer3
   if (sel == "primer3") {
-    data["PRIMER_EXPLAIN_FLAG"] = 1;
+    data["PRIMER_EXPLAIN_FLAG"] = "1";
   } 
 
   // Write the headers

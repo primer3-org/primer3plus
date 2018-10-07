@@ -1,53 +1,47 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-  <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
-  <meta name="viewport" content="width==1034px, initial-scale=1.0">
-  <meta name="description" content="Primer3Plus picks primers from a DNA sequence using Primer3. This is the latest version straight from the developers with all the new features.">
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <meta name="viewport" content="width=1034, initial-scale=1.0">
+  <meta name="description" content="The Compare Files tool analyzes Primer3 settings files for differences.">
   <title>Primer3Plus - Compare Files</title>
   <link rel="stylesheet" href="static/css/primer3plus.css">
   <link rel="canonical" href="https://primer3plus.com/cgi-bin/dev/primer3compareFiles.html" />
 </head>
-
 <body>
-  <div id="page">
-
-    <div id="primer3plus_complete">
-
-    <div id="primer3plus_top_bar">
-      <table class="primer3plus_top_bar_table">
+  <div class="p3p_page">
+    <div class="p3p_top_bar">
+      <table>
         <colgroup>
-          <col width="60%" class="primer3plus_background">
-          <col width="20%" class="primer3plus_background">
-          <col width="20%" class="primer3plus_background">
+          <col style="width: 60%" class="p3p_blue">
+          <col style="width: 20%" class="p3p_blue">
+          <col style="width: 20%" class="p3p_blue">
         </colgroup>
         <tr>
-          <td class="primer3plus_top_bar_cell" rowspan="2"><a class="primer3plus_top_bar_title">Primer3CompareFiles</a><br>
-            <a class="primer3plus_top_bar_explain" id="top">find the difference</a>
+          <td class="p3p_big_space p3p_blue" rowspan="2"><a class="p3p_top_bar_title">Primer3CompareFiles</a><br>
+            <a class="p3p_top_bar_explain">find the difference</a>
           </td>
-          <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://primer3plusPackage.cgi">More...</a>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusPackage.html">More...</a>
           </td>
-          <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://sourceforge.net/projects/primer3/">Source Code</a>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="https://github.com/primer3-org/primer3plus">Source Code</a>
           </td>
         </tr>
         <tr>
-          <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://primer3plusHelp.cgi">Help</a>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusHelp.html">Help</a>
           </td>
-          <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://primer3plusAbout.cgi">About</a>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusAbout.html">About</a>
           </td>
         </tr>
       </table>
     </div>
-
-    <div id="primer3plus_results">
+    <div id="P3P_TAB_HELP" class="p3p_tab_page">
       <p>&nbsp;&nbsp;Primer3ComareFiles allows to compare files with each other and the 
         default values to identify differences.<br>
         <br>
-        &nbsp;&nbsp;<a id="SCRIPT_SEQUENCE_FILE_INPUT">File 1:</a>
+        &nbsp;&nbsp;<a>File 1:</a>
         &nbsp;&nbsp;<input id="P3P_COMPARE_FILE_ONE" type="file"><br>
         <br>
-        &nbsp;&nbsp;<a id="SCRIPT_SEQUENCE_FILE_INPUT">File 2:</a>
+        &nbsp;&nbsp;<a>File 2:</a>
         &nbsp;&nbsp;<input id="P3P_COMPARE_FILE_TWO" type="file"><br>
         <br>
         &nbsp;&nbsp;<a>Server settings:</a>&nbsp;&nbsp;
@@ -64,23 +58,24 @@
         &nbsp;&nbsp;
         <input id="P3P_COMPARE_RUN" type="submit">
       </p>
-
-<div id="primer3plus_footer">
-<a>&copy; by A. Untergasser</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/contact_e.html">Contact</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/datenschutzerklaerung.html">Datenschutzerkl&auml;rung</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/impressum.html">Impressum</a>
-</div>
-
     </div>
 
-  </div>  
+    <div class="p3p_footer_bar">
+      <div class="p3p_footer_l">
+        GEAR + Primer3 ~
+        <a target="_blank" class="p3p_footer_link" href="https://gear.embl.de"> Home </a> ·
+        <a target="_blank" class="p3p_footer_link" href="https://github.com/gear-genomics"> GEAR-GitHub </a> ·
+        <a target="_blank" class="p3p_footer_link" href="https://github.com/primer3-org"> Primer3-GitHub </a> ·
+        <a target="_blank" class="p3p_footer_link" href="https://gear.embl.de/terms"> Terms of Use </a> ·
+        <a target="_blank" class="p3p_footer_link" href="https://gear.embl.de/contact"> Contact Us </a>
+      </div>
+      <div class="p3p_footer_r">
+        Hosted with love by
+        <a target="_blank" class="p3p_footer_link" href="https://www.embl.de">EMBL</a>
+      </div>
+    </div>
   </div>
-
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="static/js/primer3plus.js"></script>
 </body>
 </html>
-
-

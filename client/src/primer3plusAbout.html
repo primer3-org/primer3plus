@@ -1,415 +1,220 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-       "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
-  <meta name="viewport" content="width==1034px, initial-scale=1.0">
-  <meta name="description" content="Find out about the fair usage and citing Primer3Plus. The licence information is available here.">
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <meta name="viewport" content="width=1034, initial-scale=1.0">
+  <meta name="description" content="Learn about the ideas and the people behind Primer3Plus and Primer3.">
   <title>Primer3Plus - About</title>
-  <style type="text/css">
-	body {
-		color: black;
-		background-color: white;
-		font-size: 100.01%;
-		margin: 1em;
-		padding: 0;
-		text-align: center
-	}
-
-	div#primer3plus_task_bar {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-  	div#primer3plus_messages { 
-        width:900px;
-        border: 2px solid #ccccff;
-        margin: 4px 0px 0px 0px;
-        clear: left;
-        float: left;
-        background-color: rgb(255, 0, 0);
-        overflow:hidden;
-        padding: 0px;
-	}
-
-	div#primer3plus_no_javascript {
-        width:900px;
-        border: 2px solid #ccccff;
-        margin: 4px 0px 0px 0px;
-        clear: left;
-        float: left;
-        background-color: rgb(255, 0, 0);
-        overflow:hidden;
-        padding: 0px;	
-	}
-
-	div#primer3plus_results {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-	div#primer3plus_footer {
-		margin: 12px 0px 3px 0px;
-		font-size: 80%;
-		font-family: Arial;
-		font-weight: bold;
-		color: rgb(75, 75, 75);
-		text-align: center;
-	}
-	
-	div#primer3plus_news {
-		float: left;
-        width:800px;
-        padding: 2px;
-        margin: 8px 0 0 8px;
-        line-height:normal;
-        text-align: center; 
-	}
-
-	div#primer3plus_select_sequence {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-	div#primer3plus_manager {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-	.primer3plus_tab_page {
-		width:900px;
-		border: 2px solid #ccccff;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 10px 0px 10px 0px;
-	}
-	
-	.primer3plus_tab_page_no_border {
-		width:900px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-	}	
-	
-	.primer3plus_submit {
-		width: 900px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-	}
-
-	div#menuBar { float: left; width:900px; padding: 0px; margin: 8px 0 0 8px; line-height:normal; text-align: left; }
-	div#menuBar ul { margin:0px; padding: 0px; list-style:none; }
-	div#menuBar li { float:left; margin:0; border: 2px solid #ccccff; border-bottom-width: 0; }
-	div#menuBar a { top: 2px; display:block; padding: 0.24em 1em; font-weight: bold; cursor: pointer; }
-
-  div#page { text-align: left;
-             margin: auto;
-             width: 1024px;
-        }
-
-  div#primer3plus_top_bar { width: 900px; padding: 0px; border: 2px solid #ccccff;}
-  div#primer3plus_footer { width: 900px; padding: 0px; clear: left;}
-  .primer3plus_background { background-color:#ccccff; }
-  .primer3plus_top_bar_table { border:0; width:100%; }
-  .primer3plus_top_bar_cell { border:0; padding:0.4em;background-color:#ccccff; }
-  .primer3plus_top_bar_explain_cell { border:0; font-style: italic; font-size: 0.9em; background: rgb(255, 255, 230);}
-  .primer3plus_top_bar_title { font-size: 2.2em; font-weight:700; }
-  .primer3plus_top_bar_explain { font-size: 1.0em; font-weight:500 }
-  .primer3plus_top_bar_link { font-weight:bold }
-  .primer3plus_task {font-size: 0.9em}
-  .primer3plus_table_no_border { border:0; width:100%; empty-cells:show; }
-  .primer3plus_cell_no_border { border:0; padding:0.15em; }
-  .primer3plus_cell_no_border_problem { border:0; padding:0.15em;background-color:rgb(255,120,60); }
-  .primer3plus_cell_no_border_explain { border:0; font-style: italic; font-size: smaller;}
-  .primer3plus_cell_no_border_bg { border:0; padding:0.2em; background-color:#ccccff; }
-  .primer3plus_cell_no_border_uli_bd { border:0; padding:0.15em; font-weight:bold; text-decoration:underline; }
-  .primer3plus_cell_no_border_right { border:0; padding:0.15em; text-align:right;}
-  .primer3plus_cell_no_border_th { border:0; padding:0.15em;background-color:rgb(230,230,205); }
-  .primer3plus_table_with_border { border:1px solid #000; width:100%; empty-cells:show; border-collapse:collapse; }
-  .primer3plus_cell_with_border { border:1px solid #000; padding:0.2em; }
-  .primer3plus_table_penalties { border:0; width:100%; empty-cells:show; border-collapse:collapse; }
-  .primer3plus_cell_penalties { border:0; padding-top:0.15em; padding-bottom:0.15em; }
-  .primer3plus_cell_penalties_th { border:0; padding-top:0.15em; padding-bottom:0.15em;background-color:rgb(230,230,205); }
-  .primer3plus_table_primer_pair_box { border:0; width:100%; empty-cells:show; border-collapse:collapse; }
-  .primer3plus_cell_primer_pair_box { padding:0.2em; }
-  .primer3plus_action_button {font-size: 0.9em}
-
-  .primer3plus_note { background-color:rgb(255,120,60); padding:0px; }
-  .primer3plus_excluded_region { background-color:rgb(255,80,60); color:rgb(0,0,0); }
-  .primer3plus_target { background-color:rgb(160,250,130); color:rgb(0,0,0); }
-  .primer3plus_included_region { background-color:rgb(110,210,90); color:rgb(0,0,0); }
-  .primer3plus_left_primer { background-color:#ccccff; color:rgb(0,0,0); }
-  .primer3plus_internal_oligo { background-color:rgb(0,0,0); color:rgb(255,255,255); }
-  .primer3plus_right_primer { background-color:rgb(250,240,75); color:rgb(0,0,0); }
-  .primer3plus_left_right_primer { background-color:rgb(140,225,0); color:rgb(0,0,0); }
-  .primer3plus_primer_overlap_pos { background-color:rgb(160,160,160); color:rgb(0,0,0); }
-  .primer3plus_warning { background-color:rgb(255,120,60); }
-  .primer3plus_primer_pair { background-color:rgb(200,200,200); color:rgb(0,0,0); }
-  .primer3plus_primer_pair_box { margin: 4px; border: 2px solid #ccccff; clear: left; float: left; width: 870px; }
-  .primer3plus_long_list {}
-  .primer3plus_long_list_table { text-align:left; width:100%; table-layout:fixed; border:0; border-collapse:collapse }
-  div#primer3plus_result_sequence { float: left; font-size:1.0em; font-family:Courier,monospace; }
-  div#primer3plus_result_sequence_id  { float: left; font-size:1.0em; font-weight:bold;}
-  .primer3plus_select_all { width: 100%; clear: left; float: left;background-color: rgb(255, 255, 230);}
-  .region_button { width: 25px; }
-  textarea#sequenceTextarea { font-family:Courier,monospace; width:95%; }
-  a#PRIMER_TASK_INPUT {font-weight:bold; font-size: 1.1em}
-  .primer3plus_section {margin: 4px; border: 1px dashed #ccccff;}
-
-  </style>
-  <link rel="canonical" href="https://primer3plus.com/cgi-bin/dev/primer3plusAbout.cgi" />
+  <link rel="stylesheet" href="static/css/primer3plus.css">
+  <link rel="canonical" href="https://primer3plus.com/primer3plusAbout.html" />
 </head>
-
-
 <body>
+  <div class="p3p_page">
+    <div class="p3p_top_bar">
+      <table>
+        <colgroup>
+          <col style="width: 60%" class="p3p_blue">
+          <col style="width: 20%" class="p3p_blue">
+          <col style="width: 20%" class="p3p_blue">
+        </colgroup>
+        <tr>
+          <td class="p3p_big_space p3p_blue" rowspan="2"><a class="p3p_top_bar_title">Primer3Plus - About</a><br>
+            <a class="p3p_top_bar_explain">pick primers from a DNA sequence</a>
+          </td>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusPackage.html">More...</a>
+          </td>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="https://github.com/primer3-org/primer3plus">Source Code</a>
+          </td>
+        </tr>
+        <tr>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusHelp.html">Help</a>
+          </td>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="index.html">Back</a>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div id="P3P_TAB_HELP" class="p3p_tab_page">
+        <h2>Primer3Plus is a web-interface for primer3</h2>
 
-<div id="page">
+        <h2>Versions</h2>
+	<p>
+          Primer3Plus Version: <a id="P3P_ST_P3P_VERSION"></a><br>
+          <br>
+          Primer3 Version : <a id="P3P_ST_P3_VERSION"></a><br>
+          <br>
+        </p>
 
-<div id="primer3plus_news">
-<b>News:</b> Try out our new tool: <a href="https://wily-dna-editor.com/index.html">Wiley-DNA-Editor</a> - A DNA/Plasmid editor running in your browser!
-</div>
+        <h2>Download Program and Source Code</h2>
+        <p>
+        <a href="https://github.com/primer3-org">
+        Source code is available at href="https://github.com/primer3-org.
+        </a>
+        </p>
 
+        <h2>Citing Primer3 and Primer3Plus</h2>
 
+        <p>We request but do not require that use of this software be cited in
+        publications as<br>
+        <br>
+        Untergasser A, Cutcutache I, Koressaar T, Ye J, Faircloth BC, Remm M and Rozen SG.<br>
+        Primer3--new capabilities and interfaces.<br>
+        Nucleic Acids Res. 2012 Aug 1;40(15):e115. 
+        <br>
+        <br>
+        The paper is available at
+        <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3424584/">
+          http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3424584/</a><br>
+        <br>	
+        Source code available at <a href="http://sourceforge.net/projects/primer3/">
+          http://sourceforge.net/projects/primer3/</a>.</p>
 
-<div id="primer3plus_complete">
+        <h2>Fair use of Primer3 and Primer3Plus</h2>
 
-<div id="primer3plus_top_bar">
-   <table class="primer3plus_top_bar_table">
-     <colgroup>
-       <col width="60%" class="primer3plus_background">
-       <col width="20%" class="primer3plus_background">
-       <col width="20%" class="primer3plus_background">
-     </colgroup>
-     <tr>
-       <td class="primer3plus_top_bar_cell" rowspan="2"><a class="primer3plus_top_bar_title">Primer3Plus - About</a><br>
-       <a class="primer3plus_top_bar_explain" id="top">pick primers from a DNA sequence</a>
-       </td>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="primer3plusPackage.cgi">More...</a>
-       </td>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://sourceforge.net/projects/primer3/">Source Code</a>
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="primer3plusHelp.cgi">Help</a>
-       </td>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="primer3plusAbout.cgi">About</a>
-       </td>
-     </tr>
-   </table>
-</div>
+        <p>
+        The development of primer3 is promoted by a small group of 
+        enthusiastic scientists mainly in their free time.They do not gain 
+        any financial profit with primer3.<br>
+        <br>
+        There are two groups of primer3 users: end users, who run 
+        primer3 to pick their primers and programmers, who use primer3 
+        in their scripts or software packages. We encourage both to use 
+        primer3.
+        <br>
+        <br>
+        If you are an end user, we request but do not
+        require that use of this software be cited in publications
+        as listed above under CITING PRIMER3.
+        <br>
+        <br>
+        If you are a programmer, you  will see that primer3 is now 
+        distributed under the GNU  General Public License, version 3 or 
+        (at  your option) any later version of the License (GPL3). 
 
+        As we understand it, if you include parts of the primer3 source 
+        code in your source code or link to primer3 binary libraries in 
+        your executable, you have to release your software also under 
+        GPL3. If you only call primer3 from your software and interpret 
+        its output, you can use any license you want for your software. 
+        If you modify primer3 and then release your modified software, 
+        you have to release your modifications in source code under 
+        GPL3 as well.
+        <br>
+        <br>
+        We chose GPL3 because we wanted primer3 to evolve and for the 
+        improvements to find their way back into the main distribution. 
 
-<div id="primer3plus_about">
-
-<h2>Primer3Plus is a web-interface for primer3</h2>
-
-<h2>Versions</h2>
-<p>Primer3Plus Version: 2.4.2 <br>
-   <br>
-   Primer3 Version : libprimer3 release 2.4.0
-<br>
-   <br>
-</p>
-
-<h2>Download Program and Source Code</h2>
-<p>
-<a href="http://sourceforge.net/projects/primer3/">
-Source code is available at http://sourceforge.net/projects/primer3/.
-</a>
-</p>
-
-<h2>Citing Primer3 and Primer3Plus</h2>
-
-<p>We request but do not require that use of this software be cited in
-publications as<br>
-<br>
-Untergasser A, Cutcutache I, Koressaar T, Ye J, Faircloth BC, Remm M and Rozen SG.<br>
-Primer3--new capabilities and interfaces.<br>
-Nucleic Acids Res. 2012 Aug 1;40(15):e115. 
-<br>
-<br>
-The paper is available at
-<a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3424584/">http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3424584/</a><br>
-<br>	
-Source code available at <a href="http://sourceforge.net/projects/primer3/">http://sourceforge.net/projects/primer3/</a>.</p>
-
-<h2>Fair use of Primer3 and Primer3Plus</h2>
-
-<p>
-The development of primer3 is promoted by a small group of 
-enthusiastic scientists mainly in their free time.They do not gain 
-any financial profit with primer3.<br>
-<br>
-There are two groups of primer3 users: end users, who run 
-primer3 to pick their primers and programmers, who use primer3 
-in their scripts or software packages. We encourage both to use 
-primer3.
-<br>
-<br>
-If you are an end user, we request but do not
-require that use of this software be cited in publications
-as listed above under CITING PRIMER3.
-<br>
-<br>
-If you are a programmer, you  will see that primer3 is now 
-distributed under the GNU  General Public License, version 2 or 
-(at  your option) any later version of the License (GPL2). 
-
-As we understand it, if you include parts of the primer3 source 
-code in your source code or link to primer3 binary libraries in 
-your executable, you have to release your software also under 
-GPL2. If you only call primer3 from your software and interpret 
-its output, you can use any license you want for your software. 
-If you modify primer3 and then release your modified software, 
-you have to release your modifications in source code under 
-GPL2 as well.
-<br>
-<br>
-We chose GPL2 because we wanted primer3 to evolve and for the 
-improvements to find their way back into the main distribution. 
-
-If you are programming a new web interface which runs primer3, 
-please include in the about page of the tool the sentence 
-"&lt;your software name&gt; uses primer3 version ...". 
-Please consider releasing your software under GPL2 as well, 
-especially if you do not want to maintain it in the future. 
-<br>
-<br>
-There is no need to ask us for permission to include primer3 
-in your tools.
+        If you are programming a new web interface which runs primer3, 
+        please include in the about page of the tool the sentence 
+        "&lt;your software name&gt; uses primer3 version ...". 
+        Please consider releasing your software under GPL3 as well, 
+        especially if you do not want to maintain it in the future. 
+        <br>
+        <br>
+        There is no need to ask us for permission to include primer3 
+        in your tools.
 
 
-<h2>Acknowledgments</h2>
+        <h2>Acknowledgments</h2>
 
-<p>Initial development of Primer3 was funded by Howard Hughes Medical
-Institute and by the National Institutes of Health, National Human
-Genome Research Institute under grants R01-HG00257 (to David C. Page)
-and P50-HG00098 (to Eric S. Lander),
-but ongoing development and maintenance are not currently funded.
-<br>
-<br>
-Primer3 was originally written by Helen J. Skaletsky (Howard Hughes
-Medical Institute, Whitehead Institute) and Steve Rozen (Duke-NUS
-Graduate Medical School Singapore, formerly at Whitehead Institute)
-based on the design of earlier versions, notably Primer 0.5
-(Steve Lincoln, Mark Daly, and Eric S. Lander).
-The original web interface was designed by Richard Resnick.  Lincoln
-Stein designed the Boulder-IO format in the days before XML and RDF, and
-championed the idea of making primer3 a software component, which
-has been key to its wide utility.<br>
-<br>
-In addition, among others, Ernst Molitor, Carl Foeller, and James Bonfield
-contributed to the early
-design of primer3. Brant Faircloth has helped with 
-ensuring that primer3 runs on Windows and MacOS and with the
-primer3 web site. 
-Triinu Koressaar and Maido Remm modernized the melting 
-temperature calculations in 2008.  
-Triinu Koressaar added secondary structure, 
-primer-dimer, and template mispriming based on a thermodynamic
-model in 2.2.0.
-Ioana Cutcutache is responsible for most of the 
-remaining improvements
-in 2.2.0, including performance enhancements, modern
-command line arguments, and new input tags to 
-control primer location (with the "overlap junction"
-tags initially implemented by Andreas Untergasser).
-Jian Ye patiently provided new requirements.<br>
-<br>
-Harm Nijveen and Andreas Untergasser developed the webinterface 
-Primer3Plus in 2006-2009. Currently Primer3Plus is maintained by 
-Andreas Untergasser.
-<br>
-<br>
-Primer3 is an open software development project hosted
-on SourceForge: <a href="http://sourceforge.net/projects/primer3/">http://sourceforge.net/projects/primer3/</a>
-.</p>
+        <p>Initial development of Primer3 was funded by Howard Hughes Medical
+        Institute and by the National Institutes of Health, National Human
+        Genome Research Institute under grants R01-HG00257 (to David C. Page)
+        and P50-HG00098 (to Eric S. Lander),
+        but ongoing development and maintenance are not currently funded.
+        <br>
+        <br>
+        Primer3 was originally written by Helen J. Skaletsky (Howard Hughes
+        Medical Institute, Whitehead Institute) and Steve Rozen (Duke-NUS
+        Graduate Medical School Singapore, formerly at Whitehead Institute)
+        based on the design of earlier versions, notably Primer 0.5
+        (Steve Lincoln, Mark Daly, and Eric S. Lander).
+        The original web interface was designed by Richard Resnick.  Lincoln
+        Stein designed the Boulder-IO format in the days before XML and RDF, and
+        championed the idea of making primer3 a software component, which
+        has been key to its wide utility.<br>
+        <br>
+        In addition, among others, Ernst Molitor, Carl Foeller, and James Bonfield
+        contributed to the early
+        design of primer3. Brant Faircloth has helped with 
+        ensuring that primer3 runs on Windows and MacOS and with the
+        primer3 web site. 
+        Triinu Koressaar and Maido Remm modernized the melting 
+        temperature calculations in 2008.  
+        Triinu Koressaar added secondary structure, 
+        primer-dimer, and template mispriming based on a thermodynamic
+        model in 2.2.0.
+        Ioana Cutcutache is responsible for most of the 
+        remaining improvements
+        in 2.2.0, including performance enhancements, modern
+        command line arguments, and new input tags to 
+        control primer location (with the "overlap junction"
+        tags initially implemented by Andreas Untergasser).
+        Jian Ye patiently provided new requirements.<br>
+        <br>
+        Harm Nijveen and Andreas Untergasser developed the webinterface 
+        Primer3Plus in 2006-2009. Currently Primer3Plus is maintained by 
+        Andreas Untergasser and was rewritten in Python 2018.
+        <br>
+        <br>
+        Primer3Plus and Primer3 are an open software development projects hosted
+        on GitHub: <a href="https://github.com/primer3-org">https://github.com/primer3-org</a>
+        .</p>
 
-<h2>COPYRIGHT AND LICENSE</h2>
+        <h2>COPYRIGHT AND LICENSE</h2>
 
-<pre>Copyright (c) 1996,1997,1998,1999,2000,2001,2004,2006,2007,2008,2009,2010
-              2011,2012
-Whitehead Institute for Biomedical Research, Steve Rozen
-(<a href="http://purl.com/STEVEROZEN/">http://purl.com/STEVEROZEN/</a>), Andreas Untergasser and Helen Skaletsky. All rights
-reserved.
+        <pre>Copyright (c) 1996 - 2018
 
-    This file is part of the primer3 suite and libraries.
+        Whitehead Institute for Biomedical Research, Steve Rozen, 
+        Andreas Untergasser and Helen Skaletsky. All rights reserved.
 
-    The primer3 suite and libraries are free software;
-    you can redistribute them and/or modify them under the terms
-    of the GNU General Public License as published by the Free
-    Software Foundation; either version 2 of the License, or (at
-    your option) any later version.
+            Primer3Plus is part of the Primer3 suite and libraries.
+           
+            The Primer3 suite and libraries are free software;
+            you can redistribute them and/or modify them under the terms
+            of the GNU General Public License as published by the Free
+            Software Foundation; either version 3 of the License, or (at
+            your option) any later version.
 
-    This software is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+            This software is distributed in the hope that it will be useful,
+            but WITHOUT ANY WARRANTY; without even the implied warranty of
+            MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+            GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this software (file gpl-2.0.txt in the source
-    distribution); if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+            You should have received a copy of the GNU General Public License
+            along with this software (file LICENSE in the source
+            distribution); If not, see <a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-</pre>
+        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+        "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+        LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+        A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+        OWNERS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+        SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+        LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+        DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+        THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+        (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+        OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+        </pre>
 
-<div id="primer3plus_footer">
-<a>&copy; by A. Untergasser</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/contact_e.html">Contact</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/datenschutzerklaerung.html">Datenschutzerkl&auml;rung</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/impressum.html">Impressum</a>
-</div>
-</div>
-
-</div>  
-
-
-</div>
-
+    </div>
+    <div class="p3p_footer_bar">
+      <div class="p3p_footer_l">
+        GEAR + Primer3 ~
+        <a target="_blank" class="p3p_footer_link" href="https://gear.embl.de"> Home </a> ·
+        <a target="_blank" class="p3p_footer_link" href="https://github.com/gear-genomics"> GEAR-GitHub </a> ·
+        <a target="_blank" class="p3p_footer_link" href="https://github.com/primer3-org"> Primer3-GitHub </a> ·
+        <a target="_blank" class="p3p_footer_link" href="https://gear.embl.de/terms"> Terms of Use </a> ·
+        <a target="_blank" class="p3p_footer_link" href="https://gear.embl.de/contact"> Contact Us </a>
+      </div>
+      <div class="p3p_footer_r">
+        Hosted with love by
+        <a target="_blank" class="p3p_footer_link" href="https://www.embl.de">EMBL</a>
+      </div>
+    </div>
+  </div>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="static/js/primer3plus.js"></script>
 </body>
 </html>
-
-

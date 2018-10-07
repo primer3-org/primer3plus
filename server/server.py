@@ -6,7 +6,7 @@ import re
 import subprocess
 import argparse
 import json
-from subprocess import call
+from subprocess import call,Popen,PIPE
 from flask import Flask, send_file, flash, send_from_directory, request, redirect, url_for, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -76,6 +76,21 @@ def upload_file():
             return jsonify(errors = [{"title": "Error in running Primer3Plus" + errInfo}]), 400
         return jsonify(data = json.loads(open(outfile).read()))
     return jsonify(errors = [{"title": "Error in handling POST request!"}]), 400
+
+@app.route('/api/v1/primer3version', methods=['POST'])
+def p3version():
+    try:
+        process = Popen(["primer3_core", "-about"], stdout=PIPE)
+        (output, err) = process.communicate()
+        exit_code = process.wait()
+    except OSError as e:
+        if e.errno == os.errno.ENOENT:
+            return "Binary ./primer3core not found!", 200
+        else:
+            return "OSError " + str(e.errno)  + " running binary ./primer3core!", 200
+    if exit_code != 0:
+        return "Error in running Primer3Plus!", 200
+    return output, 200
 
 @app.route('/api/v1/settingsFile', methods=['POST'])
 def loadsettingsfile():
