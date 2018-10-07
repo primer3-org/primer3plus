@@ -149,7 +149,10 @@ div#P3P_TOP_MESSAGE_MESSAGE {
   margin: 4px;
   border: 1px dashed #ccccff;
 }
-
+.p3p_top_right {
+  text-align: right;
+  vertical-align: top;
+}
 	
 .p3p_footer_bar {
    float:left; 

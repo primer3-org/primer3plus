@@ -15,11 +15,16 @@ var server_setting_files;
 // The available misspriming library files
 var misspriming_lib_files;
 
-var debug = 1;
+var debugMode = 2;
 
 var p3p_errors = [];
 var p3p_warnings = [];
 var p3p_messages = [];
+
+var ignore_tags = ["PRIMER_EXPLAIN_FLAG","PRIMER_THERMODYNAMIC_PARAMETERS_PATH","PRIMER_MIN_THREE_PRIME_DISTANCE",
+      "PRIMER_MASK_3P_DIRECTION","PRIMER_MASK_5P_DIRECTION","PRIMER_MASK_FAILURE_RATE",
+      "PRIMER_MASK_KMERLIST_PATH","PRIMER_MASK_KMERLIST_PREFIX","PRIMER_MASK_TEMPLATE",
+      "PRIMER_WT_MASK_FAILURE_RATE"];
 
 document.addEventListener("DOMContentLoaded", function() {
   // Send different data to avoid caching
@@ -51,10 +56,9 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function loadSetFileFromServer() {
-  del_all_messages ();
   // Send different data to avoid caching
   var fileName = getHtmlTagValue("P3P_SERVER_SETTINGS_FILE");
-  if ((fileName == "Default") || (fileName == "")) {
+  if ((fileName == "Default") || (!(fileName))) {
     setHTMLParameters(defSet);
     add_message("mess","Default settings loaded!");
     return;	  
@@ -79,7 +83,31 @@ function loadSetFileFromServer() {
     })
 }
 
-function del_all_messages () {
+
+function init_message_buttons() {
+  var err = document.getElementById('P3P_ACTION_RESET_ERROR');
+  if (err !== null) {
+    err.addEventListener('click', function(){
+      del_message("err");
+      refresh_message("err");
+    });
+  }
+  var warn = document.getElementById('P3P_ACTION_RESET_WARNING');
+  if (warn !== null) {
+    warn.addEventListener('click', function(){
+      del_message("warn");
+      refresh_message("warn");
+    });
+  }
+  var mess = document.getElementById('P3P_ACTION_RESET_MESSAGE');
+  if (mess !== null) {
+    mess.addEventListener('click', function(){
+      del_message("mess");
+      refresh_message("mess");
+    });
+  }
+}
+function del_all_messages() {
   del_message("err");
   del_message("warn");
   del_message("mess");
@@ -97,50 +125,53 @@ function del_message(level) {
   refresh_message(level);
 }
 function add_message(level,message) {
-  var arr = get_message_arr(level);
+  var arr = null;
+  if (level == "err") {
+    arr = p3p_errors;
+  }
+  if (level == "warn") {
+    arr = p3p_warnings;
+  }
+  if (level == "mess") {
+    arr = p3p_messages;
+  }
   if (arr == null) {
     return;
   }
   arr.push(message);
   refresh_message(level);
 }
-function get_message_arr(level) {
-  if (level == "err") {
-    return p3p_errors;
-  }
-  if (level == "warn") {
-    return p3p_warnings;
-  }
-  if (level == "mess") {
-    return p3p_messages;
-  }
-  return null;
-}
-
 function refresh_message(level) {
   var el = null;
+  var box = null;
+  var arr = null;
   if (level == "err") {
     el = document.getElementById('P3P_TOP_MESSAGE_ERROR');
+    box = document.getElementById('P3P_TOP_MESSAGE_ERROR_BOX');
+    arr = p3p_errors;
   }
   if (level == "warn") {
     el = document.getElementById('P3P_TOP_MESSAGE_WARNING');
+    box = document.getElementById('P3P_TOP_MESSAGE_WARNING_BOX');
+    arr = p3p_warnings;  
   }
   if (level == "mess") {
     el = document.getElementById('P3P_TOP_MESSAGE_MESSAGE');
+    box = document.getElementById('P3P_TOP_MESSAGE_MESSAGE_BOX');
+    arr = p3p_messages;	  
   }
-  var arr = get_message_arr(level);
-  if ((arr === null) || (el == null)) {
+  if ((arr === null) || (box == null) || (el == null)) {
     return;
   }
   if (arr.length == 0) {
-    el.innerHTML = "\n";
+    box.innerHTML = "\n";
     el.style.display="none";
   } else {
     var txt = "";
     for (var i = 0; i < arr.length; i++) {
       txt += arr[i] + "<br />";
     }
-    el.innerHTML = txt;
+    box.innerHTML = txt;
     el.style.display="inline";
   }
 }
@@ -156,6 +187,8 @@ function initElements(){
   initLoadExample();
   initExplainSeqRegions();
   initLoadSetFile();
+  init_message_buttons();
+  initDebug();
 }
 
 function linkHelpTags() {
@@ -212,16 +245,15 @@ async function blaParameters() {
   for (var tag in defSet) {
     if (defSet.hasOwnProperty(tag)) {
       var  value = getHtmlTagValue(tag);
-      if (value !== null) {
-	if (value == defSet[tag][0]) {
+      if (value) {
+        if (value == defSet[tag][0]) {
 //           console.log("EQUAL: " + tag );
-	} else {
+        } else {
            alles += "Difference: " + tag + "\n      HP:" + value + "\n    JSON:" + defSet[tag][0] + "\n";
-	}
+        }
       } else {
            alles += "ABSENT: " + tag + "\n";
       }
-
     }
   }
   var out = document.getElementById('sequenceTextarea');  
@@ -250,7 +282,13 @@ function getHtmlTagValue(tag) {
       if ((type == 'text') || (type == 'hidden')) {
         return pageElement.value;
       }
-//    alert("Unknown Type by " + tag + ": " + pageElement.getAttribute('type'));
+    }
+    if (debugMode > 1) {
+      add_message("warn","Unknown Type by " + tag + " get: " + pageElement.getAttribute('type'));
+    }
+  } else {
+    if (debugMode > 1) {
+      add_message("warn","Missing element by " + tag + " get!");
     }
   }
   return null;
@@ -265,12 +303,19 @@ async function setHTMLParameters(para) {
 }
 
 function setHtmlTagValue(tag, value) {
+  if (tag.startsWith("P3_")) {
+    return true;
+  }
+  if (ignore_tags.includes(tag)) {
+    return true;
+  }
   var pageElement = document.getElementById(tag);
   value = value.replace(/\s*$/, "");
   if (pageElement !== null) {
     var tagName = pageElement.tagName.toLowerCase();
     if (tagName === 'textarea') {
       pageElement.value = value;
+      return true;
     }
     if (tagName === 'select') {
       if (value == "") {
@@ -302,7 +347,13 @@ function setHtmlTagValue(tag, value) {
           pageElement.value = value;
           return true;
       }
-//    alert("Unknown Type by " + tag + ": " + pageElement.getAttribute('type'));
+    }
+    if (debugMode > 1) {
+      add_message("warn","Unknown Type by " + tag + " set: " + pageElement.getAttribute('type'));
+    }
+  } else {
+    if (debugMode > 1) {
+      add_message("warn","Missing element by " + tag + " set!");
     }
   }
   return false;
@@ -434,7 +485,6 @@ function loadSeqFile(txt) {
   seq = seq.replace(/\d+/g, "");
   seq = seq.replace(/\W+/g, "");
   setHtmlTagValue("SEQUENCE_TEMPLATE", seq);
-  del_all_messages();
   add_message("mess",message);
 }
 function initLoadSetFile() {
@@ -509,7 +559,6 @@ function loadP3File(limit,txt) {
   } else {
     message += "!";
   }
-  del_all_messages();
   add_message("mess",message);
 }
 // Functions to load the sequence and settings files
@@ -547,9 +596,9 @@ function createSaveFileString(sel) {
   for (var tag in defSet) {
     if (defSet.hasOwnProperty(tag)) {
       var val = getHtmlTagValue(tag);
-      if (val != null) {
-	if (((sel == "seq") && tag.startsWith("SEQUENCE_")) ||
-	    ((sel == "set") && tag.startsWith("PRIMER_")) ||
+      if (val) {
+        if (((sel == "seq") && tag.startsWith("SEQUENCE_")) ||
+            ((sel == "set") && tag.startsWith("PRIMER_")) ||
             ((sel == "set") && tag.startsWith("P3P_")) ||
             ((sel == "all")) ||
             ((sel == "primer3") && !(tag.startsWith("P3P_")))) {
@@ -585,6 +634,29 @@ function createSaveFileString(sel) {
   }
   return ret;
 }
+
+// Conect the debug info
+function initDebug() {
+  var btn = document.getElementById('P3P_DEBUG_MODE');
+  if (btn !== null) {
+    placeDebugTab();
+    btn.addEventListener('change', function(){
+      debugMode = getHtmlTagValue("P3P_DEBUG_MODE");
+      placeDebugTab();    
+    });
+  }
+}
+function placeDebugTab() {
+  var tb = document.getElementById('P3P_SEL_TAB_DEBUG');
+  if (tb) {
+    if (debugMode > 0) {
+      tb.style.display="inline";
+    } else {
+      tb.style.display="none";
+    }
+  }
+}
+
 
 // Explain sequence Regions help functionality
 function initExplainSeqRegions() { 
@@ -695,6 +767,10 @@ function initTabFunctionality() {
   if (btAdvancedSeq === null) {
     return;
   }
+  var btDebug = document.getElementById('P3P_SEL_TAB_DEBUG');
+  if (btDebug === null) {
+    return;  
+  }
   var btResults = document.getElementById('P3P_SEL_TAB_RESULTS');
   if (btResults === null) {
     return;
@@ -723,6 +799,10 @@ function initTabFunctionality() {
   if (tabAdvancedSeq === null) {
     return;
   }
+  var tabDebug = document.getElementById('P3P_TAB_DEBUG');
+  if (tabDebug === null) {
+    return;
+  }
   var tabResults = document.getElementById('P3P_TAB_RESULTS');
   if (tabResults === null) {
     return;
@@ -733,8 +813,8 @@ function initTabFunctionality() {
   btInternal.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_INTERNAL_OLIGO');});
   btPenalties.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_PENALTIES');});
   btAdvancedSeq.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_ADVANCED_SEQUENCE');});
+  btDebug.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_DEBUG');});
   btResults.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_RESULTS');});
-	
   browseTabFunctionality('P3P_TAB_MAIN');
 }
 function browseTabFunctionality(tab) {
@@ -744,6 +824,7 @@ function browseTabFunctionality(tab) {
   browseTabSelect(tab,'P3P_SEL_TAB_INTERNAL','P3P_TAB_INTERNAL_OLIGO');
   browseTabSelect(tab,'P3P_SEL_TAB_PENALTIES','P3P_TAB_PENALTIES');
   browseTabSelect(tab,'P3P_SEL_TAB_ADVANCED_SEQ','P3P_TAB_ADVANCED_SEQUENCE');
+  browseTabSelect(tab,'P3P_SEL_TAB_DEBUG','P3P_TAB_DEBUG');
   browseTabSelect(tab,'P3P_SEL_TAB_RESULTS','P3P_TAB_RESULTS');
 }
 function browseTabSelect(sel,btn,tab) {

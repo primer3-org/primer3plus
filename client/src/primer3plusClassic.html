@@ -117,7 +117,6 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
 <input id="GENBRO_FILE" value="" type="hidden">
 
     <div class="p3p_task_bar">
-      <input id="P3P_DEBUG_MODE" type="hidden">
       <table>
         <colgroup>
           <col style="width: 50%">
@@ -165,8 +164,8 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
           <td  style="text-align: right">
             <table>
               <tr>
-                <td><input id="P3P_ACTION_RUN_PRIMER3" value="Pick Primers" type="submit" style="font-size: 0.9em; background: #83db7b;"></td>
-                <td><input id="P3P_ACTION_RESET_DEFAULT" value="Reset Default" type="submit"  style="font-size: 0.9em;"></td>
+                <td><input id="P3P_ACTION_RUN_PRIMER3" value="Pick Primers" type="button" style="font-size: 0.9em; background: #83db7b;"></td>
+                <td><input id="P3P_ACTION_RESET_DEFAULT" value="Reset Default" type="button"  style="font-size: 0.9em;"></td>
               </tr>
             </table>
           </td>
@@ -182,12 +181,54 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
     </div>
  
     <div id="P3P_TOP_MESSAGE_ERROR" style="display: none;">
+      <table id="P3P_SEL_REG_ALL_IN">
+        <colgroup>
+          <col style="width: 90%">
+          <col style="width: 10%">
+        </colgroup>
+        <tr>
+          <td>
+            <div id="P3P_TOP_MESSAGE_ERROR_BOX"></div>
+          </td>
+          <td class="p3p_top_right">
+            <input id="P3P_ACTION_RESET_ERROR" value="Dismiss" type="button">
+          </td>
+        </tr>
+      </table>
     </div>
 
     <div id="P3P_TOP_MESSAGE_WARNING" style="display: none;">
+      <table id="P3P_SEL_REG_ALL_IN">
+        <colgroup>
+          <col style="width: 90%">
+          <col style="width: 10%">
+        </colgroup>
+        <tr>
+          <td>
+            <div id="P3P_TOP_MESSAGE_WARNING_BOX"></div>
+          </td>
+          <td class="p3p_top_right">
+            <input id="P3P_ACTION_RESET_WARNING" value="Dismiss" type="button">
+          </td>
+        </tr>
+      </table>
     </div>
 
     <div id="P3P_TOP_MESSAGE_MESSAGE" style="display: none;">
+      <table id="P3P_SEL_REG_ALL_IN">
+        <colgroup>
+          <col style="width: 90%">
+          <col style="width: 10%">
+        </colgroup>
+        <tr>
+          <td>
+            <div id="P3P_TOP_MESSAGE_MESSAGE_BOX"></div>
+          </td>
+          <td class="p3p_top_right">
+            <input id="P3P_ACTION_RESET_MESSAGE" value="Dismiss" type="button">
+          </td>
+        </tr>
+      </table>
     </div>
 
     <div id="menuBar">
@@ -198,6 +239,7 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
         <li id="P3P_SEL_TAB_INTERNAL"><a>Internal Oligo</a></li>
         <li id="P3P_SEL_TAB_PENALTIES"><a>Penalties</a></li>
         <li id="P3P_SEL_TAB_ADVANCED_SEQ"><a>Advanced Seq.</a></li>
+        <li id="P3P_SEL_TAB_DEBUG" style="display: none;"><a>D</a></li>
         <li id="P3P_SEL_TAB_RESULTS"><a>Results</a></li>
       </ul>
     </div>
@@ -877,8 +919,8 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
           </td>
           <td>
             &nbsp;&nbsp;&nbsp;
-            <input id="SCRIPT_DISPLAY_DEBUG_INFORMATION" type="checkbox">
-            <a id="SCRIPT_DISPLAY_DEBUG_INFORMATION_HELP">Debug Information</a>
+            <input id="P3P_DEBUG_MODE" type="checkbox">
+            <a id="P3P_DEBUG_MODE_HELP">Debug Information</a>
           </td>
         </tr>
       </table>
@@ -1142,7 +1184,7 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
               <a id="PRIMER_INTERNAL_MIN_QUALITY_HELP">Hyb Oligo Min Sequence Quality:</a>
             </td>
             <td>
-              <input size="4" name="PRIMER_INTERNAL_MIN_QUALITY" type="text">
+              <input size="4" id="PRIMER_INTERNAL_MIN_QUALITY" type="text">
             </td>
             <td>
             </td>
@@ -1726,6 +1768,16 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
           </td>
         </tr>
       </table>
+    </div>
+
+    <div id="P3P_TAB_DEBUG" class="p3p_tab_page">
+      <div class="p3p_fit_to_table">
+        <h2>Primer3 Debug Information</h2>
+        <h3>Primer3 Input:</h3>
+        <textarea id="P3P_DEBUG_TXT_INPUT" rows="15" cols="90"></textarea>
+        <h3>Primer3 Output:</h3>
+        <textarea id="P3P_DEBUG_TXT_OUTPUT" rows="15" cols="90"></textarea>
+      </div>
     </div>
 
     <div id="P3P_TAB_RESULTS" class="p3p_tab_page">
