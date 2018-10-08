@@ -151,6 +151,12 @@ function processPimer3Data(data){
       add_message("err", p3ErrLines[i]);
     }
   }
+  if (results.hasOwnProperty("PRIMER_WARNING")) {
+    var p3WarnLines = results["PRIMER_WARNING"].split(';');
+    for (var i = 0; i < p3WarnLines.length; i++) {
+      add_message("warn", p3WarnLines[i]);
+    }
+  }
 }
 
 function init_primer3_versions() {
@@ -665,6 +671,7 @@ function loadP3File(limit,txt) {
     message += "!";
   }
   add_message("mess",message);
+  showTaskSelection();
 }
 // Functions to load the sequence and settings files
 function initSaveFile() {
@@ -719,12 +726,12 @@ function createSaveFileString(sel) {
   if (sel == "primer3") {
     data["PRIMER_EXPLAIN_FLAG"] = "1";
     data["PRIMER_THERMODYNAMIC_PARAMETERS_PATH"] = "Add Path to the Primer3 /src/primer3_config/ folder";
-    if ((data.hasOwnProperty("PRIMER_INTERNAL_MISHYB_LIBRARY")) &&
+    if (data.hasOwnProperty("PRIMER_INTERNAL_MISHYB_LIBRARY") &&
         ((data["PRIMER_INTERNAL_MISHYB_LIBRARY"] == "NONE") ||
          (data["PRIMER_INTERNAL_MISHYB_LIBRARY"] == ""))) {
       delete data["PRIMER_INTERNAL_MISHYB_LIBRARY"];
     }
-    if ((data.hasOwnProperty("PRIMER_MISPRIMING_LIBRARY")) &&
+    if (data.hasOwnProperty("PRIMER_MISPRIMING_LIBRARY") &&
         ((data["PRIMER_MISPRIMING_LIBRARY"] == "NONE") ||
          (data["PRIMER_MISPRIMING_LIBRARY"] == ""))) {
       delete data["PRIMER_MISPRIMING_LIBRARY"]; 
@@ -742,7 +749,120 @@ function createSaveFileString(sel) {
         }
       }
     }
+    if (data.hasOwnProperty("PRIMER_PRODUCT_OPT_SIZE") &&
+        (data["PRIMER_PRODUCT_OPT_SIZE"] != "") && 
+        data.hasOwnProperty("P3P_TMP_PRODUCT_MIN_SIZE") &&
+        (data["P3P_TMP_PRODUCT_MIN_SIZE"] != "") && 
+        data.hasOwnProperty("P3P_TMP_PRODUCT_MAX_SIZE") &&
+        (data["P3P_TMP_PRODUCT_MAX_SIZE"] != "")) {
+       data["PRIMER_PRODUCT_SIZE_RANGE"] = data["P3P_TMP_PRODUCT_MIN_SIZE"] + "-" + data["P3P_TMP_PRODUCT_MAX_SIZE"];
+    }
+    // Handle the tasks
+    if (data.hasOwnProperty("PRIMER_TASK") &&
+        (data["PRIMER_TASK"] == "pick_cloning_primers")) {
+      if (data.hasOwnProperty("SEQUENCE_EXCLUDED_REGION")) {
+        delete data["SEQUENCE_EXCLUDED_REGION"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_TARGET")) {
+        delete data["SEQUENCE_TARGET"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_OVERLAP_JUNCTION_LIST")) {
+        delete data["SEQUENCE_OVERLAP_JUNCTION_LIST"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_PRIMER_PAIR_OK_REGION_LIST")) {
+        delete data["SEQUENCE_PRIMER_PAIR_OK_REGION_LIST"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_PRIMER")) {
+        delete data["SEQUENCE_PRIMER"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_INTERNAL_OLIGO")) {
+        delete data["SEQUENCE_INTERNAL_OLIGO"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_PRIMER_REVCOMP")) {
+        delete data["SEQUENCE_PRIMER_REVCOMP"];
+      }
+    }
+    if (data.hasOwnProperty("PRIMER_TASK") &&
+        (data["PRIMER_TASK"] == "pick_discriminative_primers")) {
+      if (data.hasOwnProperty("SEQUENCE_EXCLUDED_REGION")) {
+        delete data["SEQUENCE_EXCLUDED_REGION"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_INCLUDED_REGION")) {
+        delete data["SEQUENCE_INCLUDED_REGION"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_OVERLAP_JUNCTION_LIST")) {
+        delete data["SEQUENCE_OVERLAP_JUNCTION_LIST"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_PRIMER_PAIR_OK_REGION_LIST")) {
+        delete data["SEQUENCE_PRIMER_PAIR_OK_REGION_LIST"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_PRIMER")) {
+        delete data["SEQUENCE_PRIMER"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_INTERNAL_OLIGO")) {
+        delete data["SEQUENCE_INTERNAL_OLIGO"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_PRIMER_REVCOMP")) {
+        delete data["SEQUENCE_PRIMER_REVCOMP"];
+      }
+    }
+    if (data.hasOwnProperty("PRIMER_TASK") &&
+        (data["PRIMER_TASK"] == "pick_sequencing_primers")) {
+      // Make space for enough primers
+      data["PRIMER_NUM_RETURN"] = "1000";
 
+      if (data.hasOwnProperty("SEQUENCE_EXCLUDED_REGION")) {
+        delete data["SEQUENCE_EXCLUDED_REGION"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_INCLUDED_REGION")) {
+        delete data["SEQUENCE_INCLUDED_REGION"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_OVERLAP_JUNCTION_LIST")) {
+        delete data["SEQUENCE_OVERLAP_JUNCTION_LIST"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_PRIMER_PAIR_OK_REGION_LIST")) {
+        delete data["SEQUENCE_PRIMER_PAIR_OK_REGION_LIST"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_PRIMER")) {
+        delete data["SEQUENCE_PRIMER"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_INTERNAL_OLIGO")) {
+        delete data["SEQUENCE_INTERNAL_OLIGO"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_PRIMER_REVCOMP")) {
+        delete data["SEQUENCE_PRIMER_REVCOMP"];
+      }
+    }
+    if (data.hasOwnProperty("PRIMER_TASK") &&
+        (data["PRIMER_TASK"] == "pick_primer_list")) {
+      if (data.hasOwnProperty("SEQUENCE_PRIMER")) {
+        delete data["SEQUENCE_PRIMER"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_INTERNAL_OLIGO")) {
+        delete data["SEQUENCE_INTERNAL_OLIGO"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_PRIMER_REVCOMP")) {
+        delete data["SEQUENCE_PRIMER_REVCOMP"];
+      }
+    }
+    if (data.hasOwnProperty("PRIMER_TASK") &&
+        (data["PRIMER_TASK"] == "check_primers")) {
+      if (data.hasOwnProperty("SEQUENCE_EXCLUDED_REGION")) {
+        delete data["SEQUENCE_EXCLUDED_REGION"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_TARGET")) {
+        delete data["SEQUENCE_TARGET"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_INCLUDED_REGION")) {
+        delete data["SEQUENCE_INCLUDED_REGION"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_OVERLAP_JUNCTION_LIST")) {
+        delete data["SEQUENCE_OVERLAP_JUNCTION_LIST"];
+      }
+      if (data.hasOwnProperty("SEQUENCE_PRIMER_PAIR_OK_REGION_LIST")) {
+        delete data["SEQUENCE_PRIMER_PAIR_OK_REGION_LIST"];
+      }
+    }
   } 
 
   // Write the headers
@@ -1007,8 +1127,8 @@ var prevSelectedTab = "";
 function showTaskSelection() {
   var task = document.getElementById('PRIMER_TASK');
   var x = task.selectedIndex;
-  var id = "P3P_EXPLAIN_TASK_" + task.options[x].text.toUpperCase();
-  if (prevSelectedTab != "" && document.getElementById(prevSelectedTab)) {
+  var id = "P3P_EXPLAIN_TASK_" + task.options[x].value.toUpperCase();
+  if ((prevSelectedTab != "") && document.getElementById(prevSelectedTab)) {
     document.getElementById(prevSelectedTab).style.display="none"; 
   }
   if (id != "" && document.getElementById(id)) {
@@ -1089,6 +1209,7 @@ function initResetDefautl() {
 function buttonResetDefault() {
   del_all_messages ();	
   setHTMLParameters(defSet);
+  showTaskSelection();
 }
 
 function initLoadExample() {
