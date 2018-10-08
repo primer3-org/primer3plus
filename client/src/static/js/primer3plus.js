@@ -17,6 +17,8 @@ var server_setting_files;
 // The available misspriming library files
 var misspriming_lib_files;
 
+var results = {};
+
 var debugMode = 2;
 
 var p3p_errors = [];
@@ -30,11 +32,7 @@ var ignore_tags = ["PRIMER_EXPLAIN_FLAG","PRIMER_THERMODYNAMIC_PARAMETERS_PATH",
       "PRIMER_WT_MASK_FAILURE_RATE"];
 
 document.addEventListener("DOMContentLoaded", function() {
-  // Send different data to avoid caching
-  var dt = new Date();
-  var utcDate = dt.toUTCString();
   const formData = new FormData();
-  formData.append('stufferData', utcDate);
   axios
     .post(`${API_URL}/defaultsettings`, formData)
     .then(res => {
@@ -87,9 +85,9 @@ function loadSetFileFromServer() {
 }
 
 function runPrimer3() {
+  del_all_messages ();
   var p3file = createSaveFileString("primer3");
   var p3in = document.getElementById('P3P_DEBUG_TXT_INPUT');
-  var p3out = document.getElementById('P3P_DEBUG_TXT_OUTPUT');
   if (p3in) {
     if (debugMode > 0) {
       p3in.value = p3file;
@@ -103,7 +101,16 @@ function runPrimer3() {
     .post(`${API_URL}/runprimer3`, formData)
     .then(res => {
         if (res.status === 200) {
-          processPimer3Data(res.data);
+          var ret = res.data;
+          var p3out = document.getElementById('P3P_DEBUG_TXT_OUTPUT');
+          if (p3out) {
+            if (debugMode > 0) {
+              p3out.value = ret;
+            } else {
+              p3out.value = "";
+            }
+          }
+          processPimer3Data(ret);
       }
     })
     .catch(err => {
@@ -125,7 +132,16 @@ function initRunPrimer3() {
 }
 
 function processPimer3Data(data){
-  alert("success\n" + data);
+  var fileLines = data.split('\n');
+  for (var i = 0; i < fileLines.length; i++) {
+    if ((fileLines[i].match(/=/) != null) && (fileLines[i] != "") && (fileLines[i] != "=")) {
+      var pair = fileLines[i].split('=');
+      results[pair[0]]=pair[1];
+    }
+  }
+  if (results.hasOwnProperty("PRIMER_ERROR")) {
+    add_message("err", results["PRIMER_ERROR"]);
+  }
 }
 
 function init_primer3_versions() {
@@ -157,7 +173,6 @@ function init_primer3_versions() {
         p3Ver.innerHTML = "---";
       })
   }
-	
 }
 
 function init_message_buttons() {
@@ -694,6 +709,8 @@ function createSaveFileString(sel) {
   // Fix data for Primer3
   if (sel == "primer3") {
     data["PRIMER_EXPLAIN_FLAG"] = "1";
+    data["PRIMER_THERMODYNAMIC_PARAMETERS_PATH"] = "Add Path to the Primer3 /src/primer3_config/ folder";
+
   } 
 
   // Write the headers

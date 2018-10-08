@@ -4,6 +4,7 @@ import os
 import uuid
 import re
 import subprocess
+import threading
 import argparse
 import json
 from subprocess import call,Popen,PIPE
@@ -19,11 +20,14 @@ app.config['PRIMER3PLUS'] = os.path.join(P3PWS, "..")
 app.config['UPLOAD_FOLDER'] = os.path.join(app.config['PRIMER3PLUS'], "data")
 app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024   #maximum of 8MB
 
+P3PATHFIX = "PRIMER_THERMODYNAMIC_PARAMETERS_PATH=" +  os.path.join(P3PWS, "../../primer3/src/primer3_config/\n")
+regEq = re.compile(r"PRIMER_THERMODYNAMIC_PARAMETERS_PATH=[^\n]*\n")
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in set(['json', 'fa'])
 
-@app.route('/api/v1/upload', methods=['POST'])
-def upload_file():
+@app.route('/api/v1/runprimer3', methods=['POST'])
+def runp3():
     if request.method == 'POST':
         uuidstr = str(uuid.uuid4())
 
@@ -33,48 +37,37 @@ def upload_file():
             os.makedirs(sf)
 
         # Experiment
-        if 'showExample' in request.form.keys():
-            fexpname = os.path.join(SAGEWS, "sample.abi")
-            genome = os.path.join(SAGEWS, "sample.fa")
-        else:
-            if 'queryFile' not in request.files:
-                return jsonify(errors = [{"title": "Chromatogram file is missing!"}]), 400
-            fexp = request.files['queryFile']
-            if fexp.filename == '':
-                return jsonify(errors = [{"title": "Chromatogram file name is missing!"}]), 400
-            if not allowed_file(fexp.filename):
-                return jsonify(errors = [{"title": "Chromatogram file has incorrect file type!"}]), 400
-            fexpname = os.path.join(sf, "sage_" + uuidstr + "_" + secure_filename(fexp.filename))
-            fexp.save(fexpname)
+        if 'P3_INPUT_FILE' in request.form.keys():
+            indata = request.form['P3_INPUT_FILE']
+            infile = os.path.join(sf, "p3p_" + uuidstr + "_input.txt")
+            with open(infile, "w") as infileHandle:
+                modin = regEq.sub(P3PATHFIX, indata)
+                infileHandle.write(modin)
 
-            # Genome
-            if 'genome' in request.form.keys():
-                genome = request.form['genome']
-                if genome == '':
-                    return jsonify(errors = [{"title": "Genome index is missing!"}]), 400
-                genome = os.path.join(app.config['SAGE'], "fm", genome)
-            else:
-                return jsonify(errors = [{"title": "No input reference file provided!"}]), 400
-
-        # Run Primer3 
-        outfile = os.path.join(sf, "p3p_" + uuidstr + "_output.txt")
-        logfile = os.path.join(sf, "p3p_" + uuidstr + ".log")
-        errfile = os.path.join(sf, "p3p_" + uuidstr + ".err")
-        with open(logfile, "w") as log:
-            with open(errfile, "w") as err:
-                try: 
-                    return_code = call(['primer3core', 'align', '-g', genome,'-o', outfile, fexpname], stdout=log, stderr=err)
-                except OSError as e:
-                    if e.errno == os.errno.ENOENT:
-                        return jsonify(errors = [{"title": "Binary ./primer3core not found!"}]), 400
-                    else:
-                        return jsonify(errors = [{"title": "OSError " + str(e.errno)  + " running binary ./primer3core!"}]), 400
-        if return_code != 0:
-            errInfo = "!"
-            with open(errfile, "r") as err:
-                errInfo = ": " + err.read()
-            return jsonify(errors = [{"title": "Error in running Primer3Plus" + errInfo}]), 400
-        return jsonify(data = json.loads(open(outfile).read()))
+                # Run Primer3 
+                outfile = os.path.join(sf, "p3p_" + uuidstr + "_output.txt")
+                p3efile = os.path.join(sf, "p3p_" + uuidstr + "_error.txt")
+                logfile = os.path.join(sf, "p3p_" + uuidstr + ".log")
+                errfile = os.path.join(sf, "p3p_" + uuidstr + ".err")
+                with open(logfile, "w") as log:
+                    with open(errfile, "w") as err:
+                        try:
+                            p3_args = ['primer3_core', '--strict_tags', '--output=' + outfile, '--error=' + p3efile, infile]
+                            print('\nCall: ' + " ".join(p3_args) + "\n")
+                            print('\nInput: ' + infile + "\n")
+                            proc = subprocess.Popen(p3_args, stdout=log, stderr=err)
+                            proc.wait()
+                        except OSError as e:
+                            if e.errno == os.errno.ENOENT:
+                                return jsonify(errors = [{"title": "Binary ./primer3core not found!"}]), 400
+                            else:
+                                return jsonify(errors = [{"title": "OSError " + str(e.errno)  + " running binary ./primer3core!"}]), 400
+#        print (str(return_code) + "\n")                    
+        with open(errfile, "r") as err:
+            errInfo = "" + err.read()
+            with open(outfile, "r") as out:
+                data = "" + out.read()
+                return data, 200
     return jsonify(errors = [{"title": "Error in handling POST request!"}]), 400
 
 @app.route('/api/v1/primer3version', methods=['POST'])
