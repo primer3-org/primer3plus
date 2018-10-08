@@ -139,8 +139,17 @@ function processPimer3Data(data){
       results[pair[0]]=pair[1];
     }
   }
+  if (results.hasOwnProperty("P3P_ERROR")) {
+    var p3pErrLines = results["P3P_ERROR"].split(';');
+    for (var i = 0; i < p3pErrLines.length; i++) {
+      add_message("err", p3pErrLines[i]);
+    }
+  }
   if (results.hasOwnProperty("PRIMER_ERROR")) {
-    add_message("err", results["PRIMER_ERROR"]);
+    var p3ErrLines = results["PRIMER_ERROR"].split(';');
+    for (var i = 0; i < p3ErrLines.length; i++) {
+      add_message("err", p3ErrLines[i]);
+    }
   }
 }
 
@@ -710,6 +719,29 @@ function createSaveFileString(sel) {
   if (sel == "primer3") {
     data["PRIMER_EXPLAIN_FLAG"] = "1";
     data["PRIMER_THERMODYNAMIC_PARAMETERS_PATH"] = "Add Path to the Primer3 /src/primer3_config/ folder";
+    if ((data.hasOwnProperty("PRIMER_INTERNAL_MISHYB_LIBRARY")) &&
+        ((data["PRIMER_INTERNAL_MISHYB_LIBRARY"] == "NONE") ||
+         (data["PRIMER_INTERNAL_MISHYB_LIBRARY"] == ""))) {
+      delete data["PRIMER_INTERNAL_MISHYB_LIBRARY"];
+    }
+    if ((data.hasOwnProperty("PRIMER_MISPRIMING_LIBRARY")) &&
+        ((data["PRIMER_MISPRIMING_LIBRARY"] == "NONE") ||
+         (data["PRIMER_MISPRIMING_LIBRARY"] == ""))) {
+      delete data["PRIMER_MISPRIMING_LIBRARY"]; 
+    }
+    for (var tag in data) {
+      if (data.hasOwnProperty(tag)) {
+        if (tag.startsWith("SEQUENCE_") && (data[tag] == "")) {
+          delete data[tag];
+        }
+        if (tag.startsWith("PRIMER_MUST_MATCH_") && (data[tag] == "")) {
+          delete data[tag];
+        }
+        if (tag.startsWith("PRIMER_INTERNAL_MUST_MATCH_") && (data[tag] == "")) {
+          delete data[tag];
+        }
+      }
+    }
 
   } 
 
