@@ -1,8 +1,8 @@
 {"def":{
 "P3P_DEBUG_MODE":["0","int"],
-"P3P_PRIMER_NAME_ACRONYM_INTERNAL":["R","string"],
+"P3P_PRIMER_NAME_ACRONYM_INTERNAL":["IN","string"],
 "P3P_PRIMER_NAME_ACRONYM_LEFT":["F","string"],
-"P3P_PRIMER_NAME_ACRONYM_RIGHT":["IN","string"],
+"P3P_PRIMER_NAME_ACRONYM_RIGHT":["R","string"],
 "P3P_PRIMER_NAME_ACRONYM_SPACER":["_","string"],
 "P3P_SERVER_SETTINGS_FILE":["F","string"],
 "P3_COMMENT":["","string"],

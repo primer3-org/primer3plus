@@ -17,6 +17,7 @@ var server_setting_files;
 // The available misspriming library files
 var misspriming_lib_files;
 
+var rawResults;
 var results = {};
 
 var debugMode = 2;
@@ -86,6 +87,12 @@ function loadSetFileFromServer() {
 
 function runPrimer3() {
   del_all_messages ();
+  var res = document.getElementById('P3P_SEL_TAB_RESULTS');
+  if (res != null) {
+    res.style.display="inline";
+    document.getElementById('P3P_P3_RUNNING').style.display="inline";
+    browseTabFunctionality('P3P_TAB_RESULTS'); 
+  }
   var p3file = createSaveFileString("primer3");
   var p3in = document.getElementById('P3P_DEBUG_TXT_INPUT');
   if (p3in) {
@@ -101,16 +108,25 @@ function runPrimer3() {
     .post(`${API_URL}/runprimer3`, formData)
     .then(res => {
         if (res.status === 200) {
-          var ret = res.data;
+          rawResults = res.data;
           var p3out = document.getElementById('P3P_DEBUG_TXT_OUTPUT');
           if (p3out) {
             if (debugMode > 0) {
-              p3out.value = ret;
+              p3out.value = rawResults;
             } else {
               p3out.value = "";
             }
           }
-          processPimer3Data(ret);
+          results = {};
+          var fileLines = rawResults.split('\n');
+          for (var i = 0; i < fileLines.length; i++) {
+            if ((fileLines[i].match(/=/) != null) && (fileLines[i] != "") && (fileLines[i] != "=")) {
+              var pair = fileLines[i].split('=');
+              results[pair[0]]=fileLines[i].split(/=(.+)/)[1];
+            }
+          }
+          calcP3PResultAdditions();
+          processResData();
       }
     })
     .catch(err => {
@@ -128,34 +144,6 @@ function initRunPrimer3() {
   var pButton = document.getElementById('P3P_ACTION_RUN_PRIMER3');
   if (pButton !== null) {
     pButton.addEventListener('click', runPrimer3);
-  }
-}
-
-function processPimer3Data(data){
-  var fileLines = data.split('\n');
-  for (var i = 0; i < fileLines.length; i++) {
-    if ((fileLines[i].match(/=/) != null) && (fileLines[i] != "") && (fileLines[i] != "=")) {
-      var pair = fileLines[i].split('=');
-      results[pair[0]]=pair[1];
-    }
-  }
-  if (results.hasOwnProperty("P3P_ERROR")) {
-    var p3pErrLines = results["P3P_ERROR"].split(';');
-    for (var i = 0; i < p3pErrLines.length; i++) {
-      add_message("err", p3pErrLines[i]);
-    }
-  }
-  if (results.hasOwnProperty("PRIMER_ERROR")) {
-    var p3ErrLines = results["PRIMER_ERROR"].split(';');
-    for (var i = 0; i < p3ErrLines.length; i++) {
-      add_message("err", p3ErrLines[i]);
-    }
-  }
-  if (results.hasOwnProperty("PRIMER_WARNING")) {
-    var p3WarnLines = results["PRIMER_WARNING"].split(';');
-    for (var i = 0; i < p3WarnLines.length; i++) {
-      add_message("warn", p3WarnLines[i]);
-    }
   }
 }
 
@@ -187,6 +175,91 @@ function init_primer3_versions() {
     //    }
         p3Ver.innerHTML = "---";
       })
+  }
+}
+
+function processResData(){
+  del_all_messages ();
+  var res = document.getElementById('P3P_SEL_TAB_RESULTS');
+  if (res != null) {
+    res.style.display="inline";
+    document.getElementById('P3P_P3_RUNNING').style.display="none";
+    browseTabFunctionality('P3P_TAB_RESULTS');
+  }
+
+  if (results.hasOwnProperty("P3P_ERROR")) {
+    var p3pErrLines = results["P3P_ERROR"].split(';');
+    for (var i = 0; i < p3pErrLines.length; i++) {
+      add_message("err", p3pErrLines[i]);
+    }
+  }
+  if (results.hasOwnProperty("PRIMER_ERROR")) {
+    var p3ErrLines = results["PRIMER_ERROR"].split(';');
+    for (var i = 0; i < p3ErrLines.length; i++) {
+      add_message("err", p3ErrLines[i]);
+    }
+  }
+  if (results.hasOwnProperty("PRIMER_WARNING")) {
+    var p3WarnLines = results["PRIMER_WARNING"].split(';');
+    for (var i = 0; i < p3WarnLines.length; i++) {
+      add_message("warn", p3WarnLines[i]);
+    }
+  }
+}
+
+function calcP3PResultAdditions(){
+  // Name the primers
+  var acLeft  = saveGetTag("P3P_PRIMER_NAME_ACRONYM_LEFT");
+  var acRight = saveGetTag("P3P_PRIMER_NAME_ACRONYM_RIGHT");
+  var acOligo = saveGetTag("P3P_PRIMER_NAME_ACRONYM_INTERNAL");
+  var acSpace = saveGetTag("P3P_PRIMER_NAME_ACRONYM_SPACER");
+  var seqName = saveGetTag("SEQUENCE_ID");
+  for (var tag in results) {
+    if(tag.endsWith("_SEQUENCE")){
+      var nameKeyComplete = tag.split('_');
+      var namePrimerType = nameKeyComplete[1];
+      var nameNumber = nameKeyComplete[2];
+      var nameKeyName = tag;
+      nameKeyName = nameKeyName.replace(/SEQUENCE/, "NAME");
+      var nameKeyPair = "PRIMER_PAIR_" + nameNumber + "_NAME";
+      var nameKeyValue;
+      // Use the Name or Primer for the ID
+      if (seqName.length > 2 ) {
+        nameKeyValue = seqName.replace(/ /, "_");
+      } else {
+        nameKeyValue = "Primer";
+      }
+      // Add a Number
+      if ( nameNumber != "0" ) {
+        nameKeyValue += acSpace + nameNumber;
+      }
+      results[nameKeyPair] = nameKeyValue;
+      nameKeyValue += acSpace;
+      // Add a Type
+      if (namePrimerType == "RIGHT" ) {
+        nameKeyValue += acRight;
+      } else if (namePrimerType == "INTERNAL") {
+        nameKeyValue += acOligo;
+      } else if (namePrimerType == "LEFT") {
+        nameKeyValue += acLeft;
+      } else {
+        nameKeyValue += "??";
+      }
+      results[nameKeyName] = nameKeyValue;
+    }
+  }
+  // Add the amplicons
+  if (results.hasOwnProperty("PRIMER_PAIR_NUM_RETURNED")) {
+    var seq   = results["SEQUENCE_TEMPLATE"];
+    var fistBase = parseInt(saveGetTag("PRIMER_FIRST_BASE_INDEX"));  
+    for (var pairCount = 0 ; pairCount < parseInt(results["PRIMER_PAIR_NUM_RETURNED"]) ; pairCount++) {
+      var left  = results["PRIMER_LEFT_" + pairCount].split(',');
+      var right = results["PRIMER_RIGHT_" + pairCount].split(',');    
+      var start = parseInt(left[0]) - fistBase;
+      var end   = parseInt(right[0]) - fistBase;
+      var amp   = seq.substring(start, end);
+      results["PRIMER_PAIR_" + pairCount + "_AMPLICON"] = amp;
+    }
   }
 }
 
@@ -299,6 +372,15 @@ function initElements(){
   init_primer3_versions();
 }
 
+function updateInterface(){
+  var res = document.getElementById('P3P_SEL_TAB_RESULTS');
+  if (res !== null) {
+    browseTabFunctionality('P3P_TAB_MAIN');	  
+    res.style.display="none";
+  }
+  showTaskSelection();
+}
+
 function linkHelpTags() {
   var linkRoot = `${HELP_LINK_URL}#`;
   for (var tag in defSet) {
@@ -366,6 +448,19 @@ async function blaParameters() {
   }
   var out = document.getElementById('sequenceTextarea');  
   out.innerHTML = alles;
+}
+
+function saveGetTag(tag){
+  var res = getHtmlTagValue(tag);
+  if (res === null) {
+    if (defSet.hasOwnProperty(tag)) {
+      return defSet[tag];
+    } else {
+      return null;
+    }       
+  } else {
+    return res;
+  }
 }
 
 function getHtmlTagValue(tag) {
@@ -1209,7 +1304,7 @@ function initResetDefautl() {
 function buttonResetDefault() {
   del_all_messages ();	
   setHTMLParameters(defSet);
-  showTaskSelection();
+  updateInterface();
 }
 
 function initLoadExample() {
