@@ -240,6 +240,14 @@ div#P3P_MENU_BAR a {
  background-color: #8ce100;
  color: #000000;
 }
+.p3p_oligo_cell {
+  padding: 0.2em;
+}
+.p3p_oligo_problem {
+  padding: 0.2em;
+  background-color: #ff783c; 
+}
+
 
   	div#primer3plus_messages { 
         width:900px;

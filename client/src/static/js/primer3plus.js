@@ -245,7 +245,7 @@ function processResData(){
 
   // Add statistics
 
- // document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = returnHTML;
+  document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = returnHTML;
   document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
 }
 
@@ -271,114 +271,92 @@ function createResultsPrimerCheck(res) {
   if (res.hasOwnProperty("PRIMER_INTERNAL_0_SEQUENCE")) {
       type = "INTERNAL";
   }
-  var retHTML = '<div class="primer3plus_oligo_box">\n<table class="primer3plus_table_no_border">\n';
+  var retHTML = '<div class="p3p_fit_to_table">\n<table>\n';
   retHTML += '  <colgroup>\n';
   retHTML += '    <col width="17%">\n';
   retHTML += '    <col width="83%">\n';
   retHTML += '  </colgroup>\n';
-  retHTML += '  <tr class="primer3plus_left_primer">\n';
-  retHTML += '    <td class="primer3plus_cell_no_border">';
+  retHTML += '  <tr class="p3p_left_primer">\n';
+  retHTML += '    <td class="p3p_oligo_cell">';
   retHTML += '<input name="PRIMER_' + type + '0_SELECT" value="1" checked="checked" type="checkbox"> &nbsp; Oligo:</td>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border">';
+  retHTML += '    <td class="p3p_oligo_cell">';
   retHTML += '<input name="PRIMER_' + type + '0_NAME" value="' + res["PRIMER_" + type + "_0_NAME"] + '" size="40"></td>\n';
   retHTML += '  </tr>\n';
   retHTML += '  <tr>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border"><a href="' + linkRoot;
-  retHTML += 'PRIMER_RIGHT_4_SEQUENCE">Sequence:</a></td>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border">';
+  retHTML += '    <td class="p3p_oligo_cell"><a href="' + linkRoot + 'PRIMER_RIGHT_4_SEQUENCE">Sequence:</a></td>\n';
+  retHTML += '    <td class="p3p_oligo_cell">';
   retHTML += '<input name="PRIMER_' + type + '0_SEQUENCE" value="' + res["PRIMER_" + type + "_0_SEQUENCE"] + '" size="90"></td>\n';
   retHTML += '  </tr>\n';
   retHTML += '  <tr>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border"><a href="' + linkRoot;
-  retHTML += 'PRIMER_RIGHT_4">Length:</a></td>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border">';
+  retHTML += '    <td class="p3p_oligo_cell"><a href="' + linkRoot + 'PRIMER_RIGHT_4">Length:</a></td>\n';
+  retHTML += '    <td class="p3p_oligo_cell">';
   var primerPos = res["PRIMER_" + type + "_0"].split(',');
   retHTML += primerPos[1];
   retHTML += ' bp</td>\n  </tr>\n';
   retHTML += '  <tr>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border"><a href="' + linkRoot;
-  retHTML += 'PRIMER_RIGHT_4_TM">Tm:</a></td>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border">';
-  retHTML += Number.parseFloat(res["PRIMER_" + type + "_0_TM"]).toFixed(1);
+  retHTML += '    <td class="p3p_oligo_cell"><a href="' + linkRoot + 'PRIMER_RIGHT_4_TM">Tm:</a></td>\n';
+  retHTML += '    <td class="p3p_oligo_cell">' + Number.parseFloat(res["PRIMER_" + type + "_0_TM"]).toFixed(1);
   retHTML += ' C</td>\n  </tr>\n';
   retHTML += '  <tr>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border"><a href="' + linkRoot;
-  retHTML += 'PRIMER_RIGHT_4_GC_PERCENT">GC:</a></td>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border">';
-  retHTML += Number.parseFloat(res["PRIMER_" + type + "_0_GC_PERCENT"]).toFixed(1);
+  retHTML += '    <td class="p3p_oligo_cell"><a href="' + linkRoot + 'PRIMER_RIGHT_4_GC_PERCENT">GC:</a></td>\n';
+  retHTML += '    <td class="p3p_oligo_cell">' + Number.parseFloat(res["PRIMER_" + type + "_0_GC_PERCENT"]).toFixed(1);
   retHTML += ' %</td>\n  </tr>\n';
   retHTML += '  <tr>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border"><a href="' + linkRoot;
-  retHTML += 'PRIMER_RIGHT_4_SELF_ANY" + thAdd + ">Any Dimer:</a></td>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border">';
-  retHTML += Number.parseFloat(res["PRIMER_" + type + "_0_SELF_ANY" + thAdd]).toFixed(1);
+  retHTML += '    <td class="p3p_oligo_cell"><a href="' + linkRoot + 'PRIMER_RIGHT_4_SELF_ANY" + thAdd + ">Any Dimer:</a></td>\n';
+  retHTML += '    <td class="p3p_oligo_cell">' + Number.parseFloat(res["PRIMER_" + type + "_0_SELF_ANY" + thAdd]).toFixed(1);
   retHTML += '</td>\n  </tr>\n';
   retHTML += '  <tr>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border"><a href="' + linkRoot;
-  retHTML += 'PRIMER_RIGHT_4_SELF_END" + thAdd + ">End Dimer:</a></td>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border">';
-  retHTML += Number.parseFloat(res["PRIMER_" + type + "_0_SELF_END" + thAdd]).toFixed(1);
+  retHTML += '    <td class="p3p_oligo_cell"><a href="' + linkRoot + 'PRIMER_RIGHT_4_SELF_END" + thAdd + ">End Dimer:</a></td>\n';
+  retHTML += '    <td class="p3p_oligo_cell">' + Number.parseFloat(res["PRIMER_" + type + "_0_SELF_END" + thAdd]).toFixed(1);
   retHTML += '</td>\n  </tr>\n';
   if (res.hasOwnProperty("PRIMER_" + type + "_0_TEMPLATE_MISPRIMING" + thTmAdd) &&
       (res["PRIMER_" + type + "_0_TEMPLATE_MISPRIMING" + thTmAdd] != "")) {
-    retHTML += '  <tr>\n    <td class="primer3plus_cell_no_border"><a href="' + linkRoot;
+    retHTML += '  <tr>\n    <td class="p3p_oligo_cell"><a href="' + linkRoot;
     retHTML += 'PRIMER_RIGHT_4_TEMPLATE_MISPRIMING' + thTmAdd + '>Template Mispriming:</a></td>\n';
-    retHTML += '<td class="primer3plus_cell_no_border">';
-    retHTML += Number.parseFloat(res["PRIMER_" + type + "_0_TEMPLATE_MISPRIMING" + thTmAdd]).toFixed(1);
+    retHTML += '<td class="p3p_oligo_cell">' + Number.parseFloat(res["PRIMER_" + type + "_0_TEMPLATE_MISPRIMING" + thTmAdd]).toFixed(1);
     retHTML += '</td>\n  </tr>\n';
   }
   if (res["PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"] == "1") {
-    retHTML += '  <tr>\n    <td class="primer3plus_cell_no_border"><a href="' + linkRoot;
-    retHTML += 'PRIMER_RIGHT_4_HAIRPIN_TH">Hairpin:</a></td>\n';
-    retHTML += '    <td class="primer3plus_cell_no_border">';
-    retHTML += Number.parseFloat(res["PRIMER_" + type + "_0_HAIRPIN_TH"]).toFixed(1);
+    retHTML += '  <tr>\n    <td class="p3p_oligo_cell"><a href="' + linkRoot + 'PRIMER_RIGHT_4_HAIRPIN_TH">Hairpin:</a></td>\n';
+    retHTML += '    <td class="p3p_oligo_cell">' + Number.parseFloat(res["PRIMER_" + type + "_0_HAIRPIN_TH"]).toFixed(1);
     retHTML += '</td>\n  </tr>\n';
   }
-  retHTML += '  <tr>\n    <td class="primer3plus_cell_no_border"><a href="' + linkRoot;
-  retHTML += 'PRIMER_RIGHT_4_END_STABILITY">3\' Stability:</a></td>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border">';
-  retHTML += Number.parseFloat(res["PRIMER_" + type + "_0_END_STABILITY"]).toFixed(1);
+  retHTML += '  <tr>\n    <td class="p3p_oligo_cell"><a href="' + linkRoot + 'PRIMER_RIGHT_4_END_STABILITY">3\' Stability:</a></td>\n';
+  retHTML += '    <td class="p3p_oligo_cell">' + Number.parseFloat(res["PRIMER_" + type + "_0_END_STABILITY"]).toFixed(1);
   retHTML += ' &Delta;G</td>\n  </tr>\n  <tr>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border"><a href="' + linkRoot;
-  retHTML += 'PRIMER_RIGHT_4_PENALTY">Penalty:</a></td>\n';
-  retHTML += '    <td class="primer3plus_cell_no_border">';
-  retHTML += Number.parseFloat(res["PRIMER_" + type + "_0_PENALTY"]).toFixed(3);
+  retHTML += '    <td class="p3p_oligo_cell"><a href="' + linkRoot + 'PRIMER_RIGHT_4_PENALTY">Penalty:</a></td>\n';
+  retHTML += '    <td class="p3p_oligo_cell">' + Number.parseFloat(res["PRIMER_" + type + "_0_PENALTY"]).toFixed(3);
   retHTML += '</td>\n  </tr>\n';
   // Now the optional fields
   if (res.hasOwnProperty("PRIMER_" + type + "_0_POSITION_PENALTY") &&
       (res["PRIMER_" + type + "_0_POSITION_PENALTY"] != "")) {
-    retHTML += '  <tr>\n    <td class="primer3plus_cell_no_border"><a href="' + linkRoot;
-    retHTML += 'PRIMER_RIGHT_4_POSITION_PENALTY">Position Penalty:</a></td>\n';
-    retHTML += '    <td class="primer3plus_cell_no_border">';
-    retHTML += Number.parseFloat(res["PRIMER_" + type + "_0_POSITION_PENALTY"]).toFixed(3);
+    retHTML += '  <tr>\n    <td class="p3p_oligo_cell"><a href="' + linkRoot + 'PRIMER_RIGHT_4_POSITION_PENALTY">Position Penalty:</a></td>\n';
+    retHTML += '    <td class="p3p_oligo_cell">' + Number.parseFloat(res["PRIMER_" + type + "_0_POSITION_PENALTY"]).toFixed(3);
     retHTML += '</td>\n  </tr>\n';
   }
   if (res.hasOwnProperty("PRIMER_" + type + "_0_LIBRARY_MISPRIMING") &&
       (res["PRIMER_" + type + "_0_LIBRARY_MISPRIMING"] != "")) {
-    retHTML += '  <tr>\n    <td class="primer3plus_cell_no_border"><a href="' + linkRoot;
+    retHTML += '  <tr>\n    <td class="p3p_oligo_cell"><a href="' + linkRoot;
     retHTML += 'PRIMER_RIGHT_4_LIBRARY_MISPRIMING">Library Mispriming:</a></td>\n';
-    retHTML += '   <td class="primer3plus_cell_no_border">';
-    retHTML += res["PRIMER_" + type + "_0_LIBRARY_MISPRIMING"] + '</td>\n  </tr>\n';
+    retHTML += '   <td class="p3p_oligo_cell">' + res["PRIMER_" + type + "_0_LIBRARY_MISPRIMING"] + '</td>\n  </tr>\n';
   }
   if (res.hasOwnProperty("PRIMER_" + type + "_0_LIBRARY_MISHYB") &&
       (res["PRIMER_" + type + "_0_LIBRARY_MISHYB"] != "")) {
-    retHTML += '  <tr>\n    <td class="primer3plus_cell_no_border"><a href="' + linkRoot;
+    retHTML += '  <tr>\n    <td class="p3p_oligo_cell"><a href="' + linkRoot;
     retHTML += 'PRIMER_INTERNAL_4_LIBRARY_MISHYB">Library Mishyb:</a></td>\n';
-    retHTML += '   <td class="primer3plus_cell_no_border">';
-    retHTML += res["PRIMER_" + type + "_0_LIBRARY_MISHYB"] + '</td>\n  </tr>\n';
+    retHTML += '   <td class="p3p_oligo_cell">' + res["PRIMER_" + type + "_0_LIBRARY_MISHYB"] + '</td>\n  </tr>\n';
   }
   if (res.hasOwnProperty("PRIMER_" + type + "_0_MIN_SEQ_QUALITY") &&
       (res["PRIMER_" + type + "_0_MIN_SEQ_QUALITY"] != "")) {
-    retHTML += '     <tr>\n    <td class="primer3plus_cell_no_border"><a href="' + linkRoot;
+    retHTML += '     <tr>\n    <td class="p3p_oligo_cell"><a href="' + linkRoot;
     retHTML += 'PRIMER_RIGHT_4_MIN_SEQ_QUALITY">Min Seq Quality:</a></td>\n';
-    retHTML += '   <td class="primer3plus_cell_no_border">';
-    retHTML += res["PRIMER_" + type + "_0_MIN_SEQ_QUALITY"] + '</td>\n  </tr>\n';
+    retHTML += '   <td class="p3p_oligo_cell">' + res["PRIMER_" + type + "_0_MIN_SEQ_QUALITY"] + '</td>\n  </tr>\n';
   }
   if (res.hasOwnProperty("PRIMER_" + type + "_0_PROBLEMS") &&
       (res["PRIMER_" + type + "_0_PROBLEMS"] != "")) {
-    retHTML += '     <tr>\n    <td class="primer3plus_cell_no_border_problem"><a href="' + linkRoot;
+    retHTML += '     <tr>\n    <td class="p3p_oligo_cell_problem"><a href="' + linkRoot;
     retHTML += 'PRIMER_RIGHT_4_PROBLEMS">Problems:</a></td>\n';
-    retHTML += '   <td class="primer3plus_cell_no_border_problem">';
+    retHTML += '   <td class="p3p_oligo_cell_problem">';
     retHTML += res["PRIMER_" + type + "_0_PROBLEMS"] + '</td>\n  </tr>\n';
   }
   retHTML += '</table>\n</div>\n';
