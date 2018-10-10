@@ -205,6 +205,307 @@ function processResData(){
       add_message("warn", p3WarnLines[i]);
     }
   }
+  
+  // Figure out if any primers were returned
+  var pair_count = 0;
+  var primer_count = 0;
+  if (results.hasOwnProperty("PRIMER_PAIR_NUM_RETURNED")){
+    pair_count = parseInt(results["PRIMER_PAIR_NUM_RETURNED"]);
+  }
+  if (results.hasOwnProperty("PRIMER_LEFT_NUM_RETURNED")){
+    primer_count += parseInt(results["PRIMER_LEFT_NUM_RETURNED"]);
+  }
+  if (results.hasOwnProperty("PRIMER_INTERNAL_NUM_RETURNED")){
+    primer_count += parseInt(results["PRIMER_INTERNAL_NUM_RETURNED"]);
+  }
+  if (results.hasOwnProperty("PRIMER_RIGHT_NUM_RETURNED")){
+    primer_count += parseInt(results["PRIMER_RIGHT_NUM_RETURNED"]);
+  }
+  var returnHTML = ""
+  // Write some help if no primers found
+  if (primer_count == 0){
+    returnHTML += "<br/ >Primer3Plus could not pick any primers. Try less strict settings.<br /><br />";       
+  } 
+  // If only one primer was found we write the results different
+  else if (primer_count == 1) {
+    returnHTML += createResultsPrimerCheck(results);
+  }
+  // Print out pair boxes
+  else if (pair_count != 0) {
+    returnHTML += createResultsDetection(results);
+  } 
+  // Sequencing needs a different sequenceprint
+  else if (results["PRIMER_TASK"] == "pick_sequencing_primers") {
+    returnHTML += createResultsPrimerList(completeParameters, results, false);
+  } 
+  // The regular output
+  else {
+      returnHTML += createResultsPrimerList(completeParameters, results, true);
+  }
+
+  // Add statistics
+
+  document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = returnHTML;
+  document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
+}
+
+function createResultsDetection(res){
+  var ret = divPrimerBox(res,0,true);
+//  ret += divHTMLsequence(res, "1");
+  ret += '<div class="primer3plus_select_all">\n  <br />\n';
+  ret += '  <input id="P3P_ACTION_SELECT_ALL_PRIMERS" type="checkbox"> &nbsp; Select all Primers';
+  ret += '<br />\n<br>\n</div>\n';
+  for (var primerCount = 1 ; primerCount < parseInt(res["PRIMER_PAIR_NUM_RETURNED"]) ; primerCount++) {
+    ret += divPrimerBox(res,primerCount,false);
+    ret += '<div class="primer3plus_submit"><br />'
+    ret += '<input name="Submit" value="Send to Primer3Manager" type="submit"><br /><br /><br /></div>';
+  }
+  return ret;
+}
+
+function divPrimerBox(res, nr, sel) {
+  var retHtml = "";
+  var linkRoot = `${HELP_LINK_URL}#`;
+  var selection = nr + 1;
+  var primerAny = "";
+  var primerEnd = "";
+  var productTM = "";
+  var productOligDiff = "";
+  var pairPenalty = "";
+  var productMispriming = "";
+  var productToA = "";
+  
+  if (res.hasOwnProperty("PRIMER_PAIR_" + nr + "_PRODUCT_TM") &&
+      (res["PRIMER_PAIR_" + nr + "_PRODUCT_TM"] != "")) {
+    productTM += '<a href="' + linkRoot + 'PRIMER_PAIR_4_PRODUCT_TM" target="p3p_help">Tm:</a> ';
+    productTM += Number.parseFloat(res["PRIMER_PAIR_" + nr + "_PRODUCT_TM"]).toFixed(1);
+    productTM += ' C';
+  }
+  if (res.hasOwnProperty("PRIMER_PAIR_" + nr + "_PRODUCT_TM_OLIGO_TM_DIFF") &&
+      (res["PRIMER_PAIR_" + nr + "_PRODUCT_TM_OLIGO_TM_DIFF"] != "")) {
+    productOligDiff += '<a href="' + linkRoot + 'PRIMER_PAIR_4_PRODUCT_TM_OLIGO_TM_DIFF" target="p3p_help">dT:</a> ';
+    productOligDiff += Number.parseFloat(res["PRIMER_PAIR_" + nr + "_PRODUCT_TM_OLIGO_TM_DIFF"]).toFixed(1);
+    productOligDiff += ' C';
+  }
+  if (res.hasOwnProperty("PRIMER_PAIR_" + nr + "_COMPL_ANY") &&
+      (res["PRIMER_PAIR_" + nr + "_COMPL_ANY"] != "")) {
+    primerAny += '<a href="' + linkRoot + 'PRIMER_PAIR_4_COMPL_ANY" target="p3p_help">Any:</a> ';
+    primerAny += Number.parseFloat(res["PRIMER_PAIR_" + nr + "_COMPL_ANY"]).toFixed(1);
+  } else if (res.hasOwnProperty("PRIMER_PAIR_" + nr + "_COMPL_ANY_TH") &&
+      (res["PRIMER_PAIR_" + nr + "_COMPL_ANY_TH"] != "")) {
+    primerAny += '<a href="' + linkRoot + 'PRIMER_PAIR_4_COMPL_ANY_TH" target="p3p_help">Any:</a> ';
+    primerAny += Number.parseFloat(res["PRIMER_PAIR_" + nr + "_COMPL_ANY_TH"]).toFixed(1);
+  }
+  if (res.hasOwnProperty("PRIMER_PAIR_" + nr + "_COMPL_END") &&
+      (res["PRIMER_PAIR_" + nr + "_COMPL_END"] != "")) {
+    primerEnd += '<a href="' + linkRoot + 'PRIMER_PAIR_4_COMPL_END" target="p3p_help">End:</a> ';
+    primerEnd += Number.parseFloat(res["PRIMER_PAIR_" + nr + "_COMPL_END"]).toFixed(1);
+  } else if (res.hasOwnProperty("PRIMER_PAIR_" + nr + "_COMPL_END_TH") &&
+      (res["PRIMER_PAIR_" + nr + "_COMPL_END_TH"] != "")) {
+    primerEnd += '<a href="' + linkRoot + 'PRIMER_PAIR_4_COMPL_END_TH" target="p3p_help">End:</a> ';
+    primerEnd += Number.parseFloat(res["PRIMER_PAIR_" + nr + "_COMPL_END_TH"]).toFixed(1);
+  }
+  if (res.hasOwnProperty("PRIMER_PAIR_" + nr + "_TEMPLATE_MISPRIMING") &&
+      (res["PRIMER_PAIR_" + nr + "_TEMPLATE_MISPRIMING"] != "")) {
+    productMispriming += '<a href="' + linkRoot + 'PRIMER_PAIR_4_TEMPLATE_MISPRIMING" target="p3p_help">TB:</a> ';
+    productMispriming += Number.parseFloat(res["PRIMER_PAIR_" + nr + "_TEMPLATE_MISPRIMING"]).toFixed(1);
+  } else if (res.hasOwnProperty("PRIMER_PAIR_" + nr + "_TEMPLATE_MISPRIMING_TH") &&
+      (res["PRIMER_PAIR_" + nr + "_TEMPLATE_MISPRIMING_TH"] != "")) {
+    productMispriming += '<a href="' + linkRoot + 'PRIMER_PAIR_4_TEMPLATE_MISPRIMING_TH" target="p3p_help">TB:</a> ';
+    productMispriming += Number.parseFloat(res["PRIMER_PAIR_" + nr + "_TEMPLATE_MISPRIMING_TH"]).toFixed(1);
+  }
+  if (res.hasOwnProperty("PRIMER_PAIR_" + nr + "_T_OPT_A") &&
+      (res["PRIMER_PAIR_" + nr + "_T_OPT_A"] != "")) {
+    productToA += '<a href="' + linkRoot + 'PRIMER_PAIR_4_T_OPT_A" target="p3p_help">T opt A:</a> ';
+    productToA += Number.parseFloat(res["PRIMER_PAIR_" + nr + "_T_OPT_A"]).toFixed(1);
+  }
+  if (res.hasOwnProperty("PRIMER_PAIR_" + nr + "_PENALTY") &&
+      (res["PRIMER_PAIR_" + nr + "_PENALTY"] != "")) {
+    pairPenalty += '<a href="' + linkRoot + 'PRIMER_PAIR_4_PENALTY" target="p3p_help">Penalty:</a> ';
+    pairPenalty += Number.parseFloat(res["PRIMER_PAIR_" + nr + "_PENALTY"]).toFixed(3);
+  }
+
+  retHtml += '<div class="primer3plus_primer_pair_box">\n';
+  retHtml += '<table class="primer3plus_table_primer_pair_box">\n';
+  retHtml += '  <colgroup>\n';
+  retHtml += '    <col style="width: 12.0%">\n';
+  retHtml += '    <col style="width: 2.0%">\n';
+  retHtml += '    <col style="width: 10.0%">\n';
+  retHtml += '    <col style="width: 10.0%">\n';
+  retHtml += '    <col style="width: 10.0%">\n';
+  retHtml += '    <col style="width: 8.0%">\n';
+  retHtml += '    <col style="width: 8.0%">\n';
+  retHtml += '    <col style="width: 8.5%">\n';
+  retHtml += '    <col style="width: 8.0%">\n';
+  retHtml += '    <col style="width: 10.5%">\n';
+  retHtml += '    <col style="width: 13.0%">\n';
+  retHtml += '  </colgroup>\n';
+  retHtml += '  <tr>\n';
+  retHtml += '    <td colspan="11" class="primer3plus_cell_primer_pair_box">\n      <input id="PRIMER_PAIR_';
+  retHtml +=  nr + '_SELECT" name="PRIMER_PAIR_' + nr + '_SELECT" value="1"';
+  if (sel) {
+    retHtml += "checked=\"checked\" ";
+  }
+  retHtml += 'type="checkbox">&nbsp;Pair ' + (nr + 1 ) +':\n      ';
+  retHtml += '<input id="PRIMER_PAIR_' + nr + '_NAME" name="PRIMER_PAIR_';
+  retHtml += nr + '_NAME" value="' + res["PRIMER_PAIR_" + nr + "_NAME"] + '" size="40">\n      ';
+  if (res.hasOwnProperty("PRIMER_PAIR_" + nr + "_AMPLICON") &&
+      (res["PRIMER_PAIR_" + nr + "_AMPLICON"] != "")) {
+    retHtml += '<input type="hidden" name="PRIMER_PAIR_' + nr + '_AMPLICON" value="' + res["PRIMER_PAIR_" + nr + "_AMPLICON"] + '">';
+  }
+  retHtml += '</td>\n    </tr>';
+
+  retHtml += partPrimerData(res, nr, "LEFT");
+  retHtml += partPrimerData(res, nr, "INTERNAL");
+  retHtml += partPrimerData(res, nr, "RIGHT");
+
+  retHtml += '  <tr class="primer3plus_primer_pair">\n';
+  retHtml += '    <td colspan="3" class="primer3plus_cell_primer_pair_box"><strong>Pair:</strong>&nbsp;&nbsp;&nbsp;\n';
+  retHtml += '      <a href="' + linkRoot + 'PRIMER_PAIR_4_PRODUCT_SIZE">Product Size:</a>&nbsp;\n';
+  retHtml += '&nbsp;' + res["PRIMER_PAIR_" + nr + "_PRODUCT_SIZE"] + ' bp</td>\n';
+  retHtml += '    <td class="primer3plus_cell_primer_pair_box">' + productTM + '</td>\n';
+  retHtml += '    <td class="primer3plus_cell_primer_pair_box">' + productOligDiff + '</td>\n';
+  retHtml += '    <td class="primer3plus_cell_primer_pair_box">' + primerAny + '</td>\n';
+  retHtml += '    <td class="primer3plus_cell_primer_pair_box">' + primerEnd + '</td>\n';
+  retHtml += '    <td class="primer3plus_cell_primer_pair_box">' + productMispriming + '</td>\n';
+  retHtml += '    <td class="primer3plus_cell_primer_pair_box">' + productToA + '</td>\n';
+  retHtml += '    <td class="primer3plus_cell_primer_pair_box"></td>\n';
+  retHtml += '    <td class="primer3plus_cell_primer_pair_box">' + pairPenalty + '</td>\n';
+  retHtml += '  </tr>\n';
+  retHtml += '</table>\n';
+  retHtml += '</div>\n';
+  return retHtml;
+}
+
+function partPrimerData(res, nr, type) {
+  var linkRoot = `${HELP_LINK_URL}#`;
+  var thAdd = "";
+  if (res["PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"] == 1) {
+    thAdd = "_TH";
+  }
+  var thTmAdd = "";
+  if (res["PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT"] == 1) {
+    thTmAdd = "_TH";
+  }
+  var cssName;
+  var writeName;
+  if (type == "LEFT") {
+    cssName = "left_primer";
+    writeName = "Left Primer";
+  }
+  else if (type == "INTERNAL") {
+    cssName = "internal_oligo";
+    writeName = "Internal Oligo";
+  }
+  else if (type == "RIGHT") {
+    cssName = "right_primer";
+    writeName = "Right Primer";
+  }
+  var formHTML = "";
+  if (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_SEQUENCE") &&
+      (res["PRIMER_" + type + "_" + nr + "_SEQUENCE"] != "")) {
+    var primerPos = res["PRIMER_" + type + "_" + nr].split(',');
+    var primerTM  = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_TM"]).toFixed(1);
+    var primerGC  = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_GC_PERCENT"]).toFixed(1);
+    var primerAny = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_SELF_ANY" + thAdd]).toFixed(1);
+    var primerEnd = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_SELF_END" + thAdd]).toFixed(1);
+    var primerTemplateBinding = "";
+    if (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_TEMPLATE_MISPRIMING" + thTmAdd)) {
+      primerTemplateBinding = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_TEMPLATE_MISPRIMING" + thTmAdd]).toFixed(1);
+    }
+    var primerHairpin = "";
+    if (res["PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"] == "1") {
+      primerHairpin = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_HAIRPIN_TH"]).toFixed(1);
+    }
+    var primerEndStability = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_END_STABILITY"]).toFixed(1);
+    var primerPenalty = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_PENALTY"]).toFixed(3);
+
+    formHTML += '  <tr class="primer3plus_' + cssName + '">\n';
+    formHTML += '    <td colspan="2" class="primer3plus_cell_primer_pair_box">&nbsp;' + writeName  + ' ' + (nr +1) + ':</td>\n';
+    formHTML += '    <td colspan="9" class="primer3plus_cell_primer_pair_box">'; 
+    formHTML += '<input id="PRIMER_' + type + '_' + nr + '_SEQUENCE" name="PRIMER_' + type + '_';
+    formHTML += nr + '_SEQUENCE" value="' + res["PRIMER_" + type + "_" + nr + "_SEQUENCE"] + '" size="90"></td>\n';
+    formHTML += '  </tr>\n';
+    formHTML += '  <tr>\n';
+    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
+    formHTML += 'PRIMER_RIGHT_4" target="p3p_help">Start:</a> ' + primerPos[0] + '</td>\n';
+    formHTML += '    <td colspan="2" class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
+    formHTML += 'PRIMER_RIGHT_4" target="p3p_help">Length:</a> ' + primerPos[1] + ' bp</td>\n';
+    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
+    formHTML += 'PRIMER_RIGHT_4_TM" target="p3p_help">Tm:</a> ' + primerTM + ' C </td>\n';
+    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
+    formHTML += 'PRIMER_RIGHT_4_GC_PERCENT" target="p3p_help">GC:</a> ' + primerGC + ' %</td>\n';
+    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
+    formHTML += 'PRIMER_RIGHT_4_SELF_ANY' + thAdd + '" target="p3p_help">Any:</a> ' + primerAny + '</td>\n';
+    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
+    formHTML += 'PRIMER_RIGHT_4_SELF_END' + thAdd + '" target="p3p_help">End:</a> ' + primerEnd + '</td>\n';
+    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
+    formHTML += 'PRIMER_RIGHT_4_TEMPLATE_MISPRIMING' + thTmAdd +'" target="p3p_help">TB:</a> ' + primerTemplateBinding + '</td>\n';
+    formHTML += '    <td class="primer3plus_cell_primer_pair_box">';
+    if (res["PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"] == "1") {
+      formHTML += '<a href="' + linkRoot + 'PRIMER_RIGHT_4_HAIRPIN_TH">HP:</a> ' + primerHairpin;
+    }
+    formHTML += '</td>\n';
+    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
+    formHTML += 'PRIMER_RIGHT_4_END_STABILITY" target="p3p_help">3\' Stab:</a> ' + primerEndStability + '</td>\n';
+    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
+    formHTML += 'PRIMER_RIGHT_4_PENALTY" target="p3p_help">Penalty:</a> ' + primerPenalty + '</td>\n';
+    formHTML += '  </tr>\n';
+    if ((res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_POSITION_PENALTY") &&
+        (res["PRIMER_" + type + "_" + nr + "_POSITION_PENALTY"] != "")) ||
+        (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_MIN_SEQ_QUALITY") &&
+        (res["PRIMER_" + type + "_" + nr + "_MIN_SEQ_QUALITY"] != ""))) {
+      var primerPosPen = "";
+      var primerMinSeqQual = "";
+      if (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_POSITION_PENALTY") &&
+          (res["PRIMER_" + type + "_" + nr + "_POSITION_PENALTY"] != "")) {
+        primerPosPen = '<a href="' + linkRoot + 'PRIMER_RIGHT_4_POSITION_PENALTY" target="p3p_help">Position Penalty:</a>&nbsp;&nbsp;';
+        primerPosPen += res["PRIMER_" + type + "_" + nr + "_POSITION_PENALTY"];
+      }
+      if (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_MIN_SEQ_QUALITY") &&
+          (res["PRIMER_" + type + "_" + nr + "_MIN_SEQ_QUALITY"] != "")) {
+        primerMinSeqQual = '<a href="' + linkRoot + 'PRIMER_RIGHT_4_MIN_SEQ_QUALITY" target="p3p_help">Min Seq Quality:</a>&nbsp;&nbsp;';
+        primerMinSeqQual += res["PRIMER_" + type + "_" + nr + "_MIN_SEQ_QUALITY"];
+      }
+      formHTML += '  <tr>\n';
+      formHTML += '    <td colspan="3" class="primer3plus_cell_primer_pair_box">' + primerPosPen + '</td>\n';
+      formHTML += '    <td colspan="2" class="primer3plus_cell_primer_pair_box">' + primerMinSeqQual + '</td>\n';
+      formHTML += '    <td class="primer3plus_cell_primer_pair_box"></td>\n';
+      formHTML += '    <td class="primer3plus_cell_primer_pair_box"></td>\n';
+      formHTML += '    <td class="primer3plus_cell_primer_pair_box"></td>\n';
+      formHTML += '    <td class="primer3plus_cell_primer_pair_box"></td>\n';
+      formHTML += '    <td class="primer3plus_cell_primer_pair_box"></td>\n';
+      formHTML += '    <td class="primer3plus_cell_primer_pair_box"></td>\n';
+      formHTML += '  </tr>\n';
+    }
+    if (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_LIBRARY_MISPRIMING") &&
+        (res["PRIMER_" + type + "_" + nr + "_LIBRARY_MISPRIMING"] != "")) {
+      formHTML += '  <tr>\n';
+      formHTML += '    <td colspan="11" class="primer3plus_cell_primer_pair_box">';
+      formHTML += '<a href="' + linkRoot + 'PRIMER_RIGHT_4_LIBRARY_MISPRIMING" target="p3p_help">Library Mispriming:</a>&nbsp;';
+      formHTML += res["PRIMER_" + type + "_" + nr + "_LIBRARY_MISPRIMING"] + '</td>\n';
+      formHTML += '  </tr>\n';
+    }
+
+    if (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_LIBRARY_MISHYB") &&
+        (res["PRIMER_" + type + "_" + nr + "_LIBRARY_MISHYB"] != "")) {
+      formHTML += '  <tr>\n';
+      formHTML += '    <td colspan="11" class="primer3plus_cell_primer_pair_box">';
+      formHTML += '<a href="' + linkRoot + 'PRIMER_INTERNAL_4_LIBRARY_MISHYB" target="p3p_help">Library Mishyb:</a>&nbsp;';
+      formHTML += res["PRIMER_" + type + "_" + nr + "_LIBRARY_MISHYB"] + '</td>\n';
+      formHTML += '  </tr>\n';
+    }
+    if (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_PROBLEMS") && 
+	 	(res["PRIMER_" + type + "_" + nr + "_PROBLEMS"] != "")) {
+      formHTML += '  <tr>\n';
+      formHTML += '    <td class="primer3plus_cell_no_border_problem" colspan="2"><a href="';
+      formHTML += linkRoot + 'PRIMER_RIGHT_4_PROBLEMS" target="p3p_help">Problems:</a></td>\n';
+      formHTML += '    <td class="primer3plus_cell_no_border_problem" colspan="9">' + res["PRIMER_" + type + "_" + nr + "_PROBLEMS"] + '</td>\n';
+      formHTML += '  </tr>\n';
+    }
+    formHTML += '  <tr>\n    <td class="primer3plus_cell_no_border" colspan="11"></td>\n  </tr>\n';
+  }
+  return formHTML;
 }
 
 function calcP3PResultAdditions(){
