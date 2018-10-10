@@ -251,7 +251,7 @@ function processResData(){
 
 function createResultsDetection(res){
   var ret = createPrimerBox(res, 0, true);
-//  ret += divHTMLsequence(res, "1");
+  ret += createHTMLsequence(res, 0);
   ret += '<div class="primer3plus_select_all">\n  <br />\n';
   ret += '  <input id="P3P_ACTION_SELECT_ALL_PRIMERS" type="checkbox"> &nbsp; Select all Primers';
   ret += '<br />\n<br>\n</div>\n';
@@ -506,6 +506,172 @@ function partPrimerData(res, nr, type) {
 //    retHTML += '  <tr>\n    <td class="primer3plus_cell_no_border" colspan="11"></td>\n  </tr>\n';
   }
   return retHTML;
+}
+
+function createHTMLsequence(res, primerNr) {
+  // primerNr 
+  //   > 0  -- Mark the indicated Primer Pair
+  //    -1  -- Mark no Primers
+  //    -2  -- Mark all Primers
+  if (!(res.hasOwnProperty("SEQUENCE_TEMPLATE")) ||
+      (res["SEQUENCE_TEMPLATE"] == "")) {
+    return "";
+  }      
+  var seq = res["SEQUENCE_TEMPLATE"];
+  var format = seq.replace(/\w/g, "N");
+  var firstBase = parseInt(res["PRIMER_FIRST_BASE_INDEX"]);
+  var targets;
+  if (res.hasOwnProperty("SEQUENCE_EXCLUDED_REGION") &&
+      (res["SEQUENCE_EXCLUDED_REGION"] != "")) {
+    targets = res["SEQUENCE_EXCLUDED_REGION"].split(' ');
+    for(var i = 0 ; i < targets.length ; i++) {
+      format = addRegion(format,targets[i],firstBase,"E");
+    }
+  }
+  if (res.hasOwnProperty("SEQUENCE_TARGET") &&
+      (res["SEQUENCE_TARGET"] != "")) {
+    targets = res["SEQUENCE_TARGET"].split(' ');
+    for(var i = 0 ; i < targets.length ; i++) {
+      format = addRegion(format,targets[i],firstBase,"T");
+    }
+  }
+  if (res.hasOwnProperty("SEQUENCE_INCLUDED_REGION") &&
+      (res["SEQUENCE_INCLUDED_REGION"] != "")) {
+    format = addRegion(format,res["SEQUENCE_INCLUDED_REGION"],firstBase,"I");
+  } 
+  // Add Primers if needed
+  if (primerNr >= 0) {
+    // Add only the first primer pair e.g. Detection
+    if (res.hasOwnProperty("PRIMER_INTERNAL_" + primerNr) &&
+        (res["PRIMER_INTERNAL_" + primerNr] != "")) {
+      format = addRegion(format,res["PRIMER_INTERNAL_" + primerNr],firstBase,"O");
+    }
+    if (res.hasOwnProperty("PRIMER_RIGHT_" + primerNr) &&
+        (res["PRIMER_RIGHT_" + primerNr] != "")) {
+      format = addRegion(format,res["PRIMER_RIGHT_" + primerNr],firstBase,"R");
+    }
+    if (res.hasOwnProperty("PRIMER_LEFT_" + primerNr) &&
+        (res["PRIMER_LEFT_" + primerNr] != "")) {
+      format = addRegion(format,res["PRIMER_LEFT_" + primerNr],firstBase,"F");
+    }
+  }
+  else if (primerNr == -2) {
+    // Mark all primers on the sequence e.g. Sequencing
+    var counter = 0;
+    while (res.hasOwnProperty("PRIMER_INTERNAL_" + counter)) {
+      format = addRegion(format,res["PRIMER_INTERNAL_" + counter],firstBase,"O");
+      counter++;
+    }
+    counter = 0;
+    while (res.hasOwnProperty("PRIMER_RIGHT_" + counter)) {
+      format = addRegion(format,res["PRIMER_RIGHT_" + counter],firstBase,"R");
+      counter++;
+    }
+    counter = 0;
+    while (res.hasOwnProperty("PRIMER_LEFT_" + counter)) {
+      format = addRegion(format,res["PRIMER_LEFT_" + counter],firstBase,"F");
+      counter++;
+    }
+  }  
+  if (res.hasOwnProperty("SEQUENCE_OVERLAP_JUNCTION_LIST") &&
+      (res["SEQUENCE_OVERLAP_JUNCTION_LIST"] != "")) {
+    targets = res["SEQUENCE_OVERLAP_JUNCTION_LIST"].split(' ');
+    for(var i = 0 ; i < targets.length ; i++) {
+      format = addRegion(format,"" + (parseInt(targets[i]) - 1) + ",2",firstBase,"-");
+    }
+  }
+
+  // Handy for testing:
+  // seq = format;
+    
+  var resHTML = '<div class="p3p_result_sequence">\n<table>\n';
+  resHTML += '  <colgroup>\n';
+  resHTML += '    <col style="width: 13%;">\n';
+  resHTML += '    <col style="width: 87%">\n';
+  resHTML += '  </colgroup>\n';
+
+  var preFormat = "J";
+  for (var i = 0 ; i < seq.length ; i++) {
+    var base = seq.charAt(i);
+    var baseFormat = format.charAt(i);
+    if ((i % 50) == 0) {
+      resHTML += '  <tr>\n    <td style="text-align: right;">' + (i + firstBase) + '&nbsp;&nbsp;</td>\n    <td>';
+    }
+    if (preFormat != baseFormat) {
+      if (preFormat != "J") {
+        resHTML += '</a>';
+      }
+    }
+    if (((i % 10) == 0) && !((i % 50) == 0)) {
+      resHTML += '&nbsp;&nbsp;';
+    }
+    if (preFormat != baseFormat) {
+      if (baseFormat == "N") {
+        resHTML += '<a>';
+      } else if (baseFormat == "E") {
+        resHTML += '<a class="p3p_excluded_region">';
+      } else if (baseFormat == "T") {
+        resHTML += '<a class="p3p_target">';
+      } else if (baseFormat == "I") {
+        resHTML += '<a class="p3p_included_region">';
+      } else if (baseFormat == "F") {
+        resHTML += '<a class="p3p_left_primer">';
+      } else if (baseFormat == "O") {
+        resHTML += '<a class="p3p_internal_oligo">';
+      } else if (baseFormat == "R") {
+        resHTML += '<a class="p3p_right_primer">';
+      } else if (baseFormat == "B") {
+        resHTML += '<a class="p3p_left_right_primer">';
+      } else if (baseFormat == "-") {
+        resHTML += '<a class="p3p_primer_overlap_pos">';
+      }
+      preFormat = baseFormat;
+    }
+    resHTML += base;
+    if (((i + 1) % 50) == 0) {
+      // If the next is a linebreak end the <a> in new round
+      resHTML += '</a></td>\n  </tr>\n';
+      preFormat = "J";
+    }
+  }
+  if ((seq.length % 50) != 0) {
+    resHTML += '</a></td>\n  </tr>\n';
+  }
+  resHTML += '</table></div>\n';
+  return resHTML;
+}
+
+function addRegion(formatString, region, firstBase, letter) {
+  var reg = region.split(',');
+  var regionStart  = parseInt(reg[0].replace(/\s/g, "")) - firstBase;
+  var regionLength = parseInt(reg[1].replace(/\s/g, ""));
+  if (regionStart < 0) {
+    regionLength = regionLength - regionStart;
+    regionStart = 0;
+  }
+  if (letter == "R") {
+    regionStart = regionStart - regionLength + 1;  
+  }
+  var regionEnd = regionStart + regionLength;
+  if (regionEnd > formatString.length) { // check for -1 !! todo
+    regionEnd = formatString.length;
+  }
+  var ret = formatString.substring(0, regionStart);
+  var toMod = formatString.substring(regionStart,regionEnd);
+  if ((letter != "F") && (letter != "R")) {
+    toMod = toMod.replace(/\w/g, letter);
+  }
+  if (letter == "F") {
+    toMod = toMod.replace(/[^RB]/g, "F");
+    toMod = toMod.replace(/R/g, "B");
+  }
+  if  (letter == "R") {
+    toMod = toMod.replace(/[^FB]/g, "R");
+    toMod = toMod.replace(/F/g, "B");
+  }
+  ret += toMod;
+  ret += formatString.substring(regionEnd); 
+  return ret;
 }
 
 function calcP3PResultAdditions(){

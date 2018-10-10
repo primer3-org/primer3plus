@@ -195,6 +195,15 @@ div#P3P_MENU_BAR a {
   font-weight: bold;
   text-align: left;
 }
+.p3p_result_sequence {
+  float: left;
+  font-size:1.0em;
+  font-family:Courier,monospace;
+  padding-top: 20px;
+  padding-right: 60px;
+  padding-bottom: 20px;
+  padding-left: 60px;
+}
 .p3p_pair_box_div {
   margin: 5px;
   border: 2px solid #ccccff;
@@ -226,6 +235,10 @@ div#P3P_MENU_BAR a {
 .p3p_primer_pair {
   background-color: #c8c8c8;
   color: #000000;
+}
+.p3p_left_right_primer {
+ background-color: #8ce100;
+ color: #000000;
 }
 
   	div#primer3plus_messages { 
