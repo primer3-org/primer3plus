@@ -11,36 +11,36 @@ body {
   width: 1024px;
 }
 table {
-  border:0;
-  width:100%;
-  empty-cells:show;
+  border: 0;
+  width: 100%;
+  empty-cells: show;
 }
 td {
-  border:0;
-  padding:0.15em;
+  border: 0;
+  padding: 0.15em;
 }
 a:visited { 
   color: blue; 
 }
 .p3p_shaded {
-  background-color:#e6e6cd;
+  background-color: #e6e6cd;
 }
 .p3p_more_space {
-  padding:0.2em;
+  padding: 0.2em;
 }
 .p3p_big_space {
-  padding:0.4em;
+  padding: 0.4em;
 }
 
 .p3p_blue {
-  background-color:#ccccff;
+  background-color: #ccccff;
 }
 .p3p_news {
   float: left;
-  width:800px;
+  width: 800px;
   padding: 2px;
   margin: 8px 0 0 8px;
-  line-height:normal;
+  line-height: normal;
   text-align: center; 
 }
 .p3p_top_bar {
@@ -50,24 +50,24 @@ a:visited {
 }
 .p3p_top_bar_title {
   font-size: 2.2em;
-  font-weight:bold;
+  font-weight: bold;
 }
 .p3p_top_bar_explain {
   font-size: 1.0em;
-  font-weight:500;
+  font-weight: 500;
 }
 .p3p_task_bar {
-  width:900px;
+  width: 900px;
   border: 2px solid #ccccff;
   margin: 4px 0px 0px 0px;
   clear: left;
   float: left;
   background-color: #ffffe6;
-  overflow:hidden;
+  overflow: hidden;
   padding: 0px;
 }
 .p3p_no_border_explain {
-  border:0;
+  border: 0;
   font-style: italic;
   font-size: smaller;
 }
@@ -80,13 +80,11 @@ a:visited {
   font-family: monospace;
   font-size: 12px;
 }
-
 div#P3P_TAB_HELP{
   padding: 10px;
   width: 880px;
   margin: 4px 0px 0px 0px;
 }
-
 div#p3p_no_javascript {
   width: 880px;
   border: 2px solid #ccccff;
@@ -94,55 +92,72 @@ div#p3p_no_javascript {
   clear: left;
   float: left;
   background-color: red;
-  overflow:hidden;
+  overflow: hidden;
   padding: 10px;	
 }
-
 div#P3P_TOP_MESSAGE_ERROR {
-  width:880px;
+  width: 880px;
   border: 2px solid #ccccff;
   margin: 4px 0px 0px 0px;
   clear: left;
   float: left;
   background-color: red;
-  overflow:hidden;
+  overflow: hidden;
   padding: 10px;
 }
-
 div#P3P_TOP_MESSAGE_WARNING {
-  width:880px;
+  width: 880px;
   border: 2px solid #ccccff;
   margin: 4px 0px 0px 0px;
   clear: left;
   float: left;
   background-color: #ffff66;
-  overflow:hidden;
+  overflow: hidden;
   padding: 10px;
 }
-
 div#P3P_TOP_MESSAGE_MESSAGE {
-  width:880px;
+  width: 880px;
   border: 2px solid #ccccff;
   margin: 4px 0px 0px 0px;
   clear: left;
   float: left;
   background-color: #33cc33;
-  overflow:hidden;
+  overflow: hidden;
   padding: 10px;
 }
-
-    div#menuBar { float: left; width:900px; padding: 0px; margin: 8px 0 0 8px; line-height:normal; text-align: left; }
-	div#menuBar ul { margin:0px; padding: 0px; list-style:none; }
-	div#menuBar li { float:left; margin:0; border: 2px solid #ccccff; border-bottom-width: 0; }
-	div#menuBar a { top: 2px; display:block; padding: 0.24em 1em; font-weight: bold; cursor: pointer; }
-
+div#P3P_MENU_BAR {
+  float: left;
+  width: 900px;
+  padding: 0px;
+  margin: 8px 0 0 8px;
+  line-height: normal;
+  text-align: left;
+}
+div#P3P_MENU_BAR ul {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+}
+div#P3P_MENU_BAR li {
+  float: left;
+  margin: 0;
+  border: 2px solid #ccccff;
+  border-bottom-width: 0;
+}
+div#P3P_MENU_BAR a {
+  top: 2px;
+  display: block;
+  padding: 0.24em 1em;
+  font-weight: bold;
+  cursor: pointer;
+}
 .p3p_tab_page {
-  width:900px;
+  width: 900px;
   border: 2px solid #ccccff;
   clear: left;
   float: left;
   background-color: #ffffe6;
-  overflow:hidden;
+  overflow: hidden;
   padding: 10px 0px 10px 0px;
 }
 .p3p_fit_to_table {
@@ -156,32 +171,62 @@ div#P3P_TOP_MESSAGE_MESSAGE {
   text-align: right;
   vertical-align: top;
 }
-	
 .p3p_footer_bar {
-   float:left; 
-   width: 900px; 
-   padding: 0px;
-   margin: 8px 0 8px 0;
-   border: 2px solid #ccccff;
-   text-align: left;
+  float:left; 
+  width: 900px; 
+  padding: 0px;
+  margin: 8px 0 8px 0;
+  border: 2px solid #ccccff;
+  text-align: left;
 }
 .p3p_footer_l {
-   float: left;
-   margin: 8px;
-   font-size: 80%;
-   font-family: Arial;
-   font-weight: bold;
-   text-align: left;
+  float: left;
+  margin: 8px;
+  font-size: 80%;
+  font-family: Arial;
+  font-weight: bold;
+  text-align: left;
 }
 .p3p_footer_r {
-   float: right;
-   margin: 8px;
-   font-size: 80%;
-   font-family: Arial;
-   font-weight: bold;
-   text-align: left;
+  float: right;
+  margin: 8px;
+  font-size: 80%;
+  font-family: Arial;
+  font-weight: bold;
+  text-align: left;
 }
-
+.p3p_pair_box_div {
+  margin: 5px;
+  border: 2px solid #ccccff;
+  clear: left;
+  float: left;
+  width: 886px;	
+}
+.p3p_pair_box_table{
+  border-collapse: collapse;
+}
+.p3p_pair_box_cell {
+  padding-top: 0.45em;
+  padding-right: 0.2em;
+  padding-bottom: 0.45em;
+  padding-left: 0.2em;
+}
+.p3p_left_primer {
+  background-color: #ccccff;
+  color: #000000;
+}
+.p3p_internal_oligo {
+  background-color: #000000;
+  color: #ffffff;
+}
+.p3p_right_primer {
+  background-color: #faf04b;
+  color: #000000;
+}
+.p3p_primer_pair {
+  background-color: #c8c8c8;
+  color: #000000;
+}
 
   	div#primer3plus_messages { 
         width:900px;
@@ -245,8 +290,6 @@ div#P3P_TOP_MESSAGE_MESSAGE {
   .primer3plus_cell_no_border_right { border:0; padding:0.15em; text-align:right;}
   .primer3plus_table_with_border { border:1px solid #000; width:100%; empty-cells:show; border-collapse:collapse; }
   .primer3plus_cell_with_border { border:1px solid #000; padding:0.2em; }
-  .primer3plus_table_primer_pair_box { border:0; width:100%; empty-cells:show; border-collapse:collapse; }
-  .primer3plus_cell_primer_pair_box { padding:0.2em; }
   .primer3plus_note { background-color:rgb(255,120,60); padding:0px; }
   .primer3plus_excluded_region { background-color:rgb(255,80,60); color:rgb(0,0,0); }
   .primer3plus_target { background-color:rgb(160,250,130); color:rgb(0,0,0); }
@@ -258,7 +301,6 @@ div#P3P_TOP_MESSAGE_MESSAGE {
   .primer3plus_primer_overlap_pos { background-color:rgb(160,160,160); color:rgb(0,0,0); }
   .primer3plus_warning { background-color:rgb(255,120,60); }
   .primer3plus_primer_pair { background-color:rgb(200,200,200); color:rgb(0,0,0); }
-  .primer3plus_primer_pair_box { margin: 4px; border: 2px solid #ccccff; clear: left; float: left; width: 870px; }
   .primer3plus_long_list {}
   .primer3plus_long_list_table { text-align:left; width:100%; table-layout:fixed; border:0; border-collapse:collapse }
   div#primer3plus_result_sequence { float: left; font-size:1.0em; font-family:Courier,monospace; }

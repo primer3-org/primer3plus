@@ -250,20 +250,20 @@ function processResData(){
 }
 
 function createResultsDetection(res){
-  var ret = divPrimerBox(res,0,true);
+  var ret = createPrimerBox(res, 0, true);
 //  ret += divHTMLsequence(res, "1");
   ret += '<div class="primer3plus_select_all">\n  <br />\n';
   ret += '  <input id="P3P_ACTION_SELECT_ALL_PRIMERS" type="checkbox"> &nbsp; Select all Primers';
   ret += '<br />\n<br>\n</div>\n';
   for (var primerCount = 1 ; primerCount < parseInt(res["PRIMER_PAIR_NUM_RETURNED"]) ; primerCount++) {
-    ret += divPrimerBox(res,primerCount,false);
+    ret += createPrimerBox(res, primerCount, false);
     ret += '<div class="primer3plus_submit"><br />'
     ret += '<input name="Submit" value="Send to Primer3Manager" type="submit"><br /><br /><br /></div>';
   }
   return ret;
 }
 
-function divPrimerBox(res, nr, sel) {
+function createPrimerBox(res, nr, sel) {
   var retHtml = "";
   var linkRoot = `${HELP_LINK_URL}#`;
   var selection = nr + 1;
@@ -325,8 +325,8 @@ function divPrimerBox(res, nr, sel) {
     pairPenalty += Number.parseFloat(res["PRIMER_PAIR_" + nr + "_PENALTY"]).toFixed(3);
   }
 
-  retHtml += '<div class="primer3plus_primer_pair_box">\n';
-  retHtml += '<table class="primer3plus_table_primer_pair_box">\n';
+  retHtml += '<div class="p3p_pair_box_div">\n';
+  retHtml += '<table class="p3p_pair_box_table">\n';
   retHtml += '  <colgroup>\n';
   retHtml += '    <col style="width: 12.0%">\n';
   retHtml += '    <col style="width: 2.0%">\n';
@@ -341,7 +341,7 @@ function divPrimerBox(res, nr, sel) {
   retHtml += '    <col style="width: 13.0%">\n';
   retHtml += '  </colgroup>\n';
   retHtml += '  <tr>\n';
-  retHtml += '    <td colspan="11" class="primer3plus_cell_primer_pair_box">\n      <input id="PRIMER_PAIR_';
+  retHtml += '    <td colspan="11" class="p3p_pair_box_cell">\n      <input id="PRIMER_PAIR_';
   retHtml +=  nr + '_SELECT" name="PRIMER_PAIR_' + nr + '_SELECT" value="1"';
   if (sel) {
     retHtml += "checked=\"checked\" ";
@@ -359,18 +359,18 @@ function divPrimerBox(res, nr, sel) {
   retHtml += partPrimerData(res, nr, "INTERNAL");
   retHtml += partPrimerData(res, nr, "RIGHT");
 
-  retHtml += '  <tr class="primer3plus_primer_pair">\n';
-  retHtml += '    <td colspan="3" class="primer3plus_cell_primer_pair_box"><strong>Pair:</strong>&nbsp;&nbsp;&nbsp;\n';
+  retHtml += '  <tr class="p3p_primer_pair">\n';
+  retHtml += '    <td colspan="3" class="p3p_pair_box_cell"><strong>Pair:</strong>&nbsp;&nbsp;&nbsp;\n';
   retHtml += '      <a href="' + linkRoot + 'PRIMER_PAIR_4_PRODUCT_SIZE">Product Size:</a>&nbsp;\n';
   retHtml += '&nbsp;' + res["PRIMER_PAIR_" + nr + "_PRODUCT_SIZE"] + ' bp</td>\n';
-  retHtml += '    <td class="primer3plus_cell_primer_pair_box">' + productTM + '</td>\n';
-  retHtml += '    <td class="primer3plus_cell_primer_pair_box">' + productOligDiff + '</td>\n';
-  retHtml += '    <td class="primer3plus_cell_primer_pair_box">' + primerAny + '</td>\n';
-  retHtml += '    <td class="primer3plus_cell_primer_pair_box">' + primerEnd + '</td>\n';
-  retHtml += '    <td class="primer3plus_cell_primer_pair_box">' + productMispriming + '</td>\n';
-  retHtml += '    <td class="primer3plus_cell_primer_pair_box">' + productToA + '</td>\n';
-  retHtml += '    <td class="primer3plus_cell_primer_pair_box"></td>\n';
-  retHtml += '    <td class="primer3plus_cell_primer_pair_box">' + pairPenalty + '</td>\n';
+  retHtml += '    <td class="p3p_pair_box_cell">' + productTM + '</td>\n';
+  retHtml += '    <td class="p3p_pair_box_cell">' + productOligDiff + '</td>\n';
+  retHtml += '    <td class="p3p_pair_box_cell">' + primerAny + '</td>\n';
+  retHtml += '    <td class="p3p_pair_box_cell">' + primerEnd + '</td>\n';
+  retHtml += '    <td class="p3p_pair_box_cell">' + productMispriming + '</td>\n';
+  retHtml += '    <td class="p3p_pair_box_cell">' + productToA + '</td>\n';
+  retHtml += '    <td class="p3p_pair_box_cell"></td>\n';
+  retHtml += '    <td class="p3p_pair_box_cell">' + pairPenalty + '</td>\n';
   retHtml += '  </tr>\n';
   retHtml += '</table>\n';
   retHtml += '</div>\n';
@@ -401,7 +401,7 @@ function partPrimerData(res, nr, type) {
     cssName = "right_primer";
     writeName = "Right Primer";
   }
-  var formHTML = "";
+  var retHTML = "";
   if (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_SEQUENCE") &&
       (res["PRIMER_" + type + "_" + nr + "_SEQUENCE"] != "")) {
     var primerPos = res["PRIMER_" + type + "_" + nr].split(',');
@@ -420,37 +420,37 @@ function partPrimerData(res, nr, type) {
     var primerEndStability = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_END_STABILITY"]).toFixed(1);
     var primerPenalty = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_PENALTY"]).toFixed(3);
 
-    formHTML += '  <tr class="primer3plus_' + cssName + '">\n';
-    formHTML += '    <td colspan="2" class="primer3plus_cell_primer_pair_box">&nbsp;' + writeName  + ' ' + (nr +1) + ':</td>\n';
-    formHTML += '    <td colspan="9" class="primer3plus_cell_primer_pair_box">'; 
-    formHTML += '<input id="PRIMER_' + type + '_' + nr + '_SEQUENCE" name="PRIMER_' + type + '_';
-    formHTML += nr + '_SEQUENCE" value="' + res["PRIMER_" + type + "_" + nr + "_SEQUENCE"] + '" size="90"></td>\n';
-    formHTML += '  </tr>\n';
-    formHTML += '  <tr>\n';
-    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
-    formHTML += 'PRIMER_RIGHT_4" target="p3p_help">Start:</a> ' + primerPos[0] + '</td>\n';
-    formHTML += '    <td colspan="2" class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
-    formHTML += 'PRIMER_RIGHT_4" target="p3p_help">Length:</a> ' + primerPos[1] + ' bp</td>\n';
-    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
-    formHTML += 'PRIMER_RIGHT_4_TM" target="p3p_help">Tm:</a> ' + primerTM + ' C </td>\n';
-    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
-    formHTML += 'PRIMER_RIGHT_4_GC_PERCENT" target="p3p_help">GC:</a> ' + primerGC + ' %</td>\n';
-    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
-    formHTML += 'PRIMER_RIGHT_4_SELF_ANY' + thAdd + '" target="p3p_help">Any:</a> ' + primerAny + '</td>\n';
-    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
-    formHTML += 'PRIMER_RIGHT_4_SELF_END' + thAdd + '" target="p3p_help">End:</a> ' + primerEnd + '</td>\n';
-    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
-    formHTML += 'PRIMER_RIGHT_4_TEMPLATE_MISPRIMING' + thTmAdd +'" target="p3p_help">TB:</a> ' + primerTemplateBinding + '</td>\n';
-    formHTML += '    <td class="primer3plus_cell_primer_pair_box">';
+    retHTML += '  <tr class="p3p_' + cssName + '">\n';
+    retHTML += '    <td colspan="2" class="p3p_pair_box_cell">&nbsp;' + writeName  + ' ' + (nr +1) + ':</td>\n';
+    retHTML += '    <td colspan="9" class="p3p_pair_box_cell">'; 
+    retHTML += '<input id="PRIMER_' + type + '_' + nr + '_SEQUENCE" name="PRIMER_' + type + '_';
+    retHTML += nr + '_SEQUENCE" value="' + res["PRIMER_" + type + "_" + nr + "_SEQUENCE"] + '" size="90"></td>\n';
+    retHTML += '  </tr>\n';
+    retHTML += '  <tr>\n';
+    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += 'PRIMER_RIGHT_4" target="p3p_help">Start:</a> ' + primerPos[0] + '</td>\n';
+    retHTML += '    <td colspan="2" class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += 'PRIMER_RIGHT_4" target="p3p_help">Length:</a> ' + primerPos[1] + ' bp</td>\n';
+    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += 'PRIMER_RIGHT_4_TM" target="p3p_help">Tm:</a> ' + primerTM + ' C </td>\n';
+    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += 'PRIMER_RIGHT_4_GC_PERCENT" target="p3p_help">GC:</a> ' + primerGC + ' %</td>\n';
+    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += 'PRIMER_RIGHT_4_SELF_ANY' + thAdd + '" target="p3p_help">Any:</a> ' + primerAny + '</td>\n';
+    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += 'PRIMER_RIGHT_4_SELF_END' + thAdd + '" target="p3p_help">End:</a> ' + primerEnd + '</td>\n';
+    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += 'PRIMER_RIGHT_4_TEMPLATE_MISPRIMING' + thTmAdd +'" target="p3p_help">TB:</a> ' + primerTemplateBinding + '</td>\n';
+    retHTML += '    <td class="p3p_pair_box_cell">';
     if (res["PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"] == "1") {
-      formHTML += '<a href="' + linkRoot + 'PRIMER_RIGHT_4_HAIRPIN_TH">HP:</a> ' + primerHairpin;
+      retHTML += '<a href="' + linkRoot + 'PRIMER_RIGHT_4_HAIRPIN_TH">HP:</a> ' + primerHairpin;
     }
-    formHTML += '</td>\n';
-    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
-    formHTML += 'PRIMER_RIGHT_4_END_STABILITY" target="p3p_help">3\' Stab:</a> ' + primerEndStability + '</td>\n';
-    formHTML += '    <td class="primer3plus_cell_primer_pair_box"><a href="' + linkRoot;
-    formHTML += 'PRIMER_RIGHT_4_PENALTY" target="p3p_help">Penalty:</a> ' + primerPenalty + '</td>\n';
-    formHTML += '  </tr>\n';
+    retHTML += '</td>\n';
+    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += 'PRIMER_RIGHT_4_END_STABILITY" target="p3p_help">3\' Stab:</a> ' + primerEndStability + '</td>\n';
+    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += 'PRIMER_RIGHT_4_PENALTY" target="p3p_help">Penalty:</a> ' + primerPenalty + '</td>\n';
+    retHTML += '  </tr>\n';
     if ((res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_POSITION_PENALTY") &&
         (res["PRIMER_" + type + "_" + nr + "_POSITION_PENALTY"] != "")) ||
         (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_MIN_SEQ_QUALITY") &&
@@ -467,45 +467,45 @@ function partPrimerData(res, nr, type) {
         primerMinSeqQual = '<a href="' + linkRoot + 'PRIMER_RIGHT_4_MIN_SEQ_QUALITY" target="p3p_help">Min Seq Quality:</a>&nbsp;&nbsp;';
         primerMinSeqQual += res["PRIMER_" + type + "_" + nr + "_MIN_SEQ_QUALITY"];
       }
-      formHTML += '  <tr>\n';
-      formHTML += '    <td colspan="3" class="primer3plus_cell_primer_pair_box">' + primerPosPen + '</td>\n';
-      formHTML += '    <td colspan="2" class="primer3plus_cell_primer_pair_box">' + primerMinSeqQual + '</td>\n';
-      formHTML += '    <td class="primer3plus_cell_primer_pair_box"></td>\n';
-      formHTML += '    <td class="primer3plus_cell_primer_pair_box"></td>\n';
-      formHTML += '    <td class="primer3plus_cell_primer_pair_box"></td>\n';
-      formHTML += '    <td class="primer3plus_cell_primer_pair_box"></td>\n';
-      formHTML += '    <td class="primer3plus_cell_primer_pair_box"></td>\n';
-      formHTML += '    <td class="primer3plus_cell_primer_pair_box"></td>\n';
-      formHTML += '  </tr>\n';
+      retHTML += '  <tr>\n';
+      retHTML += '    <td colspan="3" class="p3p_pair_box_cell">' + primerPosPen + '</td>\n';
+      retHTML += '    <td colspan="2" class="p3p_pair_box_cell">' + primerMinSeqQual + '</td>\n';
+      retHTML += '    <td class="p3p_pair_box_cell"></td>\n';
+      retHTML += '    <td class="p3p_pair_box_cell"></td>\n';
+      retHTML += '    <td class="p3p_pair_box_cell"></td>\n';
+      retHTML += '    <td class="p3p_pair_box_cell"></td>\n';
+      retHTML += '    <td class="p3p_pair_box_cell"></td>\n';
+      retHTML += '    <td class="p3p_pair_box_cell"></td>\n';
+      retHTML += '  </tr>\n';
     }
     if (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_LIBRARY_MISPRIMING") &&
         (res["PRIMER_" + type + "_" + nr + "_LIBRARY_MISPRIMING"] != "")) {
-      formHTML += '  <tr>\n';
-      formHTML += '    <td colspan="11" class="primer3plus_cell_primer_pair_box">';
-      formHTML += '<a href="' + linkRoot + 'PRIMER_RIGHT_4_LIBRARY_MISPRIMING" target="p3p_help">Library Mispriming:</a>&nbsp;';
-      formHTML += res["PRIMER_" + type + "_" + nr + "_LIBRARY_MISPRIMING"] + '</td>\n';
-      formHTML += '  </tr>\n';
+      retHTML += '  <tr>\n';
+      retHTML += '    <td colspan="11" class="p3p_pair_box_cell">';
+      retHTML += '<a href="' + linkRoot + 'PRIMER_RIGHT_4_LIBRARY_MISPRIMING" target="p3p_help">Library Mispriming:</a>&nbsp;';
+      retHTML += res["PRIMER_" + type + "_" + nr + "_LIBRARY_MISPRIMING"] + '</td>\n';
+      retHTML += '  </tr>\n';
     }
 
     if (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_LIBRARY_MISHYB") &&
         (res["PRIMER_" + type + "_" + nr + "_LIBRARY_MISHYB"] != "")) {
-      formHTML += '  <tr>\n';
-      formHTML += '    <td colspan="11" class="primer3plus_cell_primer_pair_box">';
-      formHTML += '<a href="' + linkRoot + 'PRIMER_INTERNAL_4_LIBRARY_MISHYB" target="p3p_help">Library Mishyb:</a>&nbsp;';
-      formHTML += res["PRIMER_" + type + "_" + nr + "_LIBRARY_MISHYB"] + '</td>\n';
-      formHTML += '  </tr>\n';
+      retHTML += '  <tr>\n';
+      retHTML += '    <td colspan="11" class="p3p_pair_box_cell">';
+      retHTML += '<a href="' + linkRoot + 'PRIMER_INTERNAL_4_LIBRARY_MISHYB" target="p3p_help">Library Mishyb:</a>&nbsp;';
+      retHTML += res["PRIMER_" + type + "_" + nr + "_LIBRARY_MISHYB"] + '</td>\n';
+      retHTML += '  </tr>\n';
     }
     if (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_PROBLEMS") && 
 	 	(res["PRIMER_" + type + "_" + nr + "_PROBLEMS"] != "")) {
-      formHTML += '  <tr>\n';
-      formHTML += '    <td class="primer3plus_cell_no_border_problem" colspan="2"><a href="';
-      formHTML += linkRoot + 'PRIMER_RIGHT_4_PROBLEMS" target="p3p_help">Problems:</a></td>\n';
-      formHTML += '    <td class="primer3plus_cell_no_border_problem" colspan="9">' + res["PRIMER_" + type + "_" + nr + "_PROBLEMS"] + '</td>\n';
-      formHTML += '  </tr>\n';
+      retHTML += '  <tr>\n';
+      retHTML += '    <td class="primer3plus_cell_no_border_problem" colspan="2"><a href="';
+      retHTML += linkRoot + 'PRIMER_RIGHT_4_PROBLEMS" target="p3p_help">Problems:</a></td>\n';
+      retHTML += '    <td class="primer3plus_cell_no_border_problem" colspan="9">' + res["PRIMER_" + type + "_" + nr + "_PROBLEMS"] + '</td>\n';
+      retHTML += '  </tr>\n';
     }
-    formHTML += '  <tr>\n    <td class="primer3plus_cell_no_border" colspan="11"></td>\n  </tr>\n';
+//    retHTML += '  <tr>\n    <td class="primer3plus_cell_no_border" colspan="11"></td>\n  </tr>\n';
   }
-  return formHTML;
+  return retHTML;
 }
 
 function calcP3PResultAdditions(){
