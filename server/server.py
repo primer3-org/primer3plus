@@ -20,6 +20,8 @@ app.config['PRIMER3PLUS'] = os.path.join(P3PWS, "..")
 app.config['UPLOAD_FOLDER'] = os.path.join(app.config['PRIMER3PLUS'], "data")
 app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024   #maximum of 8MB
 
+KILLTIME = 60 # time in seconds till Primer3 is killed!
+
 P3PATHFIX = "PRIMER_THERMODYNAMIC_PARAMETERS_PATH=" +  os.path.join(P3PWS, "../../primer3/src/primer3_config/\n")
 regEq = re.compile(r"PRIMER_THERMODYNAMIC_PARAMETERS_PATH=[^\n]*\n")
 
@@ -70,12 +72,12 @@ def runp3():
                       #  print('\nInput: ' + infile + "\n")
                         stat = {'timeout':False}
                         proc = subprocess.Popen(p3_args, stdout=log, stderr=err)
-                        timer = threading.Timer(5, p3_watchdog, (proc, stat))
+                        timer = threading.Timer(KILLTIME, p3_watchdog, (proc, stat))
                         timer.start()
                         proc.wait()
                         timer.cancel()
                         if stat['timeout'] and not proc.returncode == 100:
-                            p3p_err_str += "Error: Primer3 was teminated due to long runtime!"
+                            p3p_err_str += "Error: Primer3 was teminated due to long runtime of more than " + str(KILLTIME)  + " seconds!"
                     except OSError as e:
                         if e.errno == os.errno.ENOENT:
                             return jsonify(errors = [{"title": "Binary ./primer3core not found!"}]), 400

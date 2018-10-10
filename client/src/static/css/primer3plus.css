@@ -247,7 +247,19 @@ div#P3P_MENU_BAR a {
   padding: 0.2em;
   background-color: #ff783c; 
 }
-
+.p3p_long_list {
+  padding: 15px;
+}
+.p3p_long_list_table {
+  text-align: left;
+  border-collapse: collapse;
+}
+.p3p_cell_long_list_l {
+  text-align: left;
+}
+.p3p_cell_long_list_r {
+  text-align: right;
+}
 
   	div#primer3plus_messages { 
         width:900px;
@@ -322,8 +334,6 @@ div#P3P_MENU_BAR a {
   .primer3plus_primer_overlap_pos { background-color:rgb(160,160,160); color:rgb(0,0,0); }
   .primer3plus_warning { background-color:rgb(255,120,60); }
   .primer3plus_primer_pair { background-color:rgb(200,200,200); color:rgb(0,0,0); }
-  .primer3plus_long_list {}
-  .primer3plus_long_list_table { text-align:left; width:100%; table-layout:fixed; border:0; border-collapse:collapse }
   div#primer3plus_result_sequence { float: left; font-size:1.0em; font-family:Courier,monospace; }
   div#primer3plus_result_sequence_id  { float: left; font-size:1.0em; font-weight:bold;}
   .primer3plus_select_all { width: 100%; clear: left; float: left;background-color: rgb(255, 255, 230);}

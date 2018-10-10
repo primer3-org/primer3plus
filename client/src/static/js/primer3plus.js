@@ -87,6 +87,7 @@ function loadSetFileFromServer() {
 
 function runPrimer3() {
   del_all_messages ();
+  document.getElementById('P3P_RESULTS_BOX').innerHTML = "";
   var res = document.getElementById('P3P_SEL_TAB_RESULTS');
   if (res != null) {
     res.style.display="inline";
@@ -236,16 +237,16 @@ function processResData(){
   } 
   // Sequencing needs a different sequenceprint
   else if (results["PRIMER_TASK"] == "pick_sequencing_primers") {
-    returnHTML += createResultsPrimerList(completeParameters, results, false);
+    returnHTML += createResultsPrimerList(results, -2);
   } 
   // The regular output
   else {
-      returnHTML += createResultsPrimerList(completeParameters, results, true);
+    returnHTML += createResultsPrimerList(results, -1);
   }
 
   // Add statistics
 
-  document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = returnHTML;
+//  document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = returnHTML;
   document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
 }
 
@@ -660,7 +661,7 @@ function createHTMLsequence(res, primerNr) {
   } 
   // Add Primers if needed
   if (primerNr >= 0) {
-    // Add only the first primer pair e.g. Detection
+    // Add only one primer pair e.g. Detection
     if (res.hasOwnProperty("PRIMER_INTERNAL_" + primerNr) &&
         (res["PRIMER_INTERNAL_" + primerNr] != "")) {
       format = addRegion(format,res["PRIMER_INTERNAL_" + primerNr],firstBase,"O");
@@ -792,6 +793,113 @@ function addRegion(formatString, region, firstBase, letter) {
   ret += formatString.substring(regionEnd); 
   return ret;
 }
+
+function createResultsPrimerList (res, printSeqStyle) {
+  var retHTML = "";
+  if (res.hasOwnProperty("PRIMER_LEFT_0_SEQUENCE")) {
+    retHTML += '<h2 class="primer3plus_left_primer" style="padding-left: 15px">Left Primers:</h2>\n';
+    retHTML += divLongList(res,"LEFT");
+  }
+  if (res.hasOwnProperty("PRIMER_INTERNAL_OLIGO_0_SEQUENCE")) {
+    retHTML += '<h2 class="primer3plus_internal_oligo" style="padding-left: 15px">Internal Oligos:</h2>\n';
+    retHTML += divLongList(res,"INTERNAL_OLIGO");
+  }
+  if (res.hasOwnProperty("PRIMER_RIGHT_0_SEQUENCE")) {
+    retHTML += '<h2 class="primer3plus_right_primer" style="padding-left: 15px">Right Primers:</h2>\n';
+    retHTML += divLongList(res,"RIGHT");
+  }
+  retHTML += createHTMLsequence(res, printSeqStyle);
+
+  retHTML += '<div class="primer3plus_select_all">\n';
+  retHTML += '  <input id="SELECT_ALL_PRIMERS" name="SELECT_ALL_PRIMERS" value="1" type="checkbox"> &nbsp; Select all Primers &nbsp;\n';
+  retHTML += '</div>\n';
+  retHTML += '<div class="primer3plus_submit">\n';
+  retHTML += '&nbsp;<input name="Submit" value="Send to Primer3Manager" type="submit"> <input value="Reset Form" type="reset">\n';
+  retHTML += '<br /><br />\n';
+  retHTML += '</div>\n';
+
+  return retHTML;
+}
+
+function divLongList (res, primerType) {
+  var linkRoot = `{HELP_LINK_URL}#`;
+  var thAdd = "";
+  if (res["PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"] == "1") {
+  	  thAdd = "_TH";
+  }
+  var thTmAdd = "";
+  if (res["PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT"] == "1") {
+  	  thTmAdd = "_TH";
+  }
+  var retHTML = '<div class="p3p_long_list">\n<table class="p3p_long_list_table">\n';
+  retHTML += '  <colgroup>\n';
+  retHTML += '    <col style="width: 16%">\n';
+  retHTML += '    <col style="width: 28%">\n';
+  retHTML += '    <col style="width: 6.5%;">\n';
+  retHTML += '    <col style="width: 6.5%;">\n';
+  retHTML += '    <col style="width: 6.0%;">\n';
+  retHTML += '    <col style="width: 6.5%;">\n';
+  retHTML += '    <col style="width: 5.5%;">\n';
+  retHTML += '    <col style="width: 5.5%;">\n';
+  retHTML += '    <col style="width: 6.5%;">\n';
+  retHTML += '    <col style="width: 6.5%;">\n';
+  retHTML += '    <col style="width: 7.5%;">\n';
+  retHTML += '  </colgroup>\n';
+  retHTML += '  <tr>\n';
+  retHTML += '    <td class="p3p_cell_long_list_l">&nbsp; &nbsp; &nbsp; &nbsp; Name</td>\n';
+  retHTML += '    <td class="p3p_cell_long_list_l">Sequence</td>\n';
+  retHTML += '    <td class="p3p_cell_long_list_r"><a href="' + linkRoot + 'PRIMER_RIGHT_4">Start</a></td>\n';
+  retHTML += '    <td class="p3p_cell_long_list_r"><a href="' + linkRoot + 'PRIMER_RIGHT_4">Length</a></td>\n';
+  retHTML += '    <td class="p3p_cell_long_list_r"><a href="' + linkRoot + 'PRIMER_RIGHT_4_TM">Tm</a></td>\n';
+  retHTML += '    <td class="p3p_cell_long_list_r"><a href="' + linkRoot + 'PRIMER_RIGHT_4_GC_PERCENT">GC %</a></td>\n';
+  retHTML += '    <td class="p3p_cell_long_list_r"><a href="' + linkRoot + 'PRIMER_RIGHT_4_SELF_ANY' + thAdd + '">Any</a></td>\n';
+  retHTML += '    <td class="p3p_cell_long_list_r"><a href="' + linkRoot + 'PRIMER_RIGHT_4_SELF_END' + thAdd + '">End</a></td>\n';
+  retHTML += '    <td class="p3p_cell_long_list_r"><a href="' + linkRoot + 'PRIMER_RIGHT_4_TEMPLATE_MISPRIMING' + thAdd + '">TB</a></td>\n';
+  retHTML += '    <td class="p3p_cell_long_list_r"><a href="' + linkRoot + 'PRIMER_RIGHT_4_END_STABILITY">3\' Stab</a></td>\n';
+  retHTML += '    <td class="p3p_cell_long_list_r"><a href="' + linkRoot + 'PRIMER_RIGHT_4_PENALTY">Penalty</a></td>\n';
+  retHTML += '  </tr>\n';
+  var counter = 0;
+  while ((res.hasOwnProperty("PRIMER_" + primerType + "_" + counter)) && (counter < 500)) {
+    var primerPos = res["PRIMER_" + primerType + "_" + counter].split(',');
+    retHTML += '  <tr>\n    <td class="p3p_cell_long_list_l">';
+    retHTML += '<input id="PRIMER_' + primerType + "_" + counter + '_SELECT" value="1" type="checkbox">&nbsp;';
+    retHTML += '<input id="PRIMER_' + primerType + "_" + counter + '_NAME" ';
+    retHTML += 'value="' + res["PRIMER_" + primerType + "_" + counter + "_NAME"] + '" size="10"></td>\n';
+    retHTML += '    <td class="p3p_cell_long_list_l"><input id="PRIMER_' + primerType + "_" + counter;
+    retHTML += '_SEQUENCE" value="';
+    retHTML += res["PRIMER_" + primerType + "_" + counter + "_SEQUENCE"] + '" size="30"></td>\n';
+    retHTML += '    <td class="p3p_cell_long_list_r">' + primerPos[0] + '</td>\n';
+    retHTML += '    <td class="p3p_cell_long_list_r">' + primerPos[1] + '</td>\n';
+    retHTML += '    <td class="p3p_cell_long_list_r">' + Number.parseFloat(res["PRIMER_" + primerType + "_" + counter + "_TM"]).toFixed(1) + '</td>\n';
+    retHTML += '    <td class="p3p_cell_long_list_r">' + Number.parseFloat(res["PRIMER_" + primerType + "_" + counter + "_GC_PERCENT"]).toFixed(1) + '</td>\n';
+    retHTML += '    <td class="p3p_cell_long_list_r">' + Number.parseFloat(res["PRIMER_" + primerType + "_" + counter + "_SELF_ANY" + thAdd]).toFixed(1) + '</td>\n';
+    retHTML += '    <td class="p3p_cell_long_list_r">' + Number.parseFloat(res["PRIMER_" + primerType + "_" + counter + "_SELF_END" + thAdd]).toFixed(1) + '</td>\n';
+    var primerTemplateBinding = "";
+    if (res.hasOwnProperty("PRIMER_" + primerType + "_" + counter + "_TEMPLATE_MISPRIMING" + thTmAdd)) {
+      primerTemplateBinding = Number.parseFloat(res["PRIMER_" + primerType + "_" + counter + "_TEMPLATE_MISPRIMING" + thTmAdd]).toFixed(1);
+    }
+    retHTML += '    <td class="p3p_cell_long_list_r">' + primerTemplateBinding + '</td>\n';
+    retHTML += '    <td class="p3p_cell_long_list_r">' + Number.parseFloat(res["PRIMER_" + primerType + "_" + counter + "_END_STABILITY"]).toFixed(1) + '</td>\n';
+    retHTML += '    <td class="p3p_cell_long_list_r">' + Number.parseFloat(res["PRIMER_" + primerType + "_" + counter + "_PENALTY"]).toFixed(3) + '</td>\n';
+    retHTML += '  </tr>\n';
+    counter++;
+  }
+  retHTML += '</table>\n</div>\n';
+
+  retHTML += '<br>\n';
+  retHTML += '<div class="primer3plus_submit">\n';
+  retHTML += '  <br>\n';
+  retHTML += '  <input name="Submit" value="Send to Primer3Manager" type="submit"> <input value="Reset Form" type="reset">\n';
+  retHTML += '  <br /><br /><br />\n';
+  retHTML += '</div>\n';
+
+  return retHTML;
+}
+
+
+
+
+
 
 function calcP3PResultAdditions(){
   // Name the primers
