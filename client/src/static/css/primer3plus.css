@@ -220,6 +220,22 @@ div#P3P_MENU_BAR a {
   padding-bottom: 0.45em;
   padding-left: 0.2em;
 }
+.p3p_excluded_region {
+  background-color: #ff503c;
+  color: #000000;
+}
+.p3p_target {
+  background-color: #a0fa82;
+  color: #000000;
+}
+.p3p_included_region {
+  background-color: #6ed25a;
+  color: #000000;
+}
+.p3p_primer_overlap_pos {
+  background-color: #a0a0a0;
+  color: #000000;
+}
 .p3p_left_primer {
   background-color: #ccccff;
   color: #000000;
@@ -259,6 +275,21 @@ div#P3P_MENU_BAR a {
 }
 .p3p_cell_long_list_r {
   text-align: right;
+}
+.p3p_table_with_border {
+  border: 1px solid #000000;
+  border-collapse: collapse; 
+}
+.p3p_cell_with_border { 
+  border: 1px solid #000000;
+  padding: 0.2em;
+}
+div#p3p_statictics {
+  margin: 7px;
+  border: none;
+  clear: left;
+  float: left;
+  width: 886px;
 }
 
   	div#primer3plus_messages { 
@@ -321,8 +352,6 @@ div#P3P_MENU_BAR a {
   .primer3plus_cell_no_border_problem { border:0; padding:0.15em;background-color:rgb(255,120,60); }
   .primer3plus_cell_no_border_uli_bd { border:0; padding:0.15em; font-weight:bold; text-decoration:underline; }
   .primer3plus_cell_no_border_right { border:0; padding:0.15em; text-align:right;}
-  .primer3plus_table_with_border { border:1px solid #000; width:100%; empty-cells:show; border-collapse:collapse; }
-  .primer3plus_cell_with_border { border:1px solid #000; padding:0.2em; }
   .primer3plus_note { background-color:rgb(255,120,60); padding:0px; }
   .primer3plus_excluded_region { background-color:rgb(255,80,60); color:rgb(0,0,0); }
   .primer3plus_target { background-color:rgb(160,250,130); color:rgb(0,0,0); }

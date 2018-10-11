@@ -243,8 +243,8 @@ function processResData(){
   else {
     returnHTML += createResultsPrimerList(results, -1);
   }
-
   // Add statistics
+  returnHTML += createPrimerStatistics(results);
 
 //  document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = returnHTML;
   document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
@@ -896,10 +896,38 @@ function divLongList (res, primerType) {
   return retHTML;
 }
 
+function createPrimerStatistics(res) {
+  var retHTML = '<div id="p3p_statictics">\n<table class="p3p_table_with_border">\n';
+  retHTML += '  <colgroup>\n';
+  retHTML += '    <col style="width: 20%">\n';
+  retHTML += '    <col style="width: 80%">\n';
+  retHTML += '  </colgroup>\n';
+  retHTML += '  <tr>\n';
+  retHTML += '    <td class="p3p_cell_with_border" colspan="2">Statistics:</td>\n';
+  retHTML += '  </tr>\n';
+  var content = createPrimerStatisticsPart(res,"PRIMER_LEFT_EXPLAIN", "Left Primer");
+  content += createPrimerStatisticsPart(res,"PRIMER_INTERNAL_EXPLAIN", "Internal Oligo");
+  content += createPrimerStatisticsPart(res,"PRIMER_RIGHT_EXPLAIN", "Right Primer");
+  content += createPrimerStatisticsPart(res,"PRIMER_PAIR_EXPLAIN", "Primer Pair");
+  if (content == ""){
+    return "";
+  } else {
+    retHTML += content;
+    retHTML += '</table>\n</div>\n';
+    return retHTML;
+  }
+}
 
-
-
-
+function createPrimerStatisticsPart(res,type,name) {
+  var retHTML = "";
+  if (res.hasOwnProperty(type) && (res[type] != "")) {
+    retHTML += '  <tr>\n';
+    retHTML += '    <td class="p3p_cell_with_border">' + name + ':</td>\n';
+    retHTML += '    <td class="p3p_cell_with_border">' + res[type] + '</td>\n';
+    retHTML += '  </tr>\n';
+  }
+  return retHTML;
+}
 
 function calcP3PResultAdditions(){
   // Name the primers
