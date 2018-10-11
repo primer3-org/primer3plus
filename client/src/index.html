@@ -11,71 +11,6 @@
 </head>
 
 <body>
-<SCRIPT>
-var prevSequence = 0;
-var prevSequencing = 0;
-
-function selectSequencing() {
-        var seqId = -1;
-        var selector = document.getElementById('PRIMER_TASK');
-        for (var i = 0; i < selector.length; i++) {
-                if (selector.options[i].text == 'Sequencing') {
-                        seqId = i;
-                }
-        }
-        if (seqId > -1) {
-                document.getElementById('PRIMER_TASK').options[seqId].selected='true';
-                showSelection(document.getElementById('PRIMER_TASK'));
-        }
-}
-
-function clearMarking() {
-        var txtarea = document.mainForm.sequenceTextarea;
-        txtarea.value = txtarea.value.replace(/[{}<>[\]]/g,"");
-        document.getElementById("SEQUENCE_INCLUDED_REGION").value="";
-        document.getElementById("SEQUENCE_EXCLUDED_REGION").value="";
-        document.getElementById("SEQUENCE_TARGET").value="";                
-}
-
-function setRegion(tagOpen,tagClose) {
-        var txtarea = document.mainForm.sequenceTextarea;
-        if (document.selection && document.selection.type == 'Text') {
-                var theSelection = document.selection.createRange().text;
-                txtarea.focus();
-                if (theSelection.length > 0) {
-                        document.selection.createRange().text = tagOpen + theSelection + tagClose;
-                }
-                document.selection.empty();
-        // Mozilla
-        } else if(txtarea.selectionStart || txtarea.selectionStart == '0') {
-                var replaced = false;
-                var startPos = txtarea.selectionStart;
-                var endPos = txtarea.selectionEnd;
-                if (endPos-startPos)
-                        replaced = true;
-                var scrollTop = txtarea.scrollTop;
-                var myText = (txtarea.value).substring(startPos, endPos);
-                if (myText.length < 1) {
-                        return;
-                }
-                subst = tagOpen + myText + tagClose;
-
-                txtarea.value = txtarea.value.substring(0, startPos) + subst +
-                        txtarea.value.substring(endPos, txtarea.value.length);
-                txtarea.focus();
-                //set new selection
-                if (replaced) {
-                        var cPos = startPos+(tagOpen.length+myText.length+tagClose.length);
-                        txtarea.selectionStart = cPos;
-                        txtarea.selectionEnd = cPos;
-                } else {
-                        txtarea.selectionStart = startPos+tagOpen.length;
-                        txtarea.selectionEnd = startPos+tagOpen.length+myText.length;
-                }
-                txtarea.scrollTop = scrollTop;
-        }
-}
-</SCRIPT>  	
   <div class="p3p_page">
 
     <div class="p3p_news">
@@ -271,16 +206,16 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
             Mark selected region:
           </td>
           <td>
-            <input type=button id="P3P_ACTION_SEL_EXCLUDED" onclick="setRegion('<','>')" value ="&lt; Excluded  &gt;">
+            <input type=button id="P3P_ACTION_SEL_EXCLUDED" value ="&lt; Excluded  &gt;">
           </td>
           <td>
-            <input type=button id="P3P_ACTION_SEL_TARGET" onclick="setRegion('[',']')" value="[ Target ]">
+            <input type=button id="P3P_ACTION_SEL_TARGET" value="[ Target ]">
           </td>
           <td>
-            <input type=button id="P3P_ACTION_SEL_INCLUDED" onclick="setRegion('{','}')" value="{ Included }">
+            <input type=button id="P3P_ACTION_SEL_INCLUDED" value="{ Included }">
           </td>
           <td>
-            <input type=button id="P3P_ACTION_SEL_CLEAR" onclick="clearMarking()" value="Clear">
+            <input type=button id="P3P_ACTION_SEL_CLEAR" value="Clear">
           </td>
           <td>
           </td>

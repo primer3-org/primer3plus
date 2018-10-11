@@ -1087,6 +1087,7 @@ function initElements(){
   initLoadSeqFile();
   initSaveFile();
   initLoadExample();
+  initSelectionFeature();
   initExplainSeqRegions();
   initLoadSetFile();
   init_message_buttons();
@@ -1193,6 +1194,9 @@ function getHtmlTagValue(tag) {
   if (pageElement !== null) {
     var tagName = pageElement.tagName.toLowerCase();
     if (tagName === 'textarea') {
+      if (tag == "SEQUENCE_TEMPLATE") {
+        return cleanSeq(pageElement.value);
+      }
       return pageElement.value;
     }
     if (tagName === 'select') {
@@ -1285,6 +1289,166 @@ function setHtmlTagValue(tag, value) {
     }
   }
   return false;
+}
+
+function initSelectionFeature() {
+  var btExcluded = document.getElementById('P3P_ACTION_SEL_EXCLUDED');
+  if (btExcluded !== null) {
+    btExcluded.addEventListener('click', function(){setSelectionRegion("SEQUENCE_EXCLUDED_REGION")});
+  }
+  var btTarget = document.getElementById('P3P_ACTION_SEL_TARGET');
+  if (btTarget !== null) {
+    btTarget.addEventListener('click', function(){setSelectionRegion("SEQUENCE_TARGET")});
+  }
+  var btIncluded = document.getElementById('P3P_ACTION_SEL_INCLUDED');
+  if (btIncluded !== null) {
+    btIncluded.addEventListener('click', function(){setSelectionRegion("SEQUENCE_INCLUDED_REGION")});
+  }
+  var btClear = document.getElementById('P3P_ACTION_SEL_CLEAR');
+  if (btClear !== null) {
+    btClear.addEventListener('click', clearSelectionRegion);
+  }
+  var fieldExcluded = document.getElementById('SEQUENCE_EXCLUDED_REGION');
+  if (fieldExcluded !== null) {
+    fieldExcluded.addEventListener('focusout', function(){createSeqWithDeco(-1);});
+  }
+  var fieldTarget = document.getElementById('SEQUENCE_TARGET');
+  if (fieldTarget !== null) {
+    fieldTarget.addEventListener('focusout', function(){createSeqWithDeco(-1);});
+  }
+  var fieldIncluded = document.getElementById('SEQUENCE_INCLUDED_REGION');
+  if (fieldIncluded !== null) {
+    fieldIncluded.addEventListener('focusout', function(){createSeqWithDeco(-1);});
+  }
+  var fieldOverlap = document.getElementById('SEQUENCE_OVERLAP_JUNCTION_LIST');
+  if (fieldOverlap !== null) {
+    fieldOverlap.addEventListener('focusout', function(){createSeqWithDeco(-1);});
+  }
+  document.getElementById("SEQUENCE_TEMPLATE").addEventListener('keyup', function (event) {
+    if (event.key == "-") {
+      event.preventDefault();
+      var seqBox = document.getElementById("SEQUENCE_TEMPLATE");
+      var start = cleanSeq(seqBox.value.substring(0, seqBox.selectionStart));
+      var firstBase = 0;
+      if (getHtmlTagValue("PRIMER_FIRST_BASE_INDEX")) {
+        firstBase = parseInt(getHtmlTagValue("PRIMER_FIRST_BASE_INDEX"));
+      }
+      var pos = start.length + firstBase;
+      var addField = document.getElementById("SEQUENCE_OVERLAP_JUNCTION_LIST");
+      if (addField !== null) {
+        var con = addField.value;
+        if (con == "") {
+          addField.value = pos;
+        } else {
+          addField.value = con + " " + pos;
+        }
+      }
+      createSeqWithDeco(pos);
+    }
+  });
+}
+
+function setSelectionRegion(tag) {
+  var seqBox = document.getElementById("SEQUENCE_TEMPLATE");
+  var start = cleanSeq(seqBox.value.substring(0, seqBox.selectionStart));
+  var center = cleanSeq(seqBox.value.substring(seqBox.selectionStart, seqBox.selectionEnd));
+  var firstBase = 0;
+  if (getHtmlTagValue("PRIMER_FIRST_BASE_INDEX")) {
+    firstBase = parseInt(getHtmlTagValue("PRIMER_FIRST_BASE_INDEX"));
+  }
+  if (center.length < 1) {
+    return;
+  }
+  var pos = "" + (start.length + firstBase) + "," + center.length;
+  var addField = document.getElementById(tag);
+  if (addField !== null) {
+    var con = addField.value;
+    if (con == "") {
+      addField.value = pos;
+    } else {
+      addField.value = con + " " + pos;
+    }
+  }
+  createSeqWithDeco(start.length + firstBase + center.length);
+}
+
+function cleanSeq(seq) {
+  return seq.replace(/[^ACGTNacgtn]/g, "");
+}
+
+function clearSelectionRegion() {
+  var seqBox = document.getElementById("SEQUENCE_TEMPLATE");
+  seqBox.value = cleanSeq(seqBox.value);
+  var delExcl = document.getElementById("SEQUENCE_EXCLUDED_REGION");
+  if (delExcl !== null) {
+    delExcl.value = "";
+  }
+  var delTar = document.getElementById("SEQUENCE_TARGET");
+  if (delTar !== null) {
+    delTar.value = "";
+  }
+  var delIncl = document.getElementById("SEQUENCE_INCLUDED_REGION");
+  if (delIncl !== null) {
+    delIncl.value = "";
+  }
+  var delOverlap = document.getElementById("SEQUENCE_OVERLAP_JUNCTION_LIST");
+  if (delOverlap !== null) {
+    delOverlap.value = "";
+  }
+}
+
+function createSeqWithDeco(pointer) {
+  var firstBase = 0;
+  if (getHtmlTagValue("PRIMER_FIRST_BASE_INDEX")) {
+    firstBase = parseInt(getHtmlTagValue("PRIMER_FIRST_BASE_INDEX"));
+  }
+  var seqBox = document.getElementById("SEQUENCE_TEMPLATE");
+  var seq = cleanSeq(seqBox.value);
+  seq = addSelDeco(seq, firstBase, "SEQUENCE_EXCLUDED_REGION", "<", ">");
+  seq = addSelDeco(seq, firstBase, "SEQUENCE_TARGET", "[", "]");
+  seq = addSelDeco(seq, firstBase, "SEQUENCE_INCLUDED_REGION", "{", "}");
+  seq = addOverlapDeco(seq, firstBase);	
+  seqBox.value = seq;
+}
+
+function addSelDeco(seq, firstBase, tag, start, end) {
+  var addField = document.getElementById(tag);
+  if (addField !== null) {
+    var posList = addField.value.split(" ");
+    for (var i = 0 ; i < posList.length ; i++) {
+      var lin = posList[i].split(",");
+      seq = addSelDecoToSeq(seq, firstBase, parseInt(lin[0]), start);
+      seq = addSelDecoToSeq(seq, firstBase, parseInt(lin[0]) + parseInt(lin[1]), end);
+    }
+  }
+  return seq;
+}
+
+function addOverlapDeco(seq, firstBase) {
+  var addField = document.getElementById("SEQUENCE_OVERLAP_JUNCTION_LIST");
+  if (addField !== null) {
+    var posList = addField.value.split(" ");
+    for (var i = 0 ; i < posList.length ; i++) {
+      seq = addSelDecoToSeq(seq, firstBase, parseInt(posList[i]), "-");
+    }
+  }
+  return seq;
+}
+
+function addSelDecoToSeq(seq, firstBase, pos, deco) {
+  var trueCount = 0;
+  var ret = "";
+  for (var i = 0 ; i < seq.length ; i++) {
+    var letter = seq.charAt(i);
+    ret += letter;	  
+    if (letter.match(/[ACGTNacgtn]/)) {
+      trueCount++;
+    }
+    if ((trueCount + firstBase) == pos) {
+      ret += deco;
+    }
+  }
+  return ret;
 }
 
 function detectBorwser() {
