@@ -1324,28 +1324,31 @@ function initSelectionFeature() {
   if (fieldOverlap !== null) {
     fieldOverlap.addEventListener('focusout', function(){createSeqWithDeco(-1);});
   }
-  document.getElementById("SEQUENCE_TEMPLATE").addEventListener('keyup', function (event) {
-    if (event.key == "-") {
-      event.preventDefault();
-      var seqBox = document.getElementById("SEQUENCE_TEMPLATE");
-      var start = cleanSeq(seqBox.value.substring(0, seqBox.selectionStart));
-      var firstBase = 0;
-      if (getHtmlTagValue("PRIMER_FIRST_BASE_INDEX")) {
-        firstBase = parseInt(getHtmlTagValue("PRIMER_FIRST_BASE_INDEX"));
-      }
-      var pos = start.length + firstBase;
-      var addField = document.getElementById("SEQUENCE_OVERLAP_JUNCTION_LIST");
-      if (addField !== null) {
-        var con = addField.value;
-        if (con == "") {
-          addField.value = pos;
-        } else {
-          addField.value = con + " " + pos;
+  var seq = document.getElementById('SEQUENCE_TEMPLATE');
+  if (seq !== null) {
+    seq.addEventListener('keyup', function (event) {
+      if (event.key == "-") {
+        event.preventDefault();
+        var seqBox = document.getElementById("SEQUENCE_TEMPLATE");
+        var start = cleanSeq(seqBox.value.substring(0, seqBox.selectionStart));
+        var firstBase = 0;
+        if (getHtmlTagValue("PRIMER_FIRST_BASE_INDEX")) {
+          firstBase = parseInt(getHtmlTagValue("PRIMER_FIRST_BASE_INDEX"));
         }
+        var pos = start.length + firstBase;
+        var addField = document.getElementById("SEQUENCE_OVERLAP_JUNCTION_LIST");
+        if (addField !== null) {
+          var con = addField.value;
+          if (con == "") {
+            addField.value = pos;
+          } else {
+            addField.value = con + " " + pos;
+          }
+        }
+        createSeqWithDeco(pos);
       }
-      createSeqWithDeco(pos);
-    }
-  });
+    });
+  }
 }
 
 function setSelectionRegion(tag) {

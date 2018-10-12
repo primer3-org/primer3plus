@@ -1,412 +1,141 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-       "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-  <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
-  <meta name="viewport" content="width==1034px, initial-scale=1.0">
-  <meta name="description" content="Primer3Prefold uses UNAFold to find stable secondary structures in template DNA and avoids them in Primer3Plus.">
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <meta id="viewport" content="width=1034, initial-scale=1.0">
+  <meta id="description" content="Primer3Prefold uses UNAFold to find stable secondary structures in template DNA and avoids them in Primer3Plus.">
   <title>Primer3Plus - Primer3Prefold</title>
-  <style type="text/css">
-	body {
-		color: black;
-		background-color: white;
-		font-size: 100.01%;
-		margin: 1em;
-		padding: 0;
-		text-align: center
-	}
-
-	div#primer3plus_task_bar {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-  	div#primer3plus_messages { 
-        width:900px;
-        border: 2px solid #ccccff;
-        margin: 4px 0px 0px 0px;
-        clear: left;
-        float: left;
-        background-color: rgb(255, 0, 0);
-        overflow:hidden;
-        padding: 0px;
-	}
-
-	div#primer3plus_no_javascript {
-        width:900px;
-        border: 2px solid #ccccff;
-        margin: 4px 0px 0px 0px;
-        clear: left;
-        float: left;
-        background-color: rgb(255, 0, 0);
-        overflow:hidden;
-        padding: 0px;	
-	}
-
-	div#primer3plus_results {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-	div#primer3plus_footer {
-		margin: 12px 0px 3px 0px;
-		font-size: 80%;
-		font-family: Arial;
-		font-weight: bold;
-		color: rgb(75, 75, 75);
-		text-align: center;
-	}
-	
-	div#primer3plus_news {
-		float: left;
-        width:800px;
-        padding: 2px;
-        margin: 8px 0 0 8px;
-        line-height:normal;
-        text-align: center; 
-	}
-
-	div#primer3plus_select_sequence {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-	div#primer3plus_manager {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-	.primer3plus_tab_page {
-		width:900px;
-		border: 2px solid #ccccff;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 10px 0px 10px 0px;
-	}
-	
-	.primer3plus_tab_page_no_border {
-		width:900px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-	}	
-	
-	.primer3plus_submit {
-		width: 900px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-	}
-
-	div#menuBar { float: left; width:900px; padding: 0px; margin: 8px 0 0 8px; line-height:normal; text-align: left; }
-	div#menuBar ul { margin:0px; padding: 0px; list-style:none; }
-	div#menuBar li { float:left; margin:0; border: 2px solid #ccccff; border-bottom-width: 0; }
-	div#menuBar a { top: 2px; display:block; padding: 0.24em 1em; font-weight: bold; cursor: pointer; }
-
-  div#page { text-align: left;
-             margin: auto;
-             width: 1024px;
-        }
-
-  div#primer3plus_top_bar { width: 900px; padding: 0px; border: 2px solid #ccccff;}
-  div#primer3plus_footer { width: 900px; padding: 0px; clear: left;}
-  .primer3plus_background { background-color:#ccccff; }
-  .primer3plus_top_bar_table { border:0; width:100%; }
-  .primer3plus_top_bar_cell { border:0; padding:0.4em;background-color:#ccccff; }
-  .primer3plus_top_bar_explain_cell { border:0; font-style: italic; font-size: 0.9em; background: rgb(255, 255, 230);}
-  .primer3plus_top_bar_title { font-size: 2.2em; font-weight:700; }
-  .primer3plus_top_bar_explain { font-size: 1.0em; font-weight:500 }
-  .primer3plus_top_bar_link { font-weight:bold }
-  .primer3plus_task {font-size: 0.9em}
-  .primer3plus_table_no_border { border:0; width:100%; empty-cells:show; }
-  .primer3plus_cell_no_border { border:0; padding:0.15em; }
-  .primer3plus_cell_no_border_problem { border:0; padding:0.15em;background-color:rgb(255,120,60); }
-  .primer3plus_cell_no_border_explain { border:0; font-style: italic; font-size: smaller;}
-  .primer3plus_cell_no_border_bg { border:0; padding:0.2em; background-color:#ccccff; }
-  .primer3plus_cell_no_border_uli_bd { border:0; padding:0.15em; font-weight:bold; text-decoration:underline; }
-  .primer3plus_cell_no_border_right { border:0; padding:0.15em; text-align:right;}
-  .primer3plus_cell_no_border_th { border:0; padding:0.15em;background-color:rgb(230,230,205); }
-  .primer3plus_table_with_border { border:1px solid #000; width:100%; empty-cells:show; border-collapse:collapse; }
-  .primer3plus_cell_with_border { border:1px solid #000; padding:0.2em; }
-  .primer3plus_table_penalties { border:0; width:100%; empty-cells:show; border-collapse:collapse; }
-  .primer3plus_cell_penalties { border:0; padding-top:0.15em; padding-bottom:0.15em; }
-  .primer3plus_cell_penalties_th { border:0; padding-top:0.15em; padding-bottom:0.15em;background-color:rgb(230,230,205); }
-  .primer3plus_table_primer_pair_box { border:0; width:100%; empty-cells:show; border-collapse:collapse; }
-  .primer3plus_cell_primer_pair_box { padding:0.2em; }
-  .primer3plus_action_button {font-size: 0.9em}
-
-  .primer3plus_note { background-color:rgb(255,120,60); padding:0px; }
-  .primer3plus_excluded_region { background-color:rgb(255,80,60); color:rgb(0,0,0); }
-  .primer3plus_target { background-color:rgb(160,250,130); color:rgb(0,0,0); }
-  .primer3plus_included_region { background-color:rgb(110,210,90); color:rgb(0,0,0); }
-  .primer3plus_left_primer { background-color:#ccccff; color:rgb(0,0,0); }
-  .primer3plus_internal_oligo { background-color:rgb(0,0,0); color:rgb(255,255,255); }
-  .primer3plus_right_primer { background-color:rgb(250,240,75); color:rgb(0,0,0); }
-  .primer3plus_left_right_primer { background-color:rgb(140,225,0); color:rgb(0,0,0); }
-  .primer3plus_primer_overlap_pos { background-color:rgb(160,160,160); color:rgb(0,0,0); }
-  .primer3plus_warning { background-color:rgb(255,120,60); }
-  .primer3plus_primer_pair { background-color:rgb(200,200,200); color:rgb(0,0,0); }
-  .primer3plus_primer_pair_box { margin: 4px; border: 2px solid #ccccff; clear: left; float: left; width: 870px; }
-  .primer3plus_long_list {}
-  .primer3plus_long_list_table { text-align:left; width:100%; table-layout:fixed; border:0; border-collapse:collapse }
-  div#primer3plus_result_sequence { float: left; font-size:1.0em; font-family:Courier,monospace; }
-  div#primer3plus_result_sequence_id  { float: left; font-size:1.0em; font-weight:bold;}
-  .primer3plus_select_all { width: 100%; clear: left; float: left;background-color: rgb(255, 255, 230);}
-  .region_button { width: 25px; }
-  textarea#sequenceTextarea { font-family:Courier,monospace; width:95%; }
-  a#PRIMER_TASK_INPUT {font-weight:bold; font-size: 1.1em}
-  .primer3plus_section {margin: 4px; border: 1px dashed #ccccff;}
-
-  </style>
-  <link rel="canonical" href="https://primer3plus.com/cgi-bin/dev/primer3prefold.cgi" />
+  <link rel="stylesheet" href="static/css/primer3plus.css">
+  <link rel="canonical" href="https://primer3plus.com/primer3prefold.html" />
 </head>
-
-
 <body>
+  <div class="p3p_page">
+    <div class="p3p_top_bar">
+      <table>
+        <colgroup>
+          <col style="width: 60%" class="p3p_blue">
+          <col style="width: 20%" class="p3p_blue">
+          <col style="width: 20%" class="p3p_blue">
+        </colgroup>
+        <tr>
+          <td class="p3p_big_space p3p_blue" rowspan="2"><a class="p3p_top_bar_title">Primer3Prefold</a><br>
+            <a class="p3p_top_bar_explain">avoid secondary structures</a>
+          </td>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusPackage.html">More...</a>
+          </td>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="https://github.com/primer3-org/primer3plus">Source Code</a>
+          </td>
+        </tr>
+        <tr>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusHelp.html">Help</a>
+          </td>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusAbout.html">About</a>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div id="P3P_TAB_HELP" class="p3p_tab_page">
+      <div class="p3p_fit_to_table">
+        <a id="SEQUENCE_ID_HELP">Sequence Id:</a>&nbsp;&nbsp;
+        <input id="SEQUENCE_ID" type="text">
+        <br /><br />
+        <a id="SEQUENCE_TEMPLATE_HELP">Paste template sequence below</a>
+        <a> or upload sequence file:</a>&nbsp;&nbsp;
+        <input id="P3P_SELECT_SEQ_FILE" type="file">&nbsp;&nbsp;
+        <input id="P3P_ACTION_LOAD_EXAMPLE" value="Load Example" type="submit">&nbsp;&nbsp;&nbsp;
+        <br /><br />
+        <textarea id="SEQUENCE_TEMPLATE" rows="12" cols="90"></textarea>
+        <br /><br />
+        Due to performance reasons a sequence can be maximally 2000 bp long. If the 
+        submitted sequence is bigger, <br />select an included region&nbsp;&nbsp;&lt; 2000 bp. 
+        <br /><br />
+        <a id="SEQUENCE_INCLUDED_REGION_HELP">Included Region (start,length):</a>&nbsp;&nbsp;&nbsp;
+        {&nbsp;
+        <input size="40" id="SEQUENCE_INCLUDED_REGION" type="text">&nbsp;
+        }&nbsp;&nbsp;
+        <input type="button" id="P3P_ACTION_SEL_INCLUDED" value="{ Included }">&nbsp;&nbsp;
+        <input type="button" id="P3P_ACTION_SEL_CLEAR" value="Clear">
+        <br /><br />
+        &nbsp;<input id="P3P_ACTION_RUN_PREFOLD" value="Prefold Sequence (Academic Use Only!)" type="button" style="font-size: 0.9em; background: #83db7b;">&nbsp;
+        <input id="P3P_ACTION_RESET_DEFAULT" value="Reset Default" type="button"  style="font-size: 0.9em;"></td>
+      </div>
 
-<div id="page">
+      <div class="p3p_section">
+        <table>
+          <colgroup>
+            <col width="30%">
+            <col width="10%">
+            <col width="15%">
+            <col width="10%">
+            <col width="35%">
+          </colgroup>
+          <tr>
+            <td>
+              <a id="PRIMER_SALT_MONOVALENT_HELP">Concentration of monovalent cations:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_SALT_MONOVALENT" type="text">
+            </td>
+            <td>
+              <a id="PRIMER_OPT_TM_HELP">Opt Primer Tm:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_OPT_TM" type="text">
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a id="PRIMER_SALT_DIVALENT_HELP">Concentration of divalent cations:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_SALT_DIVALENT" type="text">
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+        </table>
+      </div>
+      
+      <div class="p3p_fit_to_table">
+        <br />Please visit <a href="primer3plusAbout.html">About</a> for Primer3 and Primer3Plus citation requests.
+        <br /><br />
+        Primer3Prefold uses for folding the software UNAFold, a successor of mfold.<br />
+        License conditions require that you cite the following article if you use Primer3Prefold:
+        <br />
+        <a href="https://link.springer.com/protocol/10.1007/978-1-60327-429-6_1">
+          Markham, N. R. &amp; Zuker, M. (2008) UNAFold: software for nucleic acid folding and hybriziation.
+          In Keith, J. M., editor, <i>Bioinformatics, Volume II. Structure, Function and Applications</i>, 
+          number 453 in <i>Methods in Molecular Biology</i>, chapter 1, pages 3&ndash;31.  
+          Humana Press, Totowa, NJ.  ISBN 978-1-60327-428-9.
+        </a>
+      </div>
+    </div>
 
-<div id="primer3plus_news">
-<b>News:</b> Try out our new tool: <a href="https://wily-dna-editor.com/index.html">Wiley-DNA-Editor</a> - A DNA/Plasmid editor running in your browser!
-</div>
+    <div class="p3p_footer_bar">
+      <div class="p3p_footer_l">
+        GEAR + Primer3 &#126;
+        <a target="_blank" class="p3p_footer_link" href="https://gear.embl.de"> Home </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://github.com/gear-genomics"> GEAR-GitHub </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://github.com/primer3-org"> Primer3-GitHub </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://gear.embl.de/terms"> Terms of Use </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://gear.embl.de/contact"> Contact Us </a>
+      </div>
+      <div class="p3p_footer_r">
+        Hosted with love by 
+        <a target="_blank" class="p3p_footer_link" href="https://www.embl.de">EMBL</a>
+      </div>
+    </div>
 
-
-
-<SCRIPT language=JavaScript>
-function clearMarking() {
-        var txtarea = document.mainForm.sequenceTextarea;
-        txtarea.value = txtarea.value.replace(/[{}<>[\]]/g,"");
-        document.getElementById("SEQUENCE_INCLUDED_REGION").value="";
-}
-
-function setRegion(tagOpen,tagClose) {
-        var txtarea = document.mainForm.sequenceTextarea;
-        if (document.selection && document.selection.type == 'Text') {
-                var theSelection = document.selection.createRange().text;
-                txtarea.focus();
-                if (theSelection.length > 0) {
-                        document.selection.createRange().text = tagOpen + theSelection + tagClose;
-                }
-                document.selection.empty();
-        // Mozilla
-        } else if(txtarea.selectionStart || txtarea.selectionStart == '0') {
-                var replaced = false;
-                var startPos = txtarea.selectionStart;
-                var endPos = txtarea.selectionEnd;
-                if (endPos-startPos)
-                        replaced = true;
-                var scrollTop = txtarea.scrollTop;
-                var myText = (txtarea.value).substring(startPos, endPos);
-                if (myText.length < 1) {
-                        return;
-                }
-                subst = tagOpen + myText + tagClose;
-
-                txtarea.value = txtarea.value.substring(0, startPos) + subst +
-                        txtarea.value.substring(endPos, txtarea.value.length);
-                txtarea.focus();
-                //set new selection
-                if (replaced) {
-                        var cPos = startPos+(tagOpen.length+myText.length+tagClose.length);
-                        txtarea.selectionStart = cPos;
-                        txtarea.selectionEnd = cPos;
-                } else {
-                        txtarea.selectionStart = startPos+tagOpen.length;
-                        txtarea.selectionEnd = startPos+tagOpen.length+myText.length;
-                }
-                txtarea.scrollTop = scrollTop;
-        }
-}
-</SCRIPT>  	
-	
-<div id="primer3plus_complete">
-
-<form name="mainForm" action="primer3prefold.cgi" method="post" enctype="multipart/form-data">
-
-<div id="primer3plus_top_bar">
-   <table class="primer3plus_top_bar_table">
-     <colgroup>
-       <col width="60%" class="primer3plus_background">
-       <col width="20%" class="primer3plus_background">
-       <col width="20%" class="primer3plus_background">
-     </colgroup>
-     <tr>
-       <td class="primer3plus_top_bar_cell" rowspan="2"><a class="primer3plus_top_bar_title">Primer3Prefold</a><br>
-       <a class="primer3plus_top_bar_explain" id="top">avoid secondary structures</a>
-       </td>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="primer3plusPackage.cgi">More...</a>
-       </td>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://sourceforge.net/projects/primer3/">Source Code</a>
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="primer3plusHelp.cgi">Help</a>
-       </td>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="primer3plusAbout.cgi">About</a>
-       </td>
-     </tr>
-   </table>
-</div>
-
-
-<div id="primer3plus_results">
-   <table class="primer3plus_table_no_border">
-     <tr>
-       <td colspan="2" class="primer3plus_cell_no_border">
-         <a name="SEQUENCE_ID_INPUT" href="primer3plusHelp.cgi#SEQUENCE_ID">Sequence Id:</a>
-         <input name="SEQUENCE_ID" value="" type="text">
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border" valign="bottom">
-         <a name="SEQUENCE_TEMPLATE_INPUT" href="primer3plusHelp.cgi#SEQUENCE_TEMPLATE">Paste template sequence below</a>
-       </td>
-       <td class="primer3plus_cell_no_border" valign="bottom">
-         <a name="SCRIPT_SEQUENCE_FILE_INPUT">Or upload sequence file:</a>
-         <input name="SCRIPT_SEQUENCE_FILE" type="file">&nbsp;&nbsp;
-         <input name="Upload_File" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
-       </td>
-     </tr>
-     <tr>
-       <td colspan="2" class="primer3plus_cell_no_border"> <textarea name="SEQUENCE_TEMPLATE" id="sequenceTextarea" rows="12" cols="90"></textarea>
-       </td>
-	</tr>
-     <tr>
-       <td colspan="2" class="primer3plus_cell_no_border">
-         Due to performance reasons a sequence can be maximally 2000 bp long. If the 
-         submitted sequence is bigger, select an included region < 2000 bp. 
-       </td>
-	</tr>
-     <tr>
-       <td colspan="2" class="primer3plus_cell_no_border">
-         <a name="SEQUENCE_INCLUDED_REGION_INPUT" href="primer3plusHelp.cgi#SEQUENCE_INCLUDED_REGION">Included Region (start,length):</a>
-         &nbsp;{&nbsp;<input size="40" id="SEQUENCE_INCLUDED_REGION" name="SEQUENCE_INCLUDED_REGION" value="" type="text">&nbsp;}
-         &nbsp;&nbsp;<input type=button name="includedRegion" onclick="setRegion('{','}');return false;" value="{ }">
-         <input type=button name="clearMarkings" onclick="clearMarking();return false;" value="Clear">
-       </td>
-	</tr>
-     <tr>
-       <td colspan="2" class="primer3plus_cell_no_border">
-         &nbsp;
-       </td>
-	</tr>
-     <tr>
-       <td colspan="2" class="primer3plus_cell_no_border">
-         &nbsp;<input name="Prefold_Sequence" value="Prefold Sequence" type="submit" style="background: #83db7b;">&nbsp;
-         <input name="Submit" value="Refresh" type="submit">&nbsp;
-         <input class="primer3plus_action_button" name="Default_Settings" value="Reset Form" type="submit">
-       </td>
-	</tr>
-     <tr>
-       <td colspan="2" class="primer3plus_cell_no_border">
-         &nbsp;
-       </td>
-	</tr>
-   </table>
-
-  <div class="primer3plus_section">
-   <table class="primer3plus_table_no_border">
-     <colgroup>
-       <col width="30%">
-       <col width="10%">
-       <col width="15%">
-       <col width="10%">
-       <col width="35%">
-     </colgroup>
-     <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_SALT_MONOVALENT_INPUT" href="primer3plusHelp.cgi#PRIMER_SALT_MONOVALENT">Concentration of monovalent cations:</a>
-       </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SALT_MONOVALENT" value="50.0" type="text">
-       </td>
-       <td class="primer3plus_cell_no_border"><a href="primer3plusHelp.cgi#PRIMER_OPT_TM">Opt Primer Tm:</a>
-       </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_OPT_TM" value="60.0" type="text">
-       </td>
-       <td class="primer3plus_cell_no_border">&nbsp;
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border"><a name="PRIMER_SALT_DIVALENT_INPUT" href="primer3plusHelp.cgi#PRIMER_SALT_DIVALENT">Concentration of divalent cations:</a>
-       </td>
-       <td class="primer3plus_cell_no_border"><input size="4" name="PRIMER_SALT_DIVALENT" value="1.5" type="text">
-       </td>
-       <td class="primer3plus_cell_no_border">&nbsp;
-       </td>
-       <td class="primer3plus_cell_no_border">&nbsp;
-       </td>
-       <td class="primer3plus_cell_no_border">&nbsp;
-       </td>
-     </tr>
-   </table>
   </div>
 
-  <table class="primer3plus_table_no_border">
-    <tr>
-       <td class="primer3plus_cell_no_border">
-         Please visit <a class="primer3plus_top_bar_link" href="primer3plusAbout.cgi">About</a> for
-         Primer3 and Primer3Plus citation requests.<br /><br />
-         Primer3Prefold uses for folding the software UNAFold, a successor of mfold. 
-         License conditions require that you cite the following article if you use Primer3Prefold:
-         <br /><br />
-         Markham, N. R. &amp; Zuker, M. (2008) UNAFold: software for nucleic acid folding and hybriziation.
-         In Keith, J. M., editor, <i>Bioinformatics, Volume II. Structure, Function and Applications</i>, 
-         number 453 in <i>Methods in Molecular Biology</i>, chapter 1, pages 3&ndash;31.  
-         Humana Press, Totowa, NJ.  ISBN 978-1-60327-428-9.
-         <a href="http://www.springerprotocols.com/Abstract/doi/10.1007/978-1-60327-429-6_1">[Abstract]</a> 
-         <a href="http://www.springerprotocols.com/Full/doi/10.1007/978-1-60327-429-6_1?encCode=RklCOjFfNi05MjQtNzIzMDYtMS04Nzk=">[Full Text]</a>
-         <a href="http://www.springerprotocols.com/Pdf/doi/10.1007/978-1-60327-429-6_1?encCode=RklCOjFfNi05MjQtNzIzMDYtMS04Nzk=">[PDF]</a>         
-       </td>
-     </tr>
-   </table>
-  
-<div id="primer3plus_footer">
-<a>&copy; by A. Untergasser</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/contact_e.html">Contact</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/datenschutzerklaerung.html">Datenschutzerkl&auml;rung</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/impressum.html">Impressum</a>
-</div>
-
-</div>
-
-</form>
-
-</div>  
-
-
-</div>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="static/js/primer3plus.js"></script>
 
 </body>
 </html>
-
-
