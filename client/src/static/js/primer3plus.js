@@ -3,9 +3,14 @@ const HELP_LINK_URL = process.env.HELP_LINK_URL
 
 var primer3plus_version = "3.0.0";
 
-// The default Settings loded from the server
+// The default Settings loaded from the server
 var defSet;
 // "TAG":["default setting","data type"]
+
+// The current loaded setings (dic)
+var currSet = {};
+var compFile1 = {};
+var compFile2 = {};
 
 // The old tags which need to be replaced by new tags
 var repOld;
@@ -1093,6 +1098,7 @@ function initElements(){
   init_message_buttons();
   initDebug();
   init_primer3_versions();
+  initLoadCompareFunct();
 }
 
 function updateInterface(){
@@ -1227,8 +1233,10 @@ function getHtmlTagValue(tag) {
 }
 
 async function setHTMLParameters(para) {
+  currSet = {};
   for (var tag in para) {
     if (para.hasOwnProperty(tag)) {
+      currSet[tag] = para[tag][0];
       setHtmlTagValue(tag, para[tag][0]);	     
     }
   }
@@ -1603,6 +1611,7 @@ function runLoadSetFile(f) {
   }
 }
 function loadP3File(limit,txt) {
+  currSet = {};	
   txt = txt.replace(/\r\n/g, "\n");
   txt = txt.replace(/\r/g, "\n");
   txt = txt.replace(/^\s*/, "");
@@ -1628,6 +1637,7 @@ function loadP3File(limit,txt) {
     if ((fileLines[i].match(/=/) != null) && (fileLines[i] != "") && (fileLines[i] != "=")) {
       var pair = fileLines[i].split('=');
       if ((pair.length > 1) && (defSet.hasOwnProperty(pair[0]))){
+        currSet[pair[0]] = pair[1];
         if (pair[0].startsWith('P3_FILE_ID')) {
           fileId = pair[1];
         }
@@ -1657,6 +1667,69 @@ function loadP3File(limit,txt) {
   add_message("mess",message);
   showTaskSelection();
 }
+function initLoadCompareFunct() {
+  var pFile1 = document.getElementById('P3P_COMPARE_FILE_ONE');
+  if (pFile1 !== null) {
+    pFile1.addEventListener('change', runLoadCompFile1, false);
+  }
+  var pFile2 = document.getElementById('P3P_COMPARE_FILE_TWO');
+  if (pFile2 !== null) {
+    pFile2.addEventListener('change', runLoadCompFile2, false);
+  }
+}
+function runLoadCompFile1(f) {
+  var file = f.target.files[0];
+  if (file) { // && file.type.match("text/*")) {
+    var reader = new FileReader();
+    reader.onload = function(event) {
+      var txt = event.target.result;
+      loadCompareFile(1, txt);
+    }
+    reader.readAsText(file);
+    document.getElementById("P3P_COMPARE_FILE_ONE").value = "";
+  } else {
+    add_message("err","Error opening file");
+  }
+}
+function runLoadCompFile2(f) {
+  var file = f.target.files[0];
+  if (file) { // && file.type.match("text/*")) {
+    var reader = new FileReader();
+    reader.onload = function(event) {
+      var txt = event.target.result;
+      loadCompareFile(2, txt);
+    }
+    reader.readAsText(file);
+    document.getElementById("P3P_COMPARE_FILE_TWO").value = "";
+  } else {
+    add_message("err","Error opening file");
+  }
+}
+function loadCompareFile(target,txt) {
+  txt = txt.replace(/\r\n/g, "\n");
+  txt = txt.replace(/\r/g, "\n");
+  txt = txt.replace(/^\s*/, "");
+  var fileLines = txt.split('\n');
+  var ret;
+  if (target == 1) {
+    compFile1 = {};
+    ret = compFile1;
+  } else if (target == 2) {
+    compFile2 = {};
+    ret = compFile2;
+  }
+  for (var i = 0; i < fileLines.length; i++) {
+    if (fileLines[i] == "") {
+      continue;
+    } else if (fileLines[i] != "=") {
+      ret["="] = "Single equal to run Primer3 present"
+    } else if (fileLines[i].match(/=/) != null) {
+      var pair = fileLines[i].split('=');
+      ret[pair[0]] = pair[1];
+    }
+  }
+}
+
 // Functions to load the sequence and settings files
 function initSaveFile() {
   var pButtonSeq = document.getElementById('P3P_ACTION_SEQUENCE_SAVE');
@@ -2110,6 +2183,9 @@ function initTaskFunctionality() {
 var prevSelectedTab = "";
 function showTaskSelection() {
   var task = document.getElementById('PRIMER_TASK');
+  if (task === null) {
+    return;
+  }
   var x = task.selectedIndex;
   var id = "P3P_EXPLAIN_TASK_" + task.options[x].value.toUpperCase();
   if ((prevSelectedTab != "") && document.getElementById(prevSelectedTab)) {
@@ -2191,8 +2267,12 @@ function initResetDefautl() {
   }
 }
 function buttonResetDefault() {
-  del_all_messages ();	
+  del_all_messages();	
   setHTMLParameters(defSet);
+  var serv = document.getElementById('P3P_SERVER_SETTINGS_FILE');
+  if (serv !== null) {
+    serv.selectedIndex = 0;
+  }
   updateInterface();
 }
 

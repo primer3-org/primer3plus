@@ -34,6 +34,24 @@
         </tr>
       </table>
     </div>
+
+    <div id="P3P_TOP_MESSAGE_ERROR" style="display: none;">
+      <table>
+        <colgroup>
+          <col style="width: 90%">
+          <col style="width: 10%">
+        </colgroup>
+        <tr>
+          <td>
+            <div id="P3P_TOP_MESSAGE_ERROR_BOX"></div>
+          </td>
+          <td class="p3p_top_right">
+            <input id="P3P_ACTION_RESET_ERROR" value="Dismiss" type="button">
+          </td>
+        </tr>
+      </table>
+    </div>
+
     <div id="P3P_TAB_HELP" class="p3p_tab_page">
       <p>&nbsp;&nbsp;Primer3ComareFiles allows to compare files with each other and the 
         default values to identify differences.<br>
@@ -48,10 +66,13 @@
         <select id="P3P_SERVER_SETTINGS_FILE">
           <option>Default</option>
         </select>&nbsp;
+        <input id="P3P_ACTION_SERVER_SETTINGS" value="Activate Settings" type="button"><br>
         <br>
         <br>
         &nbsp;&nbsp;
-        <input id="P3P_COMPARE_RUN" type="submit">
+	<input id="P3P_ACTION_RUN_COMPARE" value="Run Compare" type="button" style="font-size: 0.9em; background: #83db7b;">
+	&nbsp;&nbsp;
+        <input id="P3P_ACTION_RESET_DEFAULT" value="Reset Default" type="button" style="font-size: 0.9em;">
       </p>
     </div>
 
