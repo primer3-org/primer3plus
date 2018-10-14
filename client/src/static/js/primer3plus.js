@@ -69,6 +69,8 @@ function loadSetFileFromServer() {
     setHTMLParameters(defSet);
     add_message("mess","Default settings loaded!");
     return;	  
+  } else if (fileName == "None") {
+    return;
   }
   const formData = new FormData();
   formData.append('P3P_SERVER_SETTINGS_FILE', fileName);
@@ -1676,6 +1678,10 @@ function initLoadCompareFunct() {
   if (pFile2 !== null) {
     pFile2.addEventListener('change', runLoadCompFile2, false);
   }
+  var btRunComp = document.getElementById('P3P_ACTION_RUN_COMPARE');
+  if (btRunComp !== null) {
+    btRunComp.addEventListener('click', runCompFiles);
+  }
 }
 function runLoadCompFile1(f) {
   var file = f.target.files[0];
@@ -1686,7 +1692,6 @@ function runLoadCompFile1(f) {
       loadCompareFile(1, txt);
     }
     reader.readAsText(file);
-    document.getElementById("P3P_COMPARE_FILE_ONE").value = "";
   } else {
     add_message("err","Error opening file");
   }
@@ -1700,9 +1705,20 @@ function runLoadCompFile2(f) {
       loadCompareFile(2, txt);
     }
     reader.readAsText(file);
-    document.getElementById("P3P_COMPARE_FILE_TWO").value = "";
   } else {
     add_message("err","Error opening file");
+  }
+}
+function resetCompFiles() {
+  compFile1 = {};
+  compFile2 = {};
+  var pFile1 = document.getElementById('P3P_COMPARE_FILE_ONE');
+  if (pFile1 !== null) {
+    pFile1.value = "";
+  }
+  var pFile2 = document.getElementById('P3P_COMPARE_FILE_TWO');
+  if (pFile2 !== null) {
+    pFile2.value = "";
   }
 }
 function loadCompareFile(target,txt) {
@@ -1721,13 +1737,125 @@ function loadCompareFile(target,txt) {
   for (var i = 0; i < fileLines.length; i++) {
     if (fileLines[i] == "") {
       continue;
-    } else if (fileLines[i] != "=") {
+    } else if (fileLines[i] == "=") {
       ret["="] = "Single equal to run Primer3 present"
     } else if (fileLines[i].match(/=/) != null) {
       var pair = fileLines[i].split('=');
       ret[pair[0]] = pair[1];
     }
   }
+}
+function runCompFiles() {
+  var ret = "";
+  var data = [];
+  var allTags = {};
+  var usedTags = [];
+  var dataName = [];
+  if (Object.keys(compFile1).length != 0) {
+    data[data.length] = compFile1;
+    dataName[dataName.length] = "File 1 upload";
+    for (var tag in compFile1) {
+      if (compFile1.hasOwnProperty(tag)) {
+        allTags[tag] = 1;
+      } 
+    }
+  }
+  if (Object.keys(compFile2).length != 0) {
+    data[data.length] = compFile2;
+    dataName[dataName.length] = "File 2 upload";
+    for (var tag in compFile2) {
+      if (compFile2.hasOwnProperty(tag)) {
+        allTags[tag] = 1;
+      }
+    }
+  }
+  var fileName = getHtmlTagValue("P3P_SERVER_SETTINGS_FILE");
+  if ((fileName) && (fileName != "None") && (data.length < 2)) {
+    data[data.length] = currSet;
+    dataName[dataName.length] = fileName;
+    for (var tag in currSet) {
+      if (currSet.hasOwnProperty(tag)) {
+        allTags[tag] = 1;
+      } 
+    }
+  }
+  // Find the differences
+  for (var tag in allTags) {
+    if (allTags.hasOwnProperty(tag)) {
+      usedTags.push(tag);
+    }
+  }
+  usedTags.sort();
+  ret += '<h2 class="p3p_fit_to_table">Results:</h2>';
+  if (data.length == 0) {
+    ret += '<p class="p3p_fit_to_table">\n  <strong style="color: red;">Select a file and/or default settings to display or compare.</strong>\n</p>';
+  } else if (data.length == 1) {
+    ret += '<h3 class="p3p_fit_to_table">Display file contents:</h3>';	  
+    ret += '<table class="p3p_table_with_border">\n';
+    ret += '  <colgroup>\n';
+    ret += '    <col style="width: 40%">\n';
+    ret += '    <col style="width: 60%">\n';
+    ret += '  </colgroup>\n';
+    ret += '  <tr>\n';
+    ret += '    <td class="p3p_comp_file_l"><strong>Tag</strong></td>\n';
+    ret += '    <td class="p3p_comp_file_r"><strong>' + dataName[0] + '</strong></td>\n';
+    ret += '  </tr>\n';
+    for (var i = 0; i < usedTags.length; i++) {
+      ret += '  <tr>\n';
+      ret += '    <td class="p3p_comp_file_l">' + usedTags[i] + '</td>\n';
+      ret += '    <td class="p3p_comp_file_r">' + data[0][usedTags[i]] + '</td>\n';
+      ret += '  </tr>\n'; 
+    }
+    ret += '</table>\n';
+  } else {
+    var different = '<h3 class="p3p_fit_to_table">Differences between both:</h3>';
+    var samesame = '<h3 class="p3p_fit_to_table">Idential values in both:</h3>';
+    var header = '<table class="p3p_table_with_border">\n';
+    header += '  <colgroup>\n';
+    header += '    <col style="width: 40%">\n';
+    header += '    <col style="width: 30%">\n';
+    header += '    <col style="width: 30%">\n';
+    header += '  </colgroup>\n';
+    header += '  <tr>\n';
+    header += '    <td class="p3p_comp_file_l"><strong>Tag</strong></td>\n';
+    header += '    <td class="p3p_comp_file_r"><strong>' + dataName[0] + '</strong></td>\n';
+    header += '    <td class="p3p_comp_file_r"><strong>' + dataName[1] + '</strong></td>\n';
+    header += '  </tr>\n';
+    different += header;
+    samesame += header;
+    var tagHtml = ["", "", ""];
+    for (var i = 0; i < usedTags.length; i++) {
+      var k = 0;
+      var tagVal1 = '<a style="color: red">Tag absent in file</a>';
+      var tagVal2 = '<a style="color: red">Tag absent in file</a>';
+      if (data[0].hasOwnProperty(usedTags[i]) && data[1].hasOwnProperty(usedTags[i])){
+        tagVal1 = data[0][usedTags[i]];
+        tagVal2 = data[1][usedTags[i]];
+        k = 0;	      
+      } else if (data[0].hasOwnProperty(usedTags[i]) && !(data[1].hasOwnProperty(usedTags[i]))){
+        tagVal1 = data[0][usedTags[i]];
+        k = 1;
+      } else if (!(data[0].hasOwnProperty(usedTags[i])) && data[1].hasOwnProperty(usedTags[i])){
+        tagVal2 = data[1][usedTags[i]];
+        k = 2;
+      }
+      var oneTag = '  <tr>\n';
+      oneTag += '    <td class="p3p_comp_file_l">' + usedTags[i] + '</td>\n';
+      oneTag += '    <td class="p3p_comp_file_r">' + tagVal1 + '</td>\n';
+      oneTag += '    <td class="p3p_comp_file_r">' + tagVal2 + '</td>\n';
+      oneTag += '  </tr>\n';
+      if (data[0][usedTags[i]] == data[1][usedTags[i]]) {
+        samesame += oneTag;
+      } else {
+        tagHtml[k] += oneTag;
+      }
+    }
+    different += tagHtml[0] + tagHtml[1] + tagHtml[2] + '</table>\n';
+    samesame += '</table>\n';
+    ret += different;
+    ret += samesame;
+  } 
+  document.getElementById('P3P_RESULTS_BOX').innerHTML = ret;
 }
 
 // Functions to load the sequence and settings files
@@ -2273,6 +2401,7 @@ function buttonResetDefault() {
   if (serv !== null) {
     serv.selectedIndex = 0;
   }
+  resetCompFiles();
   updateInterface();
 }
 

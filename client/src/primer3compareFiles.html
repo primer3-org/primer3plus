@@ -60,11 +60,11 @@
         &nbsp;&nbsp;<input id="P3P_COMPARE_FILE_ONE" type="file"><br>
         <br>
         &nbsp;&nbsp;<a>File 2:</a>
-        &nbsp;&nbsp;<input id="P3P_COMPARE_FILE_TWO" type="file"><br>
-        <br>
-        &nbsp;&nbsp;<a>Server settings:</a>&nbsp;&nbsp;
+        &nbsp;&nbsp;<input id="P3P_COMPARE_FILE_TWO" type="file">&nbsp;&nbsp;
+	or&nbsp;&nbsp;&nbsp;&nbsp;<a>Server settings:</a>&nbsp;&nbsp;
         <select id="P3P_SERVER_SETTINGS_FILE">
-          <option>Default</option>
+          <option value="Default">Default</option>
+          <option value="None">None</option>
         </select>&nbsp;
         <input id="P3P_ACTION_SERVER_SETTINGS" value="Activate Settings" type="button"><br>
         <br>
@@ -74,6 +74,9 @@
 	&nbsp;&nbsp;
         <input id="P3P_ACTION_RESET_DEFAULT" value="Reset Default" type="button" style="font-size: 0.9em;">
       </p>
+      <br />
+      <div id="P3P_RESULTS_BOX">
+      </div>
     </div>
 
     <div class="p3p_footer_bar">
