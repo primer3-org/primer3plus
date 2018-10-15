@@ -286,14 +286,14 @@ function createResultsPrimerCheck(res) {
   retHTML += '  </colgroup>\n';
   retHTML += '  <tr class="p3p_left_primer">\n';
   retHTML += '    <td class="p3p_oligo_cell">';
-  retHTML += '<input name="PRIMER_' + type + '0_SELECT" value="1" checked="checked" type="checkbox"> &nbsp; Oligo:</td>\n';
+  retHTML += '<input id="PRIMER_' + type + '0_SELECT" checked="checked" type="checkbox"> &nbsp; Oligo:</td>\n';
   retHTML += '    <td class="p3p_oligo_cell">';
-  retHTML += '<input name="PRIMER_' + type + '0_NAME" value="' + res["PRIMER_" + type + "_0_NAME"] + '" size="40"></td>\n';
+  retHTML += '<input id="PRIMER_' + type + '0_NAME" value="' + res["PRIMER_" + type + "_0_NAME"] + '" size="40"></td>\n';
   retHTML += '  </tr>\n';
   retHTML += '  <tr>\n';
   retHTML += '    <td class="p3p_oligo_cell"><a href="' + linkRoot + 'PRIMER_RIGHT_4_SEQUENCE">Sequence:</a></td>\n';
   retHTML += '    <td class="p3p_oligo_cell">';
-  retHTML += '<input name="PRIMER_' + type + '0_SEQUENCE" value="' + res["PRIMER_" + type + "_0_SEQUENCE"] + '" size="90"></td>\n';
+  retHTML += '<input id="PRIMER_' + type + '0_SEQUENCE" value="' + res["PRIMER_" + type + "_0_SEQUENCE"] + '" size="90"></td>\n';
   retHTML += '  </tr>\n';
   retHTML += '  <tr>\n';
   retHTML += '    <td class="p3p_oligo_cell"><a href="' + linkRoot + 'PRIMER_RIGHT_4">Length:</a></td>\n';
@@ -370,7 +370,7 @@ function createResultsPrimerCheck(res) {
   retHTML += '</table>\n</div>\n';
 
   retHTML += '<div class="primer3plus_submit"><br />\n';
-  retHTML += '  <input name="Submit" value="Send to Primer3Manager" type="submit"> <input value="Reset Form" type="reset">\n';
+  retHTML += '  <input name="Submit" value="Send to Primer3Manager" type="button">\n';
   retHTML += '</div><br />\n';
 
   return retHTML;
@@ -385,7 +385,7 @@ function createResultsDetection(res){
   for (var primerCount = 1 ; primerCount < parseInt(res["PRIMER_PAIR_NUM_RETURNED"]) ; primerCount++) {
     ret += createPrimerBox(res, primerCount, false);
     ret += '<div class="primer3plus_submit"><br />'
-    ret += '<input name="Submit" value="Send to Primer3Manager" type="submit"><br /><br /><br /></div>';
+    ret += '<input name="Submit" value="Send to Primer3Manager" type="buttton"><br /><br /><br /></div>';
   }
   return ret;
 }
@@ -468,18 +468,12 @@ function createPrimerBox(res, nr, sel) {
   retHtml += '    <col style="width: 13.0%">\n';
   retHtml += '  </colgroup>\n';
   retHtml += '  <tr>\n';
-  retHtml += '    <td colspan="11" class="p3p_pair_box_cell">\n      <input id="PRIMER_PAIR_';
-  retHtml +=  nr + '_SELECT" name="PRIMER_PAIR_' + nr + '_SELECT" value="1"';
+  retHtml += '    <td colspan="11" class="p3p_pair_box_cell">\n      <input id="PRIMER_PAIR_' + nr + '_SELECT"';
   if (sel) {
     retHtml += "checked=\"checked\" ";
   }
   retHtml += 'type="checkbox">&nbsp;Pair ' + (nr + 1 ) +':\n      ';
-  retHtml += '<input id="PRIMER_PAIR_' + nr + '_NAME" name="PRIMER_PAIR_';
-  retHtml += nr + '_NAME" value="' + res["PRIMER_PAIR_" + nr + "_NAME"] + '" size="40">\n      ';
-  if (res.hasOwnProperty("PRIMER_PAIR_" + nr + "_AMPLICON") &&
-      (res["PRIMER_PAIR_" + nr + "_AMPLICON"] != "")) {
-    retHtml += '<input type="hidden" name="PRIMER_PAIR_' + nr + '_AMPLICON" value="' + res["PRIMER_PAIR_" + nr + "_AMPLICON"] + '">';
-  }
+  retHtml += '<input id="PRIMER_PAIR_' + nr + '_NAME" value="' + res["PRIMER_PAIR_" + nr + "_NAME"] + '" size="40">\n      ';
   retHtml += '</td>\n    </tr>';
 
   retHtml += partPrimerData(res, nr, "LEFT");
@@ -550,8 +544,8 @@ function partPrimerData(res, nr, type) {
     retHTML += '  <tr class="p3p_' + cssName + '">\n';
     retHTML += '    <td colspan="2" class="p3p_pair_box_cell">&nbsp;' + writeName  + ' ' + (nr +1) + ':</td>\n';
     retHTML += '    <td colspan="9" class="p3p_pair_box_cell">'; 
-    retHTML += '<input id="PRIMER_' + type + '_' + nr + '_SEQUENCE" name="PRIMER_' + type + '_';
-    retHTML += nr + '_SEQUENCE" value="' + res["PRIMER_" + type + "_" + nr + "_SEQUENCE"] + '" size="90"></td>\n';
+    retHTML += '<input id="PRIMER_' + type + '_' + nr + '_SEQUENCE" ';
+    retHTML += 'value="' + res["PRIMER_" + type + "_" + nr + "_SEQUENCE"] + '" size="90"></td>\n';
     retHTML += '  </tr>\n';
     retHTML += '  <tr>\n';
     retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
@@ -869,7 +863,7 @@ function divLongList (res, primerType) {
   while ((res.hasOwnProperty("PRIMER_" + primerType + "_" + counter)) && (counter < 500)) {
     var primerPos = res["PRIMER_" + primerType + "_" + counter].split(',');
     retHTML += '  <tr>\n    <td class="p3p_cell_long_list_l">';
-    retHTML += '<input id="PRIMER_' + primerType + "_" + counter + '_SELECT" value="1" type="checkbox">&nbsp;';
+    retHTML += '<input id="PRIMER_' + primerType + "_" + counter + '_SELECT" type="checkbox">&nbsp;';
     retHTML += '<input id="PRIMER_' + primerType + "_" + counter + '_NAME" ';
     retHTML += 'value="' + res["PRIMER_" + primerType + "_" + counter + "_NAME"] + '" size="10"></td>\n';
     retHTML += '    <td class="p3p_cell_long_list_l"><input id="PRIMER_' + primerType + "_" + counter;

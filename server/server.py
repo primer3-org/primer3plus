@@ -20,6 +20,8 @@ app.config['PRIMER3PLUS'] = os.path.join(P3PWS, "..")
 app.config['UPLOAD_FOLDER'] = os.path.join(app.config['PRIMER3PLUS'], "data")
 app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024   #maximum of 8MB
 
+app.config['BASEURL'] = 'http://localhost:1234/index.html'
+
 KILLTIME = 60 # time in seconds till Primer3 is killed!
 
 P3PATHFIX = "PRIMER_THERMODYNAMIC_PARAMETERS_PATH=" +  os.path.join(P3PWS, "../../primer3/src/primer3_config/\n")
@@ -92,6 +94,40 @@ def runp3():
                     data += "\n" + "P3P_ERROR=" + p3p_err_str + "\n"
                 return data, 200
     return jsonify(errors = [{"title": "Error in handling POST request!"}]), 400
+
+@app.route('/api/v1/upload', methods=['GET','POST'])
+def uploadData():
+    print(".......up............." + request.method)
+    if (request.method == 'GET') or (request.method == 'POST'):
+        uuidstr = str(uuid.uuid4())
+
+        # Get subfolder
+        sf = os.path.join(app.config['UPLOAD_FOLDER'], uuidstr[0:2])
+        if not os.path.exists(sf):
+            os.makedirs(sf)
+
+        # Write Data to File
+        upfile = os.path.join(sf, "p3p_" + uuidstr + "_upload.txt")
+        with open(upfile, "w") as dat:
+            if request.method == 'POST':
+                for tag in request.form.keys():
+                    tag = tag.replace('=', '_')
+                    tag = tag.replace('\n', '_')
+                    val = request.form[tag]
+                    val = val.replace('=', '_')
+                    val = val.replace('\n', '_')
+                    dat.write(tag + "=" + val + "\n")
+            if request.method == 'GET':
+                for tag in request.args.keys():
+                    tag = tag.replace('=', '_')
+                    tag = tag.replace('\n', '_')
+                    val = request.args.get(tag)
+                    val = val.replace('=', '_')
+                    val = val.replace('\n', '_')
+                    dat.write(tag + "=" + val + "\n")
+        # print (upfile)
+        return redirect(app.config['BASEURL'] + "?UUID=" + uuidstr, code=302)
+    return "hallo", 200
 
 @app.route('/api/v1/primer3version', methods=['POST'])
 def p3version():
