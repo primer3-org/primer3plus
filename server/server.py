@@ -35,6 +35,10 @@ regLibIN = re.compile(r"PRIMER_INTERNAL_MISHYB_LIBRARY=")
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in set(['json', 'fa'])
 
+uuid_re = re.compile(r'(^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})-{0,1}([ap]{0,1})([cj]{0,1})$')
+def is_valid_uuid(s):
+   return uuid_re.match(s) is not None
+
 def p3_watchdog(proc, stat):
     """Kill process on timeout and note in stat"""
     stat['timeout'] = True
@@ -127,7 +131,22 @@ def uploadData():
                     dat.write(tag + "=" + val + "\n")
         # print (upfile)
         return redirect(app.config['BASEURL'] + "?UUID=" + uuidstr, code=302)
-    return "hallo", 200
+    return redirect(app.config['BASEURL'], code=302)
+
+@app.route('/api/v1/loadServerData', methods=['POST'])
+def loadServerData():
+    if request.method == 'POST':
+        if 'P3P_UUID' in request.form.keys():
+            uuid = secure_filename(request.form['P3P_UUID'])
+            if is_valid_uuid(uuid):
+                sf = os.path.join(app.config['UPLOAD_FOLDER'], uuid[0:2])
+                if os.path.exists(sf):
+                    upfile = os.path.join(sf, "p3p_" + uuid + "_upload.txt")
+                    if os.path.isfile(upfile):          
+                        with open(upfile, "r") as out:
+                            data = out.read()
+                            return data, 200
+    return "", 400
 
 @app.route('/api/v1/primer3version', methods=['POST'])
 def p3version():

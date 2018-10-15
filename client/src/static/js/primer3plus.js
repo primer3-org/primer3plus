@@ -49,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function() {
           misspriming_lib_files = res.data["misspriming_lib_files"];
           setHTMLParameters(defSet);
           initElements();
+          checkForUUID();		
       }
     })
     .catch(err => {
@@ -146,6 +147,31 @@ function runPrimer3() {
   //    }
       add_message("err","Error running Primer3: " + errorMessage);
     })
+}
+
+function checkForUUID() {  
+  var path = window.location.search; // .pathname;
+  if (path.match(/UUID=.+/)) { 
+    var uuid = path.split("UUID=")[1];
+    const formData = new FormData();
+    formData.append('P3P_UUID', uuid);
+    axios
+      .post(`${API_URL}/loadServerData`, formData)
+      .then(res => {
+          if (res.status === 200) {
+            loadP3File("silent",res.data);
+        }
+      })
+      .catch(err => {
+        let errorMessage = err
+    //    if (err.response) {
+    //      errorMessage = err.response.data.errors
+    //      .map(error => error.title)
+     //     .join('; ')
+    //    }
+        add_message("err","Error loading server settings file " + fileName + ": " + errorMessage);
+      })
+  }
 }
 
 function initRunPrimer3() {
@@ -1625,6 +1651,8 @@ function loadP3File(limit,txt) {
       sel = "all";
       message += "all information from Primer3Plus file";
     }
+  } else if (limit == "silent") {
+    sel = "all";
   } else {
     sel = limit;
   }
@@ -1660,7 +1688,9 @@ function loadP3File(limit,txt) {
   } else {
     message += "!";
   }
-  add_message("mess",message);
+  if (limit != "silent") {
+    add_message("mess",message);
+  }
   showTaskSelection();
 }
 function initLoadCompareFunct() {
