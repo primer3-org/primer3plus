@@ -31,6 +31,8 @@ var p3p_errors = [];
 var p3p_warnings = [];
 var p3p_messages = [];
 
+var selectedPrimerPair = 0;
+
 var ignore_tags = ["PRIMER_EXPLAIN_FLAG","PRIMER_THERMODYNAMIC_PARAMETERS_PATH",
       "PRIMER_MIN_THREE_PRIME_DISTANCE","P3P_SERVER_SETTINGS_FILE",
       "PRIMER_MASK_3P_DIRECTION","PRIMER_MASK_5P_DIRECTION","PRIMER_MASK_FAILURE_RATE",
@@ -305,14 +307,14 @@ function createResultsPrimerCheck(res) {
   if (res.hasOwnProperty("PRIMER_INTERNAL_0_SEQUENCE")) {
       type = "INTERNAL";
   }
+  res["PRIMER_" + type + "0_SELECTED"] = "1";
   var retHTML = '<div class="p3p_fit_to_table">\n<table>\n';
   retHTML += '  <colgroup>\n';
   retHTML += '    <col width="17%">\n';
   retHTML += '    <col width="83%">\n';
   retHTML += '  </colgroup>\n';
   retHTML += '  <tr class="p3p_left_primer">\n';
-  retHTML += '    <td class="p3p_oligo_cell">';
-  retHTML += '<input id="PRIMER_' + type + '0_SELECT" checked="checked" type="checkbox"> &nbsp; Oligo:</td>\n';
+  retHTML += '    <td class="p3p_oligo_cell">Oligo:</td>\n';
   retHTML += '    <td class="p3p_oligo_cell">';
   retHTML += '<input id="PRIMER_' + type + '0_NAME" value="' + res["PRIMER_" + type + "_0_NAME"] + '" size="40"></td>\n';
   retHTML += '  </tr>\n';
@@ -403,20 +405,36 @@ function createResultsPrimerCheck(res) {
 }
 
 function createResultsDetection(res){
-  var ret = createPrimerBox(res, 0, true);
-  ret += createHTMLsequence(res, 0);
+  var ret = 
   ret += '<div class="primer3plus_select_all">\n  <br />\n';
   ret += '  <input id="P3P_ACTION_SELECT_ALL_PRIMERS" type="checkbox"> &nbsp; Select all Primers';
   ret += '<br />\n<br>\n</div>\n';
-  for (var primerCount = 1 ; primerCount < parseInt(res["PRIMER_PAIR_NUM_RETURNED"]) ; primerCount++) {
-    ret += createPrimerBox(res, primerCount, false);
-    ret += '<div class="primer3plus_submit"><br />'
-    ret += '<input name="Submit" value="Send to Primer3Manager" type="buttton"><br /><br /><br /></div>';
+  ret += '<div class="primer3plus_submit"><br />'
+  ret += '<input name="Submit" value="Send to Primer3Manager" type="button"><br /><br /><br /></div>';
+  ret += '<div class="p3p_fit_to_table">\n';
+  if (selectedPrimerPair > 0 ) {
+    ret += '  <input value="Previous Primer Pair" type="button" onclick="changeSelectedPrimerPair(-1);">\n';
   }
+  ret += '</div>\n';
+  ret += createPrimerBox(res, selectedPrimerPair);
+  ret += '<div class="p3p_fit_to_table">\n'; 
+  if (selectedPrimerPair < parseInt(res["PRIMER_PAIR_NUM_RETURNED"]) - 1) {
+    ret += '  <input value="Next Primer Pair" type="button" onclick="changeSelectedPrimerPair(1);">\n';
+  }
+  ret += '</div>\n';
+  ret += createHTMLsequence(res, selectedPrimerPair);
   return ret;
 }
 
-function createPrimerBox(res, nr, sel) {
+window.changeSelectedPrimerPair = changeSelectedPrimerPair;
+function changeSelectedPrimerPair(it) {
+  selectedPrimerPair = selectedPrimerPair + it;
+  var returnHTML = createResultsDetection(results);
+  returnHTML += createPrimerStatistics(results);
+  document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
+}
+
+function createPrimerBox(res, nr) {
   var retHtml = "";
   var linkRoot = `${HELP_LINK_URL}#`;
   var selection = nr + 1;
@@ -495,7 +513,8 @@ function createPrimerBox(res, nr, sel) {
   retHtml += '  </colgroup>\n';
   retHtml += '  <tr>\n';
   retHtml += '    <td colspan="11" class="p3p_pair_box_cell">\n      <input id="PRIMER_PAIR_' + nr + '_SELECT"';
-  if (sel) {
+  if (res.hasOwnProperty("PRIMER_PAIR_" + nr + "_SELECTED") &&
+      (res["PRIMER_PAIR_" + nr + "_SELECTED"] == "1")) {
     retHtml += "checked=\"checked\" ";
   }
   retHtml += 'type="checkbox">&nbsp;Pair ' + (nr + 1 ) +':\n      ';
@@ -963,51 +982,66 @@ function calcP3PResultAdditions(){
   var acOligo = saveGetTag("P3P_PRIMER_NAME_ACRONYM_INTERNAL");
   var acSpace = saveGetTag("P3P_PRIMER_NAME_ACRONYM_SPACER");
   var seqName = saveGetTag("SEQUENCE_ID");
-  for (var tag in results) {
-    if(tag.endsWith("_SEQUENCE")){
-      var nameKeyComplete = tag.split('_');
-      var namePrimerType = nameKeyComplete[1];
-      var nameNumber = nameKeyComplete[2];
-      var nameKeyName = tag;
-      nameKeyName = nameKeyName.replace(/SEQUENCE/, "NAME");
-      var nameKeyPair = "PRIMER_PAIR_" + nameNumber + "_NAME";
-      var nameKeyValue;
-      // Use the Name or Primer for the ID
-      if (seqName.length > 2 ) {
-        nameKeyValue = seqName.replace(/ /, "_");
-      } else {
-        nameKeyValue = "Primer";
-      }
-      // Add a Number
-      if ( nameNumber != "0" ) {
-        nameKeyValue += acSpace + nameNumber;
-      }
-      results[nameKeyPair] = nameKeyValue;
-      nameKeyValue += acSpace;
-      // Add a Type
-      if (namePrimerType == "RIGHT" ) {
-        nameKeyValue += acRight;
-      } else if (namePrimerType == "INTERNAL") {
-        nameKeyValue += acOligo;
-      } else if (namePrimerType == "LEFT") {
-        nameKeyValue += acLeft;
-      } else {
-        nameKeyValue += "??";
-      }
-      results[nameKeyName] = nameKeyValue;
-    }
+  var task    = saveGetTag("PRIMER_TASK");
+  if (seqName.length > 2 ) {
+    seqName = seqName.replace(/ /, "_");
+  } else {
+    seqName = "Primer";
   }
-  // Add the amplicons
-  if (results.hasOwnProperty("PRIMER_PAIR_NUM_RETURNED")) {
-    var seq   = results["SEQUENCE_TEMPLATE"];
+  if (results.hasOwnProperty("PRIMER_PAIR_NUM_RETURNED") && (parseInt(results["PRIMER_PAIR_NUM_RETURNED"]) > 0 )) {
+    var seq = results["SEQUENCE_TEMPLATE"];
     var fistBase = parseInt(saveGetTag("PRIMER_FIRST_BASE_INDEX"));  
     for (var pairCount = 0 ; pairCount < parseInt(results["PRIMER_PAIR_NUM_RETURNED"]) ; pairCount++) {
+      // Add the amplicons
       var left  = results["PRIMER_LEFT_" + pairCount].split(',');
       var right = results["PRIMER_RIGHT_" + pairCount].split(',');    
-      var start = parseInt(left[0]) - fistBase;
-      var end   = parseInt(right[0]) - fistBase;
+      var start = parseInt(left[0]) + parseInt(left[1]) - fistBase;
+      var end   = parseInt(right[0]) - parseInt(right[1]) - fistBase;
       var amp   = seq.substring(start, end);
       results["PRIMER_PAIR_" + pairCount + "_AMPLICON"] = amp;
+      // Add the name
+      var nameKeyValue = seqName;
+      if ( pairCount != "0" ) {
+        nameKeyValue += acSpace + pairCount;
+      }
+      results["PRIMER_PAIR_" + pairCount + "_NAME"] = nameKeyValue;
+      // Add select value
+      var selValue = "0";
+      if ( pairCount == 0 ) {
+        selValue = "1";
+      }
+      results["PRIMER_PAIR_" + pairCount + "_SELECTED"] = selValue;
+    }
+  } else {
+    for (var tag in results) {
+      if(tag.endsWith("_SEQUENCE")){
+        // Add the name
+        var nameKeyComplete = tag.split('_');
+        var namePrimerType = nameKeyComplete[1];
+        var nameNumber = nameKeyComplete[2];
+        var nameKeyName = tag.replace(/SEQUENCE$/, "NAME");
+        var nameKeyValue = seqName;
+        if ( nameNumber != "0" ) {
+          nameKeyValue += acSpace + nameNumber;
+        }
+        if (namePrimerType == "RIGHT" ) {
+          nameKeyValue += acSpace + acRight;
+        } else if (namePrimerType == "INTERNAL") {
+          nameKeyValue += acSpace + acOligo;
+        } else if (namePrimerType == "LEFT") {
+          nameKeyValue += acSpace + acLeft;
+        } else {
+          nameKeyValue += "??";
+        }
+        results[nameKeyName] = nameKeyValue;
+        // Add select value
+        nameKeyName = tag.replace(/SEQUENCE$/, "SELECTED");
+        if (task == "pick_sequencing_primers") {
+          results[nameKeyName] = "1";
+	} else {
+          results[nameKeyName] = "0";
+        }
+      }
     }
   }
 }
