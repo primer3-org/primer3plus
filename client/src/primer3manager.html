@@ -1,283 +1,169 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
-       "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!doctype html>
+<html lang="en">
+
 <head>
-  <meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
-  <meta name="viewport" content="width==1034px, initial-scale=1.0">
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <meta name="viewport" content="width=1034, initial-scale=1.0">
   <meta name="description" content="Primer3Manager organizes primer collections and exports them in the RDML format.">
   <title>Primer3Plus - Primer3Manager</title>
-  <style type="text/css">
-	body {
-		color: black;
-		background-color: white;
-		font-size: 100.01%;
-		margin: 1em;
-		padding: 0;
-		text-align: center
-	}
-
-	div#primer3plus_task_bar {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-  	div#primer3plus_messages { 
-        width:900px;
-        border: 2px solid #ccccff;
-        margin: 4px 0px 0px 0px;
-        clear: left;
-        float: left;
-        background-color: rgb(255, 0, 0);
-        overflow:hidden;
-        padding: 0px;
-	}
-
-	div#primer3plus_no_javascript {
-        width:900px;
-        border: 2px solid #ccccff;
-        margin: 4px 0px 0px 0px;
-        clear: left;
-        float: left;
-        background-color: rgb(255, 0, 0);
-        overflow:hidden;
-        padding: 0px;	
-	}
-
-	div#primer3plus_results {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-	div#primer3plus_footer {
-		margin: 12px 0px 3px 0px;
-		font-size: 80%;
-		font-family: Arial;
-		font-weight: bold;
-		color: rgb(75, 75, 75);
-		text-align: center;
-	}
-	
-	div#primer3plus_news {
-		float: left;
-        width:800px;
-        padding: 2px;
-        margin: 8px 0 0 8px;
-        line-height:normal;
-        text-align: center; 
-	}
-
-	div#primer3plus_select_sequence {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-	div#primer3plus_manager {
-		width:900px;
-		border: 2px solid #ccccff;
-		margin: 4px 0px 0px 0px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 0px;
-	}
-
-	.primer3plus_tab_page {
-		width:900px;
-		border: 2px solid #ccccff;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-		padding: 10px 0px 10px 0px;
-	}
-	
-	.primer3plus_tab_page_no_border {
-		width:900px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-	}	
-	
-	.primer3plus_submit {
-		width: 900px;
-		clear: left;
-		float: left;
-		background-color: rgb(255, 255, 230);
-		overflow:hidden;
-	}
-
-	div#menuBar { float: left; width:900px; padding: 0px; margin: 8px 0 0 8px; line-height:normal; text-align: left; }
-	div#menuBar ul { margin:0px; padding: 0px; list-style:none; }
-	div#menuBar li { float:left; margin:0; border: 2px solid #ccccff; border-bottom-width: 0; }
-	div#menuBar a { top: 2px; display:block; padding: 0.24em 1em; font-weight: bold; cursor: pointer; }
-
-  div#page { text-align: left;
-             margin: auto;
-             width: 1024px;
-        }
-
-  div#primer3plus_top_bar { width: 900px; padding: 0px; border: 2px solid #ccccff;}
-  div#primer3plus_footer { width: 900px; padding: 0px; clear: left;}
-  .primer3plus_background { background-color:#ccccff; }
-  .primer3plus_top_bar_table { border:0; width:100%; }
-  .primer3plus_top_bar_cell { border:0; padding:0.4em;background-color:#ccccff; }
-  .primer3plus_top_bar_explain_cell { border:0; font-style: italic; font-size: 0.9em; background: rgb(255, 255, 230);}
-  .primer3plus_top_bar_title { font-size: 2.2em; font-weight:700; }
-  .primer3plus_top_bar_explain { font-size: 1.0em; font-weight:500 }
-  .primer3plus_top_bar_link { font-weight:bold }
-  .primer3plus_task {font-size: 0.9em}
-  .primer3plus_table_no_border { border:0; width:100%; empty-cells:show; }
-  .primer3plus_cell_no_border { border:0; padding:0.15em; }
-  .primer3plus_cell_no_border_problem { border:0; padding:0.15em;background-color:rgb(255,120,60); }
-  .primer3plus_cell_no_border_explain { border:0; font-style: italic; font-size: smaller;}
-  .primer3plus_cell_no_border_bg { border:0; padding:0.2em; background-color:#ccccff; }
-  .primer3plus_cell_no_border_uli_bd { border:0; padding:0.15em; font-weight:bold; text-decoration:underline; }
-  .primer3plus_cell_no_border_right { border:0; padding:0.15em; text-align:right;}
-  .primer3plus_cell_no_border_th { border:0; padding:0.15em;background-color:rgb(230,230,205); }
-  .primer3plus_table_with_border { border:1px solid #000; width:100%; empty-cells:show; border-collapse:collapse; }
-  .primer3plus_cell_with_border { border:1px solid #000; padding:0.2em; }
-  .primer3plus_table_penalties { border:0; width:100%; empty-cells:show; border-collapse:collapse; }
-  .primer3plus_cell_penalties { border:0; padding-top:0.15em; padding-bottom:0.15em; }
-  .primer3plus_cell_penalties_th { border:0; padding-top:0.15em; padding-bottom:0.15em;background-color:rgb(230,230,205); }
-  .primer3plus_table_primer_pair_box { border:0; width:100%; empty-cells:show; border-collapse:collapse; }
-  .primer3plus_cell_primer_pair_box { padding:0.2em; }
-  .primer3plus_action_button {font-size: 0.9em}
-
-  .primer3plus_note { background-color:rgb(255,120,60); padding:0px; }
-  .primer3plus_excluded_region { background-color:rgb(255,80,60); color:rgb(0,0,0); }
-  .primer3plus_target { background-color:rgb(160,250,130); color:rgb(0,0,0); }
-  .primer3plus_included_region { background-color:rgb(110,210,90); color:rgb(0,0,0); }
-  .primer3plus_left_primer { background-color:#ccccff; color:rgb(0,0,0); }
-  .primer3plus_internal_oligo { background-color:rgb(0,0,0); color:rgb(255,255,255); }
-  .primer3plus_right_primer { background-color:rgb(250,240,75); color:rgb(0,0,0); }
-  .primer3plus_left_right_primer { background-color:rgb(140,225,0); color:rgb(0,0,0); }
-  .primer3plus_primer_overlap_pos { background-color:rgb(160,160,160); color:rgb(0,0,0); }
-  .primer3plus_warning { background-color:rgb(255,120,60); }
-  .primer3plus_primer_pair { background-color:rgb(200,200,200); color:rgb(0,0,0); }
-  .primer3plus_primer_pair_box { margin: 4px; border: 2px solid #ccccff; clear: left; float: left; width: 870px; }
-  .primer3plus_long_list {}
-  .primer3plus_long_list_table { text-align:left; width:100%; table-layout:fixed; border:0; border-collapse:collapse }
-  div#primer3plus_result_sequence { float: left; font-size:1.0em; font-family:Courier,monospace; }
-  div#primer3plus_result_sequence_id  { float: left; font-size:1.0em; font-weight:bold;}
-  .primer3plus_select_all { width: 100%; clear: left; float: left;background-color: rgb(255, 255, 230);}
-  .region_button { width: 25px; }
-  textarea#sequenceTextarea { font-family:Courier,monospace; width:95%; }
-  a#PRIMER_TASK_INPUT {font-weight:bold; font-size: 1.1em}
-  .primer3plus_section {margin: 4px; border: 1px dashed #ccccff;}
-
-  </style>
-  <link rel="canonical" href="https://primer3plus.com/cgi-bin/dev/primer3manager.cgi" />
+  <link rel="stylesheet" href="static/css/primer3plus.css">
+  <link rel="canonical" href="https://primer3plus.com/primer3manager.html" />
 </head>
 
-
 <body>
+  <div class="p3p_page">
 
-<div id="page">
+    <div class="p3p_news">
+      <b>News:</b> Try out our new tool: 
+      <a href="https://wily-dna-editor.com/index.html">Wiley-DNA-Editor</a>
+      - A DNA/Plasmid editor running in your browser!
+    </div>
 
-<div id="primer3plus_news">
-<b>News:</b> Try out our new tool: <a href="https://wily-dna-editor.com/index.html">Wiley-DNA-Editor</a> - A DNA/Plasmid editor running in your browser!
-</div>
+    <div class="p3p_top_bar">
+      <table>
+        <colgroup>
+          <col style="width: 60%" class="p3p_blue">
+          <col style="width: 20%" class="p3p_blue">
+          <col style="width: 20%" class="p3p_blue">
+        </colgroup>
+        <tr>
+          <td class="p3p_big_space p3p_blue" rowspan="2"><a class="p3p_top_bar_title">Primer3Manager</a><br>
+            <a class="p3p_top_bar_explain">manage your primer library</a>
+          </td>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusPackage.html">More...</a>
+          </td>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="https://github.com/primer3-org/primer3plus">Source Code</a>
+          </td>
+        </tr>
+        <tr>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusHelp.html">Help</a>
+          </td>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusAbout.html">About</a>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <script>
+      document.write("<style type=\"text/css\">div#p3p_no_javascript { display: none; }</style>");
+    </script>
+    <div id="p3p_no_javascript">
+      <a>Fatal Error: Primer3Plus requires JavaScript. JavaScript is not enabled, please enable JavaScript and refresh the browser.</a>.
+    </div>
+ 
+    <div id="P3P_TOP_MESSAGE_ERROR" style="display: none;">
+      <table>
+        <colgroup>
+          <col style="width: 90%">
+          <col style="width: 10%">
+        </colgroup>
+        <tr>
+          <td>
+            <div id="P3P_TOP_MESSAGE_ERROR_BOX"></div>
+          </td>
+          <td class="p3p_top_right">
+            <input id="P3P_ACTION_RESET_ERROR" value="Dismiss" type="button">
+          </td>
+        </tr>
+      </table>
+    </div>
 
+    <div id="P3P_TOP_MESSAGE_WARNING" style="display: none;">
+      <table>
+        <colgroup>
+          <col style="width: 90%">
+          <col style="width: 10%">
+        </colgroup>
+        <tr>
+          <td>
+            <div id="P3P_TOP_MESSAGE_WARNING_BOX"></div>
+          </td>
+          <td class="p3p_top_right">
+            <input id="P3P_ACTION_RESET_WARNING" value="Dismiss" type="button">
+          </td>
+        </tr>
+      </table>
+    </div>
 
+    <div id="P3P_TOP_MESSAGE_MESSAGE" style="display: none;">
+      <table>
+        <colgroup>
+          <col style="width: 90%">
+          <col style="width: 10%">
+        </colgroup>
+        <tr>
+          <td>
+            <div id="P3P_TOP_MESSAGE_MESSAGE_BOX"></div>
+          </td>
+          <td class="p3p_top_right">
+            <input id="P3P_ACTION_RESET_MESSAGE" value="Dismiss" type="button">
+          </td>
+        </tr>
+      </table>
+    </div>
 
-<SCRIPT language=JavaScript>
-var prevTabPage = "primer3plus_main_tab";
-var prevTab = "tab1";
+    <div id="P3P_MENU_BAR">
+      <ul>
+        <li id="P3P_SEL_TAB_MAIN"><a>Main</a></li>
+        <li id="P3P_SEL_TAB_SETTINGS"><a>Settings</a></li>
+      </ul>
+    </div>
 
-function showTab(tab,id) {
-        if (id == "" || !document.getElementById(id)) {
-                return;
-        }
-        if (prevTabPage != "" && document.getElementById(prevTabPage)) {
-                document.getElementById(prevTabPage).style.display="none";
-                document.getElementById(prevTab).style.background="white";
-                document.getElementById(prevTab).style.top="0";
-                document.getElementById(prevTab).style.zIndex="0";
-        }
-        if (tab != "" && document.getElementById(tab)) {
-                document.getElementById(tab).style.background="rgb(255, 255, 230)";
-                document.getElementById(tab).style.position="relative";
-                document.getElementById(tab).style.top="2px";
-                document.getElementById(tab).style.zIndex="1";
-                prevTab = tab;
-        }
-        document.getElementById(id).style.display="inline";
-        prevTabPage = id;
-}
-
-function hideTabs() {
-        document.getElementById('primer3plus_load_and_save').style.display="none";
-        document.getElementById('primer3plus_settings').style.display="none";
-}
-</SCRIPT> 	
- 	
-<div id="primer3plus_complete">
-
-<form action="primer3manager.cgi" method="post" enctype="multipart/form-data">
-<input type="hidden" name="SCRIPT_PRIMER_MANAGER" value="PRIMER3MANAGER_DISPLAYMODE">
-<input type="hidden" name="PRIMER_PAIR_NUM_RETURNED" value="">
-
-<div id="primer3plus_top_bar">
-   <table class="primer3plus_top_bar_table">
+    <div id="P3P_TAB_MAIN" class="p3p_tab_page">
+    
+       <table>
      <colgroup>
-       <col width="60%" class="primer3plus_background">
-       <col width="20%" class="primer3plus_background">
-       <col width="20%" class="primer3plus_background">
+       <col width="100%">
      </colgroup>
      <tr>
-       <td class="primer3plus_top_bar_cell" rowspan="2"><a class="primer3plus_top_bar_title">Primer3Manager</a><br>
-       <a class="primer3plus_top_bar_explain" id="top">manage your primer library</a>
-       </td>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="primer3plusPackage.cgi">More...</a>
-       </td>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="http://sourceforge.net/projects/primer3/">Source Code</a>
+       <td><a id="SCRIPT_SAVE_FILE_HELP" name="SCRIPT_SAVE_FILE_HELP">To save a RDML file or
+         export as fasta on your local computer, choose here:</a>
        </td>
      </tr>
      <tr>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="primer3plusHelp.cgi">Help</a>
+       <td>
+         <input name="Submit" value="Save RDML File" type="submit">&nbsp;&nbsp;
+         <input name="Submit" value="Export as Fasta" type="submit">
        </td>
-       <td class="primer3plus_top_bar_cell"><a class="primer3plus_top_bar_link" href="primer3plusAbout.cgi">About</a>
+     </tr>
+     <tr>
+       <td>&nbsp;&nbsp;&nbsp;
+       </td>
+     </tr>
+     <tr>
+       <td><a id="SCRIPT_SEQUENCE_FILE_HELP" name="SCRIPT_SEQUENCE_FILE_HELP">To upload a RDML primer file from
+         your local computer, choose here:</a>
+       </td>
+     </tr>
+     <tr>
+       <td><input id="SCRIPT_SEQUENCE_FILE" name="SCRIPT_SEQUENCE_FILE" type="file">&nbsp;&nbsp;
+	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
+       </td>
+     </tr>
+     <tr>
+       <td>&nbsp;&nbsp;&nbsp;
+       </td>
+     </tr>
+     <tr>
+       <td><a id="SCRIPT_SETTINGS_FILE_HELP" name="SCRIPT_SETTINGS_FILE_HELP">To import a fasta primer file created by 
+         Primer3Plus up to version 2.1 from your local computer, choose here:</a>
+       </td>
+     </tr>
+     <tr>
+       <td><input id="SCRIPT_SETTINGS_FILE" name="SCRIPT_SETTINGS_FILE" type="file">&nbsp;&nbsp;
+	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
        </td>
      </tr>
    </table>
-</div>
 
+    
+      <div class="p3p_fit_to_table">
 
-  <div id="menuBar">
-    <ul>
-      <li id="tab1"><a onclick="showTab('tab1','primer3plus_main_tab')">Main</a></li>
-      <li id="tab2"><a onclick="showTab('tab2','primer3plus_load_and_save')">Load and Save</a></li>
-      <li id="tab3"><a onclick="showTab('tab3','primer3plus_settings')">Settings</a></li>
-    </ul>
-  </div>
-
-  <div id="primer3plus_main_tab" class="primer3plus_tab_page">
    <input name="Submit" value="Order selected Primers" type="submit" style="background: #83db7b;">&nbsp;
    <input name="Submit" value="Refresh" type="submit">&nbsp;
    <input value="Reset Form" type="reset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
    <input name="Submit" value="Delete Mode" type="submit">
    <br>
-   <table class="primer3plus_table_no_border">
+   <table>
      <colgroup>
        <col width="10%">
        <col width="40%">
@@ -285,36 +171,36 @@ function hideTabs() {
        <col width="40%">
      </colgroup>
      <tr>
-       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;<input id="PRIMER_PAIR_0_SELECT" name="PRIMER_PAIR_0_SELECT" value="1" type="checkbox">&nbsp;&nbsp; Name: 
+       <td>&nbsp;&nbsp;<input id="PRIMER_PAIR_0_SELECT" name="PRIMER_PAIR_0_SELECT" value="1" type="checkbox">&nbsp;&nbsp; Name: 
        </td>
-       <td class="primer3plus_cell_no_border"><input id="PRIMER_PAIR_0_NAME" name="PRIMER_PAIR_0_NAME" value="" size="25">
+       <td><input id="PRIMER_PAIR_0_NAME" name="PRIMER_PAIR_0_NAME" value="" size="25">
        </td>
-       <td class="primer3plus_cell_no_border">Designed on</td>
-       <td class="primer3plus_cell_no_border"><input id="PRIMER_PAIR_0_DATE" name="PRIMER_PAIR_0_DATE" value="" size="10">
+       <td>Designed on</td>
+       <td><input id="PRIMER_PAIR_0_DATE" name="PRIMER_PAIR_0_DATE" value="" size="10">
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
          <a href="primer3plus.cgi?SEQUENCE_ID=&SEQUENCE_PRIMER=&SEQUENCE_INTERNAL_OLIGO=&SEQUENCE_PRIMER_REVCOMP=&SEQUENCE_TEMPLATE=">Check!</a>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
          <a href="http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?ALIGNMENTS=50&amp;ALIGNMENT_VIEW=Pairwise&amp;AUTO_FORMAT=Semiauto&amp;CLIENT=web&amp;DATABASE=nr&amp;DESCRIPTIONS=100&amp;ENTREZ_QUERY=All+organisms&amp;EXPECT=1000&amp;FORMAT_BLOCK_ON_RESPAGE=None&amp;FORMAT_ENTREZ_QUERY=All+organisms&amp;FORMAT_OBJECT=Alignment&amp;FORMAT_TYPE=HTML&amp;FULL_DBNAME=nr&amp;GET_SEQUENCE=on&amp;HITLIST_SIZE=100&amp;JOB_TITLE=Nucleotide+sequence+(26+letters)&amp;LAYOUT=TwoWindows&amp;MASK_CHAR=2&amp;MASK_COLOR=1&amp;MYNCBI_USER=4308031382&amp;NEW_VIEW=on&amp;NUM_OVERVIEW=100&amp;PAGE=Nucleotides&amp;PROGRAM=blastn&amp;QUERY=&amp;QUERY_LENGTH=&amp;REPEATS=repeat_9606&amp;RID=1167160749-11191-152202340454.BLASTQ1&amp;RTOE=9&amp;SEARCH_NAME=short_bn&amp;SERVICE=plain&amp;SET_DEFAULTS.x=48&amp;SET_DEFAULTS.y=8&amp;SHOW_LINKOUT=on&amp;SHOW_OVERVIEW=on&amp;USER_TYPE=2&amp;WORD_SIZE=7&amp;dbtype=hc&amp;END_OF_HTTPGET=Yes" target="_blank">BLAST!</a></td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border">Left:</td>
-       <td class="primer3plus_cell_no_border"><input id="PRIMER_LEFT_0_SEQUENCE" name="PRIMER_LEFT_0_SEQUENCE" value="" size="40"></td>
-       <td class="primer3plus_cell_no_border">Right:</td>
-       <td class="primer3plus_cell_no_border"><input id="PRIMER_RIGHT_0_SEQUENCE" name="PRIMER_RIGHT_0_SEQUENCE" value="" size="40"></td>
+       <td>Left:</td>
+       <td><input id="PRIMER_LEFT_0_SEQUENCE" name="PRIMER_LEFT_0_SEQUENCE" value="" size="40"></td>
+       <td>Right:</td>
+       <td><input id="PRIMER_RIGHT_0_SEQUENCE" name="PRIMER_RIGHT_0_SEQUENCE" value="" size="40"></td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border">Internal:</td>
-       <td class="primer3plus_cell_no_border"><input id="PRIMER_INTERNAL_0_SEQUENCE" name="PRIMER_INTERNAL_0_SEQUENCE" value="" size="40"></td>
-       <td class="primer3plus_cell_no_border"></td>
-       <td class="primer3plus_cell_no_border"></td>
+       <td>Internal:</td>
+       <td><input id="PRIMER_INTERNAL_0_SEQUENCE" name="PRIMER_INTERNAL_0_SEQUENCE" value="" size="40"></td>
+       <td></td>
+       <td></td>
      </tr>
      <tr>
-       <td class="primer3plus_cell_no_border">Amplicon: </td>
-       <td colspan="3" class="primer3plus_cell_no_border"><textarea name="PRIMER_PAIR_0_AMPLICON" id="PRIMER_PAIR_0_AMPLICON" rows="4" cols="85"></textarea>
+       <td>Amplicon: </td>
+       <td colspan="3"><textarea name="PRIMER_PAIR_0_AMPLICON" id="PRIMER_PAIR_0_AMPLICON" rows="4" cols="85"></textarea>
        </td>
      </tr>
      <tr>
-       <td colspan="4" class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;</td>
+       <td colspan="4">&nbsp;&nbsp;&nbsp;</td>
      </tr>   </table>
    <br>
    <input name="Submit" value="Order selected Primers" type="submit" style="background: #83db7b;">&nbsp;
@@ -324,151 +210,89 @@ function hideTabs() {
    <br>
    <br>
 
-   <div id="primer3plus_footer">
-   <a>&copy; by A. Untergasser</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/contact_e.html">Contact</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/datenschutzerklaerung.html">Datenschutzerkl&auml;rung</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/impressum.html">Impressum</a>
-   </div>
+    </div>
 
   </div>
 
   <div id="primer3plus_load_and_save" class="primer3plus_tab_page">
 
-   <table class="primer3plus_table_no_border">
-     <colgroup>
-       <col width="100%">
-     </colgroup>
-     <tr>
-       <td class="primer3plus_cell_no_border"><a id="SCRIPT_SAVE_FILE_INPUT" name="SCRIPT_SAVE_FILE_INPUT">To save a RDML file or
-         export as fasta on your local computer, choose here:</a>
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border">
-         <input name="Submit" value="Save RDML File" type="submit">&nbsp;&nbsp;
-         <input name="Submit" value="Export as Fasta" type="submit">
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border"><a id="SCRIPT_SEQUENCE_FILE_INPUT" name="SCRIPT_SEQUENCE_FILE_INPUT">To upload a RDML primer file from
-         your local computer, choose here:</a>
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border"><input id="SCRIPT_SEQUENCE_FILE" name="SCRIPT_SEQUENCE_FILE" type="file">&nbsp;&nbsp;
-	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border">&nbsp;&nbsp;&nbsp;
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border"><a id="SCRIPT_SETTINGS_FILE_INPUT" name="SCRIPT_SETTINGS_FILE_INPUT">To import a fasta primer file created by 
-         Primer3Plus up to version 2.1 from your local computer, choose here:</a>
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border"><input id="SCRIPT_SETTINGS_FILE" name="SCRIPT_SETTINGS_FILE" type="file">&nbsp;&nbsp;
-	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
-       </td>
-     </tr>
-   </table>
    
-   <div id="primer3plus_footer">
-   <a>&copy; by A. Untergasser</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/contact_e.html">Contact</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/datenschutzerklaerung.html">Datenschutzerkl&auml;rung</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/impressum.html">Impressum</a>
-   </div>
-
   </div>
 
 
-  <div id="primer3plus_settings" class="primer3plus_tab_page">
+    <div id="P3P_TAB_SETTINGS" class="p3p_tab_page">
+      <table>
+        <colgroup>
+          <col width="25%">
+          <col width="15%">
+          <col width="27%">
+          <col width="33%">
+        </colgroup>
+        <tr>
+          <td>
+            <a id="P3P_RDML_VERSION_HELP">RDML Version:</a>
+          </td>
+          <td>
+            <select id="P3P_RDML_VERSION" onchange="changeSettings(this);">
+              <option value="1.0">1.0</option>
+              <option value="1.1">1.1</option>
+              <option value="1.2">1.2</option>
+            </select>
+          </td>
+          <td>
+          </td>
+          <td style="text-align: right"><input value="Reset Default" onclick="resetSettings();" type="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a id="P3P_PRIMER_NAME_ACRONYM_LEFT_HELP">Left Primer Acronym:</a>
+          </td>
+          <td>
+            <input size="4" id="P3P_PRIMER_NAME_ACRONYM_LEFT" onchange="changeSettings(this);" type="text">
+          </td>
+          <td>
+            <a id="P3P_PRIMER_NAME_ACRONYM_INTERNAL_HELP">Internal Oligo Acronym:</a>
+          </td>
+          <td>
+            <input size="4" id="P3P_PRIMER_NAME_ACRONYM_INTERNAL" onchange="changeSettings(this);" type="text">
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a id="P3P_PRIMER_NAME_ACRONYM_RIGHT_HELP">Right Primer Acronym:</a>
+          </td>
+          <td>
+            <input size="4" id="P3P_PRIMER_NAME_ACRONYM_RIGHT" onchange="changeSettings(this);" type="text">
+          </td>
+          <td>
+            <a id="P3P_PRIMER_NAME_ACRONYM_SPACER_HELP">Primer Name Spacer:</a>
+          </td>
+          <td>
+            <input size="4" id="P3P_PRIMER_NAME_ACRONYM_SPACER" onchange="changeSettings(this);" type="text">
+          </td>
+        </tr>
+      </table>
+    </div>
 
-   <table class="primer3plus_table_no_border">
-     <colgroup>
-       <col width="25%">
-       <col width="15%">
-       <col width="27%">
-       <col width="33%">
-     </colgroup>
-     <tr>
-       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_LEFT_INPUT">
-       RDML Version:</a>
-       </td>
-       <td class="primer3plus_cell_no_border">
-         <select name="P3P_RDML_VERSION">
-           <option selected="selected" value="1.0">1.0</option>
-           <option value="1.1">1.1</option>
-         </select>
-       </td>
-       <td class="primer3plus_cell_no_border">
-       </td>
-       <td class="primer3plus_cell_no_border">
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_LEFT_INPUT" href="primer3plusHelp.cgi#P3P_PRIMER_NAME_ACRONYM_LEFT">
-       Left Primer Acronym:</a>
-       </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_LEFT" value="F" type="text">
-       </td>
-       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_INTERNAL_INPUT" href="primer3plusHelp.cgi#P3P_PRIMER_NAME_ACRONYM_INTERNAL">
-       Internal Oligo Acronym:</a>
-       </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_INTERNAL" value="IN" type="text">
-       </td>
-     </tr>
-     <tr>
-       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_RIGHT_INPUT" href="primer3plusHelp.cgi#P3P_PRIMER_NAME_ACRONYM_RIGHT">
-       Right Primer Acronym:</a>
-       </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_RIGHT" value="R" type="text">
-       </td>
-       <td class="primer3plus_cell_no_border"> <a name="P3P_PRIMER_NAME_ACRONYM_SPACER_INPUT" href="primer3plusHelp.cgi#P3P_PRIMER_NAME_ACRONYM_SPACER">
-       Primer Name Spacer:</a>
-       </td>
-       <td class="primer3plus_cell_no_border"> <input size="4" name="P3P_PRIMER_NAME_ACRONYM_SPACER" value="_" type="text">
-       </td>
-     </tr>
-   </table>
-   
-   <div id="primer3plus_footer">
-   <a>&copy; by A. Untergasser</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/contact_e.html">Contact</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/datenschutzerklaerung.html">Datenschutzerkl&auml;rung</a>
-&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="http://www.untergasser.de/data/impressum.html">Impressum</a>
-   </div>
- 
-   </div>
+    <div class="p3p_footer_bar">
+      <div class="p3p_footer_l">
+        GEAR + Primer3 &#126;
+        <a target="_blank" class="p3p_footer_link" href="https://gear.embl.de"> Home </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://github.com/gear-genomics"> GEAR-GitHub </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://github.com/primer3-org"> Primer3-GitHub </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://gear.embl.de/terms"> Terms of Use </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://gear.embl.de/contact"> Contact Us </a>
+      </div>
+      <div class="p3p_footer_r">
+        Hosted with love by 
+        <a target="_blank" class="p3p_footer_link" href="https://www.embl.de">EMBL</a>
+      </div>
+    </div>
 
-</form>
-</div>
-<script type="text/javascript">
-  hideTabs();
-  showTab('tab1','primer3plus_main_tab');
-</script>
+  </div>
 
-
-</div>
+  <script src="static/js/primer3manager.js"></script>
 
 </body>
 </html>
-
-

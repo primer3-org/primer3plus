@@ -1968,6 +1968,7 @@ function createSaveFileString(sel) {
   // Fix data for Primer3
   if (sel == "primer3") {
     data["PRIMER_EXPLAIN_FLAG"] = "1";
+    data["PRIMER_PICK_ANYWAY"] = "1";
     data["PRIMER_THERMODYNAMIC_PARAMETERS_PATH"] = "Add Path to the Primer3 /src/primer3_config/ folder";
     if (data.hasOwnProperty("PRIMER_INTERNAL_MISHYB_LIBRARY") &&
         ((data["PRIMER_INTERNAL_MISHYB_LIBRARY"] == "NONE") ||
