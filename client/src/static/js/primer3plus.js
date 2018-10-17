@@ -297,14 +297,95 @@ function createPrimer3ManagerBar() {
   ret += '    <col width="70%">\n';
   ret += '  </colgroup>\n';
   ret += '  <tr>\n';
-  ret += '    <td><input id="P3P_ACTION_SELECT_ALL_PRIMERS" type="checkbox"> &nbsp; Select all Primers</td>\n';
+  ret += '    <td><input id="P3P_ALL_PRIMERS_SELECTED" type="checkbox"> &nbsp; Select all Primers</td>\n';
   ret += '    <td style="text-align: right;">\n';
-  ret += '      <input value="Send Selected Primers to Primer3Manager" type="button">&nbsp;\n';
-  ret += '      <input value="Go to Primer3Manager" type="button">&nbsp;\n';
+  ret += '      <input value="Send Selected Primers to Primer3Manager" onclick="uploadToPrimer3Manager();" type="button">&nbsp;\n';
+  ret += '      <input value="Go to Primer3Manager" onclick="goToPrimer3Manager();"type="button">&nbsp;\n';
   ret += '    </td>';
   ret += '  </tr>';
   ret += '</table>';
   return ret;
+}
+
+window.uploadToPrimer3Manager = uploadToPrimer3Manager;
+function uploadToPrimer3Manager(){
+  var clData = localStorage.getItem("P3M_ALL_DATA");
+  if (clData === null) {
+    clData = [];
+  } else {
+    clData = JSON.parse(clData);
+  }
+  var task    = saveGetTag("PRIMER_TASK");
+  var selAll = false;
+  if (getHtmlTagValue("P3P_ALL_PRIMERS_SELECTED") == "1") {
+    selAll = true;
+  }
+  primSet = {};
+  var today = new Date();
+  var dd = today.getDate();
+  var mm = today.getMonth() + 1; //January is 0!
+  var yyyy = today.getFullYear();
+  if(dd < 10) {
+    dd = '0'+dd
+  } 
+  if(mm < 10) {
+    mm = '0'+mm
+  } 
+  if (results.hasOwnProperty("PRIMER_PAIR_NUM_RETURNED") && (parseInt(results["PRIMER_PAIR_NUM_RETURNED"]) > 0 )) {
+    var seq = results["SEQUENCE_TEMPLATE"];
+    var fistBase = parseInt(saveGetTag("PRIMER_FIRST_BASE_INDEX"));  
+    for (var pairCount = 0 ; pairCount < parseInt(results["PRIMER_PAIR_NUM_RETURNED"]) ; pairCount++) {
+      if ((results["PRIMER_PAIR_" + pairCount + "_SELECTED"] == "1") || selAll) {
+        var primSet = {};	      
+        primSet["forwardPrimer"] = results["PRIMER_LEFT_" + pairCount + "_SEQUENCE"];
+        if (results.hasOwnProperty("PRIMER_INTERNAL_" + pairCount + "_SEQUENCE")) {
+          primSet["probe1"] = results["PRIMER_INTERNAL_" + pairCount + "_SEQUENCE"];
+        }
+        primSet["reversePrimer"] = results["PRIMER_RIGHT_" + pairCount + "_SEQUENCE"];
+        primSet["amplicon"] = results["PRIMER_PAIR_" + pairCount + "_AMPLICON"];
+        primSet["id"] = results["PRIMER_PAIR_" + pairCount + "_NAME"];
+
+        primSet["description"] = "Primer3Plus " + task + " result from " + dd + '.' + mm + '.' + yyyy + " - display as selected";
+	localStorage.setItem("P3M_NEW_DATA", true);
+        clData.unshift(primSet);
+      }
+    }
+  } else {
+    for (var tag in results) {
+      if(tag.endsWith("_SEQUENCE")){
+        // Add the name
+        var nameKeyComplete = tag.split('_');
+        var namePrimerType = nameKeyComplete[1];
+        var nameNumber = nameKeyComplete[2];
+        var nameKeyName = tag.replace(/SEQUENCE$/, "NAME");
+        var nameKeySelected = tag.replace(/SEQUENCE$/, "SELECTED");
+        if ((results[nameKeySelected] == "1") || selAll) {
+          var primSet = {};
+          if (namePrimerType == "LEFT" ) {
+            primSet["forwardPrimer"] = results[tag];
+          } else if (namePrimerType == "INTERNAL") {
+            primSet["probe1"] = results[tag];
+          } else if (namePrimerType == "RIGHT") {
+            primSet["reversePrimer"] = results[tag];
+          }
+          primSet["id"] = results[nameKeyName];
+          primSet["description"] = "Primer3Plus " + task + " result from " + dd + '.' + mm + '.' + yyyy + " - display as selected";
+          localStorage.setItem("P3M_NEW_DATA", true);
+          clData.unshift(primSet);
+        }
+      }
+    }
+  }
+  if (localStorage.getItem("P3M_NEW_DATA")) {
+    localStorage.setItem("P3M_ALL_DATA", JSON.stringify(clData));    
+  }
+  goToPrimer3Manager();
+}
+
+window.goToPrimer3Manager = goToPrimer3Manager;
+function goToPrimer3Manager(){
+  var win = window.open("primer3manager.html", 'Primer3Manager');
+  win.focus();
 }
 
 function createResultsPrimerCheck(res) {
