@@ -4,6 +4,8 @@ var p3p_errors = [];
 var p3p_warnings = [];
 var p3p_messages = [];
 
+var primerData;
+
 var prevSelectedTab = "";
 
 var sett = {
@@ -18,6 +20,24 @@ document.addEventListener("DOMContentLoaded", function() {
   init_message_buttons();
   initTabFunctionality();
   initSettings();
+  var clData = localStorage.getItem("P3M_ALL_DATA");
+  if (clData === null) {
+    primerData = [];
+  } else {
+    primerData = JSON.parse(clData);
+  }
+  for (var i = 0 ; i < primerData.length ; i++) {
+    if (primerData[i].hasOwnProperty('description')) {
+      var desc = primerData[i]['description'];
+      if (desc.endsWith(" - display as selected")) {
+        primerData[i]['selected'] = "1";
+        primerData[i]['description'] = desc.replace(" - display as selected", "");
+      } else {
+        primerData[i]['selected'] = "0";
+      }
+    }
+  }
+  updateList();
 });
 
 function init_message_buttons() {
@@ -189,6 +209,61 @@ function setSettings(tag, value) {
 window.changeSettings = changeSettings;
 function changeSettings(elem) {
   localStorage.setItem(elem.id, getHtmlTagValue(elem.id))
+}
+
+function updateList() {
+  retHTML  = '<table style="border: 0; width: 100%; empty-cells: show; table-layout: fixed;">\n';
+  retHTML += '  <colgroup>\n';
+  retHTML += '    <col width="3%">\n';
+  retHTML += '    <col width="22%">\n';
+  retHTML += '    <col width="35%">\n';
+  retHTML += '    <col width="20%">\n';
+  retHTML += '    <col width="20%">\n';
+  retHTML += '  </colgroup>\n';
+  retHTML += '  <tr>\n';
+  retHTML += '    <td><strong>Sel</strong></td>\n';
+  retHTML += '    <td><strong>Name</strong></td>\n';
+  retHTML += '    <td><strong>Description</strong></td>\n';
+  retHTML += '    <td><strong>Forward Primer</strong></td>\n';
+  retHTML += '    <td><strong>Reverse Primer</strong></td>\n';
+  retHTML += '  </tr>\n';
+
+  for (var i = 0 ; i < primerData.length ; i++) {
+    retHTML += '  <tr>\n';
+    retHTML += '    <td><input onchange="changeSelectedBox(' + i + ',this);"';
+    if (primerData[i].hasOwnProperty('selected') &&
+        (primerData[i]['selected'] == "1")) {
+      retHTML += "checked=\"checked\" ";
+    }
+    retHTML += 'type="checkbox"></td>\n';
+    retHTML += makeCell(i, 'id')
+    retHTML += makeCell(i, 'description')
+    retHTML += makeCell(i, 'forwardPrimer')
+    retHTML += makeCell(i, 'reversePrimer')
+    retHTML += '  </tr>\n';
+  }
+  retHTML += '</table>\n';
+  window.frames['P3M_LIST'].document.body.innerHTML = retHTML;
+}
+
+function makeCell(count,tag) {
+  var retHTML = '    <td>'
+  if (primerData[count].hasOwnProperty(tag)) {
+    retHTML += primerData[count][tag];
+  }
+  retHTML += '</td>\n';
+  return retHTML;
+}
+
+window.frames['P3M_LIST'].changeSelectedBox = changeSelectedBox;
+function changeSelectedBox(count, elem) {
+  if (primerData[count].hasOwnProperty('selected')) {
+    if (elem.checked) {
+      primerData[count]['selected'] = "1";
+    } else {
+      primerData[count]['selected'] = "0";
+    }
+  }
 }
 
 function linkHelpTags() {

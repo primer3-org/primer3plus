@@ -293,8 +293,8 @@ function updateResultsElement(elm) {
 function createPrimer3ManagerBar() {
   var ret = '<table>\n';
   ret += '  <colgroup>\n';
-  ret += '    <col width="30%">\n';
-  ret += '    <col width="70%">\n';
+  ret += '    <col style="width: 30%">\n';
+  ret += '    <col style="width: 70%">\n';
   ret += '  </colgroup>\n';
   ret += '  <tr>\n';
   ret += '    <td><input id="P3P_ALL_PRIMERS_SELECTED" type="checkbox"> &nbsp; Select all Primers</td>\n';
@@ -414,8 +414,8 @@ function createResultsPrimerCheck(res) {
   var retHTML = createPrimer3ManagerBar();
   retHTML += '<div class="p3p_fit_to_table">\n<table>\n';
   retHTML += '  <colgroup>\n';
-  retHTML += '    <col width="17%">\n';
-  retHTML += '    <col width="83%">\n';
+  retHTML += '    <col style="width: 17%">\n';
+  retHTML += '    <col style="width: 83%">\n';
   retHTML += '  </colgroup>\n';
   retHTML += '  <tr class="p3p_left_primer">\n';
   retHTML += '    <td class="p3p_oligo_cell">Oligo:</td>\n';
@@ -2049,7 +2049,6 @@ function createSaveFileString(sel) {
   // Fix data for Primer3
   if (sel == "primer3") {
     data["PRIMER_EXPLAIN_FLAG"] = "1";
-    data["PRIMER_PICK_ANYWAY"] = "1";
     data["PRIMER_THERMODYNAMIC_PARAMETERS_PATH"] = "Add Path to the Primer3 /src/primer3_config/ folder";
     if (data.hasOwnProperty("PRIMER_INTERNAL_MISHYB_LIBRARY") &&
         ((data["PRIMER_INTERNAL_MISHYB_LIBRARY"] == "NONE") ||
@@ -2085,6 +2084,7 @@ function createSaveFileString(sel) {
     // Handle the tasks
     if (data.hasOwnProperty("PRIMER_TASK") &&
         (data["PRIMER_TASK"] == "pick_cloning_primers")) {
+      data["PRIMER_PICK_ANYWAY"] = "1";
       if (data.hasOwnProperty("SEQUENCE_EXCLUDED_REGION")) {
         delete data["SEQUENCE_EXCLUDED_REGION"];
       }
@@ -2109,6 +2109,7 @@ function createSaveFileString(sel) {
     }
     if (data.hasOwnProperty("PRIMER_TASK") &&
         (data["PRIMER_TASK"] == "pick_discriminative_primers")) {
+      data["PRIMER_PICK_ANYWAY"] = "1";
       if (data.hasOwnProperty("SEQUENCE_EXCLUDED_REGION")) {
         delete data["SEQUENCE_EXCLUDED_REGION"];
       }
@@ -2135,7 +2136,6 @@ function createSaveFileString(sel) {
         (data["PRIMER_TASK"] == "pick_sequencing_primers")) {
       // Make space for enough primers
       data["PRIMER_NUM_RETURN"] = "1000";
-
       if (data.hasOwnProperty("SEQUENCE_EXCLUDED_REGION")) {
         delete data["SEQUENCE_EXCLUDED_REGION"];
       }
