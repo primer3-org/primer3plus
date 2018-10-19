@@ -158,66 +158,55 @@
     
       <div class="p3p_fit_to_table">
       <iframe name="P3M_LIST" id="P3M_LIST" style="border:#000000 1px solid; background-color: white; width:880px; height:250px;"></iframe>
+ <br>
+ <br>
 
-   <input name="Submit" value="Order selected Primers" type="submit" style="background: #83db7b;">&nbsp;
-   <input name="Submit" value="Refresh" type="submit">&nbsp;
-   <input value="Reset Form" type="reset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   <input name="Submit" value="Delete Mode" type="submit">
    <br>
    <table>
      <colgroup>
-       <col width="10%">
-       <col width="40%">
-       <col width="10%">
-       <col width="40%">
+       <col width="15%">
+       <col width="85%">
      </colgroup>
      <tr>
-       <td>&nbsp;&nbsp;<input id="PRIMER_PAIR_0_SELECT" name="PRIMER_PAIR_0_SELECT" value="1" type="checkbox">&nbsp;&nbsp; Name: 
-       </td>
-       <td><input id="PRIMER_PAIR_0_NAME" name="PRIMER_PAIR_0_NAME" value="" size="25">
-       </td>
-       <td>Designed on</td>
-       <td><input id="PRIMER_PAIR_0_DATE" name="PRIMER_PAIR_0_DATE" value="" size="10">
+       <td>Add to Order:</td>
+       <td><input id="P3M_SELECT" onclick="changeOrderSelection();" type="checkbox">
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
          <a href="index.html?SEQUENCE_ID=&SEQUENCE_PRIMER=&SEQUENCE_INTERNAL_OLIGO=&SEQUENCE_PRIMER_REVCOMP=&SEQUENCE_TEMPLATE=">Check!</a>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
          <a href="http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?ALIGNMENTS=50&amp;ALIGNMENT_VIEW=Pairwise&amp;AUTO_FORMAT=Semiauto&amp;CLIENT=web&amp;DATABASE=nr&amp;DESCRIPTIONS=100&amp;ENTREZ_QUERY=All+organisms&amp;EXPECT=1000&amp;FORMAT_BLOCK_ON_RESPAGE=None&amp;FORMAT_ENTREZ_QUERY=All+organisms&amp;FORMAT_OBJECT=Alignment&amp;FORMAT_TYPE=HTML&amp;FULL_DBNAME=nr&amp;GET_SEQUENCE=on&amp;HITLIST_SIZE=100&amp;JOB_TITLE=Nucleotide+sequence+(26+letters)&amp;LAYOUT=TwoWindows&amp;MASK_CHAR=2&amp;MASK_COLOR=1&amp;MYNCBI_USER=4308031382&amp;NEW_VIEW=on&amp;NUM_OVERVIEW=100&amp;PAGE=Nucleotides&amp;PROGRAM=blastn&amp;QUERY=&amp;QUERY_LENGTH=&amp;REPEATS=repeat_9606&amp;RID=1167160749-11191-152202340454.BLASTQ1&amp;RTOE=9&amp;SEARCH_NAME=short_bn&amp;SERVICE=plain&amp;SET_DEFAULTS.x=48&amp;SET_DEFAULTS.y=8&amp;SHOW_LINKOUT=on&amp;SHOW_OVERVIEW=on&amp;USER_TYPE=2&amp;WORD_SIZE=7&amp;dbtype=hc&amp;END_OF_HTTPGET=Yes" target="_blank">BLAST!</a></td>
      </tr>
      <tr>
+       <td>Name:</td>
+       <td><input id="P3M_NAME" size="85" type="text"></td>
+     </tr>
+     <tr>
+       <td>Description:</td>
+       <td><input id="P3M_DESCRIPTION" size="85" type="text"></td>
+     </tr>
+     <tr>
        <td>Left:</td>
-       <td><input id="PRIMER_LEFT_0_SEQUENCE" name="PRIMER_LEFT_0_SEQUENCE" value="" size="40"></td>
-       <td>Right:</td>
-       <td><input id="PRIMER_RIGHT_0_SEQUENCE" name="PRIMER_RIGHT_0_SEQUENCE" value="" size="40"></td>
+       <td><input id="P3M_LEFT_SEQUENCE" size="85" type="text"></td>
      </tr>
      <tr>
        <td>Internal:</td>
-       <td><input id="PRIMER_INTERNAL_0_SEQUENCE" name="PRIMER_INTERNAL_0_SEQUENCE" value="" size="40"></td>
-       <td></td>
-       <td></td>
+       <td><input id="P3M_INTERNAL_SEQUENCE" size="85" type="text"></td>
      </tr>
      <tr>
-       <td>Amplicon: </td>
-       <td colspan="3"><textarea name="PRIMER_PAIR_0_AMPLICON" id="PRIMER_PAIR_0_AMPLICON" rows="4" cols="85"></textarea>
-       </td>
+       <td>Right:</td>
+       <td><input id="P3M_RIGHT_SEQUENCE" size="85" type="text"></td>
      </tr>
      <tr>
-       <td colspan="4">&nbsp;&nbsp;&nbsp;</td>
-     </tr>   </table>
-   <br>
-   <input name="Submit" value="Order selected Primers" type="submit" style="background: #83db7b;">&nbsp;
-   <input name="Submit" value="Refresh" type="submit">&nbsp;
-   <input value="Reset Form" type="reset">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-   <input name="Submit" value="Delete Mode" type="submit">
-   <br>
-   <br>
+       <td>Amplicon Insert: </td>
+       <td><textarea id="P3M_AMPLICON" rows="4" cols="85"></textarea></td>
+     </tr>
+     <tr>
+       <td>Full Amplicon: </td>
+       <td><textarea id="P3M_AMPLICON_CALC" rows="4" cols="85" readonly="readonly"></textarea></td>
+     </tr>
+   </table>
 
     </div>
 
-  </div>
-
-  <div id="primer3plus_load_and_save" class="primer3plus_tab_page">
-
-   
   </div>
 
         

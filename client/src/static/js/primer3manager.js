@@ -6,6 +6,8 @@ var p3p_messages = [];
 
 var primerData;
 
+var showPrimer = 0;
+
 var prevSelectedTab = "";
 
 var sett = {
@@ -15,6 +17,8 @@ var sett = {
   "P3P_PRIMER_NAME_ACRONYM_RIGHT": "R",
   "P3P_PRIMER_NAME_ACRONYM_SPACER": "_"
 };
+
+var debugMode = 2;
 
 document.addEventListener("DOMContentLoaded", function() {
   init_message_buttons();
@@ -138,6 +142,10 @@ function initTabFunctionality() {
   if (btMain === null) {
     return;
   }
+  var btOrder = document.getElementById('P3P_SEL_TAB_ORDER');
+  if (btOrder === null) {
+    return;
+  }
   var btSet = document.getElementById('P3P_SEL_TAB_SETTINGS');
   if (btSet === null) {
     return;
@@ -146,16 +154,22 @@ function initTabFunctionality() {
   if (tabMain === null) {
     return;
   }
+  var tabOrder = document.getElementById('P3P_TAB_ORDER');
+  if (tabOrder === null) {
+    return;
+  }
   var tabGeneralSet = document.getElementById('P3P_TAB_SETTINGS');
   if (tabGeneralSet === null) {
     return;
   }
   btMain.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_MAIN');});
+  btOrder.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_ORDER');});
   btSet.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_SETTINGS');});
   browseTabFunctionality('P3P_TAB_MAIN');
 }
 function browseTabFunctionality(tab) {
   browseTabSelect(tab,'P3P_SEL_TAB_MAIN','P3P_TAB_MAIN');
+  browseTabSelect(tab,'P3P_SEL_TAB_ORDER','P3P_TAB_ORDER');
   browseTabSelect(tab,'P3P_SEL_TAB_SETTINGS','P3P_TAB_SETTINGS');
 }
 function browseTabSelect(sel,btn,tab) {
@@ -244,15 +258,23 @@ function updateList() {
   }
   retHTML += '</table>\n';
   window.frames['P3M_LIST'].document.body.innerHTML = retHTML;
+  updateOrderList();
+  updateSelectedPrimer();	
 }
 
 function makeCell(count,tag) {
-  var retHTML = '    <td>'
+  var retHTML = '    <td onclick="setActivePrimer(' + count + ');">'
   if (primerData[count].hasOwnProperty(tag)) {
     retHTML += primerData[count][tag];
   }
   retHTML += '</td>\n';
   return retHTML;
+}
+
+window.frames['P3M_LIST'].setActivePrimer = setActivePrimer;
+function setActivePrimer(count) {
+  showPrimer = count;
+  updateSelectedPrimer();
 }
 
 window.frames['P3M_LIST'].changeSelectedBox = changeSelectedBox;
@@ -264,6 +286,94 @@ function changeSelectedBox(count, elem) {
       primerData[count]['selected'] = "0";
     }
   }
+  updateOrderList();
+}
+
+window.changeOrderSelection = changeOrderSelection;
+function changeOrderSelection() {
+  if (document.getElementById('P3M_SELECT').checked) {
+    primerData[showPrimer]['selected'] = "1";
+  } else {
+    primerData[showPrimer]['selected'] = "0";
+  }
+  updateList();
+}
+
+function updateOrderList() {
+  var txtOrder = document.getElementById('P3M_ORDER_LIST');
+  if (txtOrder === null) {
+    return;
+  }
+  order = "";
+  for (var i = 0 ; i < primerData.length ; i++) {
+    if (primerData[i].hasOwnProperty('selected') &&
+        (primerData[i]['selected'] == "1")) {
+      var acSpace = getHtmlTagValue("P3P_PRIMER_NAME_ACRONYM_SPACER");
+      var pName = primerData[i]['id'].replace(/\s/g, acSpace);
+      if (primerData[i].hasOwnProperty('forwardPrimer') &&
+          (primerData[i]['forwardPrimer'] != "")) {
+	var toAdd = acSpace + getHtmlTagValue("P3P_PRIMER_NAME_ACRONYM_LEFT");
+	if (pName.endsWith(toAdd)) {
+          order += pName + " ";
+	} else {
+          order += pName + toAdd + " ";
+	}
+        order += primerData[i]['forwardPrimer'] + "\n";
+      }
+      if (primerData[i].hasOwnProperty('probe1') &&
+          (primerData[i]['probe1'] != "")) {
+        var toAdd = acSpace + getHtmlTagValue("P3P_PRIMER_NAME_ACRONYM_INTERNAL");
+        if (pName.endsWith(toAdd)) {
+          order += pName + " ";
+        } else {
+          order += pName + toAdd + " ";
+        }
+        order += primerData[i]['probe1'] + "\n";
+      }
+      if (primerData[i].hasOwnProperty('reversePrimer') &&
+          (primerData[i]['reversePrimer'] != "")) {
+        var toAdd = acSpace + getHtmlTagValue("P3P_PRIMER_NAME_ACRONYM_RIGHT");
+        if (pName.endsWith(toAdd)) {
+          order += pName + " ";
+        } else {
+          order += pName + toAdd + " ";
+        }
+        order += primerData[i]['reversePrimer'] + "\n";
+      }
+    }
+  }
+  txtOrder.value = order;
+}
+
+function updateSelectedPrimer() {
+  if (primerData[showPrimer]['selected'] == "1") {
+    setHtmlTagValue('P3M_SELECT', "1");
+  } else {
+    setHtmlTagValue('P3M_SELECT', "0");
+  }
+  saveAdd(showPrimer, "P3M_NAME", 'id');
+  saveAdd(showPrimer, "P3M_DESCRIPTION", 'description');
+  saveAdd(showPrimer, "P3M_LEFT_SEQUENCE", 'forwardPrimer');
+  saveAdd(showPrimer, "P3M_INTERNAL_SEQUENCE", 'probe1');
+  saveAdd(showPrimer, "P3M_RIGHT_SEQUENCE", 'reversePrimer');
+  saveAdd(showPrimer, "P3M_AMPLICON", 'amplicon');
+  if ((showPrimer < primerData.length) &&
+      (primerData[showPrimer].hasOwnProperty('amplicon')) &&
+      (primerData[showPrimer]['amplicon'] != ""))  {
+    var value = primerData[showPrimer]['forwardPrimer'] + primerData[showPrimer]['amplicon'];
+    value += reverseComplement(primerData[showPrimer]['reversePrimer']);
+    setHtmlTagValue('P3M_AMPLICON_CALC', value);
+  }
+}
+
+function saveAdd(count, tag, id) {
+  var value = "";
+  if ((count < primerData.length) &&
+      (primerData[count].hasOwnProperty(id)) &&
+      (primerData[count][id] != ""))  {
+    value = primerData[count][id];
+  }
+  setHtmlTagValue(tag, value);
 }
 
 function linkHelpTags() {
@@ -583,4 +693,32 @@ function runSaveFile(sel, fileName) {
   saveFile(fileName,con);
 }
 
+function reverseComplement(seq){
+  var revComp = "";
+  for (var i = seq.length; i >= 0 ; i--) {
+    switch (seq.charAt(i)) {
+      case "a": revComp += "t";
+        break;
+      case "A": revComp += "T";
+        break;
+      case "c": revComp += "g";
+        break;
+      case "C": revComp += "G";
+        break;
+      case "g": revComp += "c";
+        break;
+      case "G": revComp += "C";
+        break;
+      case "t": revComp += "a";
+        break;
+      case "T": revComp += "A";
+        break;
+      case "n": revComp += "n";
+        break;
+      case "N": revComp += "N";
+        break;
+    }
+  }
+  return revComp;
+}
 
