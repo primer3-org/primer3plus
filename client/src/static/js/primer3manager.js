@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
   init_message_buttons();
   initTabFunctionality();
   initSettings();
+  initLoadFile();	
   var clData = localStorage.getItem("P3M_ALL_DATA");
   if (clData === null) {
     primerData = [];
@@ -415,6 +416,8 @@ function updateSelectedPrimer() {
     var value = primerData[showPrimer]['forwardPrimer'] + primerData[showPrimer]['amplicon'];
     value += reverseComplement(primerData[showPrimer]['reversePrimer']);
     setHtmlTagValue('P3M_AMPLICON_CALC', value);
+  } else {
+    setHtmlTagValue('P3M_AMPLICON_CALC', "");
   }
 }
 
@@ -547,11 +550,12 @@ function detectBorwser() {
     add_message("warn","Unknown Browser: Functionality may be impaired!\n\n" +browser);
     return browser;
 }
-function saveFile(fileName,content) {
+
+function saveFile(fileName,content, mime) {
     var a = document.createElement("a");
     document.body.appendChild(a);
     a.style.display = "none";
-    var blob = new Blob([content], {type: "text/plain"});
+    var blob = new Blob([content], {type: mime});
     var browser = detectBorwser();
     if (browser != "edge") {
             var url = window.URL.createObjectURL(blob);
@@ -566,183 +570,124 @@ function saveFile(fileName,content) {
 };
 
 // Functions to load the sequence and settings files
-function initLoadSeqFile() {
-  var pButton = document.getElementById('P3P_SELECT_SEQ_FILE');
+function initLoadFile() {
+  var pButton = document.getElementById('P3M_LOAD_FILE');
   if (pButton !== null) {
-    pButton.addEventListener('change', runLoadSeqFile, false);
+    pButton.addEventListener('change', runLoadFile, false);
   }
 }
-function runLoadSeqFile(f) {
+
+function runLoadFile(f) {
   var file = f.target.files[0];
   if (file) { // && file.type.match("text/*")) {
+    add_message("warn", "-" + file.type + "-");
+    add_message("warn", "-" + document.getElementById('P3M_LOAD_FILE').value + "-");
+
     var reader = new FileReader();
     reader.onload = function(event) {
       var txt = event.target.result;
-      loadSeqFile(txt);
+      loadTextFile(txt);
     }
     reader.readAsText(file);
-    document.getElementById("P3P_SELECT_SEQ_FILE").value = "";
+    document.getElementById('P3M_LOAD_FILE').value = "";
   } else {
     add_message("err","Error opening file");
   }
 }
-function loadSeqFile(txt) {
+
+function loadTextFile(txt) {
   txt = txt.replace(/\r\n/g, "\n");
   txt = txt.replace(/\r/g, "\n");
   txt = txt.replace(/^\s*/, "");
   var fileLines = txt.split('\n');
-  var id = "";
-  var seq = "";
-  var message = "Primer3Plus loaded ";
-
+  var message = "Primer3Manager loaded ";
+  var newData = [];
   if (txt.match(/^>/) != null) {
     // Read Fasta
     id = fileLines[0].replace(/^>/, "");
-    var add = true;
-    for (var i = 1; i < fileLines.length; i++) {
-      if ((fileLines[i].match(/^>/) == null) && (add == true)){
-        seq += fileLines[i];
+    var name = "";
+    for (var i = 0; i < fileLines.length; i++) {
+      if (fileLines[i].match(/^>/) == null) {
+        name = fileLines[i].replace(/^>/, "");
       } else {
-        add = false;
+        newData.push({id: name.replace(/\n/, ""), forwardPrimer: fileLines[i].replace(/\n/, "")});
       }
     }
     message += "Fasta file!";
-  } else if (txt.match(/^\^\^/) != null) {
-    // Read SeqEdit (not tested!)
-    seq = txt.replace(/^\^\^/, "");
-    message += "SeqEdit file!";
-  } else if ((txt.match(/ORIGIN/) != null) && (txt.match(/LOCUS/) != null)) {
-    // Read GeneBank
-    var add = false;
-    for (var i = 0; i < fileLines.length; i++) {
-      if (fileLines[i].match(/^DEFINITION/) != null) {
-        id = fileLines[i].replace(/^DEFINITION/, "");
-      } else if (fileLines[i].match(/^ORIGIN/) != null) {
-        add = true;
-      } else if (fileLines[i].match(/^\/\//) != null) {
-        add = false;
-      } else if (add == true) {
-        seq += fileLines[i].replace(/\d+/g, "");
-      }
-    }
-    message += "GeneBank file!";
-  } else if ((txt.match(/Sequence/) != null) && (txt.match(/SQ/) != null)) {
-    // Read EMBL
-    var add = false;
-    for (var i = 0; i < fileLines.length; i++) {
-      if (fileLines[i].match(/^DE/) != null) {
-        id = fileLines[i].replace(/^DE/, "");
-      } else if (fileLines[i].match(/^SQ/) != null) {
-        add = true;
-      } else if (fileLines[i].match(/^\/\//) != null) {
-        add = false; 
-      } else if (add == true) {
-        seq += fileLines[i].replace(/\d+/g, "");
-      }
-    }
-    message += "EMBL file!";
-  } else if ((txt.match(/Primer3 File/) != null) || (txt.match(/\n=\n/) != null)) {
-    // Read Primer3Plus and Primer3
-    loadP3File("file",txt);
-    return;
+  } else if (txt.match(/^\[\{/) != null) {
+    newData = JSON.parse(txt);
+    message += "JSON file!";
   } else {
     // Read file plain txt
-    seq = txt;
     message += "file as plain text!";
   }
-  // cleanup input
-  id = id.replace(/^\s+/g, "");
-  setHtmlTagValue("SEQUENCE_ID",id);
-  seq = seq.replace(/\d+/g, "");
-  seq = seq.replace(/\W+/g, "");
-  setHtmlTagValue("SEQUENCE_TEMPLATE", seq);
+  for (var i = 0 ; i < primerData.length ; i++) {
+    newData.push(primerData[i]);
+  }
+  primerData = newData;
   add_message("mess",message);
-}
-function initLoadSetFile() {
-  var pButton = document.getElementById('P3P_SELECT_SETTINGS_FILE');
-  if (pButton !== null) {
-    pButton.addEventListener('change', runLoadSetFile, false);
-  }
-}
-function runLoadSetFile(f) {
-  var file = f.target.files[0];
-  if (file) { // && file.type.match("text/*")) {
-    var reader = new FileReader();
-    reader.onload = function(event) {
-      var txt = event.target.result;
-      loadP3File("set", txt);
-    }
-    reader.readAsText(file);
-    document.getElementById("P3P_SELECT_SETTINGS_FILE").value = "";
-  } else {
-    add_message("err","Error opening file");
-  }
-}
-function loadP3File(limit,txt) {
-  currSet = {};	
-  txt = txt.replace(/\r\n/g, "\n");
-  txt = txt.replace(/\r/g, "\n");
-  txt = txt.replace(/^\s*/, "");
-  var fileLines = txt.split('\n');
-  var sel;
-  var message = "Primer3Plus loaded ";
-  if (limit == "file") {
-    if (txt.match(/P3_FILE_TYPE=sequence/) != null) {
-      sel = "seq";
-      message += "sequence information from Primer3Plus file";    
-    } else if (txt.match(/P3_FILE_TYPE=settings/) != null) {
-      sel = "set";
-      message += "settings information from Primer3Plus file";
-    } else {
-      sel = "all";
-      message += "all information from Primer3Plus file";
-    }
-  } else if (limit == "silent") {
-    sel = "all";
-  } else {
-    sel = limit;
-  }
-  var fileId = "";
-  for (var i = 0; i < fileLines.length; i++) {
-    if ((fileLines[i].match(/=/) != null) && (fileLines[i] != "") && (fileLines[i] != "=")) {
-      var pair = fileLines[i].split('=');
-      if ((pair.length > 1) && (defSet.hasOwnProperty(pair[0]))){
-        currSet[pair[0]] = pair[1];
-        if (pair[0].startsWith('P3_FILE_ID')) {
-          fileId = pair[1];
-        }
-        if (sel == "seq") {
-          if (pair[0].startsWith("SEQUENCE_")) {
-            setHtmlTagValue(pair[0], pair[1]);
-          }
-        } else if (sel == "set") {
-          if (pair[0].startsWith("PRIMER_") || pair[0].startsWith("P3P_")) {
-            setHtmlTagValue(pair[0], pair[1]);
-          }
-        } else {
-          setHtmlTagValue(pair[0], pair[1]);
-        }
-      } else {
-	if (!(pair[0].startsWith('P3_FILE_TYPE'))) {
-          add_message("warn","Primer3Plus is unable to load: " + fileLines[i]);
-        }
-      }
-    }
-  }
-  if (fileId != "") {
-    message += ": " + fileId + "!";
-  } else {
-    message += "!";
-  }
-  if (limit != "silent") {
-    add_message("mess",message);
-  }
-  showTaskSelection();
+  showPrimer = 0;
+  updateList();
+  saveToLocalStorage();
 }
 
-function runSaveFile(sel, fileName) {
-  var con = createSaveFileString(sel);
-  saveFile(fileName,con);
+function getDateToday(sep) {
+  var today = new Date();
+  var dd = today.getDate();
+  var mm = today.getMonth() + 1; //January is 0!
+  var yyyy = today.getFullYear();
+  if(dd < 10) {
+    dd = '0'+dd
+  } 
+  if(mm < 10) {
+    mm = '0'+mm
+  } 
+  return yyyy  + sep + mm + sep + dd;
+}
+
+window.saveFileJson = saveFileJson;
+function saveFileJson() {
+  saveFile("Primer_Library_" + getDateToday('_') + ".json", JSON.stringify(primerData), "application/json");
+}
+
+window.saveFileFasta = saveFileFasta;
+function saveFileFasta() {
+  var ret = "";
+  for (var i = 0 ; i < primerData.length ; i++) {
+    var acSpace = getHtmlTagValue("P3P_PRIMER_NAME_ACRONYM_SPACER");
+    var pName = primerData[i]['id'].replace(/\s/g, acSpace);
+    if (primerData[i].hasOwnProperty('forwardPrimer') &&
+        (primerData[i]['forwardPrimer'] != "")) {
+      var toAdd = acSpace + getHtmlTagValue("P3P_PRIMER_NAME_ACRONYM_LEFT");
+      if (pName.endsWith(toAdd)) {
+        ret += ">" + pName + "\n";
+      } else {
+        ret += ">" + pName + toAdd + "\n";
+      }
+      ret += primerData[i]['forwardPrimer'] + "\n";
+    }
+    if (primerData[i].hasOwnProperty('probe1') &&
+        (primerData[i]['probe1'] != "")) {
+      var toAdd = acSpace + getHtmlTagValue("P3P_PRIMER_NAME_ACRONYM_INTERNAL");
+      if (pName.endsWith(toAdd)) {
+        ret += ">" + pName + "\n";
+      } else {
+        ret += ">" + pName + toAdd + "\n";
+      }
+      ret += primerData[i]['probe1'] + "\n";
+    }
+    if (primerData[i].hasOwnProperty('reversePrimer') &&
+        (primerData[i]['reversePrimer'] != "")) {
+      var toAdd = acSpace + getHtmlTagValue("P3P_PRIMER_NAME_ACRONYM_RIGHT");
+      if (pName.endsWith(toAdd)) {
+        ret += ">" + pName + "\n";
+      } else {
+        ret += ">" + pName + toAdd + "\n";
+      }
+      ret += primerData[i]['reversePrimer'] + "\n";
+    }
+  }
+  saveFile("Primer_Library_" + getDateToday('_') + ".fa", ret, "text/plain");
 }
 
 function reverseComplement(seq){

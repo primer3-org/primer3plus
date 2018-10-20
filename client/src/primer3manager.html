@@ -110,51 +110,32 @@
     </div>
 
     <div id="P3P_TAB_MAIN" class="p3p_tab_page">
-    
-       <table>
-     <colgroup>
-       <col width="100%">
-     </colgroup>
-     <tr>
-       <td><a id="SCRIPT_SAVE_FILE_HELP" name="SCRIPT_SAVE_FILE_HELP">To save a RDML file or
-         export as fasta on your local computer, choose here:</a>
-       </td>
-     </tr>
-     <tr>
-       <td>
-         <input name="Submit" value="Save RDML File" type="submit">&nbsp;&nbsp;
-         <input name="Submit" value="Export as Fasta" type="submit">
-       </td>
-     </tr>
-     <tr>
-       <td>&nbsp;&nbsp;&nbsp;
-       </td>
-     </tr>
-     <tr>
-       <td><a id="SCRIPT_SEQUENCE_FILE_HELP" name="SCRIPT_SEQUENCE_FILE_HELP">To upload a RDML primer file from
-         your local computer, choose here:</a>
-       </td>
-     </tr>
-     <tr>
-       <td><input id="SCRIPT_SEQUENCE_FILE" name="SCRIPT_SEQUENCE_FILE" type="file">&nbsp;&nbsp;
-	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
-       </td>
-     </tr>
-     <tr>
-       <td>&nbsp;&nbsp;&nbsp;
-       </td>
-     </tr>
-     <tr>
-       <td><a id="SCRIPT_SETTINGS_FILE_HELP" name="SCRIPT_SETTINGS_FILE_HELP">To import a fasta primer file created by 
-         Primer3Plus up to version 2.1 from your local computer, choose here:</a>
-       </td>
-     </tr>
-     <tr>
-       <td><input id="SCRIPT_SETTINGS_FILE" name="SCRIPT_SETTINGS_FILE" type="file">&nbsp;&nbsp;
-	     <input name="Submit" value="Upload File" type="submit">&nbsp;&nbsp;&nbsp;
-       </td>
-     </tr>
-   </table>
+      <table>
+        <colgroup>
+          <col style="width: 60%">
+          <col style="width: 40%">
+        </colgroup>
+        <tr>
+          <td>
+            Save All Primer Data: 		  
+            <input value="Save JSON" onclick="saveFileJson();" type="button">&nbsp;&nbsp;
+            <input value="Export Fasta" onclick="saveFileFasta();" type="button">&nbsp;&nbsp;
+          </td>
+          <td>
+            <input value="Save RDML" onclick="resddetSettings();" type="button">&nbsp;&nbsp;
+          </td>
+        </tr>
+        <tr>
+          <td>
+            Load and add: Fasta or JSON file:
+            <input id="P3M_LOAD_FILE" type="file">
+          </td>
+          <td>
+            RDML file:
+            <input id="P3M_RDML_FILE" type="file">
+          </td>
+        </tr>
+      </table>
     
       <div class="p3p_fit_to_table">
         <iframe name="P3M_LIST" id="P3M_LIST" style="border:#000000 1px solid; background-color: white; width:880px; height:250px;"></iframe>
@@ -183,7 +164,6 @@
         </tr>
       </table>
 
-      <br>
       <table>
         <colgroup>
           <col style="width: 15%">
