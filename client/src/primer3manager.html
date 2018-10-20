@@ -157,58 +157,76 @@
    </table>
     
       <div class="p3p_fit_to_table">
-      <iframe name="P3M_LIST" id="P3M_LIST" style="border:#000000 1px solid; background-color: white; width:880px; height:250px;"></iframe>
- <br>
- <br>
+        <iframe name="P3M_LIST" id="P3M_LIST" style="border:#000000 1px solid; background-color: white; width:880px; height:250px;"></iframe>
+        <br>
+        <br>
+      </div>
 
-   <br>
-   <table>
-     <colgroup>
-       <col width="15%">
-       <col width="85%">
-     </colgroup>
-     <tr>
-       <td>Add to Order:</td>
-       <td><input id="P3M_SELECT" onclick="changeOrderSelection();" type="checkbox">
+      <table>
+        <colgroup>
+          <col style="width: 30%">
+          <col style="width: 40%">
+          <col style="width: 30%">
+        </colgroup>
+        <tr>
+          <td>
+            <input value="Move Up" onclick="movePairUp();" type="button">&nbsp;&nbsp;
+            <input value="Move Down" onclick="movePairDown();" type="button">&nbsp;&nbsp;
+          </td>
+          <td>
+            <input value="Check Primer(s)" onclick="resetSettings();" type="button">&nbsp;&nbsp;
+            <input value="BLAST Primer(s)" onclick="resetSettings();" type="button">&nbsp;&nbsp;
+          </td>
+          <td style="text-align: right">
+            <input value="Delete Primer" onclick="deletePair();" type="button">&nbsp;&nbsp;
+          </td>
+        </tr>
+      </table>
+
+      <br>
+      <table>
+        <colgroup>
+          <col style="width: 15%">
+          <col style="width: 85%">
+        </colgroup>
+        <tr>
+          <td>Add to Order:</td>
+          <td><input id="P3M_SELECT" onclick="changeOrderSelection();" type="checkbox">
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
          <a href="index.html?SEQUENCE_ID=&SEQUENCE_PRIMER=&SEQUENCE_INTERNAL_OLIGO=&SEQUENCE_PRIMER_REVCOMP=&SEQUENCE_TEMPLATE=">Check!</a>
          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
          <a href="http://www.ncbi.nlm.nih.gov/BLAST/Blast.cgi?ALIGNMENTS=50&amp;ALIGNMENT_VIEW=Pairwise&amp;AUTO_FORMAT=Semiauto&amp;CLIENT=web&amp;DATABASE=nr&amp;DESCRIPTIONS=100&amp;ENTREZ_QUERY=All+organisms&amp;EXPECT=1000&amp;FORMAT_BLOCK_ON_RESPAGE=None&amp;FORMAT_ENTREZ_QUERY=All+organisms&amp;FORMAT_OBJECT=Alignment&amp;FORMAT_TYPE=HTML&amp;FULL_DBNAME=nr&amp;GET_SEQUENCE=on&amp;HITLIST_SIZE=100&amp;JOB_TITLE=Nucleotide+sequence+(26+letters)&amp;LAYOUT=TwoWindows&amp;MASK_CHAR=2&amp;MASK_COLOR=1&amp;MYNCBI_USER=4308031382&amp;NEW_VIEW=on&amp;NUM_OVERVIEW=100&amp;PAGE=Nucleotides&amp;PROGRAM=blastn&amp;QUERY=&amp;QUERY_LENGTH=&amp;REPEATS=repeat_9606&amp;RID=1167160749-11191-152202340454.BLASTQ1&amp;RTOE=9&amp;SEARCH_NAME=short_bn&amp;SERVICE=plain&amp;SET_DEFAULTS.x=48&amp;SET_DEFAULTS.y=8&amp;SHOW_LINKOUT=on&amp;SHOW_OVERVIEW=on&amp;USER_TYPE=2&amp;WORD_SIZE=7&amp;dbtype=hc&amp;END_OF_HTTPGET=Yes" target="_blank">BLAST!</a></td>
-     </tr>
-     <tr>
-       <td>Name:</td>
-       <td><input id="P3M_NAME" size="85" type="text"></td>
-     </tr>
-     <tr>
-       <td>Description:</td>
-       <td><input id="P3M_DESCRIPTION" size="85" type="text"></td>
-     </tr>
-     <tr>
-       <td>Left:</td>
-       <td><input id="P3M_LEFT_SEQUENCE" size="85" type="text"></td>
-     </tr>
-     <tr>
-       <td>Internal:</td>
-       <td><input id="P3M_INTERNAL_SEQUENCE" size="85" type="text"></td>
-     </tr>
-     <tr>
-       <td>Right:</td>
-       <td><input id="P3M_RIGHT_SEQUENCE" size="85" type="text"></td>
-     </tr>
-     <tr>
-       <td>Amplicon Insert: </td>
-       <td><textarea id="P3M_AMPLICON" rows="4" cols="85"></textarea></td>
-     </tr>
-     <tr>
-       <td>Full Amplicon: </td>
-       <td><textarea id="P3M_AMPLICON_CALC" rows="4" cols="85" readonly="readonly"></textarea></td>
-     </tr>
-   </table>
-
+        </tr>
+        <tr>
+          <td>Name:</td>
+          <td><input id="P3M_NAME" size="85" onchange="changeSelectedPair('P3M_NAME', 'id');" type="text"></td>
+        </tr>
+        <tr>
+          <td>Description:</td>
+          <td><input id="P3M_DESCRIPTION" size="85" onchange="changeSelectedPair('P3M_DESCRIPTION', 'description');" type="text"></td>
+        </tr>
+        <tr>
+          <td>Left:</td>
+          <td><input id="P3M_LEFT_SEQUENCE" size="85" onchange="changeSelectedPair('P3M_LEFT_SEQUENCE', 'forwardPrimer');" type="text"></td>
+        </tr>
+        <tr>
+          <td>Internal:</td>
+          <td><input id="P3M_INTERNAL_SEQUENCE" size="85" onchange="changeSelectedPair('P3M_INTERNAL_SEQUENCE', 'probe1');" type="text"></td>
+        </tr>
+        <tr>
+          <td>Right:</td>
+          <td><input id="P3M_RIGHT_SEQUENCE" size="85" onchange="changeSelectedPair('P3M_RIGHT_SEQUENCE', 'reversePrimer');" type="text"></td>
+        </tr>
+        <tr>
+          <td>Amplicon Insert: </td>
+          <td><textarea id="P3M_AMPLICON" rows="4" onchange="changeSelectedPair('P3M_AMPLICON', 'amplicon');" cols="85"></textarea></td>
+        </tr>
+        <tr>
+          <td>Full Amplicon: </td>
+          <td><textarea id="P3M_AMPLICON_CALC" rows="4" cols="85" readonly="readonly"></textarea></td>
+        </tr>
+      </table>
     </div>
-
-  </div>
-
         
     <div id="P3P_TAB_ORDER" class="p3p_tab_page">
       <div class="p3p_fit_to_table"> 
@@ -222,10 +240,10 @@
     <div id="P3P_TAB_SETTINGS" class="p3p_tab_page">
       <table>
         <colgroup>
-          <col width="25%">
-          <col width="15%">
-          <col width="27%">
-          <col width="33%">
+          <col style="width: 25%">
+          <col style="width: 15%">
+          <col style="width: 27%">
+          <col style="width: 33%">
         </colgroup>
         <tr>
           <td>
@@ -240,7 +258,9 @@
           </td>
           <td>
           </td>
-          <td style="text-align: right"><input value="Reset Default" onclick="resetSettings();" type="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <td style="text-align: right">
+            <input value="Reset Default" onclick="resetSettings();" type="button">&nbsp;&nbsp;
+            <input value="Delete All Primers" onclick="clearLocalStorage();" style="background-color: red;" type="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           </td>
         </tr>
         <tr>

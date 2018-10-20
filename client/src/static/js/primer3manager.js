@@ -30,19 +30,57 @@ document.addEventListener("DOMContentLoaded", function() {
   } else {
     primerData = JSON.parse(clData);
   }
-  for (var i = 0 ; i < primerData.length ; i++) {
-    if (primerData[i].hasOwnProperty('description')) {
-      var desc = primerData[i]['description'];
-      if (desc.endsWith(" - display as selected")) {
-        primerData[i]['selected'] = "1";
-        primerData[i]['description'] = desc.replace(" - display as selected", "");
-      } else {
-        primerData[i]['selected'] = "0";
-      }
-    }
-  }
   updateList();
 });
+
+function saveToLocalStorage() {
+  localStorage.setItem("P3M_ALL_DATA", JSON.stringify(primerData));
+}
+
+window.clearLocalStorage = clearLocalStorage;
+function clearLocalStorage() {
+  localStorage.clear();
+  primerData = [];
+  showPrimer = 0;
+  updateList();
+  browseTabFunctionality('P3P_TAB_MAIN');
+}
+
+window.movePairUp = movePairUp;
+function movePairUp() {
+  if (showPrimer > 0) {
+    var ele = primerData[showPrimer - 1];
+    primerData[showPrimer - 1] = primerData[showPrimer];
+    primerData[showPrimer] = ele;
+    showPrimer--;
+    updateList();
+    saveToLocalStorage();
+  }
+}
+
+window.movePairDown = movePairDown;
+function movePairDown() {
+  if (showPrimer < primerData.length - 1) {
+    var ele = primerData[showPrimer + 1];
+    primerData[showPrimer + 1] = primerData[showPrimer];
+    primerData[showPrimer] = ele;
+    showPrimer++;
+    updateList();
+    saveToLocalStorage();
+  }
+}
+
+window.deletePair = deletePair;
+function deletePair() {
+  if (primerData.length > 0) {
+    primerData.splice(showPrimer, 1);
+    if(showPrimer > 0) {
+      showPrimer--;
+    }
+    updateList();
+    saveToLocalStorage();
+  }
+}
 
 function init_message_buttons() {
   var err = document.getElementById('P3P_ACTION_RESET_ERROR');
@@ -287,6 +325,7 @@ function changeSelectedBox(count, elem) {
     }
   }
   updateOrderList();
+  saveToLocalStorage();
 }
 
 window.changeOrderSelection = changeOrderSelection;
@@ -297,6 +336,17 @@ function changeOrderSelection() {
     primerData[showPrimer]['selected'] = "0";
   }
   updateList();
+  saveToLocalStorage();
+}
+
+window.changeSelectedPair = changeSelectedPair;
+function changeSelectedPair(elem, id) {
+  var value = getHtmlTagValue(elem);
+  if (value !== null) {
+    primerData[showPrimer][id] = value;
+    updateList();
+    saveToLocalStorage();
+  }
 }
 
 function updateOrderList() {
@@ -346,7 +396,9 @@ function updateOrderList() {
 }
 
 function updateSelectedPrimer() {
-  if (primerData[showPrimer]['selected'] == "1") {
+  if ((showPrimer < primerData.length) &&
+      (primerData[showPrimer].hasOwnProperty('selected')) &&
+      (primerData[showPrimer]['selected'] == "1")) {
     setHtmlTagValue('P3M_SELECT', "1");
   } else {
     setHtmlTagValue('P3M_SELECT', "0");

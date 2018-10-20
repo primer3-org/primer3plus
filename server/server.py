@@ -20,11 +20,12 @@ app.config['PRIMER3PLUS'] = os.path.join(P3PWS, "..")
 app.config['UPLOAD_FOLDER'] = os.path.join(app.config['PRIMER3PLUS'], "data")
 app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024   #maximum of 8MB
 
-app.config['BASEURL'] = 'http://localhost:1234/index.html'
+app.config['BASEURL'] = os.environ.get('URL_INDEX', 'http://localhost:1234/index.html')
+P3CONFPATH = os.environ.get('P3_CONFIG_PATH', '../../primer3/src/primer3_config/')
 
 KILLTIME = 60 # time in seconds till Primer3 is killed!
 
-P3PATHFIX = "PRIMER_THERMODYNAMIC_PARAMETERS_PATH=" +  os.path.join(P3PWS, "../../primer3/src/primer3_config/\n")
+P3PATHFIX = "PRIMER_THERMODYNAMIC_PARAMETERS_PATH=" +  os.path.join(P3PWS, P3CONFPATH) + "\n"
 regEq = re.compile(r"PRIMER_THERMODYNAMIC_PARAMETERS_PATH=[^\n]*\n")
 
 P3LIBPFIX = "PRIMER_MISPRIMING_LIBRARY=" +  os.path.join(P3PWS, "mispriming_lib/")

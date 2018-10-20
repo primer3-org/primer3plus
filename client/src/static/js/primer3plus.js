@@ -315,7 +315,23 @@ function uploadToPrimer3Manager(){
   } else {
     clData = JSON.parse(clData);
   }
-  var task    = saveGetTag("PRIMER_TASK");
+  var newData = [];
+  var rawTask = saveGetTag("PRIMER_TASK");
+  var task = " - ";
+  if (rawTask == "generic") {
+    task += "Generic Primers";
+  } else if (rawTask == "pick_cloning_primers") {
+    task += "Cloning Primers";
+  } else if (rawTask == "pick_discriminative_primers") {
+    task += "Discriminative Primers";
+  } else if (rawTask == "pick_sequencing_primers") {
+    task += "Sequencing Primers";
+  } else if (rawTask == "pick_primer_list") {
+    task += "Primer List";
+  } else if (rawTask == "check_primers") {
+    task += "Check Primers";
+  }
+
   var selAll = false;
   if (getHtmlTagValue("P3P_ALL_PRIMERS_SELECTED") == "1") {
     selAll = true;
@@ -345,9 +361,10 @@ function uploadToPrimer3Manager(){
         primSet["amplicon"] = results["PRIMER_PAIR_" + pairCount + "_AMPLICON"];
         primSet["id"] = results["PRIMER_PAIR_" + pairCount + "_NAME"];
 
-        primSet["description"] = "Primer3Plus " + task + " result from " + dd + '.' + mm + '.' + yyyy + " - display as selected";
-	localStorage.setItem("P3M_NEW_DATA", true);
-        clData.unshift(primSet);
+        primSet["description"] = "Primer3Plus " + task + " - " + dd + '.' + mm + '.' + yyyy;
+        primSet["selected"] = "1";
+        localStorage.setItem("P3M_NEW_DATA", true);
+        newData.push(primSet);
       }
     }
   } else {
@@ -369,15 +386,19 @@ function uploadToPrimer3Manager(){
             primSet["reversePrimer"] = results[tag];
           }
           primSet["id"] = results[nameKeyName];
-          primSet["description"] = "Primer3Plus " + task + " result from " + dd + '.' + mm + '.' + yyyy + " - display as selected";
+          primSet["description"] = "Primer3Plus " + task + " - " + dd + '.' + mm + '.' + yyyy;
+          primSet["selected"] = "1";
           localStorage.setItem("P3M_NEW_DATA", true);
-          clData.unshift(primSet);
+          newData.push(primSet);
         }
       }
     }
   }
   if (localStorage.getItem("P3M_NEW_DATA")) {
-    localStorage.setItem("P3M_ALL_DATA", JSON.stringify(clData));    
+    for (var i = 0 ; i < clData.length ; i++) {
+      newData.push(clData[i]);
+    }
+    localStorage.setItem("P3M_ALL_DATA", JSON.stringify(newData));
   }
   goToPrimer3Manager();
 }
