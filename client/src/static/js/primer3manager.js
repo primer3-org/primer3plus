@@ -307,7 +307,7 @@ function updateList() {
 function makeCell(count,tag) {
   var retHTML = '    <td onclick="setActivePrimer(' + count + ');">'
   if (primerData[count].hasOwnProperty(tag)) {
-    retHTML += primerData[count][tag];
+    retHTML += encodeForXml(primerData[count][tag]);
   }
   retHTML += '</td>\n';
   return retHTML;
@@ -614,22 +614,53 @@ function loadRDMLContent(data) {
   }
   parser = new DOMParser();
   xmlDoc = parser.parseFromString(data,"text/xml");
-
-
-
-  var newData = [];
-  var primerSet = data.split('</target>');
-  if (primerSet.length < 2) {
+  if (xmlDoc.documentElement.nodeName != 'rdml') {
+    add_message("err","Uploaded file is not an RDML file");
     return;
   }
-  for (var i = 0 ; i < primerSet.length - 1 ; i++) {
+  var newData = [];
+  var tar = xmlDoc.getElementsByTagName("target");
+  for (var i = 0 ; i < tar.length; i++) {
     var currSet = {};
-    var regId = /<target id='([^']+)'>/g;
-    var matchId = regId.exec(primerSet[i]);
-    currSet['id'] = matchId[1];
-    currSet = addRDMLTagToSet(currSet, primerSet[i], 'description');
-
-    if (matchId[1] && (matchId[1].length > 2)) {	  
+    if (tar[i].getAttribute('id')) {
+      currSet['id'] = tar[i].getAttribute('id');
+      var desc = tar[i].getElementsByTagName('description');
+      if (desc.length > 0) {
+        desc = desc[0].childNodes[0].data;
+        if (desc.endsWith(" - display as selected")) {
+          currSet['selected'] = "1";
+          currSet['description'] = desc.replace(/ - display as selected$/, "");
+        } else {
+          currSet['selected'] = "0";
+          currSet['description'] = desc;
+        }
+      }
+      var fw = tar[i].getElementsByTagName('forwardPrimer');
+      if (fw.length > 0) {
+        fw = fw[0].getElementsByTagName('sequence')[0].childNodes[0].data;
+        currSet['forwardPrimer'] = fw;
+      }
+      var pr = tar[i].getElementsByTagName('probe1');
+      if (pr.length > 0) {
+        pr = pr[0].getElementsByTagName('sequence')[0].childNodes[0].data;
+        currSet['probe1'] = pr;
+      }
+      var rv = tar[i].getElementsByTagName('reversePrimer');
+      if (rv.length > 0) {
+        rv = rv[0].getElementsByTagName('sequence')[0].childNodes[0].data;
+        currSet['reversePrimer'] = rv;
+      }
+      var amp = tar[i].getElementsByTagName('amplicon');
+      if (amp.length > 0) {
+        amp = amp[0].getElementsByTagName('sequence')[0].childNodes[0].data;
+        if (amp.startsWith(fw)) {
+          amp = amp.substring(fw.length);
+        }
+        if (amp.endsWith(reverseComplement(rv))) { 
+          amp = amp.substring(0, amp.length - rv.length);
+        }
+        currSet['amplicon'] = amp;
+      }
       newData.push(currSet);
     }
   }
@@ -641,24 +672,6 @@ function loadRDMLContent(data) {
   showPrimer = 0;
   updateList();
   saveToLocalStorage();
-}
-
-function addRDMLTagToSet(currSet, data, tag) {
-  var startTag = "<" + tag + ">";
-  var endTag = "</" + tag + ">";
-  var content = data.split(startTag);
-  content = content[1].split(endTag);
-  currSet[tag] = content[0];
-  if (tag == 'description') {
-    if (content[0].endsWith(" - display as selected")) {
-      currSet['selected'] = "1";
-      currSet[tag] = content[0].replace(/ - display as selected$/, "");
-    } else {
-      currSet['selected'] = "0";
-    }
-  }
-
-  return currSet;
 }
 
 function loadTextFile(txt) {
@@ -772,29 +785,28 @@ function saveFileRdml() {
     }
     if (primerData[i].hasOwnProperty('id') &&
         (primerData[i]['id'] != "")) {
-      var rdmlId = primerData[i]['id'].replace(/'/g, '"');   
-      ret += "<target id='" + codeForXml(rdmlId) + "'>\n";
+      ret += "<target id='" + encodeForXml(primerData[i]['id']) + "'>\n";
       if (primerData[i].hasOwnProperty('description') &&
           (primerData[i]['description'] != "")) {
-        ret += "<description>" + codeForXml(primerData[i]['description']) + select + "</description>\n";
+        ret += "<description>" + encodeForXml(primerData[i]['description']) + select + "</description>\n";
       }
       ret += "<type>toi</type>\n<sequences>\n";
       if (primerData[i].hasOwnProperty('forwardPrimer') &&
           (primerData[i]['forwardPrimer'] != "")) {
-        ret += "<forwardPrimer>\n<sequence>" + codeForXml(primerData[i]['forwardPrimer']) + "</sequence>\n</forwardPrimer>\n";
+        ret += "<forwardPrimer>\n<sequence>" + encodeForXml(primerData[i]['forwardPrimer']) + "</sequence>\n</forwardPrimer>\n";
       }
       if (primerData[i].hasOwnProperty('probe1') &&
           (primerData[i]['probe1'] != "")) {
-        ret += "<probe1>\n<sequence>" + codeForXml(primerData[i]['probe1']) + "</sequence>\n</probe1>\n";
+        ret += "<probe1>\n<sequence>" + encodeForXml(primerData[i]['probe1']) + "</sequence>\n</probe1>\n";
       }
       if (primerData[i].hasOwnProperty('reversePrimer') &&
           (primerData[i]['reversePrimer'] != "")) {
-        ret += "<reversePrimer>\n<sequence>" + codeForXml(primerData[i]['reversePrimer']) + "</sequence>\n</reversePrimer>\n";
+        ret += "<reversePrimer>\n<sequence>" + encodeForXml(primerData[i]['reversePrimer']) + "</sequence>\n</reversePrimer>\n";
       }
       if (primerData[i].hasOwnProperty('amplicon') &&
           (primerData[i]['amplicon'] != "")) {
-        ret += "<amplicon>\n<sequence>" + primerData[showPrimer]['forwardPrimer'];
-        ret += codeForXml(primerData[i]['amplicon']) + reverseComplement(primerData[showPrimer]['reversePrimer']);
+        ret += "<amplicon>\n<sequence>" +  encodeForXml(primerData[showPrimer]['forwardPrimer']);
+        ret += encodeForXml(primerData[i]['amplicon']) + encodeForXml(reverseComplement(primerData[showPrimer]['reversePrimer']));
         ret += "</sequence>\n</amplicon>\n";
       }
       ret += "</sequences>\n</target>\n";
@@ -821,9 +833,24 @@ function saveFileRdml() {
   });
 }
 
-function codeForXml(txt) {
+function encodeForXml(txt) {
+  txt = txt.replace(/&/g, "&amp;");
+  txt = txt.replace(/"/g, "&quot;");
+  txt = txt.replace(/'/g, "&apos;");
+  txt = txt.replace(/</g, "&lt;");
+  txt = txt.replace(/>/g, "&gt;");
   return txt;
 }
+
+function decodeXml(txt) {
+  txt = txt.replace(/"/g, "&quot;");
+  txt = txt.replace(/'/g, "&apos;");
+  txt = txt.replace(/</g, "&lt;");
+  txt = txt.replace(/>/g, "&gt;");
+  txt = txt.replace(/&/g, "&amp;");
+  return txt;
+}
+
 
 function reverseComplement(seq){
   var revComp = "";
