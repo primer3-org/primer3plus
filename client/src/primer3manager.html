@@ -110,37 +110,17 @@
     </div>
 
     <div id="P3P_TAB_MAIN" class="p3p_tab_page">
-      <table>
-        <colgroup>
-          <col style="width: 60%">
-          <col style="width: 40%">
-        </colgroup>
-        <tr>
-          <td>
-            Save All Primer Data: 		  
-            <input value="Save JSON" onclick="saveFileJson();" type="button">&nbsp;&nbsp;
-            <input value="Export Fasta" onclick="saveFileFasta();" type="button">&nbsp;&nbsp;
-          </td>
-          <td>
-            <input value="Save RDML" onclick="resddetSettings();" type="button">&nbsp;&nbsp;
-          </td>
-        </tr>
-        <tr>
-          <td>
-            Load and add: Fasta or JSON file:
-            <input id="P3M_LOAD_FILE" type="file">
-          </td>
-          <td>
-            RDML file:
-            <input id="P3M_RDML_FILE" type="file">
-          </td>
-        </tr>
-      </table>
-    
       <div class="p3p_fit_to_table">
+        Load file and add to primer list:&nbsp;&nbsp;
+        <input id="P3M_LOAD_FILE" type="file">
+        <input value="Save JSON" onclick="saveFileJson();" type="button">&nbsp;&nbsp;
+        <input value="Save RDML" onclick="saveFileRdml();" type="button">&nbsp;&nbsp;&nbsp;&nbsp;
+        <input value="Export Fasta" onclick="saveFileFasta();" type="button">&nbsp;&nbsp;
+        <br />
+        <br />
         <iframe name="P3M_LIST" id="P3M_LIST" style="border:#000000 1px solid; background-color: white; width:880px; height:250px;"></iframe>
-        <br>
-        <br>
+        <br />
+        <br />
       </div>
 
       <table>

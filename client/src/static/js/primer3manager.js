@@ -1,5 +1,8 @@
 const HELP_LINK_URL = ""; //process.env.HELP_LINK_URL
 
+var JSZip = require('./jszip');
+// From https://github.com/Stuk/jszip/tree/master/dist
+
 var p3p_errors = [];
 var p3p_warnings = [];
 var p3p_messages = [];
@@ -442,7 +445,6 @@ function linkHelpTags() {
       }
     }
   }
-//  targetGenomes.innerHTML = rhtml
 }
 
 function getHtmlTagValue(tag) {
@@ -534,39 +536,39 @@ function setHtmlTagValue(tag, value) {
 }
 
 function detectBorwser() {
-    var browser = window.navigator.userAgent.toLowerCase();
-    if (browser.indexOf("edge") != -1) {
-        return "edge";
-    }
-    if (browser.indexOf("firefox") != -1) {
-        return "firefox";
-    }
-    if (browser.indexOf("chrome") != -1) {
-        return "chrome";
-    }
-    if (browser.indexOf("safari") != -1) {
-        return "safari";
-    }
-    add_message("warn","Unknown Browser: Functionality may be impaired!\n\n" +browser);
-    return browser;
+  var browser = window.navigator.userAgent.toLowerCase();
+  if (browser.indexOf("edge") != -1) {
+    return "edge";
+  }
+  if (browser.indexOf("firefox") != -1) {
+    return "firefox";
+  }
+  if (browser.indexOf("chrome") != -1) {
+    return "chrome";
+  }
+  if (browser.indexOf("safari") != -1) {
+    return "safari";
+  }
+  add_message("warn","Unknown Browser: Functionality may be impaired!\n\n" +browser);
+  return browser;
 }
 
 function saveFile(fileName,content, mime) {
-    var a = document.createElement("a");
-    document.body.appendChild(a);
-    a.style.display = "none";
-    var blob = new Blob([content], {type: mime});
-    var browser = detectBorwser();
-    if (browser != "edge") {
-            var url = window.URL.createObjectURL(blob);
-            a.href = url;
-            a.download = fileName;
-            a.click();
-            window.URL.revokeObjectURL(url);
-    } else {
-        window.navigator.msSaveBlob(blob, fileName);
-    }
-    return;
+  var a = document.createElement("a");
+  document.body.appendChild(a);
+  a.style.display = "none";
+  var blob = new Blob([content], {type: mime});
+  var browser = detectBorwser();
+  if (browser != "edge") {
+    var url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = fileName;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  } else {
+    window.navigator.msSaveBlob(blob, fileName);
+  }
+  return;
 };
 
 // Functions to load the sequence and settings files
@@ -580,19 +582,83 @@ function initLoadFile() {
 function runLoadFile(f) {
   var file = f.target.files[0];
   if (file) { // && file.type.match("text/*")) {
-    add_message("warn", "-" + file.type + "-");
-    add_message("warn", "-" + document.getElementById('P3M_LOAD_FILE').value + "-");
-
-    var reader = new FileReader();
-    reader.onload = function(event) {
-      var txt = event.target.result;
-      loadTextFile(txt);
+    var reader = new FileReader();	  
+    fileName = document.getElementById('P3M_LOAD_FILE').value.toLowerCase();
+    if (fileName.endsWith(".rdml") || fileName.endsWith(".rdm")) {
+      reader.onload = function(event) {
+        var blob = event.target.result;
+	var zip = JSZip.loadAsync(blob).then(function (zip) {
+          zip.file("rdml_data.xml").async("string").then(function (data) {
+            loadRDMLContent(data);
+          });
+        });
+      }
+      reader.readAsArrayBuffer(file);
+    } else {
+      reader.onload = function(event) {
+        var txt = event.target.result;
+        loadTextFile(txt);
+      }
+      reader.readAsText(file);
     }
-    reader.readAsText(file);
     document.getElementById('P3M_LOAD_FILE').value = "";
   } else {
     add_message("err","Error opening file");
   }
+}
+
+function loadRDMLContent(data) {
+  if ((data == "") || (data == null)) {
+    add_message("err","Error opening rdml file");
+    return;
+  }
+  parser = new DOMParser();
+  xmlDoc = parser.parseFromString(data,"text/xml");
+
+
+
+  var newData = [];
+  var primerSet = data.split('</target>');
+  if (primerSet.length < 2) {
+    return;
+  }
+  for (var i = 0 ; i < primerSet.length - 1 ; i++) {
+    var currSet = {};
+    var regId = /<target id='([^']+)'>/g;
+    var matchId = regId.exec(primerSet[i]);
+    currSet['id'] = matchId[1];
+    currSet = addRDMLTagToSet(currSet, primerSet[i], 'description');
+
+    if (matchId[1] && (matchId[1].length > 2)) {	  
+      newData.push(currSet);
+    }
+  }
+  for (var i = 0 ; i < primerData.length ; i++) {
+    newData.push(primerData[i]);
+  }
+  primerData = newData;
+  add_message("mess", "Primer3Manager loaded RDML file!");
+  showPrimer = 0;
+  updateList();
+  saveToLocalStorage();
+}
+
+function addRDMLTagToSet(currSet, data, tag) {
+  var startTag = "<" + tag + ">";
+  var endTag = "</" + tag + ">";
+  var content = data.split(startTag);
+  content = content[1].split(endTag);
+  currSet[tag] = content[0];
+  if (tag == 'description') {
+    if (content[0].endsWith(" - display as selected")) {
+      currSet['selected'] = "1";
+      currSet[tag] = content[0].replace(/ - display as selected$/, "");
+    } else {
+      currSet['selected'] = "0";
+    }
+  }
+
+  return currSet;
 }
 
 function loadTextFile(txt) {
@@ -607,10 +673,12 @@ function loadTextFile(txt) {
     id = fileLines[0].replace(/^>/, "");
     var name = "";
     for (var i = 0; i < fileLines.length; i++) {
-      if (fileLines[i].match(/^>/) == null) {
+      if (fileLines[i].match(/^>/) !== null) {
         name = fileLines[i].replace(/^>/, "");
       } else {
-        newData.push({id: name.replace(/\n/, ""), forwardPrimer: fileLines[i].replace(/\n/, "")});
+        if (fileLines[i].replace(/\n/, "") != "") {
+          newData.push({id: name.replace(/\n/, ""), forwardPrimer: fileLines[i].replace(/\n/, "")});
+        }
       }
     }
     message += "Fasta file!";
@@ -619,7 +687,8 @@ function loadTextFile(txt) {
     message += "JSON file!";
   } else {
     // Read file plain txt
-    message += "file as plain text!";
+    add_message("err","Primer3Manager could not read file! RDML files require the file name ending .rdml");
+    return;
   }
   for (var i = 0 ; i < primerData.length ; i++) {
     newData.push(primerData[i]);
@@ -688,6 +757,72 @@ function saveFileFasta() {
     }
   }
   saveFile("Primer_Library_" + getDateToday('_') + ".fa", ret, "text/plain");
+}
+
+window.saveFileRdml = saveFileRdml;
+function saveFileRdml() {
+  var ret = "<rdml version='"
+  ret += getHtmlTagValue("P3P_RDML_VERSION");
+  ret += "' xmlns:rdml='http://www.rdml.org' xmlns='http://www.rdml.org'>\n";
+  for (var i = 0 ; i < primerData.length ; i++) {
+    var select = "";
+    if (primerData[i].hasOwnProperty('selected') &&
+        (primerData[i]['selected'] == "1")) {
+      select = " - display as selected";
+    }
+    if (primerData[i].hasOwnProperty('id') &&
+        (primerData[i]['id'] != "")) {
+      var rdmlId = primerData[i]['id'].replace(/'/g, '"');   
+      ret += "<target id='" + codeForXml(rdmlId) + "'>\n";
+      if (primerData[i].hasOwnProperty('description') &&
+          (primerData[i]['description'] != "")) {
+        ret += "<description>" + codeForXml(primerData[i]['description']) + select + "</description>\n";
+      }
+      ret += "<type>toi</type>\n<sequences>\n";
+      if (primerData[i].hasOwnProperty('forwardPrimer') &&
+          (primerData[i]['forwardPrimer'] != "")) {
+        ret += "<forwardPrimer>\n<sequence>" + codeForXml(primerData[i]['forwardPrimer']) + "</sequence>\n</forwardPrimer>\n";
+      }
+      if (primerData[i].hasOwnProperty('probe1') &&
+          (primerData[i]['probe1'] != "")) {
+        ret += "<probe1>\n<sequence>" + codeForXml(primerData[i]['probe1']) + "</sequence>\n</probe1>\n";
+      }
+      if (primerData[i].hasOwnProperty('reversePrimer') &&
+          (primerData[i]['reversePrimer'] != "")) {
+        ret += "<reversePrimer>\n<sequence>" + codeForXml(primerData[i]['reversePrimer']) + "</sequence>\n</reversePrimer>\n";
+      }
+      if (primerData[i].hasOwnProperty('amplicon') &&
+          (primerData[i]['amplicon'] != "")) {
+        ret += "<amplicon>\n<sequence>" + primerData[showPrimer]['forwardPrimer'];
+        ret += codeForXml(primerData[i]['amplicon']) + reverseComplement(primerData[showPrimer]['reversePrimer']);
+        ret += "</sequence>\n</amplicon>\n";
+      }
+      ret += "</sequences>\n</target>\n";
+    }
+  }
+  ret += '</rdml>\n';
+  var zip = new JSZip();
+  zip.file("rdml_data.xml", ret);
+  zip.generateAsync({type:"blob"})
+  .then(function(blob) {
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style.display = "none";
+    var browser = detectBorwser();
+    if (browser != "edge") {
+            var url = window.URL.createObjectURL(blob);
+            a.href = url;
+            a.download = "Primer_Library_" + getDateToday('_') + ".rdml";
+            a.click();
+            window.URL.revokeObjectURL(url);
+    } else {
+        window.navigator.msSaveBlob(blob, fileName);
+    }
+  });
+}
+
+function codeForXml(txt) {
+  return txt;
 }
 
 function reverseComplement(seq){
