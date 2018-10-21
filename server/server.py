@@ -58,6 +58,8 @@ def runp3():
         # Experiment
         if 'P3_INPUT_FILE' in request.form.keys():
             indata = request.form['P3_INPUT_FILE']
+            indata = indata.replace('\r\n', '\n')
+            indata = indata.replace('\r', '\n')
             infile = os.path.join(sf, "p3p_" + uuidstr + "_input.txt")
             modin = regEq.sub(P3PATHFIX, indata)
             modin = regLibP.sub(P3LIBPFIX, modin)
