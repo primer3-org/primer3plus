@@ -104,7 +104,7 @@ def runp3():
 
 @app.route('/api/v1/upload', methods=['GET','POST'])
 def uploadData():
-    print(".......up............." + request.method)
+#    print(".......up............." + request.method)
     if (request.method == 'GET') or (request.method == 'POST'):
         uuidstr = str(uuid.uuid4())
 
