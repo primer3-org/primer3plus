@@ -1,5 +1,7 @@
 const HELP_LINK_URL = ""; //process.env.HELP_LINK_URL
 
+const uploadTarget = "https://gear.embl.de/primer3plus/api/v1/upload";
+
 var JSZip = require('./jszip');
 // From https://github.com/Stuk/jszip/tree/master/dist
 
@@ -265,6 +267,32 @@ function setSettings(tag, value) {
 window.changeSettings = changeSettings;
 function changeSettings(elem) {
   localStorage.setItem(elem.id, getHtmlTagValue(elem.id))
+}
+
+window.checkPrimersP3P = checkPrimersP3P;
+function checkPrimersP3P() {
+  var form = document.createElement("form");
+  form.setAttribute("method", "post");
+  form.setAttribute("action", uploadTarget);
+  form.setAttribute("target", "_blank");
+  var params = {};
+  params['SEQUENCE_ID'] = getHtmlTagValue('P3M_NAME');
+  params['SEQUENCE_PRIMER'] = getHtmlTagValue('P3M_LEFT_SEQUENCE');
+  params['SEQUENCE_INTERNAL_OLIGO'] = getHtmlTagValue('P3M_INTERNAL_SEQUENCE');
+  params['SEQUENCE_PRIMER_REVCOMP'] = getHtmlTagValue('P3M_RIGHT_SEQUENCE');
+  params['SEQUENCE_TEMPLATE'] = getHtmlTagValue('P3M_AMPLICON_CALC');
+  params['PRIMER_TASK'] = 'check_primers';
+  for(var key in params) {
+    if(params.hasOwnProperty(key)) {
+      var hiddenField = document.createElement("input");
+      hiddenField.setAttribute("type", "hidden");
+      hiddenField.setAttribute("name", key);
+      hiddenField.setAttribute("value", params[key]);
+      form.appendChild(hiddenField);
+    }
+  }
+  document.body.appendChild(form);
+  form.submit();
 }
 
 function updateList() {

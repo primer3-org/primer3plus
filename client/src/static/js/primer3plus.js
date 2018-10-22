@@ -2193,6 +2193,7 @@ function createSaveFileString(sel) {
     }
     if (data.hasOwnProperty("PRIMER_TASK") &&
         (data["PRIMER_TASK"] == "check_primers")) {
+      data["PRIMER_PICK_ANYWAY"] = "1";
       if (data.hasOwnProperty("SEQUENCE_EXCLUDED_REGION")) {
         delete data["SEQUENCE_EXCLUDED_REGION"];
       }
