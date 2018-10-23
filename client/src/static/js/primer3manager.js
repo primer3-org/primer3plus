@@ -1,6 +1,7 @@
 const HELP_LINK_URL = ""; //process.env.HELP_LINK_URL
 
-const uploadTarget = "https://gear.embl.de/primer3plus/api/v1/upload";
+const uploadTargetP3P = "https://gear.embl.de/primer3plus/api/v1/upload";
+const uploadTargetNcbi = "https://blast.ncbi.nlm.nih.gov/Blast.cgi";
 
 var JSZip = require('./jszip');
 // From https://github.com/Stuk/jszip/tree/master/dist
@@ -273,7 +274,7 @@ window.checkPrimersP3P = checkPrimersP3P;
 function checkPrimersP3P() {
   var form = document.createElement("form");
   form.setAttribute("method", "post");
-  form.setAttribute("action", uploadTarget);
+  form.setAttribute("action", uploadTargetP3P);
   form.setAttribute("target", "_blank");
   var params = {};
   params['SEQUENCE_ID'] = getHtmlTagValue('P3M_NAME');
@@ -294,6 +295,80 @@ function checkPrimersP3P() {
   document.body.appendChild(form);
   form.submit();
 }
+
+window.blastPrimersNcbi = blastPrimersNcbi;
+function blastPrimersNcbi() {
+  var name = getHtmlTagValue("P3M_NAME");
+  var acSpace = getHtmlTagValue("P3P_PRIMER_NAME_ACRONYM_SPACER");
+  var fasta = "";
+  var fwSeq = getHtmlTagValue("P3M_LEFT_SEQUENCE");
+  if (fwSeq.length > 2) {
+    fasta += name.replace(/\s/g, acSpace) + acSpace + getHtmlTagValue("P3P_PRIMER_NAME_ACRONYM_LEFT");
+    fasta += "\n" + fwSeq + "\n";
+  }
+  var rvSeq = getHtmlTagValue("P3M_RIGHT_SEQUENCE");
+  if (rvSeq.length > 2) {
+    fasta += name.replace(/\s/g, acSpace) + acSpace + getHtmlTagValue("P3P_PRIMER_NAME_ACRONYM_RIGHT");
+    fasta += "\n" + rvSeq + "\n";
+  }
+  var form = document.createElement("form");
+  form.setAttribute("method", "post");
+  form.setAttribute("action", uploadTargetNcbi);
+  form.setAttribute("target", "_blank");
+  var params = {};
+  params['ALIGNMENTS'] = '50';
+  params['ALIGNMENT_VIEW'] = 'Pairwise';
+  params['AUTO_FORMAT'] = 'Semiauto';
+  params['CLIENT'] = 'web';
+  params['DATABASE'] = 'nr';
+  params['DESCRIPTIONS'] = '100';
+  params['ENTREZ_QUERY'] = 'All+organisms';
+  params['EXPECT'] = '1000';
+  params['FORMAT_BLOCK_ON_RESPAGE'] = 'None';
+  params['FORMAT_ENTREZ_QUERY'] = 'All+organisms';
+  params['FORMAT_OBJECT'] = 'Alignment';
+  params['FORMAT_TYPE'] = 'HTML';
+  params['FULL_DBNAME'] = 'nr';
+  params['GET_SEQUENCE'] = 'on';
+  params['HITLIST_SIZE'] = '100';
+  params['JOB_TITLE'] = name;
+  params['LAYOUT'] = 'TwoWindows';
+  params['MASK_CHAR'] = '2';
+  params['MASK_COLOR'] = '1';
+//  params['MYNCBI_USER'] = '4308031382';
+  params['NEW_VIEW'] = 'on';
+  params['NUM_OVERVIEW'] = '100';
+  params['PAGE'] = 'Nucleotides';
+  params['PROGRAM'] = 'blastn';
+  params['QUERY'] = fasta;
+  params['QUERY_LENGTH'] = '';
+  params['REPEATS'] = 'repeat_9606';
+//  params['RID'] = '1167160749-11191-152202340454.BLASTQ1';
+  params['RTOE'] = '9';
+  params['SEARCH_NAME'] = 'short_bn';
+  params['SERVICE'] = 'plain';
+  params['SET_DEFAULTS.x'] = '48';
+  params['SET_DEFAULTS.y'] = '8';
+  params['SHOW_LINKOUT'] = 'on';
+  params['SHOW_OVERVIEW'] = 'on';
+  params['USER_TYPE'] = '2';
+  params['WORD_SIZE'] = '7';
+  params['dbtype'] = 'hc';
+  for(var key in params) {
+    if(params.hasOwnProperty(key)) {
+      var hiddenField = document.createElement("input");
+      hiddenField.setAttribute("type", "hidden");
+      hiddenField.setAttribute("name", key);
+      hiddenField.setAttribute("value", params[key]);
+      form.appendChild(hiddenField);
+    }
+  }
+  document.body.appendChild(form);
+  form.submit();
+}
+
+
+
 
 function updateList() {
   retHTML  = '<table style="border: 0; width: 100%; empty-cells: show; table-layout: fixed;">\n';
