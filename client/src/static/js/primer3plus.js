@@ -44,7 +44,7 @@ var misspriming_lib_files;
 var rawResults;
 var results = {};
 
-var debugMode = 2;
+var debugMode = 0;
 
 var p3p_errors = [];
 var p3p_warnings = [];
@@ -100,7 +100,8 @@ function loadSetFileFromServer() {
     .post(`${API_URL}/settingsFile`, formData)
     .then(res => {
         if (res.status === 200) {
-          loadP3File("set",res.data);
+          loadP3File("set", res.data);
+          document.getElementById('P3P_DEBUG_TXT_INPUT').value = res.data;
       }
     })
     .catch(err => {
@@ -124,14 +125,8 @@ function runPrimer3() {
     browseTabFunctionality('P3P_TAB_RESULTS'); 
   }
   var p3file = createSaveFileString("primer3");
-  var p3in = document.getElementById('P3P_DEBUG_TXT_INPUT');
-  if (p3in) {
-    if (debugMode > 0) {
-      p3in.value = p3file;
-    } else {
-      p3in.value = "";
-    }
-  }
+  document.getElementById('P3P_DEBUG_TXT_INPUT').value = p3file;
+  document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = "";
   const formData = new FormData();
   formData.append('P3_INPUT_FILE', p3file);
   axios
@@ -139,14 +134,7 @@ function runPrimer3() {
     .then(res => {
         if (res.status === 200) {
           rawResults = res.data.outfile;
-          var p3out = document.getElementById('P3P_DEBUG_TXT_OUTPUT');
-          if (p3out) {
-            if (debugMode > 0) {
-              p3out.value = rawResults;
-            } else {
-              p3out.value = "";
-            }
-          }
+          document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = rawResults;
           results = {};
           var fileLines = rawResults.split('\n');
           for (var i = 0; i < fileLines.length; i++) {
@@ -182,17 +170,15 @@ function checkForUUID() {
           if (res.status === 200) {
             if (res.data.upfile	!= "") {
               loadP3File("silent",res.data.upfile);
+              document.getElementById('P3P_DEBUG_TXT_INPUT').value = res.data.upfile;
+            }
+            if (res.data.infile != "") {
+            //  loadP3File("silent",res.data.infile);
+              document.getElementById('P3P_DEBUG_TXT_INPUT').value = res.data.infile;
             }
             if (res.data.outfile != "") {
               rawResults = res.data.outfile;
-              var p3out = document.getElementById('P3P_DEBUG_TXT_OUTPUT');
-              if (p3out) {
-                if (debugMode > 0) {
-                  p3out.value = rawResults;
-                } else {
-                  p3out.value = "";
-                }
-              }
+              document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = rawResults;
               results = {};
               var fileLines = rawResults.split('\n');
               for (var i = 0; i < fileLines.length; i++) {
@@ -213,7 +199,7 @@ function checkForUUID() {
     //      .map(error => error.title)
      //     .join('; ')
     //    }
-        add_message("err","Error loading server settings file " + fileName + ": " + errorMessage);
+        add_message("err","Error loading uuid  " + uuid + ": " + errorMessage);
       })
   }
 }
@@ -1829,6 +1815,10 @@ function loadP3File(limit,txt) {
     } else if (txt.match(/P3_FILE_TYPE=settings/) != null) {
       sel = "set";
       message += "settings information from Primer3Plus file";
+    } else if (txt.match(/P3_FILE_TYPE=results/) != null) {
+      sel = "res";
+      message += "results from Primer3Plus file";
+      results = {};
     } else {
       sel = "all";
       message += "all information from Primer3Plus file";
@@ -1839,10 +1829,11 @@ function loadP3File(limit,txt) {
     sel = limit;
   }
   var fileId = "";
+
   for (var i = 0; i < fileLines.length; i++) {
     if ((fileLines[i].match(/=/) != null) && (fileLines[i] != "") && (fileLines[i] != "=")) {
       var pair = fileLines[i].split('=');
-      if ((pair.length > 1) && (defSet.hasOwnProperty(pair[0]))){
+      if ((sel != "res") && (pair.length > 1) && (defSet.hasOwnProperty(pair[0]))){
         currSet[pair[0]] = pair[1];
         if (pair[0].startsWith('P3_FILE_ID')) {
           fileId = pair[1];
@@ -1858,6 +1849,9 @@ function loadP3File(limit,txt) {
         } else {
           setHtmlTagValue(pair[0], pair[1]);
         }
+      } else if (sel == "res") {
+        setHtmlTagValue(pair[0], pair[1]);
+        results[pair[0]] = pair[1];	      
       } else {
 	if (!(pair[0].startsWith('P3_FILE_TYPE'))) {
           add_message("warn","Primer3Plus is unable to load: " + fileLines[i]);
@@ -1873,7 +1867,11 @@ function loadP3File(limit,txt) {
   if (limit != "silent") {
     add_message("mess",message);
   }
-  showTaskSelection();
+  if (sel == "res") {
+    processResData();
+  } else {
+    showTaskSelection();
+  }
 }
 function initLoadCompareFunct() {
   var pFile1 = document.getElementById('P3P_COMPARE_FILE_ONE');
@@ -2068,19 +2066,23 @@ function runCompFiles() {
 function initSaveFile() {
   var pButtonSeq = document.getElementById('P3P_ACTION_SEQUENCE_SAVE');
   if (pButtonSeq !== null) {
-    pButtonSeq.addEventListener('click', function(){runSaveFile('seq','Primer3plus_Sequence.txt');});
+    pButtonSeq.addEventListener('click', function(){runSaveFile('seq','Primer3Plus_Sequence.txt');});
   }
   var pButtonSet = document.getElementById('P3P_ACTION_SETTINGS_SAVE');
   if (pButtonSet !== null) {
-    pButtonSet.addEventListener('click', function(){runSaveFile('set','Primer3plus_Settings.txt');});
+    pButtonSet.addEventListener('click', function(){runSaveFile('set','Primer3Plus_Settings.txt');});
   }
   var pButtonAll = document.getElementById('P3P_ACTION_ALL_SAVE');
   if (pButtonAll !== null) {
-    pButtonAll.addEventListener('click', function(){runSaveFile('all','Primer3plus_Complete.txt');});
+    pButtonAll.addEventListener('click', function(){runSaveFile('all','Primer3Plus_Complete.txt');});
   }
   var pButtonP3 = document.getElementById('P3P_ACTION_ALL_P3_SAVE');
   if (pButtonP3 !== null) {
     pButtonP3.addEventListener('click', function(){runSaveFile('primer3','Primer3_Input.txt');});
+  }
+  var pButtonRes = document.getElementById('P3P_ACTION_RESULTS_P3P_SAVE');
+  if (pButtonRes !== null) {
+    pButtonRes.addEventListener('click', function(){runSaveFile('results','Primer3Plus_Results.txt');});
   }
 }
 
@@ -2096,22 +2098,26 @@ function createSaveFileString(sel) {
   var usedTags = [];
   var ret = "";
   // Extract the used tags with values
-  for (var tag in defSet) {
-    if (defSet.hasOwnProperty(tag)) {
-      if (ignore_tags.includes(tag)) {
-        continue;
-      }
-      var val = getHtmlTagValue(tag);
-      if (val !== null) {
-        if (((sel == "seq") && tag.startsWith("SEQUENCE_")) ||
-            ((sel == "set") && tag.startsWith("PRIMER_")) ||
-            ((sel == "set") && tag.startsWith("P3P_")) ||
-            ((sel == "all")) ||
-            ((sel == "primer3") && !(tag.startsWith("P3P_")))) {
-              data[tag] = val;
+  if (sel != "results") {
+    for (var tag in defSet) {
+      if (defSet.hasOwnProperty(tag)) {
+        if (ignore_tags.includes(tag)) {
+          continue;
+        }
+        var val = getHtmlTagValue(tag);
+        if (val !== null) {
+          if (((sel == "seq") && tag.startsWith("SEQUENCE_")) ||
+              ((sel == "set") && tag.startsWith("PRIMER_")) ||
+              ((sel == "set") && tag.startsWith("P3P_")) ||
+              ((sel == "all")) ||
+              ((sel == "primer3") && !(tag.startsWith("P3P_")))) {
+                data[tag] = val;
+          }
         }
       }
     }
+  } else {	  
+    data = results;
   }
   // Fix data for Primer3
   if (sel == "primer3") {
@@ -2269,8 +2275,11 @@ function createSaveFileString(sel) {
     ret += "P3_FILE_TYPE=settings\n\nP3_FILE_ID=User settings\n";
   }  
   if (sel == "all") {
-    ret += "P3_FILE_TYPE=all\nP3_FILE_ID=User data\n";
+    ret += "P3_FILE_TYPE=all\n\nP3_FILE_ID=User data\n";
   }  
+  if (sel == "results") {
+    ret += "P3_FILE_TYPE=results\n\nP3_FILE_ID=User results\n";
+  } 
 
   //Print the array data
   for (var tag in data) {
@@ -2605,6 +2614,8 @@ function initResetDefautl() {
 function buttonResetDefault() {
   del_all_messages();	
   setHTMLParameters(defSet);
+  document.getElementById('P3P_DEBUG_TXT_INPUT').value = "";
+  document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = "";
   var serv = document.getElementById('P3P_SERVER_SETTINGS_FILE');
   if (serv !== null) {
     serv.selectedIndex = 0;

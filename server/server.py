@@ -168,13 +168,18 @@ def loadServerData():
                     if os.path.isfile(upfile):          
                         with open(upfile, "r") as upfh:
                             upData = upfh.read()
+                    infile = os.path.join(sf, "p3p_" + uuid + "_input.txt")
+                    inData = "";
+                    if os.path.isfile(infile):
+                        with open(infile, "r") as infh:
+                            inData = infh.read()
                     outfile = os.path.join(sf, "p3p_" + uuid + "_output.txt")
                     outData = "";
                     if os.path.isfile(outfile):          
                         with open(outfile, "r") as outfh:
                             outData = outfh.read()
                             outData += "\n" + "P3P_UUID=" + uuid + "\n"
-                    return jsonify({"upfile": upData, "outfile": outData}), 200
+                    return jsonify({"upfile": upData, "infile": inData, "outfile": outData}), 200
     return "", 400
 
 @app.route('/api/v1/primer3version', methods=['POST'])
