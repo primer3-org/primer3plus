@@ -1,4 +1,23 @@
 <!doctype html>
+<!--
+    Copyright (C) 2006 - 2018 by Andreas Untergasser and Harm Nijveen
+    All rights reserved.
+  
+    This file is part of Primer3Plus. Primer3Plus is a web interface to Primer3.
+  
+    The Primer3Plus is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+  
+    Primer3Plus is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this Primer3Plus. If not, see <https://www.gnu.org/licenses/>.
+-->
 <html lang="en">
 
 <head>
@@ -32,7 +51,7 @@
           </td>
           <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusPackage.html">More...</a>
           </td>
-          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="https://github.com/primer3-org/primer3plus">Source Code</a>
+          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="https://github.com/primer3-org/primer3plus" target="_blank">Source Code</a>
           </td>
         </tr>
         <tr>
@@ -43,13 +62,6 @@
         </tr>
       </table>
     </div>
-
-<input name="SCRIPT_RADIO_BUTTONS_FIX" id="SCRIPT_RADIO_BUTTONS_FIX" 
-value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIMER,PRIMER_PICK_ANYWAY,PRIMER_LIBERAL_BASE,PRIMER_LOWERCASE_MASKING,PRIMER_LIB_AMBIGUITY_CODES_CONSENSUS,PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT,PRIMER_THERMODYNAMIC_TEMPLATE_ALIGNMENT,SCRIPT_DISPLAY_DEBUG_INFORMATION" type="hidden">
-<input id="GENBRO_RETURN_PATH" value="" type="hidden">
-<input id="GENBRO_DB" value="" type="hidden">
-<input id="GENBRO_POSITION" value="" type="hidden">
-<input id="GENBRO_FILE" value="" type="hidden">
 
     <div class="p3p_task_bar">
       <table>
@@ -181,6 +193,10 @@ value="PRIMER_PICK_LEFT_PRIMER,PRIMER_PICK_INTERNAL_OLIGO,PRIMER_PICK_RIGHT_PRIM
 
     <div id="P3P_TAB_MAIN" class="p3p_tab_page">
       <div class="p3p_fit_to_table">
+        <input id="P3P_GENBRO_RETURN_PATH" type="hidden">
+        <input id="P3P_GENBRO_DB" type="hidden">
+        <input id="P3P_GENBRO_POSITION" type="hidden">
+        <input id="P3P_GENBRO_FILE" type="hidden">
         <a id="SEQUENCE_ID_HELP">Sequence Id:</a>&nbsp;&nbsp;
         <input id="SEQUENCE_ID" type="text">
         <br /><br />
