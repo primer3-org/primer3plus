@@ -1,5 +1,6 @@
 const API_URL = process.env.API_URL
 const HELP_LINK_URL = process.env.HELP_LINK_URL
+const INDEX_LINK_URL = process.env.INDEX_LINK_URL
 
 var primer3plus_version = "3.0.0";
 
@@ -119,7 +120,7 @@ function runPrimer3() {
     .post(`${API_URL}/runprimer3`, formData)
     .then(res => {
         if (res.status === 200) {
-          rawResults = res.data;
+          rawResults = res.data.outfile;
           var p3out = document.getElementById('P3P_DEBUG_TXT_OUTPUT');
           if (p3out) {
             if (debugMode > 0) {
@@ -161,7 +162,30 @@ function checkForUUID() {
       .post(`${API_URL}/loadServerData`, formData)
       .then(res => {
           if (res.status === 200) {
-            loadP3File("silent",res.data);
+            if (res.data.upfile	!= "") {
+              loadP3File("silent",res.data.upfile);
+            }
+            if (res.data.outfile != "") {
+              rawResults = res.data.outfile;
+              var p3out = document.getElementById('P3P_DEBUG_TXT_OUTPUT');
+              if (p3out) {
+                if (debugMode > 0) {
+                  p3out.value = rawResults;
+                } else {
+                  p3out.value = "";
+                }
+              }
+              results = {};
+              var fileLines = rawResults.split('\n');
+              for (var i = 0; i < fileLines.length; i++) {
+                if ((fileLines[i].match(/=/) != null) && (fileLines[i] != "") && (fileLines[i] != "=")) {
+                  var pair = fileLines[i].split('=');
+                  results[pair[0]]=fileLines[i].split(/=(.+)/)[1];
+                }
+              }
+              calcP3PResultAdditions();
+              processResData();
+            }
         }
       })
       .catch(err => {
@@ -278,6 +302,10 @@ function processResData(){
   else {
     returnHTML += createResultsPrimerList(results, -2);
   }
+  returnHTML += '<div id="p3p_uuid_link">\n  Link to the results (valid 3 days): \n';
+  var linkAddr = INDEX_LINK_URL + "?UUID=" + results["P3P_UUID"];
+  returnHTML += '<a href="' + linkAddr + '">' + linkAddr + '</a>\n';
+  returnHTML += '</div>\n';
   // Add statistics
   returnHTML += createPrimerStatistics(results);
 

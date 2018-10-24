@@ -1,3 +1,7 @@
+html {
+  overflow-y: scroll;
+}
+
 body {
   color: black;
   background-color: white;
@@ -283,6 +287,13 @@ div#P3P_MENU_BAR a {
 .p3p_cell_with_border { 
   border: 1px solid #000000;
   padding: 0.2em;
+}
+div#p3p_uuid_link {
+  margin: 7px;
+  border: none;
+  clear: left;
+  float: left;
+  width: 886px;
 }
 div#p3p_statictics {
   margin: 7px;

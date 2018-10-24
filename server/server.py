@@ -96,10 +96,11 @@ def runp3():
         with open(errfile, "r") as err:
             errInfo = "" + err.read()
             with open(outfile, "r") as out:
-                data = out.read() 
+                data = out.read()
+                data += "\n" + "P3P_UUID=" + uuidstr + "\n"
                 if not p3p_err_str == "":
-                    data += "\n" + "P3P_ERROR=" + p3p_err_str + "\n"
-                return data, 200
+                    data += "P3P_ERROR=" + p3p_err_str + "\n"
+                return jsonify({"outfile": data}), 200
     return jsonify(errors = [{"title": "Error in handling POST request!"}]), 400
 
 @app.route('/api/v1/upload', methods=['GET','POST'])
@@ -145,10 +146,17 @@ def loadServerData():
                 sf = os.path.join(app.config['UPLOAD_FOLDER'], uuid[0:2])
                 if os.path.exists(sf):
                     upfile = os.path.join(sf, "p3p_" + uuid + "_upload.txt")
+                    upData = "";
                     if os.path.isfile(upfile):          
-                        with open(upfile, "r") as out:
-                            data = out.read()
-                            return data, 200
+                        with open(upfile, "r") as upfh:
+                            upData = upfh.read()
+                    outfile = os.path.join(sf, "p3p_" + uuid + "_output.txt")
+                    outData = "";
+                    if os.path.isfile(outfile):          
+                        with open(outfile, "r") as outfh:
+                            outData = outfh.read()
+                            outData += "\n" + "P3P_UUID=" + uuid + "\n"
+                    return jsonify({"upfile": upData, "outfile": outData}), 200
     return "", 400
 
 @app.route('/api/v1/primer3version', methods=['POST'])
