@@ -1,3 +1,4 @@
 data/
+log/
 server/run.sh
 server/server.pyc

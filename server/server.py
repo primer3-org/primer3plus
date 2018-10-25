@@ -25,6 +25,7 @@ import subprocess
 import threading
 import argparse
 import json
+import datetime
 from subprocess import call,Popen,PIPE
 from flask import Flask, send_file, flash, send_from_directory, request, redirect, url_for, jsonify
 from flask_cors import CORS
@@ -36,12 +37,14 @@ app = Flask(__name__)
 CORS(app)
 app.config['PRIMER3PLUS'] = os.path.join(P3PWS, "..")
 app.config['UPLOAD_FOLDER'] = os.path.join(app.config['PRIMER3PLUS'], "data")
+app.config['LOG_FOLDER'] = os.path.join(app.config['PRIMER3PLUS'], "log")
 app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024   #maximum of 8MB
 
 app.config['BASEURL'] = os.environ.get('URL_INDEX', 'http://localhost:1234/index.html')
 P3CONFPATH = os.environ.get('P3_CONFIG_PATH', '../../primer3/src/primer3_config/')
 
 KILLTIME = 60 # time in seconds till Primer3 is killed!
+LOGP3RUNS = 1 # log the primer3 runs
 
 P3PATHFIX = "PRIMER_THERMODYNAMIC_PARAMETERS_PATH=" +  os.path.join(P3PWS, P3CONFPATH) + "\n"
 regEq = re.compile(r"PRIMER_THERMODYNAMIC_PARAMETERS_PATH=[^\n]*\n")
@@ -50,6 +53,10 @@ P3LIBPFIX = "PRIMER_MISPRIMING_LIBRARY=" +  os.path.join(P3PWS, "mispriming_lib/
 regLibP = re.compile(r"PRIMER_MISPRIMING_LIBRARY=")
 P3LIBINFIX = "PRIMER_INTERNAL_MISHYB_LIBRARY=" +  os.path.join(P3PWS, "mispriming_lib/")
 regLibIN = re.compile(r"PRIMER_INTERNAL_MISHYB_LIBRARY=")
+
+regLPrim = re.compile(r"PRIMER_LEFT_NUM_RETURNED=([^\n]*)\n")
+regIPrim = re.compile(r"PRIMER_INTERNAL_NUM_RETURNED=([^\n]*)\n")
+regRPrim = re.compile(r"PRIMER_RIGHT_NUM_RETURNED=([^\n]*)\n")
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in set(['json', 'fa'])
@@ -72,6 +79,8 @@ def runp3():
         sf = os.path.join(app.config['UPLOAD_FOLDER'], uuidstr[0:2])
         if not os.path.exists(sf):
             os.makedirs(sf)
+        if not os.path.exists(app.config['LOG_FOLDER']):
+            os.makedirs(app.config['LOG_FOLDER'])
 
         # Experiment
         if 'P3_INPUT_FILE' in request.form.keys():
@@ -118,7 +127,31 @@ def runp3():
                 data += "\n" + "P3P_UUID=" + uuidstr + "\n"
                 if not p3p_err_str == "":
                     data += "P3P_ERROR=" + p3p_err_str + "\n"
+                if LOGP3RUNS != 0:
+                    runTime = datetime.datetime.utcnow()
+                    statFile = os.path.join(app.config['LOG_FOLDER'], "p3_runs_" + runTime.strftime("%Y_%m_%d") + ".log")
+                    state = "Fail"
+                    prCount = 0
+                    llpr = regLPrim.search(data)
+                    prCount += int(llpr.group(1))
+                    inpr = regIPrim.search(data)
+                    prCount += int(inpr.group(1))
+                    rrpr = regRPrim.search(data)
+                    prCount += int(rrpr.group(1))
+                    if prCount > 0:
+                        state = "Success"
+                    addLine = request.remote_addr + " - [" + runTime.strftime("%d/%b/%Y:%H:%M:%S +0000") + '] "Primer3Plus" "Primer3_Pick_' + state + '" '
+                    addLine += str(prCount) + " " + uuidstr + ' "' + request.headers.get('User-Agent') + '"\n'
+                    with open(statFile, "a") as stat:
+                        stat.write(addLine)
                 return jsonify({"outfile": data}), 200
+    if LOGP3RUNS != 0:
+        runTime = datetime.datetime.utcnow()
+        statFile = os.path.join(app.config['LOG_FOLDER'], "p3_runs_" + runTime.strftime("%Y_%m_%d") + ".log")
+        addLine = request.remote_addr + " - [" + runTime.strftime("%d/%b/%Y:%H:%M:%S +0000") + '] "Primer3Plus" "Primer3_Pick_Error" '
+        addLine += '-1' + " " + uuidstr + ' "' + request.headers.get('User-Agent') + '"\n'
+        with open(statFile, "a") as stat:
+            stat.write(addLine)
     return jsonify(errors = [{"title": "Error in handling POST request!"}]), 400
 
 @app.route('/api/v1/upload', methods=['GET','POST'])
