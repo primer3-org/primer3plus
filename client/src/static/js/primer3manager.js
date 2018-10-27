@@ -246,7 +246,7 @@ function browseTabSelect(sel,btn,tab) {
     tabField.style.display="inline";
   } else {
     button.style.background="white";
-//    button.style.position="relative";
+    button.style.position="static";
     button.style.top="0";
     button.style.zIndex="0";
     tabField.style.display="none";
