@@ -7,7 +7,12 @@
     "build": "rimraf dist && parcel build src/index.html --no-cache --no-source-maps --public-url ./",
     "dev": "parcel src/index.html --no-cache --open"
   },
-  "keywords": ["Primer3","Primer3Plus","PCR","Polymerase Chain Reaction"],
+  "keywords": [
+    "Primer3",
+    "Primer3Plus",
+    "PCR",
+    "Polymerase Chain Reaction"
+  ],
   "author": {
     "name": "Andreas Untergasser",
     "email": "andreas@untergasser.de",
@@ -15,9 +20,10 @@
   },
   "license": "GPL-3.0+",
   "devDependencies": {
+    "babel-core": "^6.26.3",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-runtime": "^6.26.0",
-    "parcel-bundler": "^1.9.2",
+    "parcel-bundler": "^1.10.3",
     "rimraf": "^2.6.2"
   }
 }

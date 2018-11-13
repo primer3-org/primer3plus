@@ -1348,7 +1348,7 @@ function addServerFiles() {
   }
 }
 
-async function blaParameters() {
+function blaParameters() {
 //  console.log(defSet)
   var alles = "";
   for (var tag in defSet) {
@@ -1422,7 +1422,7 @@ function getHtmlTagValue(tag) {
   return null;
 }
 
-async function setHTMLParameters(para) {
+function setHTMLParameters(para) {
   currSet = {};
   for (var tag in para) {
     if (para.hasOwnProperty(tag)) {
