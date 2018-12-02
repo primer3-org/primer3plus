@@ -690,6 +690,10 @@ function createPrimerBox(res, nr) {
   retHtml += '    <td class="p3p_pair_box_cell"></td>\n';
   retHtml += '    <td class="p3p_pair_box_cell">' + pairPenalty + '</td>\n';
   retHtml += '  </tr>\n';
+  retHtml += partBoxSecStruct(res, linkRoot, "PRIMER_PAIR_" + nr + "_COMPL_ANY_STUCT",
+                              "PRIMER_PAIR_4_COMPL_ANY_STUCT", "Compl Any Secondary Structure");
+  retHtml += partBoxSecStruct(res, linkRoot, "PRIMER_PAIR_" + nr + "_COMPL_END_STUCT",
+                              "PRIMER_PAIR_4_COMPL_END_STUCT", "Compl End Secondary Structure");
   retHtml += '</table>\n';
   retHtml += '</div>\n';
   return retHtml;
@@ -769,6 +773,14 @@ function partPrimerData(res, nr, type) {
     retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
     retHTML += 'PRIMER_RIGHT_4_PENALTY" target="p3p_help">Penalty:</a> ' + primerPenalty + '</td>\n';
     retHTML += '  </tr>\n';
+
+    retHTML += partBoxSecStruct(res, linkRoot, "PRIMER_" + type + "_" + nr + "_SELF_ANY_STUCT",
+                                "PRIMER_RIGHT_4_SELF_ANY_STUCT", "Self Any Secondary Structure");
+    retHTML += partBoxSecStruct(res, linkRoot, "PRIMER_" + type + "_" + nr + "_SELF_END_STUCT",
+                                "PRIMER_RIGHT_4_SELF_END_STUCT", "Self End Secondary Structure");
+    retHTML += partBoxSecStruct(res, linkRoot, "PRIMER_" + type + "_" + nr + "_HAIRPIN_STUCT",
+                                "PRIMER_RIGHT_4_HAIRPIN_STUCT", "Hairpin Secondary Structure");
+
     if ((res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_POSITION_PENALTY") &&
         (res["PRIMER_" + type + "_" + nr + "_POSITION_PENALTY"] != "")) ||
         (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_MIN_SEQ_QUALITY") &&
@@ -822,6 +834,21 @@ function partPrimerData(res, nr, type) {
       retHTML += '  </tr>\n';
     }
   }
+  return retHTML;
+}
+
+function partBoxSecStruct(res, linkRoot, tag, help, description) {
+  var retHTML = "";
+  if (res.hasOwnProperty(tag) && (res[tag] != "")) {
+      retHTML += '  <tr>\n';
+      retHTML += '    <td colspan="11" class="p3p_pair_box_cell">';
+      retHTML += '<a href="' + linkRoot + help + '" target="p3p_help">' + description + ':</a><br />\n<pre>\n   ';
+      var secStr = res[tag];
+      secStr = secStr.replace(/\\n/g, "\n   ");
+      secStr = secStr.replace(/U\+25(\d\d)/g, "&#x25$1;");
+      retHTML += secStr + '</pre></td>\n';
+      retHTML += '  </tr>\n';
+    }
   return retHTML;
 }
 
