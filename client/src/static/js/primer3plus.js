@@ -73,15 +73,22 @@ document.addEventListener("DOMContentLoaded", function() {
           checkForUUID();		
       }
     })
-    .catch(err => {
-      let errorMessage = err
-  //    if (err.response) {
-  //      errorMessage = err.response.data.errors
-  //      .map(error => error.title)
-   //     .join('; ')
-  //    }
-      add_message("err","Error loading default settings from server: " + errorMessage);
-    })
+    .catch(function (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        let errorMessage = error.response.data.errors
+          .map(error => error.title)
+          .join('; ')
+        add_message("err","Error loading default settings from server: " + errorMessage);
+      } else if (error.request) {
+        // The request was made but no response was received
+        add_message("err","Error: No response from the server trying to load default settings from server.");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        add_message("err","Error while setting up the request trying to load default settings from server: " + error.message);
+      }
+    });
 });
 
 function loadSetFileFromServer() {
@@ -104,15 +111,22 @@ function loadSetFileFromServer() {
           document.getElementById('P3P_DEBUG_TXT_INPUT').value = res.data;
       }
     })
-    .catch(err => {
-      let errorMessage = err
-  //    if (err.response) {
-  //      errorMessage = err.response.data.errors
-  //      .map(error => error.title)
-   //     .join('; ')
-  //    }
-      add_message("err","Error loading server settings file " + fileName + ": " + errorMessage);
-    })
+    .catch(function (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        let errorMessage = error.response.data.errors
+          .map(error => error.title)
+          .join('; ')
+        add_message("err","Error loading server settings file " + fileName + ": " + errorMessage);
+      } else if (error.request) {
+        // The request was made but no response was received
+        add_message("err","Error: No response from the server trying to load server settings file " + fileName + ".");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        add_message("err","Error while setting up the request trying to load server settings file " + fileName + ": " + error.message);
+      }
+    });
 }
 
 function runPrimer3() {
@@ -147,15 +161,24 @@ function runPrimer3() {
           processResData();
       }
     })
-    .catch(err => {
-      let errorMessage = err
-  //    if (err.response) {
-  //      errorMessage = err.response.data.errors
-  //      .map(error => error.title)
-   //     .join('; ')
-  //    }
-      add_message("err","Error running Primer3: " + errorMessage);
-    })
+    .catch(function (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        let errorMessage = error.response.data.errors
+          .map(error => error.title)
+          .join('; ')
+        add_message("err","Error running Primer3: " + errorMessage);
+      } else if (error.request) {
+        // The request was made but no response was received
+        add_message("err","Error: No response from the server trying to run Primer3.");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        add_message("err","Error while setting up the request trying to run Primer3: " + error.message);
+      }
+      document.getElementById('P3P_SEL_TAB_RESULTS').style.display="inline";
+      document.getElementById('P3P_P3_RUNNING').style.display="none";
+    });
 }
 
 function checkForUUID() {  
@@ -192,15 +215,22 @@ function checkForUUID() {
             }
         }
       })
-      .catch(err => {
-        let errorMessage = err
-    //    if (err.response) {
-    //      errorMessage = err.response.data.errors
-    //      .map(error => error.title)
-     //     .join('; ')
-    //    }
-        add_message("err","Error loading uuid  " + uuid + ": " + errorMessage);
-      })
+      .catch(function (error) {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          let errorMessage = error.response.data.errors
+            .map(error => error.title)
+            .join('; ')
+          add_message("err","Error loading uuid " + uuid + ": " + errorMessage);
+        } else if (error.request) {
+          // The request was made but no response was received
+          add_message("err","Error: No response from the server trying to load uuid " + uuid + ".");
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          add_message("err","Error while setting up the request trying to load uuid " + uuid + ": " + error.message);
+        }
+      });
   }
 }
 
@@ -230,15 +260,9 @@ function init_primer3_versions() {
             p3Ver.innerHTML = res.data;
         }
       })
-      .catch(err => {
-        let errorMessage = err
-    //    if (err.response) {
-    //      errorMessage = err.response.data.errors
-    //      .map(error => error.title)
-     //     .join('; ')
-    //    }
+      .catch(function (error) {
         p3Ver.innerHTML = "---";
-      })
+      });
   }
 }
 
@@ -500,14 +524,16 @@ function createResultsPrimerCheck(res) {
   retHTML += '    <td class="p3p_oligo_cell"><a href="' + linkRoot + 'PRIMER_RIGHT_4_SELF_ANY" + thAdd + ">Any Dimer:</a></td>\n';
   retHTML += '    <td class="p3p_oligo_cell">' + Number.parseFloat(res["PRIMER_" + type + "_0_SELF_ANY" + thAdd]).toFixed(1);
   retHTML += '</td>\n  </tr>\n';
+  retHTML += partCheckSecStruct(res, linkRoot, "PRIMER_" + type + "_0_SELF_ANY_STUCT", "PRIMER_" + type + "_4_SELF_ANY_STUCT", "Secondary Structure");
   retHTML += '  <tr>\n';
   retHTML += '    <td class="p3p_oligo_cell"><a href="' + linkRoot + 'PRIMER_RIGHT_4_SELF_END" + thAdd + ">End Dimer:</a></td>\n';
   retHTML += '    <td class="p3p_oligo_cell">' + Number.parseFloat(res["PRIMER_" + type + "_0_SELF_END" + thAdd]).toFixed(1);
   retHTML += '</td>\n  </tr>\n';
+  retHTML += partCheckSecStruct(res, linkRoot, "PRIMER_" + type + "_0_SELF_END_STUCT", "PRIMER_" + type + "_4_SELF_END_STUCT", "Secondary Structure");
   if (res.hasOwnProperty("PRIMER_" + type + "_0_TEMPLATE_MISPRIMING" + thTmAdd) &&
       (res["PRIMER_" + type + "_0_TEMPLATE_MISPRIMING" + thTmAdd] != "")) {
     retHTML += '  <tr>\n    <td class="p3p_oligo_cell"><a href="' + linkRoot;
-    retHTML += 'PRIMER_RIGHT_4_TEMPLATE_MISPRIMING' + thTmAdd + '>Template Mispriming:</a></td>\n';
+    retHTML += 'PRIMER_RIGHT_4_TEMPLATE_MISPRIMING' + thTmAdd + '">Template Mispriming:</a></td>\n';
     retHTML += '<td class="p3p_oligo_cell">' + Number.parseFloat(res["PRIMER_" + type + "_0_TEMPLATE_MISPRIMING" + thTmAdd]).toFixed(1);
     retHTML += '</td>\n  </tr>\n';
   }
@@ -516,6 +542,7 @@ function createResultsPrimerCheck(res) {
     retHTML += '    <td class="p3p_oligo_cell">' + Number.parseFloat(res["PRIMER_" + type + "_0_HAIRPIN_TH"]).toFixed(1);
     retHTML += '</td>\n  </tr>\n';
   }
+  retHTML += partCheckSecStruct(res, linkRoot, "PRIMER_" + type + "_0_HAIRPIN_STUCT", "PRIMER_" + type + "_4_HAIRPIN_STUCT", "Secondary Structure");
   retHTML += '  <tr>\n    <td class="p3p_oligo_cell"><a href="' + linkRoot + 'PRIMER_RIGHT_4_END_STABILITY">3\' Stability:</a></td>\n';
   retHTML += '    <td class="p3p_oligo_cell">' + Number.parseFloat(res["PRIMER_" + type + "_0_END_STABILITY"]).toFixed(1);
   retHTML += ' &Delta;G</td>\n  </tr>\n  <tr>\n';
@@ -556,6 +583,20 @@ function createResultsPrimerCheck(res) {
   }
   retHTML += '</table>\n</div>\n';
 
+  return retHTML;
+}
+
+function partCheckSecStruct(res, linkRoot, tag, help, description) {
+  var retHTML = "";
+  if (res.hasOwnProperty(tag) && (res[tag] != "")) {
+      retHTML += '  <tr>\n    <td class="p3p_oligo_cell"><a href="' + linkRoot;
+      retHTML += help + '" target="p3p_help">' + description + ':</a></td>\n<td class="p3p_oligo_cell"><pre>\n';
+      var secStr = res[tag];
+      secStr = secStr.replace(/\\n/g, "\n");
+      secStr = secStr.replace(/U\+25(\d\d)/g, "&#x25$1;");
+      retHTML += secStr + '</pre></td>\n';
+      retHTML += '  </tr>\n  </tr>\n';
+    }
   return retHTML;
 }
 
@@ -1641,7 +1682,7 @@ function createSeqWithDeco(pointer) {
 
 function addSelDeco(seq, firstBase, tag, start, end) {
   var addField = document.getElementById(tag);
-  if (addField !== null) {
+  if ((addField !== null) && (addField.value.length > 0)) {
     var posList = addField.value.split(" ");
     for (var i = 0 ; i < posList.length ; i++) {
       var lin = posList[i].split(",");
@@ -1654,7 +1695,7 @@ function addSelDeco(seq, firstBase, tag, start, end) {
 
 function addOverlapDeco(seq, firstBase) {
   var addField = document.getElementById("SEQUENCE_OVERLAP_JUNCTION_LIST");
-  if (addField !== null) {
+  if ((addField !== null) && (addField.value.length > 0)) {
     var posList = addField.value.split(" ");
     for (var i = 0 ; i < posList.length ; i++) {
       seq = addSelDecoToSeq(seq, firstBase, parseInt(posList[i]), "-");
@@ -1666,6 +1707,9 @@ function addOverlapDeco(seq, firstBase) {
 function addSelDecoToSeq(seq, firstBase, pos, deco) {
   var trueCount = 0;
   var ret = "";
+  if (firstBase == pos) {
+    ret += deco;
+  }
   for (var i = 0 ; i < seq.length ; i++) {
     var letter = seq.charAt(i);
     ret += letter;	  

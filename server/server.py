@@ -41,12 +41,10 @@ app.config['LOG_FOLDER'] = os.path.join(app.config['PRIMER3PLUS'], "log")
 app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024   #maximum of 8MB
 
 app.config['BASEURL'] = os.environ.get('URL_INDEX', 'http://localhost:1234/index.html')
-P3CONFPATH = os.environ.get('P3_CONFIG_PATH', '../../primer3/src/primer3_config/')
 
 KILLTIME = 60 # time in seconds till Primer3 is killed!
 LOGP3RUNS = 1 # log the primer3 runs
 
-P3PATHFIX = "PRIMER_THERMODYNAMIC_PARAMETERS_PATH=" +  os.path.join(P3PWS, P3CONFPATH) + "\n"
 regEq = re.compile(r"PRIMER_THERMODYNAMIC_PARAMETERS_PATH=[^\n]*\n")
 
 P3LIBPFIX = "PRIMER_MISPRIMING_LIBRARY=" +  os.path.join(P3PWS, "mispriming_lib/")
@@ -88,7 +86,7 @@ def runp3():
             indata = indata.replace('\r\n', '\n')
             indata = indata.replace('\r', '\n')
             infile = os.path.join(sf, "p3p_" + uuidstr + "_input.txt")
-            modin = regEq.sub(P3PATHFIX, indata)
+            modin = regEq.sub("", indata)
             modin = regLibP.sub(P3LIBPFIX, modin)
             modin = regLibIN.sub(P3LIBINFIX, modin)
             with open(infile, "w") as infileHandle:
@@ -133,11 +131,14 @@ def runp3():
                     state = "Fail"
                     prCount = 0
                     llpr = regLPrim.search(data)
-                    prCount += int(llpr.group(1))
+                    if llpr:
+                        prCount += int(llpr.group(1))
                     inpr = regIPrim.search(data)
-                    prCount += int(inpr.group(1))
+                    if inpr:
+                        prCount += int(inpr.group(1))
                     rrpr = regRPrim.search(data)
-                    prCount += int(rrpr.group(1))
+                    if rrpr:
+                        prCount += int(rrpr.group(1))
                     if prCount > 0:
                         state = "Success"
                     addLine = request.remote_addr + " - [" + runTime.strftime("%d/%b/%Y:%H:%M:%S +0000") + '] "Primer3Plus" "Primer3_Pick_' + state + '" '
