@@ -1198,7 +1198,7 @@ function calcP3PResultAdditions(){
       var left  = results["PRIMER_LEFT_" + pairCount].split(',');
       var right = results["PRIMER_RIGHT_" + pairCount].split(',');    
       var start = parseInt(left[0]) + parseInt(left[1]) - fistBase;
-      var end   = parseInt(right[0]) - parseInt(right[1]) - fistBase;
+      var end   = parseInt(right[0]) - parseInt(right[1]) - fistBase + 1;
       var amp   = seq.substring(start, end);
       results["PRIMER_PAIR_" + pairCount + "_AMPLICON"] = amp;
       // Add the name
@@ -2213,6 +2213,18 @@ function createSaveFileString(sel) {
           delete data[tag];
         }
         if (tag.startsWith("PRIMER_INTERNAL_MUST_MATCH_") && (data[tag] == "")) {
+          delete data[tag];
+        }
+        if (tag.startsWith("PRIMER_PRODUCT_MAX_TM") && (data[tag] == "")) {
+          delete data[tag];
+        }
+        if (tag.startsWith("PRIMER_PRODUCT_MIN_TM") && (data[tag] == "")) {
+          delete data[tag];
+        }
+        if (tag.startsWith("PRIMER_PRODUCT_OPT_SIZE") && (data[tag] == "")) {
+          delete data[tag];
+        }
+        if (tag.startsWith("PRIMER_PRODUCT_OPT_TM") && (data[tag] == "")) {
           delete data[tag];
         }
       }
