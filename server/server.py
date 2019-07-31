@@ -243,5 +243,9 @@ def loadsettingsfile():
 def defaultsettings():
     return send_from_directory(os.path.join(P3PWS, "settings_files"),"default_settings.json"), 200
 
+@app.route('/api/v1/health', methods=['GET'])
+def health():
+    return jsonify(status="OK")
+
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', port=3300, debug = True, threaded=True)
