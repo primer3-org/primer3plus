@@ -26,10 +26,11 @@ import threading
 import argparse
 import json
 import datetime
-from subprocess import call,Popen,PIPE
+from subprocess import call, Popen, PIPE
 from flask import Flask, send_file, flash, send_from_directory, request, redirect, url_for, jsonify
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+from ipaddress import ip_address
 
 P3PWS = os.path.dirname(os.path.abspath(__file__))
 
@@ -43,7 +44,8 @@ app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024   #maximum of 8MB
 app.config['BASEURL'] = os.environ.get('URL_INDEX', 'http://localhost:1234/index.html')
 
 KILLTIME = 60 # time in seconds till Primer3 is killed!
-LOGP3RUNS = 1 # log the primer3 runs
+LOGP3RUNS = True  # log the primer3 runs
+LOGIPANONYM = True  # anonymize the ip address in log files
 
 regEq = re.compile(r"PRIMER_THERMODYNAMIC_PARAMETERS_PATH=[^\n]*\n")
 
@@ -56,17 +58,47 @@ regLPrim = re.compile(r"PRIMER_LEFT_NUM_RETURNED=([^\n]*)\n")
 regIPrim = re.compile(r"PRIMER_INTERNAL_NUM_RETURNED=([^\n]*)\n")
 regRPrim = re.compile(r"PRIMER_RIGHT_NUM_RETURNED=([^\n]*)\n")
 
+
+def logData(pProg, pKey, pValue, uuid):
+    if not LOGP3RUNS:
+        return
+
+    runTime = datetime.datetime.utcnow()
+    addLine = runTime.strftime("%Y-%m-%dT%H:%M:%S")
+    addLine += "\t" + pProg + "\t" + pKey + "\t" + pValue + "\t" + uuid + "\t"
+    if LOGIPANONYM:
+        ip_bit = ip_address(request.remote_addr).packed
+        mod_ip = bytearray(ip_bit)
+        if len(ip_bit) == 4:
+            mod_ip[3] = 0
+        if len(ip_bit) == 16:
+            for count_ip in range(6, len(mod_ip)):
+                mod_ip[count_ip] = 0
+        addLine += str(ip_address(bytes(mod_ip))) + "\t\t"
+    else:
+        addLine += request.remote_addr + "\t\t"
+    addLine += request.headers.get('User-Agent').replace("\t", " ") + "\n"
+
+    statFile = os.path.join(app.config['LOG_FOLDER'], "p3_runs_" + runTime.strftime("%Y_%m_%d") + ".log")
+    with open(statFile, "a") as stat:
+        stat.write(addLine)
+
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in set(['json', 'fa'])
 
 uuid_re = re.compile(r'(^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})-{0,1}([ap]{0,1})([cj]{0,1})$')
+
+
 def is_valid_uuid(s):
    return uuid_re.match(s) is not None
+
 
 def p3_watchdog(proc, stat):
     """Kill process on timeout and note in stat"""
     stat['timeout'] = True
     proc.kill()
+
 
 @app.route('/api/v1/runprimer3', methods=['POST'])
 def runp3():
@@ -125,10 +157,8 @@ def runp3():
                 data += "\n" + "P3P_UUID=" + uuidstr + "\n"
                 if not p3p_err_str == "":
                     data += "P3P_ERROR=" + p3p_err_str + "\n"
-                if LOGP3RUNS != 0:
-                    runTime = datetime.datetime.utcnow()
-                    statFile = os.path.join(app.config['LOG_FOLDER'], "p3_runs_" + runTime.strftime("%Y_%m_%d") + ".log")
-                    state = "Fail"
+                if LOGP3RUNS:
+                    state = "Primer3_Pick_Fail"
                     prCount = 0
                     llpr = regLPrim.search(data)
                     if llpr:
@@ -140,20 +170,13 @@ def runp3():
                     if rrpr:
                         prCount += int(rrpr.group(1))
                     if prCount > 0:
-                        state = "Success"
-                    addLine = request.remote_addr + " - [" + runTime.strftime("%d/%b/%Y:%H:%M:%S +0000") + '] "Primer3Plus" "Primer3_Pick_' + state + '" '
-                    addLine += str(prCount) + " " + uuidstr + ' "' + request.headers.get('User-Agent') + '"\n'
-                    with open(statFile, "a") as stat:
-                        stat.write(addLine)
+                        state = "Primer3_Pick_Success"
+                    logData("Primer3Plus", state, str(prCount), uuidstr)
                 return jsonify({"outfile": data}), 200
-    if LOGP3RUNS != 0:
-        runTime = datetime.datetime.utcnow()
-        statFile = os.path.join(app.config['LOG_FOLDER'], "p3_runs_" + runTime.strftime("%Y_%m_%d") + ".log")
-        addLine = request.remote_addr + " - [" + runTime.strftime("%d/%b/%Y:%H:%M:%S +0000") + '] "Primer3Plus" "Primer3_Pick_Error" '
-        addLine += '-1' + " " + uuidstr + ' "' + request.headers.get('User-Agent') + '"\n'
-        with open(statFile, "a") as stat:
-            stat.write(addLine)
-    return jsonify(errors = [{"title": "Error in handling POST request!"}]), 400
+        logData("Primer3Plus", "Primer3_Pick_Error", '0', uuidstr)
+        return jsonify(errors=[{"title": "Error in handling POST request!"}]), 400
+    return jsonify(errors=[{"title": "Error: No POST request!"}]), 400
+
 
 @app.route('/api/v1/upload', methods=['GET','POST'])
 def uploadData():
@@ -186,8 +209,10 @@ def uploadData():
                     val = val.replace('\n', '_')
                     dat.write(tag + "=" + val + "\n")
         # print (upfile)
+        logData("Primer3Plus", "Post_Get_Data", '0', uuidstr)
         return redirect(app.config['BASEURL'] + "?UUID=" + uuidstr, code=302)
     return redirect(app.config['BASEURL'], code=302)
+
 
 @app.route('/api/v1/loadServerData', methods=['POST'])
 def loadServerData():
@@ -213,8 +238,10 @@ def loadServerData():
                         with open(outfile, "r") as outfh:
                             outData = outfh.read()
                             outData += "\n" + "P3P_UUID=" + uuid + "\n"
+                    logData("Primer3Plus", "Load_Server_Data", '0', uuid)
                     return jsonify({"upfile": upData, "infile": inData, "outfile": outData}), 200
     return "", 400
+
 
 @app.route('/api/v1/primer3version', methods=['POST'])
 def p3version():
@@ -231,21 +258,27 @@ def p3version():
         return "Error in running Primer3Plus!", 200
     return output, 200
 
+
 @app.route('/api/v1/settingsFile', methods=['POST'])
 def loadsettingsfile():
     if request.method == 'POST':
         if 'P3P_SERVER_SETTINGS_FILE' in request.form.keys():
             filename = secure_filename(request.form['P3P_SERVER_SETTINGS_FILE'])
+            logData("Primer3Plus", "Load_Settings_File", '0', "---")
             return send_from_directory(os.path.join(P3PWS, "settings_files"),filename), 200
     return jsonify(errors = [{"title": "Could not find file on server!"}]), 400
 
+
 @app.route('/api/v1/defaultsettings', methods=['POST'])
 def defaultsettings():
+    logData("Primer3Plus", "Load_Default_Settings", '0', "---")
     return send_from_directory(os.path.join(P3PWS, "settings_files"),"default_settings.json"), 200
+
 
 @app.route('/api/v1/health', methods=['GET'])
 def health():
     return jsonify(status="OK")
+
 
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', port=3300, debug = True, threaded=True)

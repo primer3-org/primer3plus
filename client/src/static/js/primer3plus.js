@@ -20,7 +20,7 @@ const API_URL = process.env.API_URL
 const HELP_LINK_URL = process.env.HELP_LINK_URL
 const INDEX_LINK_URL = process.env.INDEX_LINK_URL
 
-var primer3plus_version = "3.1.1";
+var primer3plus_version = "3.2.0";
 
 // The default Settings loaded from the server
 var defSet;
