@@ -31,13 +31,6 @@
 
 <body>
   <div class="p3p_page">
-
-    <div class="p3p_news">
-      <b>News:</b> Try out our new tool: 
-      <a href="https://wily-dna-editor.com/index.html">Wily-DNA-Editor</a>
-      - A DNA/Plasmid editor running in your browser!
-    </div>
-
     <div class="p3p_top_bar">
       <table>
         <colgroup>
@@ -382,7 +375,7 @@
             (internal oligo) or use <a id="SEQUENCE_INTERNAL_OLIGO_HELP">oligo</a> below.
           </td>
           <td class="p3p_more_space p3p_blue" style="vertical-align: top">
-            or use <a href="SEQUENCE_PRIMER_REVCOMP_HELP">right primer</a><br>
+            or use <a id="SEQUENCE_PRIMER_REVCOMP_HELP">right primer</a><br>
             below (5'-&gt;3' on opposite strand).
           </td>
         </tr>
@@ -395,6 +388,18 @@
           </td>
           <td class="p3p_more_space p3p_blue">
             &nbsp;&nbsp;<input size="30" id="SEQUENCE_PRIMER_REVCOMP" type="text">
+          </td>
+        </tr>
+        <tr id="P3P_VIS_PRIMER_BOXES">
+          <td class="p3p_more_space p3p_blue">
+            &nbsp;&nbsp;<a id="SEQUENCE_OVERHANG_LEFT_HELP">5' Overhang:</a>
+            &nbsp;&nbsp;<input size="10" id="SEQUENCE_OVERHANG_LEFT" type="text">
+          </td>
+          <td class="p3p_more_space p3p_blue">
+          </td>
+          <td class="p3p_more_space p3p_blue">
+            &nbsp;&nbsp;<a id="SEQUENCE_OVERHANG_RIGHT_HELP">5' Overhang:</a>
+            &nbsp;&nbsp;<input size="10" id="SEQUENCE_OVERHANG_RIGHT" type="text">
           </td>
         </tr>
       </table>
@@ -452,6 +457,26 @@
             <td>
               &nbsp;&nbsp;&nbsp;<a id="PRIMER_PAIR_MAX_DIFF_TM_HELP">Max Tm Difference:</a>
               <input size="4" id="PRIMER_PAIR_MAX_DIFF_TM" type="text">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a>Primer Bound%</a>
+            </td>
+            <td>
+              <a id="PRIMER_MIN_BOUND_HELP">Min:</a>
+              <input size="4" id="PRIMER_MIN_BOUND" type="text">
+            </td>
+            <td>
+              <a id="PRIMER_OPT_BOUND_HELP">Opt:</a>
+              <input size="4" id="PRIMER_OPT_BOUND" type="text">
+            </td>
+            <td><a id="PRIMER_MAX_BOUND_HELP">Max:</a>
+              <input size="4" id="PRIMER_MAX_BOUND" type="text">
+            </td>
+            <td>
+              &nbsp;&nbsp;&nbsp;<a id="PRIMER_ANNEALING_TEMP_HELP">Annealing Temp:</a>
+              <input size="4" id="PRIMER_ANNEALING_TEMP" type="text">
             </td>
           </tr>
           <tr>
@@ -515,6 +540,32 @@
             </td>
             <td>
               &nbsp;
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a id="PRIMER_DMSO_CONC_HELP">DMSO Concentration:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_DMSO_CONC" type="text">
+            </td>
+            <td>
+              <a id="PRIMER_FORMAMIDE_CONC_HELP">Formamide Concentration:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_FORMAMIDE_CONC" type="text">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a id="PRIMER_DMSO_FACTOR_HELP">DMSO Factor:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_DMSO_FACTOR" type="text">
+            </td>
+            <td>
+            </td>
+            <td>
             </td>
           </tr>
         </table>
@@ -952,7 +1003,15 @@
               <a id="SEQUENCE_INTERNAL_EXCLUDED_REGION_HELP">Excluded Regions for Internal Oligo:</a>
             </td>
             <td>
-              <input id="SEQUENCE_INTERNAL_EXCLUDED_REGION" type="text">
+              <input size="40" id="SEQUENCE_INTERNAL_EXCLUDED_REGION" type="text">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a id="SEQUENCE_INTERNAL_OVERLAP_JUNCTION_LIST_HELP">Internal Oligo Overlap Positions:</a>
+            </td>
+            <td>
+              <input size="40" id="SEQUENCE_INTERNAL_OVERLAP_JUNCTION_LIST" type="text">
             </td>
           </tr>
         </table>
@@ -1004,7 +1063,26 @@
             <td>
             </td>
           </tr>
-           <tr>
+          <tr>
+            <td>
+              <a>Hyb Oligo Bound%:</a> 
+            </td>
+            <td>
+              <a id="PRIMER_INTERNAL_MIN_BOUND_HELP">Min:</a>
+              <input size="4" id="PRIMER_INTERNAL_MIN_BOUND" type="text">
+            </td>
+            <td>
+              <a id="PRIMER_INTERNAL_OPT_BOUND_HELP">Opt:</a>
+              <input size="4" id="PRIMER_INTERNAL_OPT_BOUND" type="text"> 
+            </td>
+            <td>
+              <a id="PRIMER_INTERNAL_MAX_BOUND_HELP">Max:</a>
+              <input size="4" id="PRIMER_INTERNAL_MAX_BOUND" type="text">
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
             <td>
               <a>Hyb Oligo GC%</a>
             </td>
@@ -1061,6 +1139,32 @@
           </tr>
           <tr>
             <td>
+              <a id="PRIMER_INTERNAL_DMSO_CONC_HELP">Hyb Oligo DMSO Concentration:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_INTERNAL_DMSO_CONC" type="text">
+            </td>
+            <td>
+              <a id="PRIMER_INTERNAL_FORMAMIDE_CONC_HELP">Hyb Oligo Formamide Concentration:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_INTERNAL_FORMAMIDE_CONC" type="text">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a id="PRIMER_INTERNAL_DMSO_FACTOR_HELP">Hyb Oligo DMSO Factor:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_INTERNAL_DMSO_FACTOR" type="text">
+            </td>
+            <td>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td>
               <a id="PRIMER_INTERNAL_MAX_NS_ACCEPTED_HELP">Max #Ns:</a>
             </td>
             <td>
@@ -1071,6 +1175,32 @@
             </td>
             <td>
               <input size="4" id="PRIMER_INTERNAL_MAX_POLY_X" type="text">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a id="PRIMER_INTERNAL_MIN_5_PRIME_OVERLAP_OF_JUNCTION_HELP">Hyb Oligo 5 Prime Junction Overlap: </a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_INTERNAL_MIN_5_PRIME_OVERLAP_OF_JUNCTION" type="text">
+            </td>
+            <td>
+              <a id="PRIMER_INTERNAL_MIN_3_PRIME_OVERLAP_OF_JUNCTION_HELP">Hyb Oligo 3 Prime Junction Overlap: </a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_INTERNAL_MIN_3_PRIME_OVERLAP_OF_JUNCTION" type="text">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a id="PRIMER_INTERNAL_MIN_THREE_PRIME_DISTANCE_HELP">Min Hyb Oligo End Distance:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_INTERNAL_MIN_THREE_PRIME_DISTANCE" type="text">
+            </td>
+            <td>
+            </td>
+            <td>
             </td>
           </tr>
           <tr>
@@ -1271,12 +1401,54 @@
             <input size="4" id="PRIMER_INTERNAL_WT_TM_GT" type="text">
           </td>
           <td>
-            <a id="PAIR_WT_DIFF_TM_HELP">Tm Difference</a>
+            <a id="PRIMER_PAIR_WT_DIFF_TM_HELP">Tm Difference</a>
           </td>
           <td> 
           </td>
           <td>
             <input size="4" id="PRIMER_PAIR_WT_DIFF_TM" type="text">
+          </td>
+          <td>
+          </td>
+          <td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a id="PRIMER_WT_BOUND_HELP">Bound</a>
+          </td>
+          <td>
+            <a id="PRIMER_WT_BOUND_LT_HELP">Lt:</a>
+          </td>
+          <td>
+            <input size="4" id="PRIMER_WT_BOUND_LT" type="text">
+          </td>
+          <td>
+            <a id="PRIMER_WT_BOUND_GT_HELP">Gt:</a>
+          </td>
+          <td>
+            <input size="4" id="PRIMER_WT_BOUND_GT" type="text">
+          </td>
+          <td>
+            <a id="PRIMER_INTERNAL_WT_BOUND_HELP">Bound</a>
+          </td>
+          <td>
+            <a id="PRIMER_INTERNAL_WT_BOUND_LT_HELP">Lt:</a>
+          </td>
+          <td>
+            <input size="4" id="PRIMER_INTERNAL_WT_BOUND_LT" type="text">
+          </td>
+          <td>
+            <a id="PRIMER_INTERNAL_WT_BOUND_GT_HELP">Gt:</a>
+          </td>
+          <td>
+            <input size="4" id="PRIMER_INTERNAL_WT_BOUND_GT" type="text">
+          </td>
+          <td>
+          </td>
+          <td> 
+          </td>
+          <td>
           </td>
           <td>
           </td>
@@ -1691,8 +1863,16 @@
           <td>
             <input size="4" id="SEQUENCE_START_CODON_POSITION" type="text">
           </td>
-          <td rowspan="5" colspan="3">
-            <textarea rows="8" cols="40" id="SEQUENCE_QUALITY"></textarea>
+          <td rowspan="6" colspan="3">
+            <textarea rows="10" cols="40" id="SEQUENCE_QUALITY"></textarea>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a id="SEQUENCE_START_CODON_SEQUENCE_HELP">Start Codon Sequence:</a>
+          </td>
+          <td>
+            <input size="4" id="SEQUENCE_START_CODON_SEQUENCE" type="text">
           </td>
         </tr>
         <tr>

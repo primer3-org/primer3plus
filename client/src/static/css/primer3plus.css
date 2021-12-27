@@ -224,6 +224,13 @@ div#P3P_MENU_BAR a {
   padding-bottom: 0.45em;
   padding-left: 0.2em;
 }
+.p3p_pair_box_cell_s {
+  padding-top: 0.45em;
+  padding-right: 0.2em;
+  padding-bottom: 0.45em;
+  padding-left: 0.2em;
+  font-size: 90%;
+}
 .p3p_excluded_region {
   background-color: #ff503c;
   color: #000000;

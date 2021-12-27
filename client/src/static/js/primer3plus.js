@@ -690,20 +690,21 @@ function createPrimerBox(res, nr) {
   retHtml += '<div class="p3p_pair_box_div">\n';
   retHtml += '<table class="p3p_pair_box_table">\n';
   retHtml += '  <colgroup>\n';
-  retHtml += '    <col style="width: 12.0%">\n';
+  retHtml += '    <col style="width: 11.0%">\n';
   retHtml += '    <col style="width: 2.0%">\n';
-  retHtml += '    <col style="width: 10.0%">\n';
-  retHtml += '    <col style="width: 10.0%">\n';
-  retHtml += '    <col style="width: 10.0%">\n';
-  retHtml += '    <col style="width: 8.0%">\n';
-  retHtml += '    <col style="width: 8.0%">\n';
-  retHtml += '    <col style="width: 8.5%">\n';
-  retHtml += '    <col style="width: 8.0%">\n';
-  retHtml += '    <col style="width: 10.5%">\n';
-  retHtml += '    <col style="width: 13.0%">\n';
+  retHtml += '    <col style="width: 9.0%">\n';
+  retHtml += '    <col style="width: 9.0%">\n';
+  retHtml += '    <col style="width: 9.5%">\n';
+  retHtml += '    <col style="width: 9.0%">\n';
+  retHtml += '    <col style="width: 7.5%">\n';
+  retHtml += '    <col style="width: 7.5%">\n';
+  retHtml += '    <col style="width: 6.5%">\n';
+  retHtml += '    <col style="width: 7.5%">\n';
+  retHtml += '    <col style="width: 9.5%">\n';
+  retHtml += '    <col style="width: 11.5%">\n';
   retHtml += '  </colgroup>\n';
   retHtml += '  <tr>\n';
-  retHtml += '    <td colspan="11" class="p3p_pair_box_cell">\n';
+  retHtml += '    <td colspan="12" class="p3p_pair_box_cell">\n';
   retHtml += '      <input id="PRIMER_PAIR_' + nr + '_SELECTED" onchange="updateResultsElement(this);" ';
   if (res.hasOwnProperty("PRIMER_PAIR_" + nr + "_SELECTED") &&
       (res["PRIMER_PAIR_" + nr + "_SELECTED"] == "1")) {
@@ -719,17 +720,16 @@ function createPrimerBox(res, nr) {
   retHtml += partPrimerData(res, nr, "RIGHT");
 
   retHtml += '  <tr class="p3p_primer_pair">\n';
-  retHtml += '    <td colspan="3" class="p3p_pair_box_cell"><strong>Pair:</strong>&nbsp;&nbsp;&nbsp;\n';
+  retHtml += '    <td colspan="4" class="p3p_pair_box_cell_s"><strong>Pair:</strong>&nbsp;&nbsp;&nbsp;\n';
   retHtml += '      <a href="' + linkRoot + 'PRIMER_PAIR_4_PRODUCT_SIZE">Product Size:</a>&nbsp;\n';
   retHtml += '&nbsp;' + res["PRIMER_PAIR_" + nr + "_PRODUCT_SIZE"] + ' bp</td>\n';
-  retHtml += '    <td class="p3p_pair_box_cell">' + productTM + '</td>\n';
-  retHtml += '    <td class="p3p_pair_box_cell">' + productOligDiff + '</td>\n';
-  retHtml += '    <td class="p3p_pair_box_cell">' + primerAny + '</td>\n';
-  retHtml += '    <td class="p3p_pair_box_cell">' + primerEnd + '</td>\n';
-  retHtml += '    <td class="p3p_pair_box_cell">' + productMispriming + '</td>\n';
-  retHtml += '    <td class="p3p_pair_box_cell">' + productToA + '</td>\n';
-  retHtml += '    <td class="p3p_pair_box_cell"></td>\n';
-  retHtml += '    <td class="p3p_pair_box_cell">' + pairPenalty + '</td>\n';
+  retHtml += '    <td class="p3p_pair_box_cell_s">' + productTM + '</td>\n';
+  retHtml += '    <td class="p3p_pair_box_cell_s">' + productOligDiff + '</td>\n';
+  retHtml += '    <td class="p3p_pair_box_cell_s">' + primerAny + '</td>\n';
+  retHtml += '    <td class="p3p_pair_box_cell_s">' + primerEnd + '</td>\n';
+  retHtml += '    <td colspan="2" class="p3p_pair_box_cell_s">' + productMispriming + '</td>\n';
+  retHtml += '    <td class="p3p_pair_box_cell_s">' + productToA + '</td>\n';
+  retHtml += '    <td class="p3p_pair_box_cell_s">' + pairPenalty + '</td>\n';
   retHtml += '  </tr>\n';
   retHtml += partBoxSecStruct(res, linkRoot, "PRIMER_PAIR_" + nr + "_COMPL_ANY_STUCT",
                               "PRIMER_PAIR_4_COMPL_ANY_STUCT", "Compl Any Secondary Structure");
@@ -769,6 +769,10 @@ function partPrimerData(res, nr, type) {
       (res["PRIMER_" + type + "_" + nr + "_SEQUENCE"] != "")) {
     var primerPos = res["PRIMER_" + type + "_" + nr].split(',');
     var primerTM  = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_TM"]).toFixed(1);
+    var primerBound = "--";
+    if (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_BOUND" + thTmAdd)) {
+      primerBound = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_BOUND" + thTmAdd]).toFixed(3);
+    }
     var primerGC  = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_GC_PERCENT"]).toFixed(1);
     var primerAny = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_SELF_ANY" + thAdd]).toFixed(1);
     var primerEnd = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_SELF_END" + thAdd]).toFixed(1);
@@ -785,33 +789,35 @@ function partPrimerData(res, nr, type) {
 
     retHTML += '  <tr class="p3p_' + cssName + '">\n';
     retHTML += '    <td colspan="2" class="p3p_pair_box_cell">&nbsp;' + writeName  + ' ' + (nr +1) + ':</td>\n';
-    retHTML += '    <td colspan="9" class="p3p_pair_box_cell">'; 
+    retHTML += '    <td colspan="10" class="p3p_pair_box_cell">'; 
     retHTML += '<input id="PRIMER_' + type + '_' + nr + '_SEQUENCE" onchange="updateResultsElement(this);" ';
     retHTML += 'value="' + res["PRIMER_" + type + "_" + nr + "_SEQUENCE"] + '" size="90" type="text"></td>\n';
     retHTML += '  </tr>\n';
     retHTML += '  <tr>\n';
-    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += '    <td class="p3p_pair_box_cell_s"><a href="' + linkRoot;
     retHTML += 'PRIMER_RIGHT_4" target="p3p_help">Start:</a> ' + primerPos[0] + '</td>\n';
-    retHTML += '    <td colspan="2" class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += '    <td colspan="2" class="p3p_pair_box_cell_s"><a href="' + linkRoot;
     retHTML += 'PRIMER_RIGHT_4" target="p3p_help">Length:</a> ' + primerPos[1] + ' bp</td>\n';
-    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += '    <td class="p3p_pair_box_cell_s"><a href="' + linkRoot;
     retHTML += 'PRIMER_RIGHT_4_TM" target="p3p_help">Tm:</a> ' + primerTM + ' C </td>\n';
-    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += '    <td class="p3p_pair_box_cell_s"><a href="' + linkRoot;
+    retHTML += 'PRIMER_RIGHT_4_BOUND" target="p3p_help">B:</a> ' + primerBound + ' % </td>\n';
+    retHTML += '    <td class="p3p_pair_box_cell_s"><a href="' + linkRoot;
     retHTML += 'PRIMER_RIGHT_4_GC_PERCENT" target="p3p_help">GC:</a> ' + primerGC + ' %</td>\n';
-    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += '    <td class="p3p_pair_box_cell_s"><a href="' + linkRoot;
     retHTML += 'PRIMER_RIGHT_4_SELF_ANY' + thAdd + '" target="p3p_help">Any:</a> ' + primerAny + '</td>\n';
-    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += '    <td class="p3p_pair_box_cell_s"><a href="' + linkRoot;
     retHTML += 'PRIMER_RIGHT_4_SELF_END' + thAdd + '" target="p3p_help">End:</a> ' + primerEnd + '</td>\n';
-    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += '    <td class="p3p_pair_box_cell_s"><a href="' + linkRoot;
     retHTML += 'PRIMER_RIGHT_4_TEMPLATE_MISPRIMING' + thTmAdd +'" target="p3p_help">TB:</a> ' + primerTemplateBinding + '</td>\n';
-    retHTML += '    <td class="p3p_pair_box_cell">';
+    retHTML += '    <td class="p3p_pair_box_cell_s">';
     if (res["PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"] == "1") {
       retHTML += '<a href="' + linkRoot + 'PRIMER_RIGHT_4_HAIRPIN_TH">HP:</a> ' + primerHairpin;
     }
     retHTML += '</td>\n';
-    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += '    <td class="p3p_pair_box_cell_s"><a href="' + linkRoot;
     retHTML += 'PRIMER_RIGHT_4_END_STABILITY" target="p3p_help">3\' Stab:</a> ' + primerEndStability + '</td>\n';
-    retHTML += '    <td class="p3p_pair_box_cell"><a href="' + linkRoot;
+    retHTML += '    <td class="p3p_pair_box_cell_s"><a href="' + linkRoot;
     retHTML += 'PRIMER_RIGHT_4_PENALTY" target="p3p_help">Penalty:</a> ' + primerPenalty + '</td>\n';
     retHTML += '  </tr>\n';
 
@@ -852,7 +858,7 @@ function partPrimerData(res, nr, type) {
     if (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_LIBRARY_MISPRIMING") &&
         (res["PRIMER_" + type + "_" + nr + "_LIBRARY_MISPRIMING"] != "")) {
       retHTML += '  <tr>\n';
-      retHTML += '    <td colspan="11" class="p3p_pair_box_cell">';
+      retHTML += '    <td colspan="12" class="p3p_pair_box_cell">';
       retHTML += '<a href="' + linkRoot + 'PRIMER_RIGHT_4_LIBRARY_MISPRIMING" target="p3p_help">Library Mispriming:</a>&nbsp;';
       retHTML += res["PRIMER_" + type + "_" + nr + "_LIBRARY_MISPRIMING"] + '</td>\n';
       retHTML += '  </tr>\n';
@@ -861,7 +867,7 @@ function partPrimerData(res, nr, type) {
     if (res.hasOwnProperty("PRIMER_" + type + "_" + nr + "_LIBRARY_MISHYB") &&
         (res["PRIMER_" + type + "_" + nr + "_LIBRARY_MISHYB"] != "")) {
       retHTML += '  <tr>\n';
-      retHTML += '    <td colspan="11" class="p3p_pair_box_cell">';
+      retHTML += '    <td colspan="12" class="p3p_pair_box_cell">';
       retHTML += '<a href="' + linkRoot + 'PRIMER_INTERNAL_4_LIBRARY_MISHYB" target="p3p_help">Library Mishyb:</a>&nbsp;';
       retHTML += res["PRIMER_" + type + "_" + nr + "_LIBRARY_MISHYB"] + '</td>\n';
       retHTML += '  </tr>\n';
@@ -882,7 +888,7 @@ function partBoxSecStruct(res, linkRoot, tag, help, description) {
   var retHTML = "";
   if (res.hasOwnProperty(tag) && (res[tag] != "")) {
       retHTML += '  <tr>\n';
-      retHTML += '    <td colspan="11" class="p3p_pair_box_cell">';
+      retHTML += '    <td colspan="12" class="p3p_pair_box_cell">';
       retHTML += '<a href="' + linkRoot + help + '" target="p3p_help">' + description + ':</a><br />\n<pre>\n   ';
       var secStr = res[tag];
       secStr = secStr.replace(/\\n/g, "\n   ");
@@ -1376,6 +1382,31 @@ function linkHelpTags() {
       if (pageElement !== null) {
         pageElement.href = linkRoot + tag;
         pageElement.target = "p3p_help";
+      } else {
+        if (debugMode > 1) {
+          if (!(ignore_tags.includes(tag)) && !(tag.startsWith("P3_"))) {
+            add_message("warn","Missing help element for tag " + tag + "!");
+          }
+        }
+      }
+    }
+  }
+  if (debugMode > 1) {
+    var all_elements = document.querySelectorAll('*[id]');
+    for (var i = 0; i < all_elements.length; ++i) {
+      var id_s = all_elements[i].id;
+      if ((id_s.startsWith("SEQUENCE_")) || (id_s.startsWith("PRIMER_")) || 
+          (id_s.startsWith("P3_"))) {
+          if (ignore_tags.includes(id_s)) {
+            continue;
+          }
+          if (defSet.hasOwnProperty(id_s)) {
+            continue;
+          }
+          if (id_s.endsWith("_HELP")) {
+            continue;
+          }
+          add_message("warn","No data for tag " + id_s + "!");
       }
     }
   }
