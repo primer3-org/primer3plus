@@ -181,6 +181,79 @@ function runPrimer3() {
     });
 }
 
+function runPrefold() {
+  var seq = getHtmlTagValue("SEQUENCE_TEMPLATE");
+  if (seq.length < 20) {
+    add_message("err","Primer3Prefold requires a sequence > 20 bp.");
+    return;
+  }
+  if (seq.length > 2000) {
+    var incl = getHtmlTagValue("SEQUENCE_INCLUDED_REGION");
+    if (incl == "") {
+      add_message("err","Primer3Prefold requires one included region < 2000 bp.");
+      return;
+    }
+    var incArr = incl.split(",");
+    if ((incArr.length != 2) || (parseInt(incArr[1]) > 2000)) {
+      add_message("err","Primer3Prefold requires one included region < 2000 bp.");
+      return;
+    }
+  }
+  var temp = getHtmlTagValue("PRIMER_ANNEALING_TEMP");
+  if ((temp == "") || (parseFloat(temp) < 0.0)) {
+    add_message("err","Primer3Prefold requires a an annealing temp > 0&deg;C.");
+    return;
+  }
+  del_all_messages ();
+  document.getElementById('P3P_RESULTS_BOX').innerHTML = "";
+  var res = document.getElementById('P3P_SEL_TAB_RESULTS');
+  if (res != null) {
+    res.style.display="inline";
+    document.getElementById('P3P_P3_RUNNING').style.display="inline";
+    browseTabFunctionality('P3P_TAB_RESULTS'); 
+  }
+  var p3file = createSaveFileString("all");
+  document.getElementById('P3P_DEBUG_TXT_INPUT').value = p3file;
+  document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = "";
+  const formData = new FormData();
+  formData.append('P3_INPUT_FILE', p3file);
+  axios
+    .post(`${API_URL}/runprefold`, formData)
+    .then(res => {
+        if (res.status === 200) {
+          rawResults = res.data.outfile;
+          document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = rawResults;
+          results = {};
+          var fileLines = rawResults.split('\n');
+          for (var i = 0; i < fileLines.length; i++) {
+            if ((fileLines[i].match(/=/) != null) && (fileLines[i] != "") && (fileLines[i] != "=")) {
+              var pair = fileLines[i].split('=');
+              results[pair[0]]=fileLines[i].split(/=(.+)/)[1];
+            }
+          }
+          processPrefoldData();
+      }
+    })
+    .catch(function (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        let errorMessage = error.response.data.errors
+          .map(error => error.title)
+          .join('; ')
+        add_message("err","Error running UNAFold: " + errorMessage);
+      } else if (error.request) {
+        // The request was made but no response was received
+        add_message("err","Error: No response from the server trying to run UNAFold.");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        add_message("err","Error while setting up the request trying to run UNAFold: " + error.message);
+      }
+      document.getElementById('P3P_SEL_TAB_RESULTS').style.display="inline";
+      document.getElementById('P3P_P3_RUNNING').style.display="none";
+    });
+}
+
 function checkForUUID() {  
   var path = window.location.search; // .pathname;
   if (path.match(/UUID=.+/)) { 
@@ -241,6 +314,13 @@ function initRunPrimer3() {
   }
 }
 
+function initRunPrefold() {
+  var pButton = document.getElementById('P3P_ACTION_RUN_PREFOLD');
+  if (pButton !== null) {
+    pButton.addEventListener('click', runPrefold);
+  }
+}
+
 function init_primer3_versions() {
   var p3pVer = document.getElementById('P3P_ST_P3P_VERSION');
   if (p3pVer !== null) {
@@ -264,6 +344,55 @@ function init_primer3_versions() {
         p3Ver.innerHTML = "---";
       });
   }
+}
+
+function processPrefoldData(){
+  del_all_messages ();
+  var res = document.getElementById('P3P_SEL_TAB_RESULTS');
+  if (res != null) {
+    res.style.display="inline";
+    document.getElementById('P3P_P3_RUNNING').style.display="none";
+    browseTabFunctionality('P3P_TAB_RESULTS');
+  }
+
+  if (results.hasOwnProperty("P3P_ERROR")) {
+    var p3pErrLines = results["P3P_ERROR"].split(';');
+    for (var i = 0; i < p3pErrLines.length; i++) {
+      add_message("err", p3pErrLines[i]);
+    }
+  }
+  if (results.hasOwnProperty("PRIMER_ERROR")) {
+    var p3ErrLines = results["PRIMER_ERROR"].split(';');
+    for (var i = 0; i < p3ErrLines.length; i++) {
+      add_message("err", p3ErrLines[i]);
+    }
+  }
+  if (results.hasOwnProperty("PRIMER_WARNING")) {
+    var p3WarnLines = results["PRIMER_WARNING"].split(';');
+    for (var i = 0; i < p3WarnLines.length; i++) {
+      add_message("warn", p3WarnLines[i]);
+    }
+  }
+
+  returnHTML = '<div class="p3p_fit_to_table">'
+  if (results.hasOwnProperty("P3P_UUID")) {
+    returnHTML += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+    returnHTML += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+    returnHTML += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+    returnHTML += '<input value="Send to Primer3Plus"'
+    returnHTML += ' onclick="window.open(\'index.html?UUID=' + results["P3P_UUID"] + '\', \'_blank\');"'
+    returnHTML += ' type="button" style="background: #83db7b;"><br /><br />'
+  }
+  if (results.hasOwnProperty("P3P_PREFOLD_DELTA_G")) { 
+    returnHTML += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+    returnHTML += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+    returnHTML += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
+    returnHTML += 'dG = ' + results["P3P_PREFOLD_DELTA_G"];
+  }
+  returnHTML += '</div>';
+  returnHTML += createHTMLsequence(results, -1);
+  // document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = returnHTML;
+  document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
 }
 
 function processResData(){
@@ -1352,6 +1481,7 @@ function initElements(){
   initTabFunctionality();
   initResetDefautl();
   initRunPrimer3();
+  initRunPrefold();
   initTaskFunctionality();
   initLoadSeqFile();
   initSaveFile();
@@ -2520,77 +2650,61 @@ function hideExplainSeqRegions() {
 // Functions for tab functionality
 function initTabFunctionality() {
   var btMain = document.getElementById('P3P_SEL_TAB_MAIN');
-  if (btMain === null) {
-    return;
+  if (!(btMain === null)) {
+    var tabMain = document.getElementById('P3P_TAB_MAIN');
+    if (!(tabMain === null)) {
+      btMain.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_MAIN');});
+    }
   }
   var btGeneralSet = document.getElementById('P3P_SEL_TAB_GENERAL_SETTINGS');
-  if (btGeneralSet === null) {
-    return;
+  if (!(btGeneralSet === null)) {
+    var tabGeneralSet = document.getElementById('P3P_TAB_GENERAL_SETTINGS');
+    if (!(tabGeneralSet === null)) {
+      btGeneralSet.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_GENERAL_SETTINGS');});
+    }
   }
   var btAdvanced = document.getElementById('P3P_SEL_TAB_ADVANCED_PRI');
-  if (btAdvanced === null) {
-    return;
+  if (!(btAdvanced === null)) {
+    var tabAdvanced = document.getElementById('P3P_TAB_ADVANCED_PRI');
+    if (!(tabAdvanced === null)) {
+      btAdvanced.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_ADVANCED_PRI');});
+    }
   }
   var btInternal = document.getElementById('P3P_SEL_TAB_INTERNAL');
-  if (btInternal === null) {
-    return;
+  if (!(btInternal === null)){
+    var tabInternal = document.getElementById('P3P_TAB_INTERNAL_OLIGO');
+    if (!(tabInternal === null)) {
+      btInternal.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_INTERNAL_OLIGO');});
+    }
   }
   var btPenalties = document.getElementById('P3P_SEL_TAB_PENALTIES');
-  if (btPenalties === null) {
-    return;
+  if (!(btPenalties === null)) {
+    var tabPenalties = document.getElementById('P3P_TAB_PENALTIES');
+    if (!(tabPenalties === null)) {
+      btPenalties.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_PENALTIES');});
+    }
   }
   var btAdvancedSeq = document.getElementById('P3P_SEL_TAB_ADVANCED_SEQ');
-  if (btAdvancedSeq === null) {
-    return;
+  if (!(btAdvancedSeq === null)) {
+    var tabAdvancedSeq = document.getElementById('P3P_TAB_ADVANCED_SEQUENCE');
+    if (!(tabAdvancedSeq === null)) {
+      btAdvancedSeq.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_ADVANCED_SEQUENCE');});
+    }
   }
   var btDebug = document.getElementById('P3P_SEL_TAB_DEBUG');
-  if (btDebug === null) {
-    return;  
+  if (!(btDebug === null)) {
+    var tabDebug = document.getElementById('P3P_TAB_DEBUG');
+    if (!(tabDebug === null)) {
+      btDebug.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_DEBUG');});
+    }
   }
   var btResults = document.getElementById('P3P_SEL_TAB_RESULTS');
-  if (btResults === null) {
-    return;
+  if (!(btResults === null)) {
+    var tabResults = document.getElementById('P3P_TAB_RESULTS');
+    if (!(tabResults === null)) {
+      btResults.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_RESULTS');});
+    }
   }
-  var tabMain = document.getElementById('P3P_TAB_MAIN');
-  if (tabMain === null) {
-    return;
-  }
-  var tabGeneralSet = document.getElementById('P3P_TAB_GENERAL_SETTINGS');
-  if (tabGeneralSet === null) {
-    return;
-  }
-  var tabAdvanced = document.getElementById('P3P_TAB_ADVANCED_PRI');
-  if (tabAdvanced === null) {
-    return;
-  }
-  var tabInternal = document.getElementById('P3P_TAB_INTERNAL_OLIGO');
-  if (tabInternal === null) {
-    return;
-  }
-  var tabPenalties = document.getElementById('P3P_TAB_PENALTIES');
-  if (tabPenalties === null) {
-    return;
-  }
-  var tabAdvancedSeq = document.getElementById('P3P_TAB_ADVANCED_SEQUENCE');
-  if (tabAdvancedSeq === null) {
-    return;
-  }
-  var tabDebug = document.getElementById('P3P_TAB_DEBUG');
-  if (tabDebug === null) {
-    return;
-  }
-  var tabResults = document.getElementById('P3P_TAB_RESULTS');
-  if (tabResults === null) {
-    return;
-  }
-  btMain.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_MAIN');});
-  btGeneralSet.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_GENERAL_SETTINGS');});
-  btAdvanced.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_ADVANCED_PRI');});
-  btInternal.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_INTERNAL_OLIGO');});
-  btPenalties.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_PENALTIES');});
-  btAdvancedSeq.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_ADVANCED_SEQUENCE');});
-  btDebug.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_DEBUG');});
-  btResults.addEventListener('click', function(){browseTabFunctionality('P3P_TAB_RESULTS');});
   browseTabFunctionality('P3P_TAB_MAIN');
 }
 function browseTabFunctionality(tab) {
@@ -2606,6 +2720,12 @@ function browseTabFunctionality(tab) {
 function browseTabSelect(sel,btn,tab) {
   var button = document.getElementById(btn);
   var tabField = document.getElementById(tab);
+  if (button === null) {
+    return;
+  }
+  if (tabField === null) {
+    return;
+  }
   if (sel == tab) {
     button.style.background="rgb(255, 255, 230)";
     button.style.position="relative";

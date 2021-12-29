@@ -178,6 +178,180 @@ def runp3():
     return jsonify(errors=[{"title": "Error: No POST request!"}]), 400
 
 
+@app.route('/api/v1/runprefold', methods=['POST'])
+def runprefold():
+    if request.method == 'POST':
+        uuidstr = str(uuid.uuid4())
+
+        # Get subfolder
+        sf = os.path.join(app.config['UPLOAD_FOLDER'], uuidstr[0:2])
+        if not os.path.exists(sf):
+            os.makedirs(sf)
+        if not os.path.exists(app.config['LOG_FOLDER']):
+            os.makedirs(app.config['LOG_FOLDER'])
+
+        # Experiment
+        data = ""
+        if 'P3_INPUT_FILE' in request.form.keys():
+            indata = request.form['P3_INPUT_FILE']
+            indata = indata.replace('\r\n', '\n')
+            indata = indata.replace('\r', '\n')
+            infile = os.path.join(sf, "prf_" + uuidstr + "_input.txt")
+            with open(infile, "w") as infileHandle:
+                infileHandle.write(indata)
+
+            # Run UNAFold
+            outfile = os.path.join(sf, "p3p_" + uuidstr + "_upload.txt")
+            seqfile = os.path.join(sf, "prf_" + uuidstr + "_seq.txt")
+            p3efile = os.path.join(sf, "prf_" + uuidstr + "_error.txt")
+            logfile = os.path.join(sf, "prf_" + uuidstr + ".log")
+            errfile = os.path.join(sf, "prf_" + uuidstr + ".err")
+            p3p_err_str = ""
+            dat_temp = 0.0
+            dat_mv = 0.0
+            dat_dv = 0.0
+            dat_start = 0
+            dat_id = ""
+            dat_seq = ""
+            dat_use_seq = ""
+            dat_incl = ""
+            dat_incl_start = 0
+            dat_incl_len = 0
+            dat_incl_found = False
+            with open(logfile, "w") as log:
+                with open(errfile, "w") as err:
+                    with open(outfile, "w") as out:
+                        line_data = indata.split("\n")
+                        for line in line_data:
+                            curr = line.split("=")
+                            if len(curr) != 2:
+                                continue
+                            if curr[0] == "PRIMER_ANNEALING_TEMP":
+                                dat_temp = re.sub("[^0-9\.]", "", curr[1])
+                                data += "PRIMER_ANNEALING_TEMP=" + dat_temp + "\n"
+                            if curr[0] == "PRIMER_SALT_DIVALENT":
+                                dat_dv = re.sub("[^0-9\.]", "", curr[1])
+                                data += "PRIMER_SALT_DIVALENT=" + dat_dv + "\n"
+                            if curr[0] == "PRIMER_SALT_MONOVALENT":
+                                dat_mv = re.sub("[^0-9\.]", "", curr[1])
+                                data += "PRIMER_SALT_MONOVALENT=" + dat_mv + "\n"
+                            if curr[0] == "PRIMER_FIRST_BASE_INDEX":
+                                dat_start = int(re.sub("[^0-9]", "", curr[1]))
+                                data += "PRIMER_FIRST_BASE_INDEX=" + str(dat_start) + "\n"
+                            if curr[0] == "SEQUENCE_ID":
+                                dat_id = re.sub("[^0-9A-Za-z _,\.]", "", curr[1])
+                                data += "SEQUENCE_ID=" + dat_id + "\n"
+                            if curr[0] == "SEQUENCE_INCLUDED_REGION":
+                                dat_incl = re.sub("[^0-9,]", "", curr[1])
+                                incl_spl = dat_incl.split(",")
+                                if len(incl_spl) == 2:
+                                    dat_incl_start = int(incl_spl[0])
+                                    dat_incl_len = int(incl_spl[1])
+                                    dat_incl_found = True
+                            if curr[0] == "SEQUENCE_TEMPLATE":
+                                dat_seq = re.sub("[^ACGTNacgtn]", "", curr[1])
+                                dat_use_seq = dat_seq
+                                data += "SEQUENCE_TEMPLATE=" + dat_seq + "\n"
+
+                        out.write(data)
+
+                        if dat_incl_found:
+                            dat_incl_start -= int(dat_start)
+                            if dat_incl_start >= 0 and dat_incl_len  >= 20 and len(dat_seq) > dat_incl_start:
+                                dat_use_seq = dat_seq[dat_incl_start: (dat_incl_start + dat_incl_len)]
+
+                        if len(dat_use_seq) > 2000:
+                            return jsonify(errors = [{"title": "Sequence to long. Limit with SEQUENCE_INCLUDED_REGION to < 2000 bp."}]), 400
+
+                        if len(dat_use_seq) < 20:
+                            return jsonify(errors = [{"title": "Sequence to short < 20 bp."}]), 400
+
+                        if float(dat_mv) < 1.0 or float(dat_mv) > 1000.0:
+                            return jsonify(errors = [{"title": "Monovalent ions must be 1.0 - 1000.0."}]), 400
+
+                        if float(dat_dv) < 1.0 or float(dat_dv) > 1000.0:
+                            return jsonify(errors = [{"title": "Divalent ions must be 1.0 - 1000.0."}]), 400
+
+                        if float(dat_temp) < 1.0 or float(dat_temp) > 99.0:
+                            return jsonify(errors = [{"title": "Annealing Temp.  must be 1.0 - 99.0."}]), 400
+
+                        with open(seqfile, "w") as seqout:
+                            seqout.write(dat_use_seq)
+
+                        # Do not trust user input for command line
+                        dat_mv = str(float(dat_mv) / 1000.0)
+                        dat_dv = str(float(dat_dv) / 1000.0)
+                        dat_temp = str(float(dat_temp))
+
+                        try:  # hybrid-ss-min seq.txt -n DNA -N 0.05 -M 0.0015 -t 60.0 -T 60.0 -o seq.txt
+                            p3_args = ['hybrid-ss-min', seqfile, '-n', 'DNA', '-N', dat_mv, 
+                                       '-M', dat_dv, '-t', dat_temp, '-T', dat_temp, '-o', seqfile]
+                        #   print('\nCall: ' + " ".join(p3_args) + "\n")
+                        #   print('\nInput: ' + seqfile + "\n")
+                            stat = {'timeout':False}
+                            proc = subprocess.Popen(p3_args, stdout=log, stderr=err)
+                            timer = threading.Timer(KILLTIME, p3_watchdog, (proc, stat))
+                            timer.start()
+                            proc.wait()
+                            timer.cancel()
+                            if stat['timeout'] and not proc.returncode == 100:
+                                p3p_err_str += "Error: UNAFold was teminated due to long runtime of more than " + str(KILLTIME)  + " seconds!"
+                        except OSError as e:
+                            if e.errno == os.errno.ENOENT:
+                                return jsonify(errors = [{"title": "UNAFold Binary not found! Use server www.primer3plus.com"}]), 400
+                            else:
+                                return jsonify(errors = [{"title": "OSError " + str(e.errno)  + " running binary ./hybrid-ss-min!"}]), 400
+#        print (str(return_code) + "\n")                    
+        with open(errfile, "r") as err:
+            with open(outfile, "a") as out:
+                errInfo = "" + err.read()
+                outdata = ""
+                excl_reg = ""
+                in_reg = False
+                try: 
+                    with open(seqfile + ".ct", "r") as res:
+                        outdata = res.read()
+                except OSError as e:
+                    return jsonify(errors = [{"title": "UNAFold cound not process the request."}]), 400
+
+                state = "no_sec_struct"
+                line_data = outdata.split("\n")
+                deltG = line_data[0].split("\t")
+                if len(deltG) > 1:
+                    data += "P3P_PREFOLD_DELTA_G=" + re.sub("dG = ", "", deltG[1]) + "\n"
+                data += "P3P_UUID=" + uuidstr + "\n"
+                excl_reg = ""
+                inc_start = 0
+                inc_end = 0
+                inc_last = 0
+                if len(line_data) > 20:
+                    cells = line_data[1].split("\t")
+                    for line in line_data:
+                        cells = line.split("\t")
+                        if len(cells) > 6:
+                            if int(cells[4]) == 0 and in_reg == True:
+                                inc_end = int(cells[0]) - 1
+                                excl_reg += str(dat_incl_start + dat_start + inc_start)
+                                excl_reg += "," + str(inc_end - inc_start) + " "
+                                in_reg = False
+                            if int(cells[4]) != 0 and in_reg == False:
+                                inc_start = int(cells[0]) - 1
+                                in_reg = True
+                            if int(cells[4]) != 0:
+                                inc_last = int(cells[0]) - 1
+                    if in_reg == True:
+                        excl_reg += str(dat_incl_start + dat_start + inc_start)
+                        excl_reg += "," + str(inc_last - inc_start) + " "
+                    data += "SEQUENCE_EXCLUDED_REGION=" + re.sub(" +$", "", excl_reg) + "\n"
+                    out.write("SEQUENCE_EXCLUDED_REGION=" + re.sub(" +$", "", excl_reg) + "\n")
+                    state = "found_sec_struct"
+                else:
+                    data += "P3P_ERROR=UNAFold did not return data.\n"
+                logData("Primer3Prefold", "UNAFold_run", state, uuidstr)
+                return jsonify({"outfile": data}), 200
+    return jsonify(errors=[{"title": "Error: No POST request!"}]), 400
+
+
 @app.route('/api/v1/upload', methods=['GET','POST'])
 def uploadData():
 #    print(".......up............." + request.method)

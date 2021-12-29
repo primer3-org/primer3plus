@@ -1,4 +1,23 @@
 <!doctype html>
+<!--
+    Copyright (C) 2006 - 2018 by Andreas Untergasser and Harm Nijveen
+    All rights reserved.
+  
+    This file is part of Primer3Plus. Primer3Plus is a web interface to Primer3.
+  
+    The Primer3Plus is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+  
+    Primer3Plus is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this Primer3Plus. If not, see <https://www.gnu.org/licenses/>.
+-->
 <html lang="en">
 <head>
   <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
@@ -6,8 +25,9 @@
   <meta id="description" content="Primer3Prefold uses UNAFold to find stable secondary structures in template DNA and avoids them in Primer3Plus.">
   <title>Primer3Plus - Primer3Prefold</title>
   <link rel="stylesheet" href="static/css/primer3plus.css">
-  <link rel="canonical" href="https://primer3plus.com/primer3prefold.html" />
+  <link rel="canonical" href="https://www.primer3plus.com/primer3prefold.html" />
 </head>
+
 <body>
   <div class="p3p_page">
     <div class="p3p_top_bar">
@@ -18,23 +38,94 @@
           <col style="width: 20%" class="p3p_blue">
         </colgroup>
         <tr>
-          <td class="p3p_big_space p3p_blue" rowspan="2"><a class="p3p_top_bar_title">Primer3Prefold</a><br>
+          <td class="p3p_big_space p3p_blue" rowspan="2"><a id="P3P_TITLE" class="p3p_top_bar_title">Primer3Prefold</a><br>
             <a class="p3p_top_bar_explain">avoid secondary structures</a>
           </td>
-          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusPackage.html">More...</a>
+          <td class="p3p_big_space p3p_blue">
+            <a style="font-weight:bold;text-decoration: none;" href="primer3plusPackage.html">More...</a>
           </td>
-          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="https://github.com/primer3-org/primer3plus">Source Code</a>
+          <td class="p3p_big_space p3p_blue">
+            <a style="font-weight:bold;text-decoration: none;" href="https://github.com/primer3-org/primer3plus" target="_blank">Source Code</a>
           </td>
         </tr>
         <tr>
-          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusHelp.html">Help</a>
+          <td class="p3p_big_space p3p_blue">
+            <a style="font-weight:bold;text-decoration: none;" href="primer3plusHelp.html" target="p3p_help">Help</a>
           </td>
-          <td class="p3p_big_space p3p_blue"><a style="font-weight:bold" href="primer3plusAbout.html">About</a>
+          <td class="p3p_big_space p3p_blue">
+            <a style="font-weight:bold;text-decoration: none;" href="primer3plusAbout.html">About</a>
           </td>
         </tr>
       </table>
     </div>
-    <div id="P3P_TAB_HELP" class="p3p_tab_page">
+
+    <script>
+      document.write("<style type=\"text/css\">div#p3p_no_javascript { display: none; }</style>");
+    </script>
+    <div id="p3p_no_javascript">
+      <a>Fatal Error: Primer3Plus requires JavaScript. JavaScript is not enabled, please enable JavaScript and refresh the browser.</a>.
+    </div>
+ 
+    <div id="P3P_TOP_MESSAGE_ERROR" style="display: none;">
+      <table>
+        <colgroup>
+          <col style="width: 90%">
+          <col style="width: 10%">
+        </colgroup>
+        <tr>
+          <td>
+            <div id="P3P_TOP_MESSAGE_ERROR_BOX"></div>
+          </td>
+          <td class="p3p_top_right">
+            <input id="P3P_ACTION_RESET_ERROR" value="Dismiss" type="button">
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="P3P_TOP_MESSAGE_WARNING" style="display: none;">
+      <table>
+        <colgroup>
+          <col style="width: 90%">
+          <col style="width: 10%">
+        </colgroup>
+        <tr>
+          <td>
+            <div id="P3P_TOP_MESSAGE_WARNING_BOX"></div>
+          </td>
+          <td class="p3p_top_right">
+            <input id="P3P_ACTION_RESET_WARNING" value="Dismiss" type="button">
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="P3P_TOP_MESSAGE_MESSAGE" style="display: none;">
+      <table>
+        <colgroup>
+          <col style="width: 90%">
+          <col style="width: 10%">
+        </colgroup>
+        <tr>
+          <td>
+            <div id="P3P_TOP_MESSAGE_MESSAGE_BOX"></div>
+          </td>
+          <td class="p3p_top_right">
+            <input id="P3P_ACTION_RESET_MESSAGE" value="Dismiss" type="button">
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="P3P_MENU_BAR">
+      <ul>
+        <li id="P3P_SEL_TAB_MAIN"><a>Main</a></li>
+        <li id="P3P_SEL_TAB_DEBUG" style="display: none;"><a>Debug</a></li>
+        <li id="P3P_SEL_TAB_RESULTS" style="display: none;"><a>Results</a></li>
+      </ul>
+    </div>
+
+    <div id="P3P_TAB_MAIN" class="p3p_tab_page">
       <div class="p3p_fit_to_table">
         <a id="SEQUENCE_ID_HELP">Sequence Id:</a>&nbsp;&nbsp;
         <input id="SEQUENCE_ID" type="text">
@@ -56,8 +147,8 @@
         <input type="button" id="P3P_ACTION_SEL_INCLUDED" value="{ Included }">&nbsp;&nbsp;
         <input type="button" id="P3P_ACTION_SEL_CLEAR" value="Clear">
         <br /><br />
-        &nbsp;<input id="P3P_ACTION_RUN_PREFOLD" value="Prefold Sequence" type="button" style="font-size: 0.9em; background: #83db7b;">&nbsp;
-        <input id="P3P_ACTION_RESET_DEFAULT" value="Reset Default" type="button"  style="font-size: 0.9em;"></td>
+        &nbsp;<input id="P3P_ACTION_RUN_PREFOLD" value="Prefold Sequence" type="button" style="background: #83db7b;">&nbsp;
+        <input id="P3P_ACTION_RESET_DEFAULT" value="Reset Default" type="button"></td>
       </div>
 
       <div class="p3p_section">
@@ -77,10 +168,10 @@
               <input size="4" id="PRIMER_SALT_MONOVALENT" type="text">
             </td>
             <td>
-              <a id="PRIMER_OPT_TM_HELP">Opt Primer Tm:</a>
+              <a id="PRIMER_ANNEALING_TEMP_HELP">Annealing Temp:</a>
             </td>
             <td>
-              <input size="4" id="PRIMER_OPT_TM" type="text">
+              <input size="4" id="PRIMER_ANNEALING_TEMP" type="text">
             </td>
             <td>
             </td>
@@ -93,28 +184,24 @@
               <input size="4" id="PRIMER_SALT_DIVALENT" type="text">
             </td>
             <td>
+              <a id="PRIMER_FIRST_BASE_INDEX_HELP">First Base Index:</a>
             </td>
             <td>
+              <input size="4" id="PRIMER_FIRST_BASE_INDEX" type="text">
             </td>
             <td>
+              &nbsp;&nbsp;&nbsp;
+              <input id="P3P_DEBUG_MODE" type="checkbox">
+              <a id="P3P_DEBUG_MODE_HELP">Debug Information</a>
             </td>
           </tr>
         </table>
       </div>
 
-
-      <form action="http://localhost:3300/api/v1/upload" method="post">
-        SEQUENCE_ID:<br>
-        <input type="text" name="SEQUENCE_ID" value="Test Sequence" size="20"><br>
-        SEQUENCE_TEMPLATE:<br>
-        <input type="text" name="SEQUENCE_TEMPLATE" value="agttgaattagagtcattttccataaaaaaatattcaataagtgtgacat" size="40"><br><br>
-        <input type="submit" value="Submit">
-      </form> 
-
       <div class="p3p_fit_to_table">
         <br />Please visit <a href="primer3plusAbout.html">About</a> for Primer3 and Primer3Plus citation requests.
         <br /><br />
-	Primer3Prefold uses the software <a href="http://unafold.rna.albany.edu/">UNAFold</a> for folding the DNA, a successor of mfold.<br />
+        Primer3Prefold uses the software <a href="http://www.unafold.org/">UNAFold</a> for folding the DNA, a successor of mfold.<br />
         License conditions require that you cite the following article if you use UNAFOLD through Primer3Prefold:
         <br />
         <a href="https://link.springer.com/protocol/10.1007/978-1-60327-429-6_1">
@@ -123,6 +210,29 @@
           number 453 in <i>Methods in Molecular Biology</i>, chapter 1, pages 3&ndash;31.  
           Humana Press, Totowa, NJ.  ISBN 978-1-60327-428-9.
         </a>
+      </div>
+    </div>
+
+    <div id="P3P_TAB_DEBUG" class="p3p_tab_page" style="display: none;">
+      <div class="p3p_fit_to_table">
+        <h2>UNAFold Debug Information</h2>
+        <h3>UNAFold Input:</h3>
+        <textarea id="P3P_DEBUG_TXT_INPUT" rows="15" cols="90"></textarea>
+        <h3>UNAFold Output:</h3>
+        <textarea id="P3P_DEBUG_TXT_OUTPUT" rows="15" cols="90"></textarea>
+      </div>
+    </div>
+
+    <div id="P3P_TAB_RESULTS" class="p3p_tab_page" style="display: none;">
+      <div id="P3P_P3_RUNNING" class="p3p_fit_to_table">
+        <p><strong style="padding: 20px">
+          UNAFold is running, please be patient. It may take up to one minute to calculate the results.
+        </strong></p>
+        <p><strong style="padding: 20px">
+          The page will update automatically, do not reload.
+        </strong></p>    
+      </div>
+      <div id="P3P_RESULTS_BOX">
       </div>
     </div>
 
@@ -136,7 +246,7 @@
         <a target="_blank" class="p3p_footer_link" href="https://www.gear-genomics.com/contact"> Contact Us </a>
       </div>
       <div class="p3p_footer_r">
-        Supported by
+        Supported by 
         <a target="_blank" class="p3p_footer_link" href="https://www.embl.de">EMBL</a>
       </div>
     </div>
