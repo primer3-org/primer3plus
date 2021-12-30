@@ -130,6 +130,11 @@ function loadSetFileFromServer() {
 }
 
 function runPrimer3() {
+  var seq = getHtmlTagValue("SEQUENCE_TEMPLATE");
+  if (seq.length > 10000) {
+    add_message("err","Primer3Plus requires a sequence length of < 10000 bp.");
+    return;
+  }
   del_all_messages ();
   document.getElementById('P3P_RESULTS_BOX').innerHTML = "";
   var res = document.getElementById('P3P_SEL_TAB_RESULTS');

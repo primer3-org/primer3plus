@@ -79,7 +79,7 @@ def logData(pProg, pKey, pValue, uuid):
         addLine += request.remote_addr + "\t\t"
     addLine += request.headers.get('User-Agent').replace("\t", " ") + "\n"
 
-    statFile = os.path.join(app.config['LOG_FOLDER'], "p3_runs_" + runTime.strftime("%Y_%m_%d") + ".log")
+    statFile = os.path.join(app.config['LOG_FOLDER'], "p3_runs_" + runTime.strftime("%Y_%m") + ".log")
     with open(statFile, "a") as stat:
         stat.write(addLine)
 
@@ -98,6 +98,81 @@ def p3_watchdog(proc, stat):
     """Kill process on timeout and note in stat"""
     stat['timeout'] = True
     proc.kill()
+
+@app.route('/api/v1/statistics', methods=['POST'])
+def runstatistics():
+    if request.method == 'POST':
+        try:
+            log_args = ['python3', 'logSum.py']
+            #  print('\nCall: ' + " ".join(p3_args) + "\n")
+            #  print('\nInput: ' + infile + "\n")
+            stat = {'timeout':False}
+            proc = subprocess.Popen(log_args)
+            timer = threading.Timer(KILLTIME, p3_watchdog, (proc, stat))
+            timer.start()
+            proc.wait()
+            timer.cancel()
+            if stat['timeout'] and not proc.returncode == 100:
+                return jsonify(errors = [{"title": "Error: Statistics calculation was teminated due to long runtime of more than " + str(KILLTIME)  + " seconds!"}]), 400
+        except OSError as e:
+            if e.errno == os.errno.ENOENT:
+                return jsonify(errors = [{"title": "Binary ./logSum.py not found!"}]), 400
+            else:
+                return jsonify(errors = [{"title": "OSError " + str(e.errno)  + " running binary ./logSum.py!"}]), 400
+
+        report = [[0, "Date", "xxxxx", "xxxxx"],
+                  [1, "Load Settings", "Primer3Plus", "Load_Default_Settings"],
+                  [2, "Primer3 + runs", "Primer3Plus", "Primer3_Pick_Success"],
+                  [3, "Primer3 - runs", "Primer3Plus", "Primer3_Pick_Fail"],
+                  [4, "Amplicon3 runs", "xxxx", "xxxx"],
+                  [5, "UNAFold runs", "Primer3Prefold", "UNAFold_run"],
+                  [6, "P3Statistics", "Primer3Statistics", "View"]]
+        pLook = {}
+        for col in report:
+            pLook[col[2] + "_" + col[3]] = col[0]
+        rawData = ""
+        logFiles = [f for f in os.listdir(app.config['LOG_FOLDER']) if os.path.isfile(os.path.join(app.config['LOG_FOLDER'], f))]
+        for fil in logFiles:
+            if not fil.startswith("p3_runs_"):
+                continue
+            if not fil.endswith(".sum"):
+                continue
+            try:
+                with open(os.path.join(app.config['LOG_FOLDER'], fil), "r") as res:
+                    rawData += res.read()
+                rawData += "\n"
+            except OSError as e:
+                return jsonify(errors=[{"title": "Error: Could not read statistics file " + fil + "!"}]), 400
+
+        finalData = {}
+        lineData = rawData.split("\n")
+        for row in lineData:
+            cells = row.split("\t")
+            if len(cells) > 3:
+                if cells[0] not in finalData:
+                    finalData[cells[0]] = [0, 0, 0, 0, 0, 0, 0]
+                curKey = cells[1] + "_" + cells[2]
+                if curKey in pLook:
+                    finalData[cells[0]][pLook[curKey]] += int(cells[3])
+        data = ""
+        for col in report:
+            data += col[1] + "\t"
+        data = re.sub(r"\t$", "\n", data)
+        allDates = list(finalData.keys())
+        allDates.sort()
+        allDates.reverse()
+        for dat in allDates:
+            data += dat + "\t"
+            data += str(finalData[dat][1]) + "\t"
+            data += str(finalData[dat][2]) + "\t"
+            data += str(finalData[dat][3]) + "\t"
+            data += str(finalData[dat][4]) + "\t"
+            data += str(finalData[dat][5]) + "\t"
+            data += str(finalData[dat][6]) + "\n"
+            print(dat)
+        logData("Primer3Statistics", "View", "1", "---")
+        return jsonify({"outfile": data}), 200
+    return jsonify(errors=[{"title": "Error: No POST request!"}]), 400
 
 
 @app.route('/api/v1/runprimer3', methods=['POST'])
@@ -256,7 +331,7 @@ def runprefold():
                         out.write(data)
 
                         if dat_incl_found:
-                            dat_incl_start -= int(dat_start)
+                            dat_incl_start -= dat_start
                             if dat_incl_start >= 0 and dat_incl_len  >= 20 and len(dat_seq) > dat_incl_start:
                                 dat_use_seq = dat_seq[dat_incl_start: (dat_incl_start + dat_incl_len)]
 
@@ -321,6 +396,8 @@ def runprefold():
                     data += "P3P_PREFOLD_DELTA_G=" + re.sub("dG = ", "", deltG[1]) + "\n"
                 data += "P3P_UUID=" + uuidstr + "\n"
                 excl_reg = ""
+                if dat_incl_start > 0:
+                    excl_reg += str(dat_start) + "," + str(dat_incl_start) + " "
                 inc_start = 0
                 inc_end = 0
                 inc_last = 0
@@ -342,11 +419,14 @@ def runprefold():
                     if in_reg == True:
                         excl_reg += str(dat_incl_start + dat_start + inc_start)
                         excl_reg += "," + str(inc_last - inc_start) + " "
-                    data += "SEQUENCE_EXCLUDED_REGION=" + re.sub(" +$", "", excl_reg) + "\n"
-                    out.write("SEQUENCE_EXCLUDED_REGION=" + re.sub(" +$", "", excl_reg) + "\n")
                     state = "found_sec_struct"
                 else:
                     data += "P3P_ERROR=UNAFold did not return data.\n"
+                if dat_incl_start + dat_incl_len < len(dat_seq ):
+                    excl_reg += str(dat_incl_start + dat_incl_len + dat_start) + ","
+                    excl_reg += str(len(dat_seq) - (dat_incl_start + dat_incl_len)) + " "
+                data += "SEQUENCE_EXCLUDED_REGION=" + re.sub(" +$", "", excl_reg) + "\n"
+                out.write("SEQUENCE_EXCLUDED_REGION=" + re.sub(" +$", "", excl_reg) + "\n")
                 logData("Primer3Prefold", "UNAFold_run", state, uuidstr)
                 return jsonify({"outfile": data}), 200
     return jsonify(errors=[{"title": "Error: No POST request!"}]), 400
@@ -412,7 +492,7 @@ def loadServerData():
                         with open(outfile, "r") as outfh:
                             outData = outfh.read()
                             outData += "\n" + "P3P_UUID=" + uuid + "\n"
-                    logData("Primer3Plus", "Load_Server_Data", '0', uuid)
+                    logData("Primer3Plus", "Load_Server_Data", "p3p_" + uuid + "_input.txt", uuid)
                     return jsonify({"upfile": upData, "infile": inData, "outfile": outData}), 200
     return "", 400
 
@@ -438,14 +518,14 @@ def loadsettingsfile():
     if request.method == 'POST':
         if 'P3P_SERVER_SETTINGS_FILE' in request.form.keys():
             filename = secure_filename(request.form['P3P_SERVER_SETTINGS_FILE'])
-            logData("Primer3Plus", "Load_Settings_File", '0', "---")
+            logData("Primer3Plus", "Load_Settings_File", filename, "---")
             return send_from_directory(os.path.join(P3PWS, "settings_files"),filename), 200
     return jsonify(errors = [{"title": "Could not find file on server!"}]), 400
 
 
 @app.route('/api/v1/defaultsettings', methods=['POST'])
 def defaultsettings():
-    logData("Primer3Plus", "Load_Default_Settings", '0', "---")
+    logData("Primer3Plus", "Load_Default_Settings", '---', "---")
     return send_from_directory(os.path.join(P3PWS, "settings_files"),"default_settings.json"), 200
 
 

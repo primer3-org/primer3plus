@@ -1,0 +1,117 @@
+<!doctype html>
+<!--
+    Copyright (C) 2006 - 2018 by Andreas Untergasser and Harm Nijveen
+    All rights reserved.
+  
+    This file is part of Primer3Plus. Primer3Plus is a web interface to Primer3.
+  
+    The Primer3Plus is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+  
+    Primer3Plus is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this Primer3Plus. If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="en">
+<head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <meta id="viewport" content="width=1034, initial-scale=1.0">
+  <meta id="description" content="The statistics page shows Primer3Plus usage. Watch our servers glow...">
+  <title>Primer3Plus - Primer3Statistics</title>
+  <link rel="stylesheet" href="static/css/primer3plus.css">
+  <link rel="canonical" href="https://www.primer3plus.com/primer3statistics.html" />
+</head>
+
+<body>
+  <div class="p3p_page">
+    <div class="p3p_top_bar">
+      <table>
+        <colgroup>
+          <col style="width: 60%" class="p3p_blue">
+          <col style="width: 20%" class="p3p_blue">
+          <col style="width: 20%" class="p3p_blue">
+        </colgroup>
+        <tr>
+          <td class="p3p_big_space p3p_blue" rowspan="2"><a id="P3P_TITLE" class="p3p_top_bar_title">Primer3Statistics</a><br>
+            <a class="p3p_top_bar_explain">watch the server glow</a>
+          </td>
+          <td class="p3p_big_space p3p_blue">
+            <a style="font-weight:bold;text-decoration: none;" href="primer3plusPackage.html">More...</a>
+          </td>
+          <td class="p3p_big_space p3p_blue">
+            <a style="font-weight:bold;text-decoration: none;" href="https://github.com/primer3-org/primer3plus" target="_blank">Source Code</a>
+          </td>
+        </tr>
+        <tr>
+          <td class="p3p_big_space p3p_blue">
+            <a style="font-weight:bold;text-decoration: none;" href="primer3plusHelp.html" target="p3p_help">Help</a>
+          </td>
+          <td class="p3p_big_space p3p_blue">
+            <a style="font-weight:bold;text-decoration: none;" href="primer3plusAbout.html">About</a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <script>
+      document.write("<style type=\"text/css\">div#p3p_no_javascript { display: none; }</style>");
+    </script>
+    <div id="p3p_no_javascript">
+      <a>Fatal Error: Primer3Plus requires JavaScript. JavaScript is not enabled, please enable JavaScript and refresh the browser.</a>.
+    </div>
+ 
+    <div id="P3P_TOP_MESSAGE_ERROR" style="display: none;">
+      <table>
+        <colgroup>
+          <col style="width: 90%">
+          <col style="width: 10%">
+        </colgroup>
+        <tr>
+          <td>
+            <div id="P3P_TOP_MESSAGE_ERROR_BOX"></div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="P3P_TAB_HELP" class="p3p_tab_page">
+      <div id="P3P_P3_RUNNING" class="p3p_fit_to_table">
+        <p><strong style="padding: 20px">
+          Statistics are calculated, please be patient. It may take up to one minute to calculate the results.
+        </strong></p>
+        <p><strong style="padding: 20px">
+          The page will update automatically, do not reload.
+        </strong></p>    
+      </div>
+      <div id="P3P_RESULTS_BOX" class="p3p_fit_to_table">
+      </div>
+    </div>
+
+    <div class="p3p_footer_bar">
+      <div class="p3p_footer_l">
+        GEAR + Primer3 &#126;
+        <a target="_blank" class="p3p_footer_link" href="https://www.gear-genomics.com"> Home </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://github.com/gear-genomics"> GEAR-GitHub </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://github.com/primer3-org"> Primer3-GitHub </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://www.gear-genomics.com/terms"> Terms of Use </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://www.gear-genomics.com/contact"> Contact Us </a>
+      </div>
+      <div class="p3p_footer_r">
+        Supported by 
+        <a target="_blank" class="p3p_footer_link" href="https://www.embl.de">EMBL</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="static/js/primer3statistics.js"></script>
+
+</body>
+</html>
