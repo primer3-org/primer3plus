@@ -1,0 +1,324 @@
+<!doctype html>
+<!--
+    Copyright (C) 2006 - 2018 by Andreas Untergasser and Harm Nijveen
+    All rights reserved.
+  
+    This file is part of Primer3Plus. Primer3Plus is a web interface to Primer3.
+  
+    The Primer3Plus is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.
+  
+    Primer3Plus is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+  
+    You should have received a copy of the GNU General Public License
+    along with this Primer3Plus. If not, see <https://www.gnu.org/licenses/>.
+-->
+<html lang="en">
+<head>
+  <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+  <meta id="viewport" content="width=1034, initial-scale=1.0">
+  <meta id="description" content="Primer3Prefold uses UNAFold to find stable secondary structures in template DNA and avoids them in Primer3Plus.">
+  <title>Primer3Plus - Amplicon3Plus</title>
+  <link rel="stylesheet" href="static/css/primer3plus.css">
+  <link rel="canonical" href="https://www.primer3plus.com/amplicon3plus.html" />
+</head>
+
+<body>
+  <div class="p3p_page">
+    <div class="p3p_top_bar">
+      <table>
+        <colgroup>
+          <col style="width: 60%" class="p3p_blue">
+          <col style="width: 20%" class="p3p_blue">
+          <col style="width: 20%" class="p3p_blue">
+        </colgroup>
+        <tr>
+          <td class="p3p_big_space p3p_blue" rowspan="2"><a id="P3P_TITLE" class="p3p_top_bar_title">Amplicon3Plus</a><br>
+            <a class="p3p_top_bar_explain">melt amplicons</a>
+          </td>
+          <td class="p3p_big_space p3p_blue">
+            <a style="font-weight:bold;text-decoration: none;" href="primer3plusPackage.html">More...</a>
+          </td>
+          <td class="p3p_big_space p3p_blue">
+            <a style="font-weight:bold;text-decoration: none;" href="https://github.com/primer3-org/primer3plus" target="_blank">Source Code</a>
+          </td>
+        </tr>
+        <tr>
+          <td class="p3p_big_space p3p_blue">
+            <a style="font-weight:bold;text-decoration: none;" href="primer3plusHelp.html" target="p3p_help">Help</a>
+          </td>
+          <td class="p3p_big_space p3p_blue">
+            <a style="font-weight:bold;text-decoration: none;" href="primer3plusAbout.html">About</a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <script>
+      document.write("<style type=\"text/css\">div#p3p_no_javascript { display: none; }</style>");
+    </script>
+    <div id="p3p_no_javascript">
+      <a>Fatal Error: Amplicon3Plus requires JavaScript. JavaScript is not enabled, please enable JavaScript and refresh the browser.</a>.
+    </div>
+ 
+    <div id="P3P_TOP_MESSAGE_ERROR" style="display: none;">
+      <table>
+        <colgroup>
+          <col style="width: 90%">
+          <col style="width: 10%">
+        </colgroup>
+        <tr>
+          <td>
+            <div id="P3P_TOP_MESSAGE_ERROR_BOX"></div>
+          </td>
+          <td class="p3p_top_right">
+            <input id="P3P_ACTION_RESET_ERROR" value="Dismiss" type="button">
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="P3P_TOP_MESSAGE_WARNING" style="display: none;">
+      <table>
+        <colgroup>
+          <col style="width: 90%">
+          <col style="width: 10%">
+        </colgroup>
+        <tr>
+          <td>
+            <div id="P3P_TOP_MESSAGE_WARNING_BOX"></div>
+          </td>
+          <td class="p3p_top_right">
+            <input id="P3P_ACTION_RESET_WARNING" value="Dismiss" type="button">
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="P3P_TOP_MESSAGE_MESSAGE" style="display: none;">
+      <table>
+        <colgroup>
+          <col style="width: 90%">
+          <col style="width: 10%">
+        </colgroup>
+        <tr>
+          <td>
+            <div id="P3P_TOP_MESSAGE_MESSAGE_BOX"></div>
+          </td>
+          <td class="p3p_top_right">
+            <input id="P3P_ACTION_RESET_MESSAGE" value="Dismiss" type="button">
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="P3P_MENU_BAR">
+      <ul>
+        <li id="P3P_SEL_TAB_MAIN"><a>Main</a></li>
+        <li id="P3P_SEL_TAB_DEBUG" style="display: none;"><a>Debug</a></li>
+        <li id="P3P_SEL_TAB_RESULTS" style="display: none;"><a>Results</a></li>
+      </ul>
+    </div>
+
+    <div id="P3P_TAB_MAIN" class="p3p_tab_page">
+      <div class="p3p_fit_to_table">
+        <a>Paste amplicon sequence below</a>
+        <a> or upload sequence file:</a>&nbsp;&nbsp;
+        <input id="P3P_SELECT_SEQ_FILE" type="file">&nbsp;&nbsp;
+        <input id="P3P_ACTION_LOAD_AMPLICON" value="Load Example" type="submit">&nbsp;&nbsp;&nbsp;
+        <br /><br />
+        <textarea id="SEQUENCE_TEMPLATE" rows="12" cols="90"></textarea>
+      </div>
+
+      <div class="p3p_section">
+        <table>
+          <colgroup>
+            <col style="width: 37%">
+            <col style="width: 20%">
+            <col style="width: 28%">
+            <col style="width: 10%">
+            <col style="width: 5%">
+          </colgroup>
+          <tr>
+            <td>
+              <a id="PRIMER_SALT_MONOVALENT_HELP">Concentration of monovalent cations:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_SALT_MONOVALENT" type="text">
+            </td>
+            <td>
+              <a id="PRIMER_DNTP_CONC_HELP">Concentration of dNTPs:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_DNTP_CONC" type="text">
+            </td>
+            <td>
+              &nbsp;
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a id="PRIMER_SALT_DIVALENT_HELP">Concentration of divalent cations:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_SALT_DIVALENT" type="text">
+            </td>
+            <td>
+              <a id="PRIMER_FORMAMIDE_CONC_HELP">Formamide Concentration:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_FORMAMIDE_CONC" type="text">
+            </td>
+            <td>
+              &nbsp;
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a id="PRIMER_DMSO_CONC_HELP">DMSO Concentration:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_DMSO_CONC" type="text">
+            </td>
+            <td>
+              <a id="PRIMER_DMSO_FACTOR_HELP">DMSO Factor:</a>
+            </td>
+            <td>
+              <input size="4" id="PRIMER_DMSO_FACTOR" type="text">
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a id="PRIMER_TM_FORMULA_HELP">Table of thermodyn. parameters:</a>
+            </td>
+            <td>         
+              <select id="PRIMER_TM_FORMULA">
+                <option value="0">Breslauer et al. 1986</option>
+                <option value="1" selected="selected">SantaLucia 1998</option>
+              </select>
+            </td>         
+            <td>
+              <a id="PRIMER_SALT_CORRECTIONS_HELP">Salt correction formula:</a>
+            </td>
+            <td>         
+              <select id="PRIMER_SALT_CORRECTIONS">
+                <option value="0"> Schildkraut and Lifson 1965</option>
+                <option value="1" selected="selected">SantaLucia 1998</option>
+                <option value="2">Owczarzy et. 2004</option>
+              </select>
+            </td>         
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <a>Tm calculation algorithm:</a>
+            </td>
+            <td colspan="3">
+              <select id="PRIMER_AMPLICON_FORMULA">
+                <option value="0">Bolton and McCarthy 1962, used by primer3</option>
+                <option value="1" selected="selected">Wright and Vetsigian 2016, used by DECIPHER-MeltPolymer</option>
+              </select>
+              &nbsp;&nbsp;&nbsp;
+              <input id="P3P_DEBUG_MODE" type="checkbox">
+              <a id="P3P_DEBUG_MODE_HELP">Debug Information</a>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="p3p_fit_to_table">
+        &nbsp;<input id="P3P_ACTION_RUN_AMPLICON3" value="Melt Amplicon" type="button" style="background: #83db7b;">&nbsp;
+        <input id="P3P_ACTION_RESET_DEFAULT" value="Reset Default" type="button"></td>
+      </div>
+
+      <div class="p3p_section">
+        <p style="padding: 1em;">If an experimentally measured melting 
+          temerature is provided below, Amplicon3Plus 
+          will calculate the suitable artificial monovalent salt 
+          concentration to obtain this melting temperature. This may be used 
+          to estimate suitable parameters for unknown reaction mixes. Be 
+          aware that the compensation of divalent salt concentration is done
+          by correcting the monovalent salt concentration and Amplicon3Plus 
+          returns a value including the divalent ions. The DMSO 
+          concentration shifts the resulting temperatures by a concentration
+          dependent delta temperature. DMSO and Formamide concentration are
+          not included in this estimation. Consider this feature 
+          experimental.
+        </p>
+        <table>
+          <colgroup>
+            <col style="width: 1%">
+            <col style="width: 29%">
+            <col style="width: 10%">
+            <col style="width: 60%">
+          </colgroup>
+          <tr>
+            <td>
+            </td>
+            <td>
+              <a>Measured Melting Temperature:</a>
+            </td>
+            <td>
+              <input size="4" id="SEQUENCE_MELTINGTEMP" type="text">
+            </td>
+            <td>
+              &nbsp;
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div id="P3P_TAB_DEBUG" class="p3p_tab_page" style="display: none;">
+      <div class="p3p_fit_to_table">
+        <h2>Amplicon3Plus Debug Information</h2>
+        <h3>Amplicon3 Input:</h3>
+        <textarea id="P3P_DEBUG_TXT_INPUT" rows="15" cols="90"></textarea>
+        <h3>Amplicon3 Output:</h3>
+        <textarea id="P3P_DEBUG_TXT_OUTPUT" rows="15" cols="90"></textarea>
+      </div>
+    </div>
+
+    <div id="P3P_TAB_RESULTS" class="p3p_tab_page" style="display: none;">
+      <div id="P3P_P3_RUNNING" class="p3p_fit_to_table">
+        <p><strong style="padding: 20px">
+          Amplicon3 is running, please be patient. It may take up to one minute to calculate the results.
+        </strong></p>
+        <p><strong style="padding: 20px">
+          The page will update automatically, do not reload.
+        </strong></p>    
+      </div>
+      <div id="P3P_RESULTS_BOX">
+      </div>
+    </div>
+
+    <div class="p3p_footer_bar">
+      <div class="p3p_footer_l">
+        GEAR + Primer3 &#126;
+        <a target="_blank" class="p3p_footer_link" href="https://www.gear-genomics.com"> Home </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://github.com/gear-genomics"> GEAR-GitHub </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://github.com/primer3-org"> Primer3-GitHub </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://www.gear-genomics.com/terms"> Terms of Use </a> &#183;
+        <a target="_blank" class="p3p_footer_link" href="https://www.gear-genomics.com/contact"> Contact Us </a>
+      </div>
+      <div class="p3p_footer_r">
+        Supported by 
+        <a target="_blank" class="p3p_footer_link" href="https://www.embl.de">EMBL</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="static/js/primer3plus.js"></script>
+
+</body>
+</html>

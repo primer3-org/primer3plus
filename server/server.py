@@ -19,6 +19,7 @@
 #   along with this Primer3Plus. If not, see <https:# www.gnu.org/licenses/>.
 
 import os
+import errno
 import uuid
 import re
 import subprocess
@@ -115,7 +116,7 @@ def runstatistics():
             if stat['timeout'] and not proc.returncode == 100:
                 return jsonify(errors = [{"title": "Error: Statistics calculation was teminated due to long runtime of more than " + str(KILLTIME)  + " seconds!"}]), 400
         except OSError as e:
-            if e.errno == os.errno.ENOENT:
+            if e.errno == errno.ENOENT:
                 return jsonify(errors = [{"title": "Binary ./logSum.py not found!"}]), 400
             else:
                 return jsonify(errors = [{"title": "OSError " + str(e.errno)  + " running binary ./logSum.py!"}]), 400
@@ -124,7 +125,7 @@ def runstatistics():
                   [1, "Load Settings", "Primer3Plus", "Load_Default_Settings"],
                   [2, "Primer3 + runs", "Primer3Plus", "Primer3_Pick_Success"],
                   [3, "Primer3 - runs", "Primer3Plus", "Primer3_Pick_Fail"],
-                  [4, "Amplicon3 runs", "xxxx", "xxxx"],
+                  [4, "Amplicon3 runs", "Amplicon3Plus", "Success"],
                   [5, "UNAFold runs", "Primer3Prefold", "UNAFold_run"],
                   [6, "P3Statistics", "Primer3Statistics", "View"]]
         pLook = {}
@@ -220,7 +221,7 @@ def runp3():
                         if stat['timeout'] and not proc.returncode == 100:
                             p3p_err_str += "Error: Primer3 was teminated due to long runtime of more than " + str(KILLTIME)  + " seconds!"
                     except OSError as e:
-                        if e.errno == os.errno.ENOENT:
+                        if e.errno == errno.ENOENT:
                             return jsonify(errors = [{"title": "Binary ./primer3core not found!"}]), 400
                         else:
                             return jsonify(errors = [{"title": "OSError " + str(e.errno)  + " running binary ./primer3core!"}]), 400
@@ -278,7 +279,6 @@ def runprefold():
             # Run UNAFold
             outfile = os.path.join(sf, "p3p_" + uuidstr + "_upload.txt")
             seqfile = os.path.join(sf, "prf_" + uuidstr + "_seq.txt")
-            p3efile = os.path.join(sf, "prf_" + uuidstr + "_error.txt")
             logfile = os.path.join(sf, "prf_" + uuidstr + ".log")
             errfile = os.path.join(sf, "prf_" + uuidstr + ".err")
             p3p_err_str = ""
@@ -344,8 +344,8 @@ def runprefold():
                         if float(dat_mv) < 1.0 or float(dat_mv) > 1000.0:
                             return jsonify(errors = [{"title": "Monovalent ions must be 1.0 - 1000.0."}]), 400
 
-                        if float(dat_dv) < 1.0 or float(dat_dv) > 1000.0:
-                            return jsonify(errors = [{"title": "Divalent ions must be 1.0 - 1000.0."}]), 400
+                        if float(dat_dv) < 0.0 or float(dat_dv) > 1000.0:
+                            return jsonify(errors = [{"title": "Divalent ions must be 0.0 - 1000.0."}]), 400
 
                         if float(dat_temp) < 1.0 or float(dat_temp) > 99.0:
                             return jsonify(errors = [{"title": "Annealing Temp.  must be 1.0 - 99.0."}]), 400
@@ -372,8 +372,8 @@ def runprefold():
                             if stat['timeout'] and not proc.returncode == 100:
                                 p3p_err_str += "Error: UNAFold was teminated due to long runtime of more than " + str(KILLTIME)  + " seconds!"
                         except OSError as e:
-                            if e.errno == os.errno.ENOENT:
-                                return jsonify(errors = [{"title": "UNAFold Binary not found! Use server www.primer3plus.com"}]), 400
+                            if e.errno == errno.ENOENT:
+                                return jsonify(errors = [{"title": "UNAFold Binary not found! Try server www.primer3plus.com"}]), 400
                             else:
                                 return jsonify(errors = [{"title": "OSError " + str(e.errno)  + " running binary ./hybrid-ss-min!"}]), 400
 #        print (str(return_code) + "\n")                    
@@ -428,6 +428,175 @@ def runprefold():
                 data += "SEQUENCE_EXCLUDED_REGION=" + re.sub(" +$", "", excl_reg) + "\n"
                 out.write("SEQUENCE_EXCLUDED_REGION=" + re.sub(" +$", "", excl_reg) + "\n")
                 logData("Primer3Prefold", "UNAFold_run", state, uuidstr)
+                return jsonify({"outfile": data}), 200
+    return jsonify(errors=[{"title": "Error: No POST request!"}]), 400
+
+
+@app.route('/api/v1/runamplicon3', methods=['POST'])
+def runa3():
+    if request.method == 'POST':
+        uuidstr = str(uuid.uuid4())
+
+        # Get subfolder
+        sf = os.path.join(app.config['UPLOAD_FOLDER'], uuidstr[0:2])
+        if not os.path.exists(sf):
+            os.makedirs(sf)
+        if not os.path.exists(app.config['LOG_FOLDER']):
+            os.makedirs(app.config['LOG_FOLDER'])
+
+        # Experiment
+        data = ""
+        if 'P3_INPUT_FILE' in request.form.keys():
+            indata = request.form['P3_INPUT_FILE']
+            indata = indata.replace('\r\n', '\n')
+            indata = indata.replace('\r', '\n')
+            infile = os.path.join(sf, "a3p_" + uuidstr + "_input.txt")
+            with open(infile, "w") as infileHandle:
+                infileHandle.write(indata)
+
+            # Run UNAFold
+            logfile = os.path.join(sf, "a3p_" + uuidstr + "_output.txt")
+            errfile = os.path.join(sf, "a3p_" + uuidstr + ".err")
+            p3p_err_str = ""
+            dat_seq = ""
+            dat_mv = 0.0
+            dat_dv = 0.0
+            dat_dntp = 0.0
+            dat_dmso = 0.0
+            dat_fact = 0.0
+            dat_form = 0.0
+            dat_tp = 1
+            dat_sal = 1
+            dat_mf = 1
+            dat_temp = -10.0
+            with open(logfile, "w") as log:
+                with open(errfile, "w") as err:
+                    line_data = indata.split("\n")
+                    for line in line_data:
+                        curr = line.split("=")
+                        if len(curr) != 2:
+                            continue
+                        if curr[0] == "SEQUENCE_TEMPLATE":
+                            dat_seq = re.sub("[^ACGTNacgtn]", "", curr[1])
+                        if curr[0] == "PRIMER_SALT_MONOVALENT":
+                            dat_mv = re.sub("[^0-9\.]", "", curr[1])
+                        if curr[0] == "PRIMER_SALT_DIVALENT":
+                            dat_dv = re.sub("[^0-9\.]", "", curr[1])
+                        if curr[0] == "PRIMER_DNTP_CONC":
+                            dat_dntp = re.sub("[^0-9\.]", "", curr[1])
+                        if curr[0] == "PRIMER_DMSO_CONC":
+                            dat_dmso = re.sub("[^0-9\.]", "", curr[1])
+                        if curr[0] == "PRIMER_DMSO_FACTOR":
+                            dat_fact = re.sub("[^0-9\.]", "", curr[1])
+                        if curr[0] == "PRIMER_FORMAMIDE_CONC":
+                            dat_form = re.sub("[^0-9\.]", "", curr[1])
+                        if curr[0] == "PRIMER_TM_FORMULA":
+                            dat_tp = re.sub("[^0-9]", "", curr[1])
+                        if curr[0] == "PRIMER_SALT_CORRECTIONS":
+                            dat_sal = re.sub("[^0-9]", "", curr[1])
+                        if curr[0] == "PRIMER_AMPLICON_FORMULA":
+                            dat_mf = re.sub("[^0-9]", "", curr[1])
+                        if curr[0] == "SEQUENCE_MELTINGTEMP":
+                            dat_temp = re.sub("[^0-9\.]", "", curr[1])
+
+                    if len(dat_seq) < 36:
+                        return jsonify(errors = [{"title": "Sequence to short < 36 bp."}]), 400
+
+                    if float(dat_mv) < 1.0 or float(dat_mv) > 1000.0:
+                        return jsonify(errors = [{"title": "Monovalent ions conc. must be 1.0 - 1000.0."}]), 400
+
+                    if float(dat_dv) < 0.0 or float(dat_dv) > 1000.0:
+                        return jsonify(errors = [{"title": "Divalent ions conc. must be 0.0 - 1000.0."}]), 400
+
+                    if float(dat_dntp) < 0.0 or float(dat_dntp) > 1000.0:
+                        return jsonify(errors = [{"title": "DNTPs conc. must be 0.0 - 1000.0."}]), 400
+
+                    if float(dat_dmso) < 0.0 or float(dat_dv) > 100.0:
+                        return jsonify(errors = [{"title": "DMSO conc. must be 0.0 - 100.0."}]), 400
+
+                    if float(dat_fact) < 0.0 or float(dat_fact) > 10.0:
+                        return jsonify(errors = [{"title": "DMSO factor must be 0.0 - 10.0."}]), 400
+
+                    if float(dat_form) < 0.0 or float(dat_form) > 1000.0:
+                        return jsonify(errors = [{"title": "Formamide conc. must be 0.0 - 1000.0."}]), 400
+
+                    if int(dat_tp) < 0 or int(dat_tp) > 1:
+                        return jsonify(errors = [{"title": "Table of thermodyn. parameters must be 0 or 1"}]), 400
+
+                    if int(dat_sal) < 0 or int(dat_sal) > 2:
+                        return jsonify(errors = [{"title": "Salt correction formula must be 0, 1 or 2"}]), 400
+
+                    if int(dat_mf) < 0 or int(dat_mf) > 1:
+                        return jsonify(errors = [{"title": "Tm calculation algorithm must be 0 or 1"}]), 400
+
+                    if float(dat_temp) != -10.0:
+                        if float(dat_temp) < 1.0 or float(dat_temp) > 99.0:
+                            return jsonify(errors = [{"title": "Measured melting Temp. must be 1.0 - 99.0."}]), 400
+
+                    # Do not trust user input for command line
+                    dat_mv = str(float(dat_mv))
+                    dat_dv = str(float(dat_dv))
+                    dat_dntp = str(float(dat_dntp))
+                    dat_dmso = str(float(dat_dmso))
+                    dat_fact = str(float(dat_fact))
+                    dat_form = str(float(dat_form))
+                    dat_tp = str(int(dat_tp))
+                    dat_sal = str(int(dat_sal))
+                    dat_mf = str(int(dat_mf))
+                    dat_temp = str(float(dat_temp))
+
+                    try:  # -mv 50 -dv 1.2 -n 0.0 -dmso 0.0 -formamid 0.0 -o 2
+                        if float(dat_temp) < 0.0:
+                            p3_args = ['amplicon3_core', 
+                                        '-mv', dat_mv, 
+                                        '-dv', dat_dv, 
+                                        '-n', dat_dntp, 
+                                        '-dmso', dat_dmso, 
+                                        '-dmso_fact', dat_fact, 
+                                        '-formamid', dat_form, 
+                                        '-tp', dat_tp, 
+                                        '-sc', dat_sal, 
+                                        '-mf', dat_mf, 
+                                        '-o', '2', 
+                                        dat_seq]
+                        else:
+                            p3_args = ['amplicon3_core', 
+                                        '-fs', dat_temp, 
+                                        '-tp', dat_tp, 
+                                        '-sc', dat_sal, 
+                                        '-mf', dat_mf, 
+                                        '-o', '2', 
+                                        dat_seq]
+                        print('\nCall: ' + " ".join(p3_args) + "\n")
+                        print('\nInput: ' + logfile + "\n")
+                        stat = {'timeout':False}
+                        proc = subprocess.Popen(p3_args, stdout=log, stderr=err)
+                        timer = threading.Timer(KILLTIME, p3_watchdog, (proc, stat))
+                        timer.start()
+                        proc.wait()
+                        timer.cancel()
+                        if stat['timeout'] and not proc.returncode == 100:
+                            p3p_err_str += "Error: Amplicon3 was teminated due to long runtime of more than " + str(KILLTIME)  + " seconds!"
+                    except OSError as e:
+                        if e.errno == errno.ENOENT:
+                            return jsonify(errors = [{"title": "Amplicon3 Binary not found!"}]), 400
+                        else:
+                            return jsonify(errors = [{"title": "OSError " + str(e.errno)  + " running binary ./hybrid-ss-min!"}]), 400
+#        print (str(return_code) + "\n")                    
+        with open(errfile, "r") as err:
+            all_err = err.read()
+            if (all_err != ""):
+                if (p3p_err_str != ""):
+                    p3p_err_str += ";"
+                p3p_err_str += all_err
+            with open(logfile, "r") as out:
+                data = out.read()
+                data += "\n" + "P3P_UUID=" + uuidstr + "\n"
+                state = "---"
+                if not p3p_err_str == "":
+                    data += "AMPLICON_ERROR=" + p3p_err_str + "\n"
+                    state = "Timeout"
+                logData("Amplicon3Plus", state, "---", uuidstr)
                 return jsonify({"outfile": data}), 200
     return jsonify(errors=[{"title": "Error: No POST request!"}]), 400
 
@@ -504,7 +673,7 @@ def p3version():
         (output, err) = process.communicate()
         exit_code = process.wait()
     except OSError as e:
-        if e.errno == os.errno.ENOENT:
+        if e.errno == errno.ENOENT:
             return "Binary ./primer3core not found!", 200
         else:
             return "OSError " + str(e.errno)  + " running binary ./primer3core!", 200

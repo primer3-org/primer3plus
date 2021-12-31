@@ -259,6 +259,67 @@ function runPrefold() {
     });
 }
 
+function runAmplicon3() {
+  var seq = getHtmlTagValue("SEQUENCE_TEMPLATE");
+  if (seq.length < 36) {
+    add_message("err","Amplicon3Plus requires a sequence > 36 bp.");
+    return;
+  }
+  del_all_messages ();
+  document.getElementById('P3P_RESULTS_BOX').innerHTML = "";
+  var res = document.getElementById('P3P_SEL_TAB_RESULTS');
+  if (res != null) {
+    res.style.display="inline";
+    document.getElementById('P3P_P3_RUNNING').style.display="inline";
+    browseTabFunctionality('P3P_TAB_RESULTS'); 
+  }
+  var p3file = createSaveFileString("all");
+  p3file += "PRIMER_AMPLICON_FORMULA" + "=" + getHtmlTagValue("PRIMER_AMPLICON_FORMULA") + "\n";
+  var exp_temp = getHtmlTagValue("SEQUENCE_MELTINGTEMP");
+  if (exp_temp != "") {
+    p3file += "SEQUENCE_MELTINGTEMP" + "=" + exp_temp + "\n";
+  }
+  document.getElementById('P3P_DEBUG_TXT_INPUT').value = p3file;
+  document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = "";
+  const formData = new FormData();
+  formData.append('P3_INPUT_FILE', p3file);
+  axios
+    .post(`${API_URL}/runamplicon3`, formData)
+    .then(res => {
+        if (res.status === 200) {
+          rawResults = res.data.outfile;
+          document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = rawResults;
+          results = {};
+          var fileLines = rawResults.split('\n');
+          for (var i = 0; i < fileLines.length; i++) {
+            if ((fileLines[i].match(/=/) != null) && (fileLines[i] != "") && (fileLines[i] != "=")) {
+              var pair = fileLines[i].split('=');
+              results[pair[0]]=fileLines[i].split(/=(.+)/)[1];
+            }
+          }
+          processAmplicon3Data();
+      }
+    })
+    .catch(function (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        let errorMessage = error.response.data.errors
+          .map(error => error.title)
+          .join('; ')
+        add_message("err","Error running Amplicon3: " + errorMessage);
+      } else if (error.request) {
+        // The request was made but no response was received
+        add_message("err","Error: No response from the server trying to run Amplicon3.");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        add_message("err","Error while setting up the request trying to run Amplicon3: " + error.message);
+      }
+      document.getElementById('P3P_SEL_TAB_RESULTS').style.display="inline";
+      document.getElementById('P3P_P3_RUNNING').style.display="none";
+    });
+}
+
 function checkForUUID() {  
   var path = window.location.search; // .pathname;
   if (path.match(/UUID=.+/)) { 
@@ -316,6 +377,13 @@ function initRunPrimer3() {
   var pButton = document.getElementById('P3P_ACTION_RUN_PRIMER3');
   if (pButton !== null) {
     pButton.addEventListener('click', runPrimer3);
+  }
+}
+
+function initRunAmplicon3() {
+  var pButton = document.getElementById('P3P_ACTION_RUN_AMPLICON3');
+  if (pButton !== null) {
+    pButton.addEventListener('click', runAmplicon3);
   }
 }
 
@@ -396,6 +464,52 @@ function processPrefoldData(){
   }
   returnHTML += '</div>';
   returnHTML += createHTMLsequence(results, -1);
+  // document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = returnHTML;
+  document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
+}
+
+function processAmplicon3Data(){
+  del_all_messages ();
+  var res = document.getElementById('P3P_SEL_TAB_RESULTS');
+  if (res != null) {
+    res.style.display="inline";
+    document.getElementById('P3P_P3_RUNNING').style.display="none";
+    browseTabFunctionality('P3P_TAB_RESULTS');
+  }
+  returnHTML = '<p style="padding: 20px">\n';
+  if (results.hasOwnProperty("AMPLICON_ERROR")) {
+    var p3pErrLines = results["AMPLICON_ERROR"].split(';');
+    for (var i = 0; i < p3pErrLines.length; i++) {
+      add_message("err", p3pErrLines[i]);
+      returnHTML += p3pErrLines[i] + '<br />\n';
+    }
+  } else {
+    if (results.hasOwnProperty("AMPLICON_MELTPOINTS")) {
+      returnHTML += 'Melting Temperature: ' + results["AMPLICON_MELTPOINTS"] + '&deg;C<br /><br />\n';
+    }
+    if (results.hasOwnProperty("AMPLICON_PRODUCT_SIZE")) {
+      returnHTML += 'Amplicon Length: ' + results["AMPLICON_PRODUCT_SIZE"] + ' bp<br />\n';
+    }
+    if (results.hasOwnProperty("AMPLICON_GC_PERCENT")) {
+      returnHTML += 'Amplicon GC: ' + results["AMPLICON_GC_PERCENT"] + '%<br /><br />\n';
+    }
+    if (results.hasOwnProperty("AMPLICON_DIVALENT")) {
+      returnHTML += 'Monovalent Salt: ' + results["AMPLICON_DIVALENT"] + ' mM<br />\n';
+    }
+    if (results.hasOwnProperty("AMPLICON_DNTPS")) {
+      returnHTML += 'Divalent Salt: ' + results["AMPLICON_DNTPS"] + ' mM<br />\n';
+    }
+    if (results.hasOwnProperty("AMPLICON_DMSO")) {
+      returnHTML += 'DMSO: ' + results["AMPLICON_DMSO"] + '%<br />\n';
+    }
+    if (results.hasOwnProperty("AMPLICON_DMSO_CORRECTION")) {
+      returnHTML += 'DMSO Factor: ' + results["AMPLICON_DMSO_CORRECTION"] + '<br />\n';
+    }
+    if (results.hasOwnProperty("AMPLICON_FORMAMID")) {
+      returnHTML += 'Formamide: ' + results["AMPLICON_FORMAMID"] + '%<br />\n';
+    }
+  }
+  returnHTML += '</p>\n';
   // document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = returnHTML;
   document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
 }
@@ -1486,11 +1600,13 @@ function initElements(){
   initTabFunctionality();
   initResetDefautl();
   initRunPrimer3();
+  initRunAmplicon3();  
   initRunPrefold();
   initTaskFunctionality();
   initLoadSeqFile();
   initSaveFile();
   initLoadExample();
+  initLoadAmplicon();
   initSelectionFeature();
   initExplainSeqRegions();
   initLoadSetFile();
@@ -2863,12 +2979,30 @@ function buttonResetDefault() {
   updateInterface();
 }
 
+function initLoadAmplicon() {
+  var pButton = document.getElementById('P3P_ACTION_LOAD_AMPLICON');
+  if (pButton !== null) {
+    pButton.addEventListener('click', runLoadAmplicon);
+  }
+}
+
+function runLoadAmplicon() {
+  var seq = 'GCCCGAGAGCTGGAGGTATTAAGTGAGCGGCTTGAAGAGGCTGGGGGTGCCACTGCTGCCCAGCTGGAGAT' +
+  'GAACAAGAAACGTGAAGCTGAGTTCCTGAAGCTGGCGCGTGACCTCGAGGAGGCCACGCTGCACTATGAAGCCACAGCTGC' +
+  'TGCTCTGAGGAAGAAGCATGCGGACAGCGTGGCTGAGATGGGGGAGCAGCTGGACAACCTGCAGCGCGTCAAGCAGAAACT' +
+  'GGAAAAGGAGAAAAGCGAGCTGAAAATGGAAGTGGATGATCTGACATCCAACATGGAGCAAACGGTTAAGGGAAAAGCAAA' +
+  'TGCAGAAAAACTTTGTCGCACTTATGAAGATCATCTTAATGAGACAAAAACTAAACTGGATGAAATGA';
+  setHTMLParameters(defSet);
+  setHtmlTagValue("SEQUENCE_TEMPLATE", seq);
+}
+
 function initLoadExample() {
   var pButton = document.getElementById('P3P_ACTION_LOAD_EXAMPLE');
   if (pButton !== null) {
     pButton.addEventListener('click', runLoadExample);
   }
 }
+
 function runLoadExample() {
   var seq = 'acaatattgtattggtgagatcatataagatttgatgtcaacatcttcgtaaaggtctcagatt' +
     'cgattctccccggtatcaatttaagtgagctaatttagcttcttaaaaaataaaatcaaacaacttttacataaactca' +
