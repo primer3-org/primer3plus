@@ -124,10 +124,11 @@ def runstatistics():
         report = [[0, "Date", "xxxxx", "xxxxx"],
                   [1, "Load Settings", "Primer3Plus", "Load_Default_Settings"],
                   [2, "Primer3 + runs", "Primer3Plus", "Primer3_Pick_Success"],
-                  [3, "Primer3 - runs", "Primer3Plus", "Primer3_Pick_Fail"],
-                  [4, "Amplicon3 runs", "Amplicon3Plus", "Success"],
-                  [5, "UNAFold runs", "Primer3Prefold", "UNAFold_run"],
-                  [6, "P3Statistics", "Primer3Statistics", "View"]]
+                  [3, "P3 - runs", "Primer3Plus", "Primer3_Pick_Fail"],
+                  [4, "Amplicon3 + runs", "Amplicon3Plus", "Success"],
+                  [5, "A3 - runs", "Amplicon3Plus", "Error"],
+                  [6, "UNAFold runs", "Primer3Prefold", "UNAFold_run"],
+                  [7, "P3Statistics", "Primer3Statistics", "View"]]
         pLook = {}
         for col in report:
             pLook[col[2] + "_" + col[3]] = col[0]
@@ -151,7 +152,7 @@ def runstatistics():
             cells = row.split("\t")
             if len(cells) > 3:
                 if cells[0] not in finalData:
-                    finalData[cells[0]] = [0, 0, 0, 0, 0, 0, 0]
+                    finalData[cells[0]] = [0, 0, 0, 0, 0, 0, 0, 0]
                 curKey = cells[1] + "_" + cells[2]
                 if curKey in pLook:
                     finalData[cells[0]][pLook[curKey]] += int(cells[3])
@@ -169,7 +170,8 @@ def runstatistics():
             data += str(finalData[dat][3]) + "\t"
             data += str(finalData[dat][4]) + "\t"
             data += str(finalData[dat][5]) + "\t"
-            data += str(finalData[dat][6]) + "\n"
+            data += str(finalData[dat][6]) + "\t"
+            data += str(finalData[dat][7]) + "\n"
             print(dat)
         logData("Primer3Statistics", "View", "1", "---")
         return jsonify({"outfile": data}), 200
@@ -447,6 +449,7 @@ def runa3():
         # Experiment
         data = ""
         if 'P3_INPUT_FILE' in request.form.keys():
+            state = "Success"
             indata = request.form['P3_INPUT_FILE']
             indata = indata.replace('\r\n', '\n')
             indata = indata.replace('\r', '\n')
@@ -534,6 +537,7 @@ def runa3():
                             return jsonify(errors = [{"title": "Measured melting Temp. must be 1.0 - 99.0."}]), 400
 
                     # Do not trust user input for command line
+                    dat_out = '2'
                     dat_mv = str(float(dat_mv))
                     dat_dv = str(float(dat_dv))
                     dat_dntp = str(float(dat_dntp))
@@ -544,6 +548,8 @@ def runa3():
                     dat_sal = str(int(dat_sal))
                     dat_mf = str(int(dat_mf))
                     dat_temp = str(float(dat_temp))
+                    if dat_mf == '0':
+                        dat_out = '1'
 
                     try:  # -mv 50 -dv 1.2 -n 0.0 -dmso 0.0 -formamid 0.0 -o 2
                         if float(dat_temp) < 0.0:
@@ -557,7 +563,7 @@ def runa3():
                                         '-tp', dat_tp, 
                                         '-sc', dat_sal, 
                                         '-mf', dat_mf, 
-                                        '-o', '2', 
+                                        '-o', dat_out,
                                         dat_seq]
                         else:
                             p3_args = ['amplicon3_core', 
@@ -565,10 +571,10 @@ def runa3():
                                         '-tp', dat_tp, 
                                         '-sc', dat_sal, 
                                         '-mf', dat_mf, 
-                                        '-o', '2', 
+                                        '-o', dat_out,
                                         dat_seq]
                         print('\nCall: ' + " ".join(p3_args) + "\n")
-                        print('\nInput: ' + logfile + "\n")
+                        # print('\nInput: ' + logfile + "\n")
                         stat = {'timeout':False}
                         proc = subprocess.Popen(p3_args, stdout=log, stderr=err)
                         timer = threading.Timer(KILLTIME, p3_watchdog, (proc, stat))
@@ -576,6 +582,7 @@ def runa3():
                         proc.wait()
                         timer.cancel()
                         if stat['timeout'] and not proc.returncode == 100:
+                            state = "Timeout"
                             p3p_err_str += "Error: Amplicon3 was teminated due to long runtime of more than " + str(KILLTIME)  + " seconds!"
                     except OSError as e:
                         if e.errno == errno.ENOENT:
@@ -589,13 +596,12 @@ def runa3():
                 if (p3p_err_str != ""):
                     p3p_err_str += ";"
                 p3p_err_str += all_err
+                state = "Error"
             with open(logfile, "r") as out:
                 data = out.read()
                 data += "\n" + "P3P_UUID=" + uuidstr + "\n"
-                state = "---"
                 if not p3p_err_str == "":
                     data += "AMPLICON_ERROR=" + p3p_err_str + "\n"
-                    state = "Timeout"
                 logData("Amplicon3Plus", state, "---", uuidstr)
                 return jsonify({"outfile": data}), 200
     return jsonify(errors=[{"title": "Error: No POST request!"}]), 400
