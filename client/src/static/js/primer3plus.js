@@ -44,6 +44,10 @@ var misspriming_lib_files;
 var rawResults;
 var results = {};
 
+var amp_temp = [];
+var amp_melt = [];
+var amp_deriv = [];
+
 var debugMode = 0;
 
 var p3p_errors = [];
@@ -470,48 +474,145 @@ function processPrefoldData(){
 
 function processAmplicon3Data(){
   del_all_messages ();
+  amp_temp = [];
+  amp_melt = [];
+  amp_deriv = [];
+
   var res = document.getElementById('P3P_SEL_TAB_RESULTS');
   if (res != null) {
     res.style.display="inline";
     document.getElementById('P3P_P3_RUNNING').style.display="none";
     browseTabFunctionality('P3P_TAB_RESULTS');
   }
-  returnHTML = '<p style="padding: 20px">\n';
   if (results.hasOwnProperty("AMPLICON_ERROR")) {
     var p3pErrLines = results["AMPLICON_ERROR"].split(';');
+    returnHTML = '<p style="padding: 20px">\n';
     for (var i = 0; i < p3pErrLines.length; i++) {
       add_message("err", p3pErrLines[i]);
       returnHTML += p3pErrLines[i] + '<br />\n';
     }
+    returnHTML = '</p>\n';
   } else {
+    returnHTML = '<div class="p3p_section">\n<table>\n<colgroup>\n';
+    returnHTML += '<col style="width: 5%">\n<col style="width: 20%">\n';
+    returnHTML += '<col style="width: 25%">\n<col style="width: 50%">\n</colgroup>\n';
     if (results.hasOwnProperty("AMPLICON_MELTPOINTS")) {
-      returnHTML += 'Melting Temperature: ' + results["AMPLICON_MELTPOINTS"] + '&deg;C<br /><br />\n';
+      returnHTML += '<tr>\n<td></td>\n<td style="font-weight: bold; font-size: large;">Melting Temperature:</td>\n';
+      returnHTML += '<td style="text-align: right;font-weight: bold;  font-size: large;">';
+      returnHTML += results["AMPLICON_MELTPOINTS"].replace(/,/g, "&deg;C, ");
+      returnHTML += '&deg;C</td>\n<td></td>\n</tr>\n';
     }
     if (results.hasOwnProperty("AMPLICON_PRODUCT_SIZE")) {
-      returnHTML += 'Amplicon Length: ' + results["AMPLICON_PRODUCT_SIZE"] + ' bp<br />\n';
+      returnHTML += '<tr>\n<td></td>\n<td>Amplicon Length:</td>\n<td style="text-align: right">';
+      returnHTML += results["AMPLICON_PRODUCT_SIZE"] + ' bp</td>\n<td></td>\n</tr>\n';
     }
     if (results.hasOwnProperty("AMPLICON_GC_PERCENT")) {
-      returnHTML += 'Amplicon GC: ' + results["AMPLICON_GC_PERCENT"] + '%<br /><br />\n';
+      returnHTML += '<tr>\n<td></td>\n<td>Amplicon GC:</td>\n<td style="text-align: right">';
+      returnHTML += results["AMPLICON_GC_PERCENT"] + '%</td>\n<td></td>\n</tr>\n';
+    }
+    returnHTML += '<tr>\n<td></td>\n<td></td>\n<td></td>\n<td></td>\n</tr>\n';
+    if (results.hasOwnProperty("AMPLICON_MONOVALENT")) {
+      returnHTML += '<tr>\n<td></td>\n<td>Monovalent Salt:</td>\n<td style="text-align: right">';
+      returnHTML += results["AMPLICON_MONOVALENT"] + ' mM</td>\n<td></td>\n</tr>\n';
     }
     if (results.hasOwnProperty("AMPLICON_DIVALENT")) {
-      returnHTML += 'Monovalent Salt: ' + results["AMPLICON_DIVALENT"] + ' mM<br />\n';
+      returnHTML += '<tr>\n<td></td>\n<td>Divalent Salt:</td>\n<td style="text-align: right">';
+      returnHTML += results["AMPLICON_DIVALENT"] + ' mM</td>\n<td></td>\n</tr>\n';
     }
     if (results.hasOwnProperty("AMPLICON_DNTPS")) {
-      returnHTML += 'Divalent Salt: ' + results["AMPLICON_DNTPS"] + ' mM<br />\n';
+      returnHTML += '<tr>\n<td></td>\n<td>DNTPs:</td>\n<td style="text-align: right">';
+      returnHTML += results["AMPLICON_DNTPS"] + ' mM</td>\n<td></td>\n</tr>\n';
     }
     if (results.hasOwnProperty("AMPLICON_DMSO")) {
-      returnHTML += 'DMSO: ' + results["AMPLICON_DMSO"] + '%<br />\n';
+      returnHTML += '<tr>\n<td></td>\n<td>DMSO:</td>\n<td style="text-align: right">';
+      returnHTML += results["AMPLICON_DMSO"] + '%</td>\n<td></td>\n</tr>\n';
     }
     if (results.hasOwnProperty("AMPLICON_DMSO_CORRECTION")) {
-      returnHTML += 'DMSO Factor: ' + results["AMPLICON_DMSO_CORRECTION"] + '<br />\n';
+      returnHTML += '<tr>\n<td></td>\n<td>DMSO Factor:</td>\n<td style="text-align: right">';
+      returnHTML += results["AMPLICON_DMSO_CORRECTION"] + '</td>\n<td></td>\n</tr>\n';
     }
     if (results.hasOwnProperty("AMPLICON_FORMAMID")) {
-      returnHTML += 'Formamide: ' + results["AMPLICON_FORMAMID"] + '%<br />\n';
+      returnHTML += '<tr>\n<td></td>\n<td>Formamide:</td>\n<td style="text-align: right">';
+      returnHTML += results["AMPLICON_FORMAMID"] + ' mol/l</td>\n<td></td>\n</tr>\n';
+    }
+    if (results.hasOwnProperty("AMPLICON_TEMPERATURES")) {
+      amp_temp = results["AMPLICON_TEMPERATURES"].split(',');
+    }
+    if (results.hasOwnProperty("AMPLICON_MELT_CURVE")) {
+      amp_melt = results["AMPLICON_MELT_CURVE"].split(',');
+    }
+    if (results.hasOwnProperty("AMPLICON_DERIVATIVE_CURVE")) {
+      amp_deriv = results["AMPLICON_DERIVATIVE_CURVE"].split(',');
     }
   }
-  returnHTML += '</p>\n';
+  returnHTML += '</table>\n</div>\n';
+  returnHTML += createSVG(amp_temp, amp_deriv, false);
+  returnHTML += '<br /><br />\n';
+  returnHTML += createSVG(amp_temp, amp_melt, true);
   // document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = returnHTML;
   document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
+}
+
+function createSVG(amp_temp, amp_vals, melt) {
+  if (amp_temp.length != amp_vals.length) {
+    return "";
+  }
+  if (amp_temp.length < 10) {
+    return "";
+  }
+  var winYend = 1.0;
+  var winYst = 0.0;
+  var winYstep = 0.1;
+  var col = "blue"
+  if (melt == false) {
+    winYend = 0.0;
+    for (var i = 0; i < amp_vals.length; i++) {
+      if (parseFloat(amp_vals[i]) > winYend) {
+        winYend = parseFloat(amp_vals[i])
+      }
+    }
+    winYend = parseInt(winYend * 10 + 0.5) / 10.0;
+  }
+  var retVal = "<polyline fill='none' stroke-linejoin='round' stroke='";
+  retVal +=  col + "' stroke-width='1.2' points='";
+  for (var i = 0; i < amp_vals.length; i++) {
+      var xPos = parseFloat(amp_temp[i] - 60.0) / (95.0 - 60.0) * 500;
+      var yPos = 300 - parseFloat(amp_vals[i]) / winYend * 300;
+      retVal += xPos + "," + yPos + " ";
+  }
+  retVal += "' />";
+  // The X-Axis
+  var xStep = 5;
+  for (var i = 0; (i * xStep + 60.0) < (95.0 + xStep); i++) {
+      var xPos = (i * xStep) / (95.0 - 60.0) * 500;
+      retVal += "<line x1='" + xPos + "' y1='300' x2='" + xPos + "' y2='" + 307 + "' stroke-width='2' stroke='black' />";
+      retVal += "<text x='" + xPos + "' y='" + 326;
+      retVal += "' font-family='Arial' font-size='15' fill='black' text-anchor='middle'>";
+      retVal += (i * xStep + 60.0) + "</text>";
+  }
+  // The Y-Axis
+  for (var i = 0; i *  winYstep < winYend + winYstep; i++) {
+      var yPos = 300 - (i *  winYstep) / winYend * 300; 
+      retVal += "<line x1='0' y1='" + yPos;
+      retVal += "' x2='-7' y2='" + yPos + "' stroke-width='2' stroke='black' />";
+      retVal += "<text x='-11' y='" + (yPos + 3);
+      retVal += "' font-family='Arial' font-size='15' fill='black' text-anchor='end'>";
+      var textValOut = i *  winYstep
+      retVal += textValOut.toFixed(1) + "</text>";
+  }
+  retVal += "<line x1='0' y1='300' x2='505' y2='300' stroke-width='2' stroke='black' stroke-linecap='square'/>";
+  retVal += "<line x1='0' y1='-5' x2='0' y2='300' stroke-width='2' stroke='black' stroke-linecap='square'/>";
+  retVal += "<text x='-150' y='-40' font-family='Arial' font-size='20' ";
+  retVal += "fill='black' transform='rotate(-90)' text-anchor='middle'>";
+  if (melt == true) {
+    retVal += "Helicity (%)</text>";
+  } else {
+    retVal += "-dF / dT</text>";
+  }
+  retVal += "<text x='250' y='350' font-family='Arial' font-size='20' fill='black' text-anchor='middle'>&deg;C</text>";
+  retVal += "</svg>";
+  var head = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='-80 -60 600 450' width='700px'>";
+  return head + retVal;
 }
 
 function processResData(){
