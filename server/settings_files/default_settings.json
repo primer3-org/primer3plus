@@ -9,7 +9,7 @@
 "P3_FILE_FLAG":["0","boolean"],
 "P3_FILE_ID":["","string"],
 "P3_FILE_TYPE":["sequence","string"],
-"PRIMER_ANNEALING_TEMP":["-10.0","float"],
+"PRIMER_ANNEALING_TEMP":["52.0","float"],
 "PRIMER_DMSO_CONC":["0.0","float"],
 "PRIMER_DMSO_FACTOR":["0.6","float"],
 "PRIMER_DNA_CONC":["50.0","float"],
@@ -270,9 +270,10 @@
 },
 "server_setting_files":[
 {"name":"qPCR","file":"qPCR.txt"},
+{"name":"Cloning Primers","file":"cloning_primers.txt"},
 {"name":"Annealing Temp","file":"annealing_temp.txt"},
+{"name":"Secondary Structures","file":"secondary_structures.txt"},
 {"name":"Probe","file":"probe.txt"},
-{"name":"P3P v.3.1.0 Def","file":"primer3plus_3_1_0_default_settings.txt"},
 {"name":"P3P v.2.4.2 Def","file":"primer3plus_2_4_2_default_settings.txt"},
 {"name":"P3W v0.4.0 Def","file":"primer3web_v0_4_0_default_settings.txt"},
 {"name":"P3 v1.1.4 Def","file":"primer3_v1_1_4_default_settings.txt"}
