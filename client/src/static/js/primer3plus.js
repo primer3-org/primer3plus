@@ -2307,7 +2307,7 @@ function loadP3File(limit,txt) {
         setHtmlTagValue(pair[0], pair[1]);
         results[pair[0]] = pair[1];	      
       } else {
-	if (!(pair[0].startsWith('P3_FILE_TYPE'))) {
+        if (!(pair[0].startsWith('P3_FILE_TYPE'))) {
           add_message("warn","Primer3Plus is unable to load: " + fileLines[i]);
         }
       }
