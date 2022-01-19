@@ -20,7 +20,7 @@ const API_URL = process.env.API_URL
 const HELP_LINK_URL = process.env.HELP_LINK_URL
 const INDEX_LINK_URL = process.env.INDEX_LINK_URL
 
-var primer3plus_version = "3.2.0";
+var primer3plus_version = "3.2.1";
 
 // The default Settings loaded from the server
 var defSet;
@@ -152,6 +152,9 @@ function runPrimer3() {
   document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = "";
   const formData = new FormData();
   formData.append('P3_INPUT_FILE', p3file);
+  formData.append('P3P_GB_RETURN_PATH', getHtmlTagValue('P3P_GB_RETURN_PATH'));
+  formData.append('P3P_GB_DB', getHtmlTagValue('P3P_GB_DB'));
+  formData.append('P3P_GB_POSITION', getHtmlTagValue('P3P_GB_POSITION'));
   axios
     .post(`${API_URL}/runprimer3`, formData)
     .then(res => {
@@ -660,6 +663,26 @@ function processResData(){
   }
   var returnHTML = ""
   // Write some help if no primers found
+  if (results.hasOwnProperty("P3P_GB_FILE") && (results["P3P_GB_FILE"] != "")){
+    returnHTML += '<table>\n';
+    returnHTML += '  <colgroup>\n';
+    returnHTML += '    <col style="width: 30%">\n';
+    returnHTML += '    <col style="width: 70%">\n';
+    returnHTML += '  </colgroup>\n';
+    returnHTML += '  <tr>\n';
+    returnHTML += '    <td></td>\n';
+    returnHTML += '    <td style="text-align: right;">\n';
+    returnHTML += '      <input value="Return to UCSC Genome Browser" onclick="goToGenomeBrowser(\'';
+    returnHTML += getHtmlTagValue('P3P_GB_RETURN_PATH')
+    returnHTML += '?db=' + getHtmlTagValue('P3P_GB_DB')
+    returnHTML += '&position=' + getHtmlTagValue('P3P_GB_POSITION')
+    returnHTML += '&hgct_customText=' + `${API_URL}/getbed/` + results["P3P_GB_FILE"]
+    returnHTML += '\');"type="button">&nbsp;\n';
+    returnHTML += '    </td>';
+    returnHTML += '  </tr>';
+    returnHTML += '</table>';
+  }
+
   if (primer_count == 0){
     returnHTML += "<br/ >Primer3Plus could not pick any primers. Try less strict settings.<br /><br />";       
   } 
@@ -813,6 +836,13 @@ function goToPrimer3Manager(){
   var win = window.open("primer3manager.html", 'Primer3Manager');
   win.focus();
 }
+
+window.goToGenomeBrowser = goToGenomeBrowser;
+function goToGenomeBrowser(linkAddr){
+  var win = window.open(linkAddr, 'GenomeBrowser');
+  win.focus();
+}
+
 
 function createResultsPrimerCheck(res) {
   var linkRoot = `${HELP_LINK_URL}#`;

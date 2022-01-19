@@ -2414,13 +2414,23 @@ general parameters that Primer3Plus may use in its interface.
 <table class="p3p_tab_help_table" style="text-align: left; width: 800px; border: 1px;">
 	  <tr>
 	    <td><a href="#P3P_DEBUG_MODE">P3P_DEBUG_MODE</a></td>
-	    <td><a href="#P3P_PRIMER_NAME_ACRONYM_LEFT">P3P_PRIMER_NAME_ACRONYM_LEFT</a></td>
+	    <td><a href="#P3P_GB_RETURN_PATH">P3P_GB_RETURN_PATH</a></td>
 	    <td><a href="#P3P_PRIMER_NAME_ACRONYM_SPACER">P3P_PRIMER_NAME_ACRONYM_SPACER</a></td>
 	  </tr>
 	  <tr>
+	    <td><a href="#P3P_GB_DB">P3P_GB_DB</a></td>
 	    <td><a href="#P3P_PRIMER_NAME_ACRONYM_INTERNAL">P3P_PRIMER_NAME_ACRONYM_INTERNAL</a></td>
-	    <td><a href="#P3P_PRIMER_NAME_ACRONYM_RIGHT">P3P_PRIMER_NAME_ACRONYM_RIGHT</a></td>
 	    <td><a href="#P3P_SERVER_SETTINGS_FILE">P3P_SERVER_SETTINGS_FILE</a></td>
+	  </tr>
+	  <tr>
+	    <td><a href="#P3P_GB_FILE">P3P_GB_FILE</a></td>
+	    <td><a href="#P3P_PRIMER_NAME_ACRONYM_LEFT">P3P_PRIMER_NAME_ACRONYM_LEFT</a></td>
+	    <td>&nbsp;</td>
+	  </tr>
+	  <tr>
+	    <td><a href="#P3P_GB_POSITION">P3P_GB_POSITION</a></td>
+	    <td><a href="#P3P_PRIMER_NAME_ACRONYM_RIGHT">P3P_PRIMER_NAME_ACRONYM_RIGHT</a></td>
+	    <td>&nbsp;</td>
 	  </tr>
 </table>
 <h3><a id="P3P_SERVER_SETTINGS_FILE">P3P_SERVER_SETTINGS_FILE (string; default F)</a></h3>
@@ -2442,6 +2452,23 @@ is added to left primers.</p>
 <p>This parameter controls the debug mode. "0" defines
 no debug information. "1" moderate debug information and "2"
 very verbouse developper debug information.</p>
+<h3><a id="P3P_GB_RETURN_PATH">P3P_GB_RETURN_PATH (string; default )</a></h3>
+<p>This parameter is used be UCSC Genome Browser.
+It is not user editable, hidden and used to link back to the
+UCSC Genome Browser. It contains the html return path.</p>
+<h3><a id="P3P_GB_DB">P3P_GB_DB (string; default )</a></h3>
+<p>This parameter is used be UCSC Genome Browser.
+It is not user editable, hidden and used to link back to the
+UCSC Genome Browser. It contains the selected database.</p>
+<h3><a id="P3P_GB_POSITION">P3P_GB_POSITION (string; default )</a></h3>
+<p>This parameter is used be UCSC Genome Browser.
+It is not user editable, hidden and used to link back to the
+UCSC Genome Browser. It contains the window psition.</p>
+<h3><a id="P3P_GB_FILE">P3P_GB_FILE (string; default )</a></h3>
+<p>This parameter is used be UCSC Genome Browser.
+It is not user editable, hidden and used to link back to the
+UCSC Genome Browser. It contains the UUID to get the BED
+file.</p>
 <h2><a id="outputTags">13. OUTPUT TAGS</a></h2>
 <p>For each Boulder-IO record passed into Primer3 via stdin, exactly
 one Boulder-IO record comes out of Primer3 on stdout.

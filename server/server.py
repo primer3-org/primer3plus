@@ -68,7 +68,7 @@ def logData(pProg, pKey, pValue, uuid):
     addLine = runTime.strftime("%Y-%m-%dT%H:%M:%S")
     addLine += "\t" + pProg + "\t" + pKey + "\t" + pValue + "\t" + uuid + "\t"
     if LOGIPANONYM:
-        ip_bit = ip_address(request.remote_addr).packed
+        ip_bit = ip_address(request.environ['REMOTE_ADDR']).packed
         mod_ip = bytearray(ip_bit)
         if len(ip_bit) == 4:
             mod_ip[3] = 0
@@ -77,7 +77,7 @@ def logData(pProg, pKey, pValue, uuid):
                 mod_ip[count_ip] = 0
         addLine += str(ip_address(bytes(mod_ip))) + "\t\t"
     else:
-        addLine += request.remote_addr + "\t\t"
+        addLine += request.environ['REMOTE_ADDR'] + "\t\t"
     addLine += request.headers.get('User-Agent').replace("\t", " ") + "\n"
 
     statFile = os.path.join(app.config['LOG_FOLDER'], "p3_runs_" + runTime.strftime("%Y_%m") + ".log")
@@ -86,7 +86,7 @@ def logData(pProg, pKey, pValue, uuid):
 
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in set(['json', 'fa'])
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in set(['json', 'fa', 'bed'])
 
 uuid_re = re.compile(r'(^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})-{0,1}([ap]{0,1})([cj]{0,1})$')
 
@@ -178,6 +178,21 @@ def runstatistics():
     return jsonify(errors=[{"title": "Error: No POST request!"}]), 400
 
 
+@app.route('/api/v1/getbed/<uuidstr>')
+def getbed(uuidstr):
+    if is_valid_uuid(uuidstr):
+        fname = "p3p_" + uuidstr + ".bed"
+        print(fname)
+        if allowed_file(fname):
+            sf = os.path.join(app.config['UPLOAD_FOLDER'], uuidstr[0:2])
+            if os.path.exists(sf):
+                print("Exists")
+                if os.path.isfile(os.path.join(sf, fname)):
+                    print("Send")
+                    return send_file(os.path.join(sf, fname), mimetype="text/plain", download_name=uuidstr)
+    return "File does not exist!"
+
+
 @app.route('/api/v1/runprimer3', methods=['POST'])
 def runp3():
     if request.method == 'POST':
@@ -235,6 +250,69 @@ def runp3():
                 data += "\n" + "P3P_UUID=" + uuidstr + "\n"
                 if not p3p_err_str == "":
                     data += "P3P_ERROR=" + p3p_err_str + "\n"
+
+                # Create BED file for UCSC Genome Browser
+                if 'P3P_GB_RETURN_PATH' in request.form.keys():
+                    if 'P3P_GB_DB' in request.form.keys():
+                        if 'P3P_GB_POSITION' in request.form.keys():
+                            gb_path = str(request.form['P3P_GB_RETURN_PATH'])
+                            gb_db = str(request.form['P3P_GB_DB'])
+                            gb_pos = str(request.form['P3P_GB_POSITION'])
+                            allOutLines = data.split('\n')
+                            allOutData = {}
+                            for line in allOutLines:
+                                lineSpl = line.split('=')
+                                if len(lineSpl) == 2:
+                                    allOutData[lineSpl[0]] = lineSpl[1]
+                            bedfile = os.path.join(sf, "p3p_" + uuidstr + ".bed")
+                            bedtxt = 'browser position ' + gb_pos + '\n'
+                            bedtxt += 'track name="Primer3Plus" description="Primers by Primer3Plus in region '
+                            bedtxt += gb_pos + '" visibility="pack" itemRgb="On"\n'
+                            gb_chrom = gb_pos.split(':')
+                            if len(gb_chrom) == 2:
+                                gb_st_end = gb_chrom[1].split('-')
+                                bedtxt += gb_chrom[0] + '\t' + gb_st_end[0] + '\t' + gb_st_end[1] + '\t'
+                                bedtxt += 'input_range\t0\t+\t' + gb_st_end[0] + '\t' + gb_st_end[1]
+                                bedtxt += '\t100,100,100\n'
+                                if 'PRIMER_LEFT_NUM_RETURNED' in allOutData:
+                                    left_prim = int(allOutData['PRIMER_LEFT_NUM_RETURNED'])
+                                    for p_num in range(0, left_prim):
+                                        geneArr = str(allOutData['PRIMER_LEFT_' + str(p_num)]).split(',')
+                                        if len(geneArr) == 2:
+                                            bedtxt += gb_chrom[0] + '\t'
+                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - 2) + '\t'
+                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) + int(geneArr[1]) - 2)
+                                            bedtxt += '\tLeft_Primer_' + str(p_num + 1) + '\t0\t+\t';
+                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - 2) + '\t'
+                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) + int(geneArr[1]) - 2)
+                                            bedtxt += '\t204,204,255\n';
+                                if 'PRIMER_INTERNAL_NUM_RETURNED' in allOutData:
+                                    int_prim = int(allOutData['PRIMER_INTERNAL_NUM_RETURNED'])
+                                    for p_num in range(0, int_prim):
+                                        geneArr = str(allOutData['PRIMER_INTERNAL_' + str(p_num)]).split(',')
+                                        if len(geneArr) == 2:
+                                            bedtxt += gb_chrom[0] + '\t'
+                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - 2) + '\t'
+                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) + int(geneArr[1]) - 2)
+                                            bedtxt += '\tInternal_Primer_' + str(p_num + 1) + '\t0\t+\t';
+                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - 2) + '\t'
+                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) + int(geneArr[1]) - 2)
+                                            bedtxt += '\t0,0,0\n';
+                                if 'PRIMER_RIGHT_NUM_RETURNED' in allOutData:
+                                    right_prim = int(allOutData['PRIMER_RIGHT_NUM_RETURNED'])
+                                    for p_num in range(0, right_prim):
+                                        geneArr = str(allOutData['PRIMER_RIGHT_' + str(p_num)]).split(',')
+                                        if len(geneArr) == 2:
+                                            bedtxt += gb_chrom[0] + '\t'
+                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - int(geneArr[1]) - 1) + '\t'
+                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - 1)
+                                            bedtxt += '\tRight_Primer_' + str(p_num + 1) + '\t0\t+\t';
+                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - int(geneArr[1]) - 1) + '\t'
+                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - 1)
+                                            bedtxt += '\t250,240,75\n';
+                                with open(bedfile, "w") as bed:
+                                    bed.write(bedtxt)
+                                    data += "P3P_GB_FILE=" + uuidstr + "\n"
                 if LOGP3RUNS:
                     state = "Primer3_Pick_Fail"
                     prCount = 0
