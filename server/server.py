@@ -67,19 +67,24 @@ def logData(pProg, pKey, pValue, uuid):
     runTime = datetime.datetime.utcnow()
     addLine = runTime.strftime("%Y-%m-%dT%H:%M:%S")
     addLine += "\t" + pProg + "\t" + pKey + "\t" + pValue + "\t" + uuid + "\t"
-    if LOGIPANONYM:
-        ip_bit = ip_address(request.environ['REMOTE_ADDR']).packed
-        mod_ip = bytearray(ip_bit)
-        if len(ip_bit) == 4:
-            mod_ip[3] = 0
-        if len(ip_bit) == 16:
-            for count_ip in range(6, len(mod_ip)):
-                mod_ip[count_ip] = 0
-        addLine += str(ip_address(bytes(mod_ip))) + "\t\t"
-    else:
-        addLine += request.environ['REMOTE_ADDR'] + "\t\t"
-    addLine += request.headers.get('User-Agent').replace("\t", " ") + "\n"
-
+    # Add to nginx config in the location section:
+    # proxy_set_header X-Real-IP $remote_addr;
+    if 'X-Real-IP' in request.headers:
+        if LOGIPANONYM:
+            ip_bit = ip_address(request.headers.get('X-Real-IP')).packed
+            mod_ip = bytearray(ip_bit)
+            if len(ip_bit) == 4:
+                mod_ip[3] = 0
+            if len(ip_bit) == 16:
+                for count_ip in range(6, len(mod_ip)):
+                    mod_ip[count_ip] = 0
+            addLine += str(ip_address(bytes(mod_ip)))
+        else:
+            addLine += request.headers.get('X-Real-IP')
+    addLine += "\t\t"
+    if 'User-Agent' in request.headers:
+        addLine += request.headers.get('User-Agent').replace("\t", " ")
+    addLine += "\n"
     statFile = os.path.join(app.config['LOG_FOLDER'], "p3_runs_" + runTime.strftime("%Y_%m") + ".log")
     with open(statFile, "a") as stat:
         stat.write(addLine)
