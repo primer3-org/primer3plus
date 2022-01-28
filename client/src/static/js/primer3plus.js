@@ -20,7 +20,7 @@ const API_URL = process.env.API_URL
 const HELP_LINK_URL = process.env.HELP_LINK_URL
 const INDEX_LINK_URL = process.env.INDEX_LINK_URL
 
-var primer3plus_version = "3.2.1";
+var primer3plus_version = "3.2.2";
 
 // The default Settings loaded from the server
 var defSet;
@@ -134,6 +134,7 @@ function loadSetFileFromServer() {
 }
 
 function runPrimer3() {
+  cleanRegions();
   var seq = getHtmlTagValue("SEQUENCE_TEMPLATE");
   if (seq.length > 10000) {
     add_message("err","Primer3Plus requires a sequence length of < 10000 bp.");
@@ -1987,6 +1988,10 @@ function initSelectionFeature() {
   if (btClear !== null) {
     btClear.addEventListener('click', clearSelectionRegion);
   }
+  var btRegFrSeq = document.getElementById('P3P_ACTION_SEL_Reg_F_SEQ');
+  if (btRegFrSeq !== null) {
+    btRegFrSeq.addEventListener('click', readRegionsfromSeq);
+  }
   var fieldExcluded = document.getElementById('SEQUENCE_EXCLUDED_REGION');
   if (fieldExcluded !== null) {
     fieldExcluded.addEventListener('focusout', function(){createSeqWithDeco(-1);});
@@ -2027,6 +2032,126 @@ function initSelectionFeature() {
         createSeqWithDeco(pos);
       }
     });
+  }
+}
+
+function readRegionsfromSeq() {
+  var seq = document.getElementById("SEQUENCE_TEMPLATE").value;
+  var seqPos = 0;
+  if (getHtmlTagValue("PRIMER_FIRST_BASE_INDEX")) {
+    seqPos = parseInt(getHtmlTagValue("PRIMER_FIRST_BASE_INDEX"));
+  }
+  var exc = "";
+  var tar = "";
+  var inc = "";
+  var ovl = "";
+  var exc_open = 0;
+  var tar_open = 0;
+  var inc_open = 0;
+  var exc_sec = 0;
+  var tar_sec = 0;
+  var inc_sec = 0;
+  for (var i = 0 ; i < seq.length ; i++) {
+    var letter = seq.charAt(i);
+    if (letter.match(/[ACGTNacgtn]/)) {
+      seqPos++;
+      exc_sec++;
+      tar_sec++;
+      inc_sec++;
+    }
+    if ((letter == '<') && (exc_open == 0)) {
+      exc_sec = 0;
+      exc_open = 1;
+      exc += seqPos + ",";
+    }
+    if ((letter == '>') && (exc_open == 1)) {
+      exc_open = 0;
+      exc += exc_sec + " ";
+    }
+    if ((letter == '[') && (tar_open == 0)) {
+      tar_sec = 0;
+      tar_open = 1;
+      tar += seqPos + ",";
+    }
+    if ((letter == ']') && (tar_open == 1)) {
+      tar_open = 0;
+      tar += tar_sec + " ";
+    }
+    if ((letter == '{') && (inc_open == 0)) {
+      inc_sec = 0;
+      inc_open = 1;
+      inc += seqPos + ",";
+    }
+    if ((letter == '}') && (inc_open == 1)) {
+      inc_open = 2;
+      inc += inc_sec + " ";
+    }
+    if (letter == '-') {
+      ovl += seqPos + " ";
+    }
+  }
+  if (exc_open == 1) {
+    exc += exc_sec + " ";
+  }
+  if (tar_open == 1) {
+    tar += tar_sec + " ";
+  }
+  if (inc_open == 1) {
+    inc += inc_sec + " ";
+  }
+  var excBox = document.getElementById("SEQUENCE_EXCLUDED_REGION");
+  if (excBox) {
+    excBox.value = exc;
+  }
+  var tarBox = document.getElementById("SEQUENCE_TARGET");
+  if (tarBox) {
+    tarBox.value = tar;
+  }
+  var incBox = document.getElementById("SEQUENCE_INCLUDED_REGION");
+  if (incBox) {
+    incBox.value = inc;
+  }
+  var ovlBox = document.getElementById("SEQUENCE_OVERLAP_JUNCTION_LIST");
+  if (ovlBox) {
+    ovlBox.value = ovl;
+  }
+  cleanRegions();
+  createSeqWithDeco(-1);
+}
+
+function cleanRegions() {
+  var excBox = document.getElementById("SEQUENCE_EXCLUDED_REGION");
+  var val = "";
+  if (excBox) {
+    val = excBox.value;
+    val = val.replace(/[^0-9, ]/g, "");
+    val = val.replace(/\s+/g, " ");
+    val = val.replace(/\s+$/g, "");
+    excBox.value = val;
+  }
+  var tarBox = document.getElementById("SEQUENCE_TARGET");
+  if (tarBox) {
+    val = tarBox.value;
+    val = val.replace(/[^0-9, ]/g, "");
+    val = val.replace(/\s+/g, " ");
+    val = val.replace(/\s+$/g, "");
+    tarBox.value = val;
+  }
+  var incBox = document.getElementById("SEQUENCE_INCLUDED_REGION");
+  if (incBox) {
+    val = incBox.value;
+    val = val.replace(/[^0-9, ]/g, "");
+    val = val.replace(/\s+/g, " ");
+    val = val.replace(/\s+$/g, "");
+    incBox.value = val;
+  }
+  var ovlBox = document.getElementById("SEQUENCE_OVERLAP_JUNCTION_LIST");
+  if (ovlBox) {
+    val = ovlBox.value;
+    val = val.replace(/[^0-9 ]/g, "");
+    val = val.replace(/\s+/g, " ");
+    val = val.replace(/\s+$/g, "");
+    ovlBox.value = val;
   }
 }
 
