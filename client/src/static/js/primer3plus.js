@@ -20,7 +20,7 @@ const API_URL = process.env.API_URL
 const HELP_LINK_URL = process.env.HELP_LINK_URL
 const INDEX_LINK_URL = process.env.INDEX_LINK_URL
 
-var primer3plus_version = "3.2.3";
+var primer3plus_version = "3.2.4";
 
 // The default Settings loaded from the server
 var defSet;
@@ -983,24 +983,71 @@ function partCheckSecStruct(res, linkRoot, tag, help, description) {
 
 function createResultsDetection(res){
   var ret = createPrimer3ManagerBar();
+
+  var maxPrimers = parseInt(res["PRIMER_PAIR_NUM_RETURNED"]) - 1;
   ret += '<div class="p3p_fit_to_table">\n';
-  if (selectedPrimerPair > 0 ) {
-    ret += '  <input value="Previous Primer Pair" type="button" onclick="changeSelectedPrimerPair(-1);">\n';
+  ret += '  <input value="First Primer Pair" type="button" onclick="changeFirstPrimerPair();"';
+  if (selectedPrimerPair < 1) {
+    ret += ' disabled';
   }
-  ret += '</div>\n';
+  ret += '>\n  <input value="Previous Primer Pair" type="button" onclick="changeSelectedPrimerPair(-1);"';
+  if (selectedPrimerPair < 1) {
+    ret += ' disabled';
+  }
+  ret += '>\n  <input value="Next Primer Pair" type="button" onclick="changeSelectedPrimerPair(1);"';
+  if (selectedPrimerPair > maxPrimers - 1) {
+    ret += ' disabled';
+  }
+  ret += '>\n  <input value="Last Primer Pair" type="button" onclick="changeLastPrimerPair(' + maxPrimers + ');"';
+  if (selectedPrimerPair > maxPrimers - 1) {
+    ret += ' disabled';
+  }
+  ret += '>\n</div>\n';
+
   ret += createPrimerBox(res, selectedPrimerPair);
-  ret += '<div class="p3p_fit_to_table">\n'; 
-  if (selectedPrimerPair < parseInt(res["PRIMER_PAIR_NUM_RETURNED"]) - 1) {
-    ret += '  <input value="Next Primer Pair" type="button" onclick="changeSelectedPrimerPair(1);">\n';
+
+  ret += '<div class="p3p_fit_to_table">\n';
+  ret += '  <input value="First Primer Pair" type="button" onclick="changeFirstPrimerPair();"';
+  if (selectedPrimerPair < 1) {
+    ret += ' disabled';
   }
-  ret += '</div>\n';
+  ret += '>\n  <input value="Previous Primer Pair" type="button" onclick="changeSelectedPrimerPair(-1);"';
+  if (selectedPrimerPair < 1) {
+    ret += ' disabled';
+  }
+  ret += '>\n  <input value="Next Primer Pair" type="button" onclick="changeSelectedPrimerPair(1);"';
+  if (selectedPrimerPair > maxPrimers - 1) {
+    ret += ' disabled';
+  }
+  ret += '>\n  <input value="Last Primer Pair" type="button" onclick="changeLastPrimerPair(' + maxPrimers + ');"';
+  if (selectedPrimerPair > maxPrimers - 1) {
+    ret += ' disabled';
+  }
+  ret += '>\n</div>\n';
+
   ret += createHTMLsequence(res, selectedPrimerPair);
   return ret;
+}
+
+window.changeFirstPrimerPair = changeFirstPrimerPair;
+function changeFirstPrimerPair() {
+  selectedPrimerPair = 0;
+  var returnHTML = createResultsDetection(results);
+  returnHTML += createPrimerStatistics(results);
+  document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
 }
 
 window.changeSelectedPrimerPair = changeSelectedPrimerPair;
 function changeSelectedPrimerPair(it) {
   selectedPrimerPair = selectedPrimerPair + it;
+  var returnHTML = createResultsDetection(results);
+  returnHTML += createPrimerStatistics(results);
+  document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
+}
+
+window.changeLastPrimerPair = changeLastPrimerPair;
+function changeLastPrimerPair(it) {
+  selectedPrimerPair = it;
   var returnHTML = createResultsDetection(results);
   returnHTML += createPrimerStatistics(results);
   document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
