@@ -20,16 +20,17 @@ const API_URL = process.env.API_URL
 const HELP_LINK_URL = process.env.HELP_LINK_URL
 const INDEX_LINK_URL = process.env.INDEX_LINK_URL
 
-var primer3plus_version = "3.2.2";
+var primer3plus_version = "3.2.3";
 
 // The default Settings loaded from the server
 var defSet;
 // "TAG":["default setting","data type"]
 
-// The current loaded setings (dic)
+// The current loaded settings (dic)
 var currSet = {};
 var compFile1 = {};
 var compFile2 = {};
+var emptySeq = true;
 
 // The old tags which need to be replaced by new tags
 var repOld;
@@ -1921,6 +1922,13 @@ function setHtmlTagValue(tag, value) {
   if (ignore_tags.includes(tag)) {
     return true;
   }
+  if (tag == "SEQUENCE_TEMPLATE") {
+    if (value == "") {
+      emptySeq = true;
+    } else {
+      emptySeq = false;
+    }
+  }
   var pageElement = document.getElementById(tag);
   value = value.replace(/\s*$/, "");
   if (pageElement !== null) {
@@ -2010,6 +2018,7 @@ function initSelectionFeature() {
   }
   var seq = document.getElementById('SEQUENCE_TEMPLATE');
   if (seq !== null) {
+    seq.addEventListener('change',checkRegionsfromSeq);
     seq.addEventListener('keyup', function (event) {
       if (event.key == "-") {
         event.preventDefault();
@@ -2032,6 +2041,20 @@ function initSelectionFeature() {
         createSeqWithDeco(pos);
       }
     });
+  }
+}
+
+function checkRegionsfromSeq() {
+  if (getHtmlTagValue("SEQUENCE_TEMPLATE") != null) {
+    seq = getHtmlTagValue("SEQUENCE_TEMPLATE");
+    if (seq == "") {
+      emptySeq = true;
+    } else {
+      if (emptySeq == true) {
+        readRegionsfromSeq()
+      }
+      emptySeq = false;
+    }
   }
 }
 
