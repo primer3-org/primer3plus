@@ -1,8 +1,11 @@
 {"def":{
 "P3P_DEBUG_MODE":["0","int"],
 "P3P_GB_DB":["","string"],
+"P3P_GB_EXONS":["","string"],
 "P3P_GB_FILE":["","string"],
+"P3P_GB_ORIENTATION":["+","string"],
 "P3P_GB_POSITION":["","string"],
+"P3P_GB_RAW_SEQUENCE":["","string"],
 "P3P_GB_RETURN_PATH":["","string"],
 "P3P_PRIMER_NAME_ACRONYM_INTERNAL":["IN","string"],
 "P3P_PRIMER_NAME_ACRONYM_LEFT":["F","string"],

@@ -20,7 +20,7 @@ const API_URL = process.env.API_URL
 const HELP_LINK_URL = process.env.HELP_LINK_URL
 const INDEX_LINK_URL = process.env.INDEX_LINK_URL
 
-var primer3plus_version = "3.2.4";
+var primer3plus_version = "3.2.5";
 
 // The default Settings loaded from the server
 var defSet;
@@ -75,7 +75,8 @@ document.addEventListener("DOMContentLoaded", function() {
           misspriming_lib_files = res.data["misspriming_lib_files"];
           setHTMLParameters(defSet);
           initElements();
-          checkForUUID();		
+          checkForUUID();
+          showGenomeBrowserButtons();
       }
     })
     .catch(function (error) {
@@ -114,6 +115,7 @@ function loadSetFileFromServer() {
         if (res.status === 200) {
           loadP3File("set", res.data);
           document.getElementById('P3P_DEBUG_TXT_INPUT').value = res.data;
+          showGenomeBrowserButtons();
       }
     })
     .catch(function (error) {
@@ -157,6 +159,9 @@ function runPrimer3() {
   formData.append('P3P_GB_RETURN_PATH', getHtmlTagValue('P3P_GB_RETURN_PATH'));
   formData.append('P3P_GB_DB', getHtmlTagValue('P3P_GB_DB'));
   formData.append('P3P_GB_POSITION', getHtmlTagValue('P3P_GB_POSITION'));
+  formData.append('P3P_GB_EXONS', getHtmlTagValue('P3P_GB_EXONS'));
+  formData.append('P3P_GB_ORIENTATION', getHtmlTagValue('P3P_GB_ORIENTATION'));
+  formData.append('P3P_GB_RAW_SEQUENCE', getHtmlTagValue('P3P_GB_RAW_SEQUENCE'));
   axios
     .post(`${API_URL}/runprimer3`, formData)
     .then(res => {
@@ -341,6 +346,23 @@ function checkForUUID() {
           if (res.status === 200) {
             if (res.data.upfile	!= "") {
               loadP3File("silent",res.data.upfile);
+              var sequence = getHtmlTagValue('SEQUENCE_TEMPLATE');
+              var exons = getHtmlTagValue('P3P_GB_EXONS');
+              var orientation = getHtmlTagValue('P3P_GB_ORIENTATION');
+              var eleSeq = document.getElementById('SEQUENCE_TEMPLATE');
+              if (orientation == "-") {
+                sequence = reverseComplement(sequence)
+                if (eleSeq !== null) {
+                  eleSeq.value = sequence;
+                }
+              }
+              if (exons != "") {
+                var pageElement = document.getElementById('P3P_GB_RAW_SEQUENCE');
+                if (pageElement !== null) {
+                  pageElement.value = sequence;
+                }
+                pocGenomeBrowserORF("overlap");
+              }
               document.getElementById('P3P_DEBUG_TXT_INPUT').value = res.data.upfile;
             }
             if (res.data.infile != "") {
@@ -361,7 +383,8 @@ function checkForUUID() {
               calcP3PResultAdditions();
               processResData();
             }
-        }
+            showGenomeBrowserButtons();
+          }
       })
       .catch(function (error) {
         if (error.response) {
@@ -382,10 +405,153 @@ function checkForUUID() {
   }
 }
 
+function showGenomeBrowserButtons() {
+  var exons = getHtmlTagValue('P3P_GB_EXONS');
+  el = document.getElementById('P3P_GENOME_BUTTONS');
+  if (el == null) {
+    return;
+  }
+  if (exons != "") {
+    el.style.display = "inline";
+  } else {
+    el.style.display = "none";
+  }
+}
+
+function pocGenomeBrowserORF(sel) {
+  var sequence = getHtmlTagValue('P3P_GB_RAW_SEQUENCE');
+  var exons = getHtmlTagValue('P3P_GB_EXONS');
+  var orientation = getHtmlTagValue('P3P_GB_ORIENTATION');
+  var gbPos = getHtmlTagValue('P3P_GB_POSITION');
+  var eleSeq = document.getElementById('SEQUENCE_TEMPLATE');
+  if (sequence == "") {
+    return;
+  }
+  if (exons != "") {
+    var gbGenomeSp = gbPos.split(':');
+    var gbPosSp = gbGenomeSp[1].split('-');
+    var gbLength = parseInt(gbPosSp[1]) - parseInt(gbPosSp[0]);
+
+    var exonList = exons.split(',');
+    var exonSeq = "";
+    var exonBound = [];
+    for (var i = 0; i < exonList.length; i++) {
+      if (exonList[i] == "") {
+        continue;
+      }
+      var curExon = exonList[i].split('-');
+      if (curExon.length != 2) {
+        continue;
+      }
+      exonSeq += sequence.substring(parseInt(curExon[0]), parseInt(curExon[0]) + parseInt(curExon[1]));
+      exonBound.push(exonSeq.length - 1);
+    }
+    if (exonBound.length > 1) {
+      exonBound.pop();
+    }
+
+    if (orientation == "-") {
+      if (eleSeq !== null) {
+        eleSeq.value = reverseComplement(exonSeq);
+      }
+      exonBound.reverse();
+      for (var i = 0; i < exonBound.length; i++) {
+        exonBound[i] = exonSeq.length - exonBound[i];
+      }
+
+    } else {
+      if (eleSeq !== null) {
+        eleSeq.value = exonSeq;
+      }
+    }
+
+    var eleSeq = document.getElementById('SEQUENCE_TEMPLATE');
+    if (eleSeq !== null) {
+      eleSeq.value = exonSeq;
+    }
+
+    var overString = "";
+    var tarString = "";
+    for (var i = 0; i < exonBound.length; i++) {
+      overString += exonBound[i] + " ";
+      tarString += (exonBound[i] - 1) + ",2 ";
+    }
+
+    if (sel == "overlap") {
+      tarString = "";
+    } else {
+      overString = "";
+    }
+
+    var eleExcl = document.getElementById('SEQUENCE_EXCLUDED_REGION');
+    if (eleExcl !== null) {
+      eleExcl.value = "";
+    }
+    var eleTar = document.getElementById('SEQUENCE_TARGET');
+    if (eleTar !== null) {
+      eleTar.value = tarString;
+    }
+    var eleIncl = document.getElementById('SEQUENCE_INCLUDED_REGION');
+    if (eleIncl !== null) {
+      eleIncl.value = "";
+    }
+    var eleOver = document.getElementById('SEQUENCE_OVERLAP_JUNCTION_LIST');
+    if (eleOver !== null) {
+      eleOver.value = overString;
+    }
+    createSeqWithDeco(-1);
+  }
+}
+
+function loadOrfOverlaps() {
+  pocGenomeBrowserORF("overlap");
+}
+
+function loadOrfTargets() {
+  pocGenomeBrowserORF("target");
+}
+
+function loadOrfGenome() {
+  var sequence = getHtmlTagValue('P3P_GB_RAW_SEQUENCE');
+  var eleSeq = document.getElementById('SEQUENCE_TEMPLATE');
+  if (eleSeq !== null) {
+    eleSeq.value = sequence;
+  }
+  var eleExcl = document.getElementById('SEQUENCE_EXCLUDED_REGION');
+  if (eleExcl !== null) {
+    eleExcl.value = "";
+  }
+  var eleTar = document.getElementById('SEQUENCE_TARGET');
+  if (eleTar !== null) {
+    eleTar.value = "";
+  }
+  var eleIncl = document.getElementById('SEQUENCE_INCLUDED_REGION');
+  if (eleIncl !== null) {
+    eleIncl.value = "";
+  }
+  var eleOver = document.getElementById('SEQUENCE_OVERLAP_JUNCTION_LIST');
+  if (eleOver !== null) {
+    eleOver.value = "";
+  }
+  createSeqWithDeco(-1);
+}
+
 function initRunPrimer3() {
   var pButton = document.getElementById('P3P_ACTION_RUN_PRIMER3');
   if (pButton !== null) {
     pButton.addEventListener('click', runPrimer3);
+  }
+  var aButton = document.getElementById('P3P_ACTION_GB_LOAD_ORF_OVERLAPS');
+  if (aButton !== null) {
+    aButton.addEventListener('click', loadOrfOverlaps);
+  }
+  var bButton = document.getElementById('P3P_ACTION_GB_LOAD_ORF_TARGETS');
+  if (bButton !== null) {
+    bButton.addEventListener('click', loadOrfTargets);
+  }
+  var cButton = document.getElementById('P3P_ACTION_GB_LOAD_GENOME');
+  if (cButton !== null) {
+    cButton.addEventListener('click', loadOrfGenome);
   }
 }
 
@@ -3304,6 +3470,37 @@ function buttonResetDefault() {
   resetCompFiles();
   updateInterface();
 }
+
+function reverseComplement(seq){
+    var revComp = "";
+    for (var i = seq.length - 1; i >= 0 ; i--) {
+        switch (seq.charAt(i)) {
+            case "a": revComp += "t";
+                break;
+            case "A": revComp += "T";
+                break;
+            case "c": revComp += "g";
+                break;
+            case "C": revComp += "G";
+                break;
+            case "g": revComp += "c";
+                break;
+            case "G": revComp += "C";
+                break;
+            case "t": revComp += "a";
+                break;
+            case "T": revComp += "A";
+                break;
+            case "n": revComp += "n";
+                break;
+            case "N": revComp += "N";
+                break;
+            default: revComp += "n";
+        }
+    }
+    return revComp;
+}
+
 
 function initLoadAmplicon() {
   var pButton = document.getElementById('P3P_ACTION_LOAD_AMPLICON');
