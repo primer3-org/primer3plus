@@ -162,6 +162,7 @@ function runPrimer3() {
   formData.append('P3P_GB_EXONS', getHtmlTagValue('P3P_GB_EXONS'));
   formData.append('P3P_GB_ORIENTATION', getHtmlTagValue('P3P_GB_ORIENTATION'));
   formData.append('P3P_GB_RAW_SEQUENCE', getHtmlTagValue('P3P_GB_RAW_SEQUENCE'));
+  formData.append('SEQUENCE_TEMPLATE', getHtmlTagValue('SEQUENCE_TEMPLATE'));
   axios
     .post(`${API_URL}/runprimer3`, formData)
     .then(res => {
@@ -422,19 +423,15 @@ function pocGenomeBrowserORF(sel) {
   var sequence = getHtmlTagValue('P3P_GB_RAW_SEQUENCE');
   var exons = getHtmlTagValue('P3P_GB_EXONS');
   var orientation = getHtmlTagValue('P3P_GB_ORIENTATION');
-  var gbPos = getHtmlTagValue('P3P_GB_POSITION');
   var eleSeq = document.getElementById('SEQUENCE_TEMPLATE');
   if (sequence == "") {
     return;
   }
   if (exons != "") {
-    var gbGenomeSp = gbPos.split(':');
-    var gbPosSp = gbGenomeSp[1].split('-');
-    var gbLength = parseInt(gbPosSp[1]) - parseInt(gbPosSp[0]);
-
     var exonList = exons.split(',');
     var exonSeq = "";
     var exonBound = [];
+    var lastPos = 0;
     for (var i = 0; i < exonList.length; i++) {
       if (exonList[i] == "") {
         continue;
@@ -444,7 +441,10 @@ function pocGenomeBrowserORF(sel) {
         continue;
       }
       exonSeq += sequence.substring(parseInt(curExon[0]), parseInt(curExon[0]) + parseInt(curExon[1]));
-      exonBound.push(exonSeq.length - 1);
+      if (lastPos + 5 < parseInt(curExon[0])) {
+        lastPos = parseInt(curExon[0]) + parseInt(curExon[1]);
+        exonBound.push(exonSeq.length - 1);
+      }
     }
     if (exonBound.length > 1) {
       exonBound.pop();
@@ -463,11 +463,6 @@ function pocGenomeBrowserORF(sel) {
       if (eleSeq !== null) {
         eleSeq.value = exonSeq;
       }
-    }
-
-    var eleSeq = document.getElementById('SEQUENCE_TEMPLATE');
-    if (eleSeq !== null) {
-      eleSeq.value = exonSeq;
     }
 
     var overString = "";

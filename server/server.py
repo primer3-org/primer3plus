@@ -177,7 +177,6 @@ def runstatistics():
             data += str(finalData[dat][5]) + "\t"
             data += str(finalData[dat][6]) + "\t"
             data += str(finalData[dat][7]) + "\n"
-            print(dat)
         logData("Primer3Statistics", "View", "1", "---")
         return jsonify({"outfile": data}), 200
     return jsonify(errors=[{"title": "Error: No POST request!"}]), 400
@@ -187,13 +186,10 @@ def runstatistics():
 def getbed(uuidstr):
     if is_valid_uuid(uuidstr):
         fname = "p3p_" + uuidstr + ".bed"
-        print(fname)
         if allowed_file(fname):
             sf = os.path.join(app.config['UPLOAD_FOLDER'], uuidstr[0:2])
             if os.path.exists(sf):
-                print("Exists")
                 if os.path.isfile(os.path.join(sf, fname)):
-                    print("Send")
                     return send_file(os.path.join(sf, fname), mimetype="text/plain", download_name=uuidstr)
     return "File does not exist!"
 
@@ -263,6 +259,12 @@ def runp3():
                             gb_path = str(request.form['P3P_GB_RETURN_PATH'])
                             gb_db = str(request.form['P3P_GB_DB'])
                             gb_pos = str(request.form['P3P_GB_POSITION'])
+                            gb_exons = str(request.form['P3P_GB_EXONS'])
+                            gb_orient = str(request.form['P3P_GB_ORIENTATION'])
+                            real_seq = str(request.form['SEQUENCE_TEMPLATE'])
+                            gb_orf_seq_len = 0
+                            gb_exon_list = []
+                            gb_genome_list = []
                             allOutLines = data.split('\n')
                             allOutData = {}
                             for line in allOutLines:
@@ -276,44 +278,122 @@ def runp3():
                             gb_chrom = gb_pos.split(':')
                             if len(gb_chrom) == 2:
                                 gb_st_end = gb_chrom[1].split('-')
+                                gb_start_pos = int(gb_st_end[0])
                                 bedtxt += gb_chrom[0] + '\t' + gb_st_end[0] + '\t' + gb_st_end[1] + '\t'
                                 bedtxt += 'input_range\t0\t+\t' + gb_st_end[0] + '\t' + gb_st_end[1]
                                 bedtxt += '\t100,100,100\n'
+                                if gb_exons != "":
+                                    exonList = gb_exons.split(',')
+                                    for i in range(0, len(exonList)):
+                                        if exonList[i] == "":
+                                            continue
+                                        curExon = exonList[i].split('-')
+                                        if len(curExon) != 2:
+                                            continue
+                                        gb_orf_seq_len += int(curExon[1])
+                                        gb_exon_list.append(gb_orf_seq_len)
+                                        gb_genome_list.append(int(curExon[0]) + int(curExon[1]) - gb_orf_seq_len)
                                 if 'PRIMER_LEFT_NUM_RETURNED' in allOutData:
                                     left_prim = int(allOutData['PRIMER_LEFT_NUM_RETURNED'])
                                     for p_num in range(0, left_prim):
                                         geneArr = str(allOutData['PRIMER_LEFT_' + str(p_num)]).split(',')
+                                        rawPos = int(geneArr[0]) - 1
+                                        rawLen = int(geneArr[1])
+                                        realStart = rawPos
+                                        realEnd = rawPos + rawLen
                                         if len(geneArr) == 2:
+                                            if gb_exons != "" and len(real_seq) == gb_orf_seq_len:
+                                                if gb_orient == '-':
+                                                    realStart = gb_orf_seq_len - (rawPos + rawLen) + 1
+                                                    realEnd = realStart + rawLen
+                                                i = 0
+                                                orfOffset = 0
+                                                while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realStart:
+                                                    orfOffset = gb_genome_list[i + 1]
+                                                    i += 1
+                                                realStart += orfOffset + 1
+                                                i = 0
+                                                orfOffset = 0
+                                                while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realEnd:
+                                                    orfOffset = gb_genome_list[i + 1]
+                                                    i += 1
+                                                realEnd += orfOffset
                                             bedtxt += gb_chrom[0] + '\t'
-                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - 2) + '\t'
-                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) + int(geneArr[1]) - 2)
+                                            bedtxt += str(gb_start_pos + realStart - 1) + '\t'
+                                            bedtxt += str(gb_start_pos + realEnd - 1)
                                             bedtxt += '\tLeft_Primer_' + str(p_num + 1) + '\t0\t+\t';
-                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - 2) + '\t'
-                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) + int(geneArr[1]) - 2)
+                                            bedtxt += str(gb_start_pos + realStart - 1) + '\t'
+                                            bedtxt += str(gb_start_pos + realEnd - 1)
                                             bedtxt += '\t204,204,255\n';
                                 if 'PRIMER_INTERNAL_NUM_RETURNED' in allOutData:
                                     int_prim = int(allOutData['PRIMER_INTERNAL_NUM_RETURNED'])
                                     for p_num in range(0, int_prim):
                                         geneArr = str(allOutData['PRIMER_INTERNAL_' + str(p_num)]).split(',')
+                                        rawPos = int(geneArr[0]) - 1
+                                        rawLen = int(geneArr[1])
+                                        realStart = rawPos
+                                        realEnd = rawPos + rawLen
                                         if len(geneArr) == 2:
+                                            if gb_exons != "" and len(real_seq) == gb_orf_seq_len:
+                                                if gb_orient == '-':
+                                                    realStart = gb_orf_seq_len - (rawPos + rawLen) + 1
+                                                    realEnd = realStart + rawLen
+                                                i = 0
+                                                orfOffset = 0
+                                                while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realStart:
+                                                    orfOffset = gb_genome_list[i + 1]
+                                                    i += 1
+                                                realStart += orfOffset + 1
+                                                i = 0
+                                                orfOffset = 0
+                                                while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realEnd:
+                                                    orfOffset = gb_genome_list[i + 1]
+                                                    i += 1
+                                                realEnd += orfOffset
                                             bedtxt += gb_chrom[0] + '\t'
-                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - 2) + '\t'
-                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) + int(geneArr[1]) - 2)
+                                            bedtxt += str(gb_start_pos + realStart - 1) + '\t'
+                                            bedtxt += str(gb_start_pos + realEnd - 1)
                                             bedtxt += '\tInternal_Primer_' + str(p_num + 1) + '\t0\t+\t';
-                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - 2) + '\t'
-                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) + int(geneArr[1]) - 2)
+                                            bedtxt += str(gb_start_pos + realStart - 1) + '\t'
+                                            bedtxt += str(gb_start_pos + realEnd - 1)
                                             bedtxt += '\t0,0,0\n';
                                 if 'PRIMER_RIGHT_NUM_RETURNED' in allOutData:
                                     right_prim = int(allOutData['PRIMER_RIGHT_NUM_RETURNED'])
+                                    print(gb_exon_list)
                                     for p_num in range(0, right_prim):
                                         geneArr = str(allOutData['PRIMER_RIGHT_' + str(p_num)]).split(',')
+                                        rawPos = int(geneArr[0])
+                                        rawLen = int(geneArr[1])
+                                        realStart = rawPos - rawLen
+                                        realEnd = rawPos
                                         if len(geneArr) == 2:
+                                            if gb_exons != "" and len(real_seq) == gb_orf_seq_len:
+                                                if gb_orient == '-':
+                                                    realEnd = gb_orf_seq_len - (rawPos - rawLen) - 1
+                                                    realStart = realEnd - rawLen
+                                                i = 0
+                                                orfOffset = 0
+                                                print("start: " + str(realStart))
+                                                while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realStart:
+                                                    orfOffset = gb_genome_list[i + 1]
+                                                    i += 1
+                                                realStart += orfOffset + 1
+                                                print(orfOffset)
+                                                i = 0
+                                                orfOffset = 0
+                                                print("start: " + str(realEnd))
+                                                while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realEnd:
+                                                    orfOffset = gb_genome_list[i + 1]
+                                                    i += 1
+                                                realEnd += orfOffset
+                                                print(orfOffset)
+                                                print("----")
                                             bedtxt += gb_chrom[0] + '\t'
-                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - int(geneArr[1]) - 1) + '\t'
-                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - 1)
+                                            bedtxt += str(gb_start_pos + realStart - 1) + '\t'
+                                            bedtxt += str(gb_start_pos + realEnd - 1)
                                             bedtxt += '\tRight_Primer_' + str(p_num + 1) + '\t0\t+\t';
-                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - int(geneArr[1]) - 1) + '\t'
-                                            bedtxt += str(int(gb_st_end[0]) + int(geneArr[0]) - 1)
+                                            bedtxt += str(gb_start_pos + realStart - 1) + '\t'
+                                            bedtxt += str(gb_start_pos + realEnd - 1)
                                             bedtxt += '\t250,240,75\n';
                                 with open(bedfile, "w") as bed:
                                     bed.write(bedtxt)
@@ -656,7 +736,7 @@ def runa3():
                                         '-mf', dat_mf, 
                                         '-o', dat_out,
                                         dat_seq]
-                        print('\nCall: ' + " ".join(p3_args) + "\n")
+                        # print('\nCall: ' + " ".join(p3_args) + "\n")
                         # print('\nInput: ' + logfile + "\n")
                         stat = {'timeout':False}
                         proc = subprocess.Popen(p3_args, stdout=log, stderr=err)
