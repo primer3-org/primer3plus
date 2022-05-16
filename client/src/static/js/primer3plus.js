@@ -408,7 +408,7 @@ function checkForUUID() {
 
 function showGenomeBrowserButtons() {
   var exons = getHtmlTagValue('P3P_GB_EXONS');
-  el = document.getElementById('P3P_GENOME_BUTTONS');
+  var el = document.getElementById('P3P_GENOME_BUTTONS');
   if (el == null) {
     return;
   }

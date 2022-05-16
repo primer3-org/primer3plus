@@ -243,177 +243,182 @@ def runp3():
                             return jsonify(errors = [{"title": "Binary ./primer3core not found!"}]), 400
                         else:
                             return jsonify(errors = [{"title": "OSError " + str(e.errno)  + " running binary ./primer3core!"}]), 400
-#        print (str(return_code) + "\n")                    
-        with open(errfile, "r") as err:
-            errInfo = "" + err.read()
-            with open(outfile, "r") as out:
-                data = out.read()
-                data += "\n" + "P3P_UUID=" + uuidstr + "\n"
-                if not p3p_err_str == "":
-                    data += "P3P_ERROR=" + p3p_err_str + "\n"
+            if os.path.exists(errfile):
+                with open(errfile, "r") as err:
+                    errInfo = "" + err.read()
+                    if (errInfo != ""):
+                        if (p3p_err_str != ""):
+                            p3p_err_str += ";"
+                        p3p_err_str += "Runerror: " + errInfo
+            if os.path.exists(outfile):        
+                with open(outfile, "r") as out:
+                    data = out.read()
+                    data += "\n" + "P3P_UUID=" + uuidstr + "\n"
+                    if not p3p_err_str == "":
+                        data += "P3P_ERROR=" + p3p_err_str + "\n"
 
-                # Create BED file for UCSC Genome Browser
-                if 'P3P_GB_RETURN_PATH' in request.form.keys():
-                    if 'P3P_GB_DB' in request.form.keys():
-                        if 'P3P_GB_POSITION' in request.form.keys():
-                            gb_path = str(request.form['P3P_GB_RETURN_PATH'])
-                            gb_db = str(request.form['P3P_GB_DB'])
-                            gb_pos = str(request.form['P3P_GB_POSITION'])
-                            gb_exons = str(request.form['P3P_GB_EXONS'])
-                            gb_orient = str(request.form['P3P_GB_ORIENTATION'])
-                            real_seq = str(request.form['SEQUENCE_TEMPLATE'])
-                            gb_orf_seq_len = 0
-                            gb_exon_list = []
-                            gb_genome_list = []
-                            allOutLines = data.split('\n')
-                            allOutData = {}
-                            for line in allOutLines:
-                                lineSpl = line.split('=')
-                                if len(lineSpl) == 2:
-                                    allOutData[lineSpl[0]] = lineSpl[1]
-                            bedfile = os.path.join(sf, "p3p_" + uuidstr + ".bed")
-                            bedtxt = 'browser position ' + gb_pos + '\n'
-                            bedtxt += 'track name="Primer3Plus" description="Primers by Primer3Plus in region '
-                            bedtxt += gb_pos + '" visibility="pack" itemRgb="On"\n'
-                            gb_chrom = gb_pos.split(':')
-                            if len(gb_chrom) == 2:
-                                gb_st_end = gb_chrom[1].split('-')
-                                gb_start_pos = int(gb_st_end[0])
-                                bedtxt += gb_chrom[0] + '\t' + gb_st_end[0] + '\t' + gb_st_end[1] + '\t'
-                                bedtxt += 'input_range\t0\t+\t' + gb_st_end[0] + '\t' + gb_st_end[1]
-                                bedtxt += '\t100,100,100\n'
-                                if gb_exons != "":
-                                    exonList = gb_exons.split(',')
-                                    for i in range(0, len(exonList)):
-                                        if exonList[i] == "":
-                                            continue
-                                        curExon = exonList[i].split('-')
-                                        if len(curExon) != 2:
-                                            continue
-                                        gb_orf_seq_len += int(curExon[1])
-                                        gb_exon_list.append(gb_orf_seq_len)
-                                        gb_genome_list.append(int(curExon[0]) + int(curExon[1]) - gb_orf_seq_len)
-                                if 'PRIMER_LEFT_NUM_RETURNED' in allOutData:
-                                    left_prim = int(allOutData['PRIMER_LEFT_NUM_RETURNED'])
-                                    for p_num in range(0, left_prim):
-                                        geneArr = str(allOutData['PRIMER_LEFT_' + str(p_num)]).split(',')
-                                        rawPos = int(geneArr[0]) - 1
-                                        rawLen = int(geneArr[1])
-                                        realStart = rawPos
-                                        realEnd = rawPos + rawLen
-                                        if len(geneArr) == 2:
-                                            if gb_exons != "" and len(real_seq) == gb_orf_seq_len:
-                                                if gb_orient == '-':
-                                                    realStart = gb_orf_seq_len - (rawPos + rawLen) + 1
-                                                    realEnd = realStart + rawLen
-                                                i = 0
-                                                orfOffset = 0
-                                                while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realStart:
-                                                    orfOffset = gb_genome_list[i + 1]
-                                                    i += 1
-                                                realStart += orfOffset + 1
-                                                i = 0
-                                                orfOffset = 0
-                                                while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realEnd:
-                                                    orfOffset = gb_genome_list[i + 1]
-                                                    i += 1
-                                                realEnd += orfOffset
-                                            bedtxt += gb_chrom[0] + '\t'
-                                            bedtxt += str(gb_start_pos + realStart - 1) + '\t'
-                                            bedtxt += str(gb_start_pos + realEnd - 1)
-                                            bedtxt += '\tLeft_Primer_' + str(p_num + 1) + '\t0\t+\t';
-                                            bedtxt += str(gb_start_pos + realStart - 1) + '\t'
-                                            bedtxt += str(gb_start_pos + realEnd - 1)
-                                            bedtxt += '\t204,204,255\n';
-                                if 'PRIMER_INTERNAL_NUM_RETURNED' in allOutData:
-                                    int_prim = int(allOutData['PRIMER_INTERNAL_NUM_RETURNED'])
-                                    for p_num in range(0, int_prim):
-                                        geneArr = str(allOutData['PRIMER_INTERNAL_' + str(p_num)]).split(',')
-                                        rawPos = int(geneArr[0]) - 1
-                                        rawLen = int(geneArr[1])
-                                        realStart = rawPos
-                                        realEnd = rawPos + rawLen
-                                        if len(geneArr) == 2:
-                                            if gb_exons != "" and len(real_seq) == gb_orf_seq_len:
-                                                if gb_orient == '-':
-                                                    realStart = gb_orf_seq_len - (rawPos + rawLen) + 1
-                                                    realEnd = realStart + rawLen
-                                                i = 0
-                                                orfOffset = 0
-                                                while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realStart:
-                                                    orfOffset = gb_genome_list[i + 1]
-                                                    i += 1
-                                                realStart += orfOffset + 1
-                                                i = 0
-                                                orfOffset = 0
-                                                while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realEnd:
-                                                    orfOffset = gb_genome_list[i + 1]
-                                                    i += 1
-                                                realEnd += orfOffset
-                                            bedtxt += gb_chrom[0] + '\t'
-                                            bedtxt += str(gb_start_pos + realStart - 1) + '\t'
-                                            bedtxt += str(gb_start_pos + realEnd - 1)
-                                            bedtxt += '\tInternal_Primer_' + str(p_num + 1) + '\t0\t+\t';
-                                            bedtxt += str(gb_start_pos + realStart - 1) + '\t'
-                                            bedtxt += str(gb_start_pos + realEnd - 1)
-                                            bedtxt += '\t0,0,0\n';
-                                if 'PRIMER_RIGHT_NUM_RETURNED' in allOutData:
-                                    right_prim = int(allOutData['PRIMER_RIGHT_NUM_RETURNED'])
-                                    print(gb_exon_list)
-                                    for p_num in range(0, right_prim):
-                                        geneArr = str(allOutData['PRIMER_RIGHT_' + str(p_num)]).split(',')
-                                        rawPos = int(geneArr[0])
-                                        rawLen = int(geneArr[1])
-                                        realStart = rawPos - rawLen
-                                        realEnd = rawPos
-                                        if len(geneArr) == 2:
-                                            if gb_exons != "" and len(real_seq) == gb_orf_seq_len:
-                                                if gb_orient == '-':
-                                                    realEnd = gb_orf_seq_len - (rawPos - rawLen) - 1
-                                                    realStart = realEnd - rawLen
-                                                i = 0
-                                                orfOffset = 0
-                                                print("start: " + str(realStart))
-                                                while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realStart:
-                                                    orfOffset = gb_genome_list[i + 1]
-                                                    i += 1
-                                                realStart += orfOffset + 1
-                                                print(orfOffset)
-                                                i = 0
-                                                orfOffset = 0
-                                                print("start: " + str(realEnd))
-                                                while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realEnd:
-                                                    orfOffset = gb_genome_list[i + 1]
-                                                    i += 1
-                                                realEnd += orfOffset
-                                                print(orfOffset)
-                                                print("----")
-                                            bedtxt += gb_chrom[0] + '\t'
-                                            bedtxt += str(gb_start_pos + realStart - 1) + '\t'
-                                            bedtxt += str(gb_start_pos + realEnd - 1)
-                                            bedtxt += '\tRight_Primer_' + str(p_num + 1) + '\t0\t+\t';
-                                            bedtxt += str(gb_start_pos + realStart - 1) + '\t'
-                                            bedtxt += str(gb_start_pos + realEnd - 1)
-                                            bedtxt += '\t250,240,75\n';
-                                with open(bedfile, "w") as bed:
-                                    bed.write(bedtxt)
-                                    data += "P3P_GB_FILE=" + uuidstr + "\n"
-                if LOGP3RUNS:
-                    state = "Primer3_Pick_Fail"
-                    prCount = 0
-                    llpr = regLPrim.search(data)
-                    if llpr:
-                        prCount += int(llpr.group(1))
-                    inpr = regIPrim.search(data)
-                    if inpr:
-                        prCount += int(inpr.group(1))
-                    rrpr = regRPrim.search(data)
-                    if rrpr:
-                        prCount += int(rrpr.group(1))
-                    if prCount > 0:
-                        state = "Primer3_Pick_Success"
-                    logData("Primer3Plus", state, str(prCount), uuidstr)
-                return jsonify({"outfile": data}), 200
+                    # Create BED file for UCSC Genome Browser
+                    if 'P3P_GB_RETURN_PATH' in request.form.keys():
+                        if 'P3P_GB_DB' in request.form.keys():
+                            if 'P3P_GB_POSITION' in request.form.keys():
+                                gb_path = str(request.form['P3P_GB_RETURN_PATH'])
+                                gb_db = str(request.form['P3P_GB_DB'])
+                                gb_pos = str(request.form['P3P_GB_POSITION'])
+                                gb_exons = str(request.form['P3P_GB_EXONS'])
+                                gb_orient = str(request.form['P3P_GB_ORIENTATION'])
+                                real_seq = str(request.form['SEQUENCE_TEMPLATE'])
+                                gb_orf_seq_len = 0
+                                gb_exon_list = []
+                                gb_genome_list = []
+                                allOutLines = data.split('\n')
+                                allOutData = {}
+                                for line in allOutLines:
+                                    lineSpl = line.split('=')
+                                    if len(lineSpl) == 2:
+                                        allOutData[lineSpl[0]] = lineSpl[1]
+                                bedfile = os.path.join(sf, "p3p_" + uuidstr + ".bed")
+                                bedtxt = 'browser position ' + gb_pos + '\n'
+                                bedtxt += 'track name="Primer3Plus" description="Primers by Primer3Plus in region '
+                                bedtxt += gb_pos + '" visibility="pack" itemRgb="On"\n'
+                                gb_chrom = gb_pos.split(':')
+                                if len(gb_chrom) == 2:
+                                    gb_st_end = gb_chrom[1].split('-')
+                                    gb_start_pos = int(gb_st_end[0])
+                                    bedtxt += gb_chrom[0] + '\t' + gb_st_end[0] + '\t' + gb_st_end[1] + '\t'
+                                    bedtxt += 'input_range\t0\t+\t' + gb_st_end[0] + '\t' + gb_st_end[1]
+                                    bedtxt += '\t100,100,100\n'
+                                    if gb_exons != "":
+                                        exonList = gb_exons.split(',')
+                                        for i in range(0, len(exonList)):
+                                            if exonList[i] == "":
+                                                continue
+                                            curExon = exonList[i].split('-')
+                                            if len(curExon) != 2:
+                                                continue
+                                            gb_orf_seq_len += int(curExon[1])
+                                            gb_exon_list.append(gb_orf_seq_len)
+                                            gb_genome_list.append(int(curExon[0]) + int(curExon[1]) - gb_orf_seq_len)
+                                    if 'PRIMER_LEFT_NUM_RETURNED' in allOutData:
+                                        left_prim = int(allOutData['PRIMER_LEFT_NUM_RETURNED'])
+                                        for p_num in range(0, left_prim):
+                                            geneArr = str(allOutData['PRIMER_LEFT_' + str(p_num)]).split(',')
+                                            rawPos = int(geneArr[0]) - 1
+                                            rawLen = int(geneArr[1])
+                                            realStart = rawPos
+                                            realEnd = rawPos + rawLen
+                                            if len(geneArr) == 2:
+                                                if gb_exons != "" and len(real_seq) == gb_orf_seq_len:
+                                                    if gb_orient == '-':
+                                                        realStart = gb_orf_seq_len - (rawPos + rawLen) + 1
+                                                        realEnd = realStart + rawLen
+                                                    i = 0
+                                                    orfOffset = 0
+                                                    while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realStart:
+                                                        orfOffset = gb_genome_list[i + 1]
+                                                        i += 1
+                                                    realStart += orfOffset + 1
+                                                    i = 0
+                                                    orfOffset = 0
+                                                    while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realEnd:
+                                                        orfOffset = gb_genome_list[i + 1]
+                                                        i += 1
+                                                    realEnd += orfOffset
+                                                bedtxt += gb_chrom[0] + '\t'
+                                                bedtxt += str(gb_start_pos + realStart - 1) + '\t'
+                                                bedtxt += str(gb_start_pos + realEnd - 1)
+                                                bedtxt += '\tLeft_Primer_' + str(p_num + 1) + '\t0\t+\t';
+                                                bedtxt += str(gb_start_pos + realStart - 1) + '\t'
+                                                bedtxt += str(gb_start_pos + realEnd - 1)
+                                                bedtxt += '\t204,204,255\n';
+                                    if 'PRIMER_INTERNAL_NUM_RETURNED' in allOutData:
+                                        int_prim = int(allOutData['PRIMER_INTERNAL_NUM_RETURNED'])
+                                        for p_num in range(0, int_prim):
+                                            geneArr = str(allOutData['PRIMER_INTERNAL_' + str(p_num)]).split(',')
+                                            rawPos = int(geneArr[0]) - 1
+                                            rawLen = int(geneArr[1])
+                                            realStart = rawPos
+                                            realEnd = rawPos + rawLen
+                                            if len(geneArr) == 2:
+                                                if gb_exons != "" and len(real_seq) == gb_orf_seq_len:
+                                                    if gb_orient == '-':
+                                                        realStart = gb_orf_seq_len - (rawPos + rawLen) + 1
+                                                        realEnd = realStart + rawLen
+                                                    i = 0
+                                                    orfOffset = 0
+                                                    while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realStart:
+                                                        orfOffset = gb_genome_list[i + 1]
+                                                        i += 1
+                                                    realStart += orfOffset + 1
+                                                    i = 0
+                                                    orfOffset = 0
+                                                    while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realEnd:
+                                                        orfOffset = gb_genome_list[i + 1]
+                                                        i += 1
+                                                    realEnd += orfOffset
+                                                bedtxt += gb_chrom[0] + '\t'
+                                                bedtxt += str(gb_start_pos + realStart - 1) + '\t'
+                                                bedtxt += str(gb_start_pos + realEnd - 1)
+                                                bedtxt += '\tInternal_Primer_' + str(p_num + 1) + '\t0\t+\t';
+                                                bedtxt += str(gb_start_pos + realStart - 1) + '\t'
+                                                bedtxt += str(gb_start_pos + realEnd - 1)
+                                                bedtxt += '\t0,0,0\n';
+                                    if 'PRIMER_RIGHT_NUM_RETURNED' in allOutData:
+                                        right_prim = int(allOutData['PRIMER_RIGHT_NUM_RETURNED'])
+                                        print(gb_exon_list)
+                                        for p_num in range(0, right_prim):
+                                            geneArr = str(allOutData['PRIMER_RIGHT_' + str(p_num)]).split(',')
+                                            rawPos = int(geneArr[0])
+                                            rawLen = int(geneArr[1])
+                                            realStart = rawPos - rawLen
+                                            realEnd = rawPos
+                                            if len(geneArr) == 2:
+                                                if gb_exons != "" and len(real_seq) == gb_orf_seq_len:
+                                                    if gb_orient == '-':
+                                                        realEnd = gb_orf_seq_len - (rawPos - rawLen) - 1
+                                                        realStart = realEnd - rawLen
+                                                    i = 0
+                                                    orfOffset = 0
+                                                    print("start: " + str(realStart))
+                                                    while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realStart:
+                                                        orfOffset = gb_genome_list[i + 1]
+                                                        i += 1
+                                                    realStart += orfOffset + 1
+                                                    print(orfOffset)
+                                                    i = 0
+                                                    orfOffset = 0
+                                                    print("start: " + str(realEnd))
+                                                    while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realEnd:
+                                                        orfOffset = gb_genome_list[i + 1]
+                                                        i += 1
+                                                    realEnd += orfOffset
+                                                    print(orfOffset)
+                                                    print("----")
+                                                bedtxt += gb_chrom[0] + '\t'
+                                                bedtxt += str(gb_start_pos + realStart - 1) + '\t'
+                                                bedtxt += str(gb_start_pos + realEnd - 1)
+                                                bedtxt += '\tRight_Primer_' + str(p_num + 1) + '\t0\t+\t';
+                                                bedtxt += str(gb_start_pos + realStart - 1) + '\t'
+                                                bedtxt += str(gb_start_pos + realEnd - 1)
+                                                bedtxt += '\t250,240,75\n';
+                                    with open(bedfile, "w") as bed:
+                                        bed.write(bedtxt)
+                                        data += "P3P_GB_FILE=" + uuidstr + "\n"
+                    if LOGP3RUNS:
+                        state = "Primer3_Pick_Fail"
+                        prCount = 0
+                        llpr = regLPrim.search(data)
+                        if llpr:
+                            prCount += int(llpr.group(1))
+                        inpr = regIPrim.search(data)
+                        if inpr:
+                            prCount += int(inpr.group(1))
+                        rrpr = regRPrim.search(data)
+                        if rrpr:
+                            prCount += int(rrpr.group(1))
+                        if prCount > 0:
+                            state = "Primer3_Pick_Success"
+                        logData("Primer3Plus", state, str(prCount), uuidstr)
+                    return jsonify({"outfile": data}), 200
         logData("Primer3Plus", "Primer3_Pick_Error", '0', uuidstr)
         return jsonify(errors=[{"title": "Error in handling POST request!"}]), 400
     return jsonify(errors=[{"title": "Error: No POST request!"}]), 400
@@ -541,59 +546,69 @@ def runprefold():
                                 return jsonify(errors = [{"title": "UNAFold Binary not found! Try server www.primer3plus.com"}]), 400
                             else:
                                 return jsonify(errors = [{"title": "OSError " + str(e.errno)  + " running binary ./hybrid-ss-min!"}]), 400
-#        print (str(return_code) + "\n")                    
-        with open(errfile, "r") as err:
-            with open(outfile, "a") as out:
-                errInfo = "" + err.read()
-                outdata = ""
-                excl_reg = ""
-                in_reg = False
-                try: 
-                    with open(seqfile + ".ct", "r") as res:
-                        outdata = res.read()
-                except OSError as e:
-                    return jsonify(errors = [{"title": "UNAFold cound not process the request."}]), 400
+            errInfo = ""
+            if os.path.exists(errfile):
+                with open(errfile, "r") as err:
+                    errInfo += err.read()
+                    if (errInfo != ""):
+                        if (p3p_err_str != ""):
+                            p3p_err_str += ";"
+                        p3p_err_str += "Runerror: " + errInfo
+            if os.path.exists(outfile):
+                with open(outfile, "a") as out:
+                    outdata = ""
+                    excl_reg = ""
+                    in_reg = False
+                    try: 
+                        with open(seqfile + ".ct", "r") as res:
+                            outdata = res.read()
+                    except OSError as e:
+                        return jsonify(errors = [{"title": "UNAFold cound not process the request."}]), 400
 
-                state = "no_sec_struct"
-                line_data = outdata.split("\n")
-                deltG = line_data[0].split("\t")
-                if len(deltG) > 1:
-                    data += "P3P_PREFOLD_DELTA_G=" + re.sub("dG = ", "", deltG[1]) + "\n"
-                data += "P3P_UUID=" + uuidstr + "\n"
-                excl_reg = ""
-                if dat_incl_start > 0:
-                    excl_reg += str(dat_start) + "," + str(dat_incl_start) + " "
-                inc_start = 0
-                inc_end = 0
-                inc_last = 0
-                if len(line_data) > 20:
-                    cells = line_data[1].split("\t")
-                    for line in line_data:
-                        cells = line.split("\t")
-                        if len(cells) > 6:
-                            if int(cells[4]) == 0 and in_reg == True:
-                                inc_end = int(cells[0]) - 1
-                                excl_reg += str(dat_incl_start + dat_start + inc_start)
-                                excl_reg += "," + str(inc_end - inc_start) + " "
-                                in_reg = False
-                            if int(cells[4]) != 0 and in_reg == False:
-                                inc_start = int(cells[0]) - 1
-                                in_reg = True
-                            if int(cells[4]) != 0:
-                                inc_last = int(cells[0]) - 1
-                    if in_reg == True:
-                        excl_reg += str(dat_incl_start + dat_start + inc_start)
-                        excl_reg += "," + str(inc_last - inc_start) + " "
-                    state = "found_sec_struct"
-                else:
-                    data += "P3P_ERROR=UNAFold did not return data.\n"
-                if dat_incl_start + dat_incl_len < len(dat_seq ):
-                    excl_reg += str(dat_incl_start + dat_incl_len + dat_start) + ","
-                    excl_reg += str(len(dat_seq) - (dat_incl_start + dat_incl_len)) + " "
-                data += "SEQUENCE_EXCLUDED_REGION=" + re.sub(" +$", "", excl_reg) + "\n"
-                out.write("SEQUENCE_EXCLUDED_REGION=" + re.sub(" +$", "", excl_reg) + "\n")
-                logData("Primer3Prefold", "UNAFold_run", state, uuidstr)
-                return jsonify({"outfile": data}), 200
+                    state = "no_sec_struct"
+                    line_data = outdata.split("\n")
+                    deltG = line_data[0].split("\t")
+                    if len(deltG) > 1:
+                        data += "P3P_PREFOLD_DELTA_G=" + re.sub("dG = ", "", deltG[1]) + "\n"
+                    data += "P3P_UUID=" + uuidstr + "\n"
+                    excl_reg = ""
+                    if dat_incl_start > 0:
+                        excl_reg += str(dat_start) + "," + str(dat_incl_start) + " "
+                    inc_start = 0
+                    inc_end = 0
+                    inc_last = 0
+                    if len(line_data) > 20:
+                        cells = line_data[1].split("\t")
+                        for line in line_data:
+                            cells = line.split("\t")
+                            if len(cells) > 6:
+                                if int(cells[4]) == 0 and in_reg == True:
+                                    inc_end = int(cells[0]) - 1
+                                    excl_reg += str(dat_incl_start + dat_start + inc_start)
+                                    excl_reg += "," + str(inc_end - inc_start) + " "
+                                    in_reg = False
+                                if int(cells[4]) != 0 and in_reg == False:
+                                    inc_start = int(cells[0]) - 1
+                                    in_reg = True
+                                if int(cells[4]) != 0:
+                                    inc_last = int(cells[0]) - 1
+                        if in_reg == True:
+                            excl_reg += str(dat_incl_start + dat_start + inc_start)
+                            excl_reg += "," + str(inc_last - inc_start) + " "
+                        state = "found_sec_struct"
+                    else:
+                        if (p3p_err_str != ""):
+                            p3p_err_str += ";"
+                        p3p_err_str += "UNAFold did not return data."
+                    if not p3p_err_str == "":
+                        data += "P3P_ERROR=" + p3p_err_str + "\n"
+                    if dat_incl_start + dat_incl_len < len(dat_seq ):
+                        excl_reg += str(dat_incl_start + dat_incl_len + dat_start) + ","
+                        excl_reg += str(len(dat_seq) - (dat_incl_start + dat_incl_len)) + " "
+                    data += "SEQUENCE_EXCLUDED_REGION=" + re.sub(" +$", "", excl_reg) + "\n"
+                    out.write("SEQUENCE_EXCLUDED_REGION=" + re.sub(" +$", "", excl_reg) + "\n")
+                    logData("Primer3Prefold", "UNAFold_run", state, uuidstr)
+                    return jsonify({"outfile": data}), 200
     return jsonify(errors=[{"title": "Error: No POST request!"}]), 400
 
 
@@ -752,21 +767,23 @@ def runa3():
                             return jsonify(errors = [{"title": "Amplicon3 Binary not found!"}]), 400
                         else:
                             return jsonify(errors = [{"title": "OSError " + str(e.errno)  + " running binary ./hybrid-ss-min!"}]), 400
-#        print (str(return_code) + "\n")                    
-        with open(errfile, "r") as err:
-            all_err = err.read()
-            if (all_err != ""):
-                if (p3p_err_str != ""):
-                    p3p_err_str += ";"
-                p3p_err_str += all_err
-                state = "Error"
-            with open(logfile, "r") as out:
-                data = out.read()
-                data += "\n" + "P3P_UUID=" + uuidstr + "\n"
-                if not p3p_err_str == "":
-                    data += "AMPLICON_ERROR=" + p3p_err_str + "\n"
-                logData("Amplicon3Plus", state, "---", uuidstr)
-                return jsonify({"outfile": data}), 200
+            all_err = ""
+            if os.path.exists(errfile):
+                with open(errfile, "r") as err:
+                    all_err = err.read()
+                    if (all_err != ""):
+                        if (p3p_err_str != ""):
+                            p3p_err_str += ";"
+                        p3p_err_str += all_err
+                        state = "Error"
+            if os.path.exists(logfile):
+                with open(logfile, "r") as out:
+                    data = out.read()
+                    data += "\n" + "P3P_UUID=" + uuidstr + "\n"
+                    if not p3p_err_str == "":
+                        data += "AMPLICON_ERROR=" + p3p_err_str + "\n"
+                    logData("Amplicon3Plus", state, "---", uuidstr)
+                    return jsonify({"outfile": data}), 200
     return jsonify(errors=[{"title": "Error: No POST request!"}]), 400
 
 
