@@ -88,10 +88,10 @@ function refresh_message(level) {
 
 function formatTable() {
   if (rawResults != "") {
-    lineSplit = rawResults.split('\n');
-    res = '<div class="p3p_section">\n<table>\n'
+    var lineSplit = rawResults.split('\n');
+    var res = '<div class="p3p_section">\n<table>\n'
     for (var i = 0; i < lineSplit.length; i++) {
-      colSplit = lineSplit[i].split('\t');
+      var colSplit = lineSplit[i].split('\t');
       res += "<tr>\n";
       for (var k = 0; k < colSplit.length; k++) {
         var alig = ""

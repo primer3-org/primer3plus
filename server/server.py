@@ -250,7 +250,7 @@ def runp3():
                         if (p3p_err_str != ""):
                             p3p_err_str += ";"
                         p3p_err_str += "Runerror: " + errInfo
-            if os.path.exists(outfile):        
+            if os.path.exists(outfile):
                 with open(outfile, "r") as out:
                     data = out.read()
                     data += "\n" + "P3P_UUID=" + uuidstr + "\n"
@@ -559,7 +559,7 @@ def runprefold():
                     outdata = ""
                     excl_reg = ""
                     in_reg = False
-                    try: 
+                    try:
                         with open(seqfile + ".ct", "r") as res:
                             outdata = res.read()
                     except OSError as e:
