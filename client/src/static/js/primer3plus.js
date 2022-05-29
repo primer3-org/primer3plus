@@ -20,7 +20,7 @@ const API_URL = process.env.API_URL
 const HELP_LINK_URL = process.env.HELP_LINK_URL
 const INDEX_LINK_URL = process.env.INDEX_LINK_URL
 
-var primer3plus_version = "3.2.5";
+var primer3plus_version = "3.2.6";
 
 // The default Settings loaded from the server
 var defSet;
@@ -617,7 +617,7 @@ function processPrefoldData(){
     }
   }
 
-  returnHTML = '<div class="p3p_fit_to_table">'
+  var returnHTML = '<div class="p3p_fit_to_table">'
   if (results.hasOwnProperty("P3P_UUID")) {
     returnHTML += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
     returnHTML += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'
@@ -652,7 +652,7 @@ function processAmplicon3Data(){
   }
   if (results.hasOwnProperty("AMPLICON_ERROR")) {
     var p3pErrLines = results["AMPLICON_ERROR"].split(';');
-    returnHTML = '<p style="padding: 20px">\n';
+    var returnHTML = '<p style="padding: 20px">\n';
     for (var i = 0; i < p3pErrLines.length; i++) {
       add_message("err", p3pErrLines[i]);
       returnHTML += p3pErrLines[i] + '<br />\n';

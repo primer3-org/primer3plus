@@ -389,7 +389,7 @@ function blastPrimersNcbi() {
 
 
 function updateList() {
-  retHTML  = '<table style="border: 0; width: 100%; empty-cells: show; table-layout: fixed;">\n';
+  var retHTML  = '<table style="border: 0; width: 100%; empty-cells: show; table-layout: fixed;">\n';
   retHTML += '  <colgroup>\n';
   retHTML += '    <col width="3%">\n';
   retHTML += '    <col width="22%">\n';
@@ -479,7 +479,7 @@ function updateOrderList() {
   if (txtOrder === null) {
     return;
   }
-  order = "";
+  var order = "";
   for (var i = 0 ; i < primerData.length ; i++) {
     if (primerData[i].hasOwnProperty('selected') &&
         (primerData[i]['selected'] == "1")) {
@@ -733,8 +733,8 @@ function loadRDMLContent(data) {
     add_message("err","Error opening rdml file");
     return;
   }
-  parser = new DOMParser();
-  xmlDoc = parser.parseFromString(data,"text/xml");
+  var parser = new DOMParser();
+  var xmlDoc = parser.parseFromString(data,"text/xml");
   if (xmlDoc.documentElement.nodeName != 'rdml') {
     add_message("err","Uploaded file is not an RDML file");
     return;
