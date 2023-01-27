@@ -305,12 +305,12 @@ def runp3():
                                             rawPos = int(geneArr[0]) - 1
                                             rawLen = int(geneArr[1])
                                             realStart = rawPos
-                                            realEnd = rawPos + rawLen
+                                            realEnd = rawPos + rawLen + 1
                                             if len(geneArr) == 2:
                                                 if gb_exons != "" and len(real_seq) == gb_orf_seq_len:
                                                     if gb_orient == '-':
-                                                        realStart = gb_orf_seq_len - (rawPos + rawLen) + 1
-                                                        realEnd = realStart + rawLen
+                                                        realStart = gb_orf_seq_len - (rawPos + rawLen)
+                                                        realEnd = realStart + rawLen + 1
                                                     i = 0
                                                     orfOffset = 0
                                                     while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realStart:
@@ -337,12 +337,12 @@ def runp3():
                                             rawPos = int(geneArr[0]) - 1
                                             rawLen = int(geneArr[1])
                                             realStart = rawPos
-                                            realEnd = rawPos + rawLen
+                                            realEnd = rawPos + rawLen + 1
                                             if len(geneArr) == 2:
                                                 if gb_exons != "" and len(real_seq) == gb_orf_seq_len:
                                                     if gb_orient == '-':
-                                                        realStart = gb_orf_seq_len - (rawPos + rawLen) + 1
-                                                        realEnd = realStart + rawLen
+                                                        realStart = gb_orf_seq_len - (rawPos + rawLen)
+                                                        realEnd = realStart + rawLen + 1
                                                     i = 0
                                                     orfOffset = 0
                                                     while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realStart:
@@ -370,12 +370,12 @@ def runp3():
                                             rawPos = int(geneArr[0])
                                             rawLen = int(geneArr[1])
                                             realStart = rawPos - rawLen
-                                            realEnd = rawPos
+                                            realEnd = rawPos + 1
                                             if len(geneArr) == 2:
                                                 if gb_exons != "" and len(real_seq) == gb_orf_seq_len:
                                                     if gb_orient == '-':
-                                                        realEnd = gb_orf_seq_len - (rawPos - rawLen) - 1
-                                                        realStart = realEnd - rawLen
+                                                        realEnd = gb_orf_seq_len - (rawPos - rawLen) + 1
+                                                        realStart = realEnd - rawLen - 1
                                                     i = 0
                                                     orfOffset = 0
                                                     print("start: " + str(realStart))

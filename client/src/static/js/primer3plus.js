@@ -20,7 +20,7 @@ const API_URL = process.env.API_URL
 const HELP_LINK_URL = process.env.HELP_LINK_URL
 const INDEX_LINK_URL = process.env.INDEX_LINK_URL
 
-var primer3plus_version = "3.2.6";
+var primer3plus_version = "3.3.0";
 
 // The default Settings loaded from the server
 var defSet;
@@ -351,12 +351,6 @@ function checkForUUID() {
               var exons = getHtmlTagValue('P3P_GB_EXONS');
               var orientation = getHtmlTagValue('P3P_GB_ORIENTATION');
               var eleSeq = document.getElementById('SEQUENCE_TEMPLATE');
-              if (orientation == "-") {
-                sequence = reverseComplement(sequence)
-                if (eleSeq !== null) {
-                  eleSeq.value = sequence;
-                }
-              }
               if (exons != "") {
                 var pageElement = document.getElementById('P3P_GB_RAW_SEQUENCE');
                 if (pageElement !== null) {
@@ -443,7 +437,7 @@ function pocGenomeBrowserORF(sel) {
       exonSeq += sequence.substring(parseInt(curExon[0]), parseInt(curExon[0]) + parseInt(curExon[1]));
       if (lastPos + 5 < parseInt(curExon[0])) {
         lastPos = parseInt(curExon[0]) + parseInt(curExon[1]);
-        exonBound.push(exonSeq.length - 1);
+        exonBound.push(exonSeq.length + 1);
       }
     }
     if (exonBound.length > 1) {
@@ -456,9 +450,8 @@ function pocGenomeBrowserORF(sel) {
       }
       exonBound.reverse();
       for (var i = 0; i < exonBound.length; i++) {
-        exonBound[i] = exonSeq.length - exonBound[i];
+        exonBound[i] = exonSeq.length - exonBound[i] + 2;
       }
-
     } else {
       if (eleSeq !== null) {
         eleSeq.value = exonSeq;
@@ -1196,6 +1189,7 @@ function changeFirstPrimerPair() {
   var returnHTML = createResultsDetection(results);
   returnHTML += createPrimerStatistics(results);
   document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
+  showGenomeBrowserButtons();
 }
 
 window.changeSelectedPrimerPair = changeSelectedPrimerPair;
@@ -1204,6 +1198,7 @@ function changeSelectedPrimerPair(it) {
   var returnHTML = createResultsDetection(results);
   returnHTML += createPrimerStatistics(results);
   document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
+  showGenomeBrowserButtons();
 }
 
 window.changeLastPrimerPair = changeLastPrimerPair;
@@ -1212,6 +1207,7 @@ function changeLastPrimerPair(it) {
   var returnHTML = createResultsDetection(results);
   returnHTML += createPrimerStatistics(results);
   document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
+  showGenomeBrowserButtons();
 }
 
 function createPrimerBox(res, nr) {
@@ -1799,7 +1795,7 @@ function calcP3PResultAdditions(){
       // Add the name
       var nameKeyValue = seqName;
       if ( pairCount != "0" ) {
-        nameKeyValue += acSpace + pairCount;
+        nameKeyValue += acSpace + (parseInt(pairCount) + 1);
       }
       results["PRIMER_PAIR_" + pairCount + "_NAME"] = nameKeyValue;
       // Add select value
@@ -1819,7 +1815,7 @@ function calcP3PResultAdditions(){
         var nameKeyName = tag.replace(/SEQUENCE$/, "NAME");
         var nameKeyValue = seqName;
         if ( nameNumber != "0" ) {
-          nameKeyValue += acSpace + nameNumber;
+          nameKeyValue += acSpace + (parseInt(nameNumber) + 1);
         }
         if (namePrimerType == "RIGHT" ) {
           nameKeyValue += acSpace + acRight;
