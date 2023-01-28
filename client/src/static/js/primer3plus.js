@@ -819,26 +819,6 @@ function processResData(){
   }
   var returnHTML = ""
   // Write some help if no primers found
-  if (results.hasOwnProperty("P3P_GB_FILE") && (results["P3P_GB_FILE"] != "")){
-    returnHTML += '<table>\n';
-    returnHTML += '  <colgroup>\n';
-    returnHTML += '    <col style="width: 30%">\n';
-    returnHTML += '    <col style="width: 70%">\n';
-    returnHTML += '  </colgroup>\n';
-    returnHTML += '  <tr>\n';
-    returnHTML += '    <td></td>\n';
-    returnHTML += '    <td style="text-align: right;">\n';
-    returnHTML += '      <input value="Return to UCSC Genome Browser" onclick="goToGenomeBrowser(\'';
-    returnHTML += getHtmlTagValue('P3P_GB_RETURN_PATH')
-    returnHTML += '?db=' + getHtmlTagValue('P3P_GB_DB')
-    returnHTML += '&position=' + getHtmlTagValue('P3P_GB_POSITION')
-    returnHTML += '&hgct_customText=' + `${API_URL}/getbed/` + results["P3P_GB_FILE"]
-    returnHTML += '\');"type="button">&nbsp;\n';
-    returnHTML += '    </td>';
-    returnHTML += '  </tr>';
-    returnHTML += '</table>';
-  }
-
   if (primer_count == 0){
     returnHTML += "<br/ >Primer3Plus could not pick any primers. Try less strict settings.<br /><br />";       
   } 
@@ -877,12 +857,18 @@ function updateResultsElement(elm) {
 function createPrimer3ManagerBar() {
   var ret = '<table>\n';
   ret += '  <colgroup>\n';
-  ret += '    <col style="width: 30%">\n';
-  ret += '    <col style="width: 70%">\n';
+  ret += '    <col style="width: 25%">\n';
+  ret += '    <col style="width: 75%">\n';
   ret += '  </colgroup>\n';
   ret += '  <tr>\n';
   ret += '    <td><input id="P3P_ALL_PRIMERS_SELECTED" type="checkbox"> &nbsp; Select all Primers</td>\n';
   ret += '    <td style="text-align: right;">\n';
+  if (results.hasOwnProperty("P3P_GB_FILE") && (results["P3P_GB_FILE"] != "")){
+    ret += '      <input value="Return to UCSC Genome Browser" onclick="goToGenomeBrowser(\'';
+    ret += getHtmlTagValue('P3P_GB_RETURN_PATH') + '?db=' + getHtmlTagValue('P3P_GB_DB')
+    ret += '&position=' + getHtmlTagValue('P3P_GB_POSITION') + '&hgct_customText='
+    ret += `${API_URL}/getbed/` + results["P3P_GB_FILE"] + '\');"type="button">&nbsp;\n';
+  }
   ret += '      <input value="Send Selected Primers to Primer3Manager" onclick="uploadToPrimer3Manager();" type="button">&nbsp;\n';
   ret += '      <input value="Go to Primer3Manager" onclick="goToPrimer3Manager();"type="button">&nbsp;\n';
   ret += '    </td>';
@@ -1189,7 +1175,6 @@ function changeFirstPrimerPair() {
   var returnHTML = createResultsDetection(results);
   returnHTML += createPrimerStatistics(results);
   document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
-  showGenomeBrowserButtons();
 }
 
 window.changeSelectedPrimerPair = changeSelectedPrimerPair;
@@ -1198,7 +1183,6 @@ function changeSelectedPrimerPair(it) {
   var returnHTML = createResultsDetection(results);
   returnHTML += createPrimerStatistics(results);
   document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
-  showGenomeBrowserButtons();
 }
 
 window.changeLastPrimerPair = changeLastPrimerPair;
@@ -1207,7 +1191,6 @@ function changeLastPrimerPair(it) {
   var returnHTML = createResultsDetection(results);
   returnHTML += createPrimerStatistics(results);
   document.getElementById('P3P_RESULTS_BOX').innerHTML = returnHTML;
-  showGenomeBrowserButtons();
 }
 
 function createPrimerBox(res, nr) {
