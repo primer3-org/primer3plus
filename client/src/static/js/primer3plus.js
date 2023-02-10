@@ -55,6 +55,8 @@ var p3p_errors = [];
 var p3p_warnings = [];
 var p3p_messages = [];
 
+window.gb_exons = "";
+
 var selectedPrimerPair = 0;
 
 var ignore_tags = ["PRIMER_EXPLAIN_FLAG","PRIMER_THERMODYNAMIC_PARAMETERS_PATH",
@@ -74,6 +76,7 @@ document.addEventListener("DOMContentLoaded", function() {
           server_setting_files = res.data["server_setting_files"];
           misspriming_lib_files = res.data["misspriming_lib_files"];
           setHTMLParameters(defSet);
+          window.gb_exons = "";
           initElements();
           checkForUUID();
           showGenomeBrowserButtons();
@@ -114,6 +117,7 @@ function loadSetFileFromServer() {
     .then(res => {
         if (res.status === 200) {
           loadP3File("set", res.data);
+          window.gb_exons = "";
           document.getElementById('P3P_DEBUG_TXT_INPUT').value = res.data;
           showGenomeBrowserButtons();
       }
@@ -349,6 +353,7 @@ function checkForUUID() {
               loadP3File("silent",res.data.upfile);
               var sequence = getHtmlTagValue('SEQUENCE_TEMPLATE');
               var exons = getHtmlTagValue('P3P_GB_EXONS');
+              window.gb_exons = exons;
               var orientation = getHtmlTagValue('P3P_GB_ORIENTATION');
               var eleSeq = document.getElementById('SEQUENCE_TEMPLATE');
               if (exons != "") {
@@ -406,6 +411,11 @@ function showGenomeBrowserButtons() {
   if (el == null) {
     return;
   }
+  if (exons == "") {
+    if (window.gb_exons != "") {
+      exons = window.gb_exons;
+    }
+  }
   if (exons != "") {
     el.style.display = "inline";
   } else {
@@ -420,6 +430,15 @@ function pocGenomeBrowserORF(sel) {
   var eleSeq = document.getElementById('SEQUENCE_TEMPLATE');
   if (sequence == "") {
     return;
+  }
+  if (exons == "") {
+    if (window.gb_exons != "") {
+      exons = window.gb_exons;
+      var eleExon = document.getElementById('P3P_GB_EXONS');
+      if (eleExon !== null) {
+        eleExon.value = exons;
+      }
+    }
   }
   if (exons != "") {
     var exonList = exons.split(',');
@@ -504,6 +523,10 @@ function loadOrfGenome() {
   var eleSeq = document.getElementById('SEQUENCE_TEMPLATE');
   if (eleSeq !== null) {
     eleSeq.value = sequence;
+  }
+  var eleExon = document.getElementById('P3P_GB_EXONS');
+  if (eleExon !== null) {
+    eleExon.value = "-999";
   }
   var eleExcl = document.getElementById('SEQUENCE_EXCLUDED_REGION');
   if (eleExcl !== null) {
@@ -3434,6 +3457,7 @@ function initResetDefautl() {
 }
 function buttonResetDefault() {
   del_all_messages();	
+  window.gb_exons = "";
   setHTMLParameters(defSet);
   document.getElementById('P3P_DEBUG_TXT_INPUT').value = "";
   document.getElementById('P3P_DEBUG_TXT_OUTPUT').value = "";

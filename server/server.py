@@ -267,6 +267,10 @@ def runp3():
                                 gb_exons = str(request.form['P3P_GB_EXONS'])
                                 gb_orient = str(request.form['P3P_GB_ORIENTATION'])
                                 real_seq = str(request.form['SEQUENCE_TEMPLATE'])
+                                genome_add_one = False
+                                if gb_exons == "-999":
+                                    gb_exons = ""
+                                    genome_add_one = True
                                 gb_orf_seq_len = 0
                                 gb_exon_list = []
                                 gb_genome_list = []
@@ -305,12 +309,12 @@ def runp3():
                                             rawPos = int(geneArr[0]) - 1
                                             rawLen = int(geneArr[1])
                                             realStart = rawPos
-                                            realEnd = rawPos + rawLen + 1
+                                            realEnd = rawPos + rawLen
                                             if len(geneArr) == 2:
                                                 if gb_exons != "" and len(real_seq) == gb_orf_seq_len:
                                                     if gb_orient == '-':
                                                         realStart = gb_orf_seq_len - (rawPos + rawLen)
-                                                        realEnd = realStart + rawLen + 1
+                                                        realEnd = realStart + rawLen
                                                     i = 0
                                                     orfOffset = 0
                                                     while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realStart:
@@ -322,7 +326,10 @@ def runp3():
                                                     while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realEnd:
                                                         orfOffset = gb_genome_list[i + 1]
                                                         i += 1
-                                                    realEnd += orfOffset
+                                                    realEnd += orfOffset + 1
+                                                if genome_add_one:
+                                                    realStart += 1
+                                                    realEnd += 1
                                                 bedtxt += gb_chrom[0] + '\t'
                                                 bedtxt += str(gb_start_pos + realStart - 1) + '\t'
                                                 bedtxt += str(gb_start_pos + realEnd - 1)
@@ -337,12 +344,12 @@ def runp3():
                                             rawPos = int(geneArr[0]) - 1
                                             rawLen = int(geneArr[1])
                                             realStart = rawPos
-                                            realEnd = rawPos + rawLen + 1
+                                            realEnd = rawPos + rawLen
                                             if len(geneArr) == 2:
                                                 if gb_exons != "" and len(real_seq) == gb_orf_seq_len:
                                                     if gb_orient == '-':
                                                         realStart = gb_orf_seq_len - (rawPos + rawLen)
-                                                        realEnd = realStart + rawLen + 1
+                                                        realEnd = realStart + rawLen
                                                     i = 0
                                                     orfOffset = 0
                                                     while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realStart:
@@ -354,7 +361,10 @@ def runp3():
                                                     while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realEnd:
                                                         orfOffset = gb_genome_list[i + 1]
                                                         i += 1
-                                                    realEnd += orfOffset
+                                                    realEnd += orfOffset + 1
+                                                if genome_add_one:
+                                                    realStart += 1
+                                                    realEnd += 1
                                                 bedtxt += gb_chrom[0] + '\t'
                                                 bedtxt += str(gb_start_pos + realStart - 1) + '\t'
                                                 bedtxt += str(gb_start_pos + realEnd - 1)
@@ -364,35 +374,32 @@ def runp3():
                                                 bedtxt += '\t0,0,0\n';
                                     if 'PRIMER_RIGHT_NUM_RETURNED' in allOutData:
                                         right_prim = int(allOutData['PRIMER_RIGHT_NUM_RETURNED'])
-                                        print(gb_exon_list)
                                         for p_num in range(0, right_prim):
                                             geneArr = str(allOutData['PRIMER_RIGHT_' + str(p_num)]).split(',')
                                             rawPos = int(geneArr[0])
                                             rawLen = int(geneArr[1])
                                             realStart = rawPos - rawLen
-                                            realEnd = rawPos + 1
+                                            realEnd = rawPos
                                             if len(geneArr) == 2:
                                                 if gb_exons != "" and len(real_seq) == gb_orf_seq_len:
                                                     if gb_orient == '-':
-                                                        realEnd = gb_orf_seq_len - (rawPos - rawLen) + 1
-                                                        realStart = realEnd - rawLen - 1
+                                                        realEnd = gb_orf_seq_len - (rawPos - rawLen)
+                                                        realStart = realEnd - rawLen
                                                     i = 0
                                                     orfOffset = 0
-                                                    print("start: " + str(realStart))
                                                     while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realStart:
                                                         orfOffset = gb_genome_list[i + 1]
                                                         i += 1
                                                     realStart += orfOffset + 1
-                                                    print(orfOffset)
                                                     i = 0
                                                     orfOffset = 0
-                                                    print("start: " + str(realEnd))
                                                     while i + 1 < len(gb_genome_list) and gb_exon_list[i] < realEnd:
                                                         orfOffset = gb_genome_list[i + 1]
                                                         i += 1
-                                                    realEnd += orfOffset
-                                                    print(orfOffset)
-                                                    print("----")
+                                                    realEnd += orfOffset + 1
+                                                if genome_add_one:
+                                                    realStart += 1
+                                                    realEnd += 1
                                                 bedtxt += gb_chrom[0] + '\t'
                                                 bedtxt += str(gb_start_pos + realStart - 1) + '\t'
                                                 bedtxt += str(gb_start_pos + realEnd - 1)
