@@ -190,6 +190,7 @@ def getbed(uuidstr):
             sf = os.path.join(app.config['UPLOAD_FOLDER'], uuidstr[0:2])
             if os.path.exists(sf):
                 if os.path.isfile(os.path.join(sf, fname)):
+                    logData("GenomeBrowser", "LoadBED", "1", "---")
                     return send_file(os.path.join(sf, fname), mimetype="text/plain", download_name=uuidstr)
     return "File does not exist!"
 
@@ -410,6 +411,7 @@ def runp3():
                                     with open(bedfile, "w") as bed:
                                         bed.write(bedtxt)
                                         data += "P3P_GB_FILE=" + uuidstr + "\n"
+                                        logData("GenomeBrowser", "WriteBED", "1", "---")
                     if LOGP3RUNS:
                         state = "Primer3_Pick_Fail"
                         prCount = 0
