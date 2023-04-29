@@ -521,12 +521,35 @@ function loadOrfTargets() {
 function loadOrfGenome() {
   var sequence = getHtmlTagValue('P3P_GB_RAW_SEQUENCE');
   var eleSeq = document.getElementById('SEQUENCE_TEMPLATE');
+  var eleExon = document.getElementById('P3P_GB_EXONS');
+  var exons = "";
+  if (eleExon !== null) {
+    exons = eleExon.value;
+    eleExon.value = "-999";
+  }
+  if ((exons != "") || (exons != "-999")) {
+    var exonList = exons.split(',');
+    var exonSeq = "";
+    var lastPos = 0;
+    for (var i = 0; i < exonList.length; i++) {
+      if (exonList[i] == "") {
+        continue;
+      }
+      var curExon = exonList[i].split('-');
+      if (parseInt(curExon[0]) > lastPos) {
+        exonSeq += sequence.substring(lastPos, parseInt(curExon[0])).toLowerCase();
+      }
+
+      exonSeq += sequence.substring(parseInt(curExon[0]), parseInt(curExon[0]) + parseInt(curExon[1])).toUpperCase();
+      lastPos = parseInt(curExon[0]) + parseInt(curExon[1]);
+      }
+    }
+    if (sequence.length - 1 > lastPos) {
+      exonSeq += sequence.substring(lastPos, sequence.length - 1).toLowerCase();
+    }
+    sequence = exonSeq;
   if (eleSeq !== null) {
     eleSeq.value = sequence;
-  }
-  var eleExon = document.getElementById('P3P_GB_EXONS');
-  if (eleExon !== null) {
-    eleExon.value = "-999";
   }
   var eleExcl = document.getElementById('SEQUENCE_EXCLUDED_REGION');
   if (eleExcl !== null) {
