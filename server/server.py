@@ -481,29 +481,29 @@ def runprefold():
                             if len(curr) != 2:
                                 continue
                             if curr[0] == "PRIMER_ANNEALING_TEMP":
-                                dat_temp = re.sub("[^0-9\.]", "", curr[1])
+                                dat_temp = re.sub(r"[^0-9\.]", "", curr[1])
                                 data += "PRIMER_ANNEALING_TEMP=" + dat_temp + "\n"
                             if curr[0] == "PRIMER_SALT_DIVALENT":
-                                dat_dv = re.sub("[^0-9\.]", "", curr[1])
+                                dat_dv = re.sub(r"[^0-9\.]", "", curr[1])
                                 data += "PRIMER_SALT_DIVALENT=" + dat_dv + "\n"
                             if curr[0] == "PRIMER_SALT_MONOVALENT":
-                                dat_mv = re.sub("[^0-9\.]", "", curr[1])
+                                dat_mv = re.sub(r"[^0-9\.]", "", curr[1])
                                 data += "PRIMER_SALT_MONOVALENT=" + dat_mv + "\n"
                             if curr[0] == "PRIMER_FIRST_BASE_INDEX":
-                                dat_start = int(re.sub("[^0-9]", "", curr[1]))
+                                dat_start = int(re.sub(r"[^0-9]", "", curr[1]))
                                 data += "PRIMER_FIRST_BASE_INDEX=" + str(dat_start) + "\n"
                             if curr[0] == "SEQUENCE_ID":
-                                dat_id = re.sub("[^0-9A-Za-z _,\.]", "", curr[1])
+                                dat_id = re.sub(r"[^0-9A-Za-z _,\.]", "", curr[1])
                                 data += "SEQUENCE_ID=" + dat_id + "\n"
                             if curr[0] == "SEQUENCE_INCLUDED_REGION":
-                                dat_incl = re.sub("[^0-9,]", "", curr[1])
+                                dat_incl = re.sub(r"[^0-9,]", "", curr[1])
                                 incl_spl = dat_incl.split(",")
                                 if len(incl_spl) == 2:
                                     dat_incl_start = int(incl_spl[0])
                                     dat_incl_len = int(incl_spl[1])
                                     dat_incl_found = True
                             if curr[0] == "SEQUENCE_TEMPLATE":
-                                dat_seq = re.sub("[^ACGTNacgtn]", "", curr[1])
+                                dat_seq = re.sub(r"[^ACGTNacgtn]", "", curr[1])
                                 dat_use_seq = dat_seq
                                 data += "SEQUENCE_TEMPLATE=" + dat_seq + "\n"
 
@@ -667,27 +667,27 @@ def runa3():
                         if len(curr) != 2:
                             continue
                         if curr[0] == "SEQUENCE_TEMPLATE":
-                            dat_seq = re.sub("[^ACGTNacgtn]", "", curr[1])
+                            dat_seq = re.sub(r"[^ACGTNacgtn]", "", curr[1])
                         if curr[0] == "PRIMER_SALT_MONOVALENT":
-                            dat_mv = re.sub("[^0-9\.]", "", curr[1])
+                            dat_mv = re.sub(r"[^0-9\.]", "", curr[1])
                         if curr[0] == "PRIMER_SALT_DIVALENT":
-                            dat_dv = re.sub("[^0-9\.]", "", curr[1])
+                            dat_dv = re.sub(r"[^0-9\.]", "", curr[1])
                         if curr[0] == "PRIMER_DNTP_CONC":
-                            dat_dntp = re.sub("[^0-9\.]", "", curr[1])
+                            dat_dntp = re.sub(r"[^0-9\.]", "", curr[1])
                         if curr[0] == "PRIMER_DMSO_CONC":
-                            dat_dmso = re.sub("[^0-9\.]", "", curr[1])
+                            dat_dmso = re.sub(r"[^0-9\.]", "", curr[1])
                         if curr[0] == "PRIMER_DMSO_FACTOR":
-                            dat_fact = re.sub("[^0-9\.]", "", curr[1])
+                            dat_fact = re.sub(r"[^0-9\.]", "", curr[1])
                         if curr[0] == "PRIMER_FORMAMIDE_CONC":
-                            dat_form = re.sub("[^0-9\.]", "", curr[1])
+                            dat_form = re.sub(r"[^0-9\.]", "", curr[1])
                         if curr[0] == "PRIMER_TM_FORMULA":
-                            dat_tp = re.sub("[^0-9]", "", curr[1])
+                            dat_tp = re.sub(r"[^0-9]", "", curr[1])
                         if curr[0] == "PRIMER_SALT_CORRECTIONS":
-                            dat_sal = re.sub("[^0-9]", "", curr[1])
+                            dat_sal = re.sub(r"[^0-9]", "", curr[1])
                         if curr[0] == "PRIMER_AMPLICON_FORMULA":
-                            dat_mf = re.sub("[^0-9]", "", curr[1])
+                            dat_mf = re.sub(r"[^0-9]", "", curr[1])
                         if curr[0] == "SEQUENCE_MELTINGTEMP":
-                            dat_temp = re.sub("[^0-9\.]", "", curr[1])
+                            dat_temp = re.sub(r"[^0-9\.]", "", curr[1])
 
                     if len(dat_seq) < 36:
                         return jsonify(errors = [{"title": "Sequence to short < 36 bp."}]), 400
