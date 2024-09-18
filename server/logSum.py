@@ -28,7 +28,7 @@ P3LOG = os.path.join(P3PWS, "..", "log")
 def sumLogs(direct, fileKey, monthShift, writeFile):
     if monthShift > 12 or monthShift < 0:
         return
-    runTime = datetime.datetime.utcnow()
+    runTime = datetime.datetime.now(datetime.UTC)
     year = int(runTime.strftime("%Y"))
     month = int(runTime.strftime("%m"))
     month -= monthShift

@@ -64,7 +64,7 @@ def logData(pProg, pKey, pValue, uuid):
     if not LOGP3RUNS:
         return
 
-    runTime = datetime.datetime.utcnow()
+    runTime = datetime.datetime.now(datetime.UTC)
     addLine = runTime.strftime("%Y-%m-%dT%H:%M:%S")
     addLine += "\t" + pProg + "\t" + pKey + "\t" + pValue + "\t" + uuid + "\t"
     # Add to nginx config in the location section:
@@ -611,7 +611,7 @@ def runprefold():
                         p3p_err_str += "UNAFold did not return data."
                     if not p3p_err_str == "":
                         data += "P3P_ERROR=" + p3p_err_str + "\n"
-                    if dat_incl_start + dat_incl_len < len(dat_seq ):
+                    if 20 < dat_incl_start + dat_incl_len < len(dat_seq ):
                         excl_reg += str(dat_incl_start + dat_incl_len + dat_start) + ","
                         excl_reg += str(len(dat_seq) - (dat_incl_start + dat_incl_len)) + " "
                     data += "SEQUENCE_EXCLUDED_REGION=" + re.sub(" +$", "", excl_reg) + "\n"
