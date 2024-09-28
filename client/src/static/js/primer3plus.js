@@ -20,7 +20,7 @@ const API_URL = process.env.API_URL
 const HELP_LINK_URL = process.env.HELP_LINK_URL
 const INDEX_LINK_URL = process.env.INDEX_LINK_URL
 
-var primer3plus_version = "3.3.0";
+var primer3plus_version = "3.4.0";
 
 // The default Settings loaded from the server
 var defSet;
@@ -431,7 +431,7 @@ function pocGenomeBrowserORF(sel) {
   if (sequence == "") {
     return;
   }
-  if (exons == "") {
+  if ((exons == "") || (exons == "-999")) {
     if (window.gb_exons != "") {
       exons = window.gb_exons;
       var eleExon = document.getElementById('P3P_GB_EXONS');
