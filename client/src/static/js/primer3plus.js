@@ -1398,7 +1398,10 @@ function partPrimerData(res, nr, type) {
     if (res["PRIMER_THERMODYNAMIC_OLIGO_ALIGNMENT"] == "1") {
       primerHairpin = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_HAIRPIN_TH"]).toFixed(1);
     }
-    var primerEndStability = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_END_STABILITY"]).toFixed(1);
+    var primerEndStability = -1.0;
+    if (type != "INTERNAL") {
+      primerEndStability =Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_END_STABILITY"]).toFixed(1);
+    }
     var primerPenalty = Number.parseFloat(res["PRIMER_" + type + "_" + nr + "_PENALTY"]).toFixed(3);
 
     retHTML += '  <tr class="p3p_' + cssName + '">\n';
@@ -1429,8 +1432,16 @@ function partPrimerData(res, nr, type) {
       retHTML += '<a href="' + linkRoot + 'PRIMER_RIGHT_4_HAIRPIN_TH">HP:</a> ' + primerHairpin;
     }
     retHTML += '</td>\n';
-    retHTML += '    <td class="p3p_pair_box_cell_s"><a href="' + linkRoot;
-    retHTML += 'PRIMER_RIGHT_4_END_STABILITY" target="p3p_help">3\' Stab:</a> ' + primerEndStability + '</td>\n';
+    retHTML += '    <td class="p3p_pair_box_cell_s">';
+    if (type != "INTERNAL") {
+      retHTML += '<a href="' + linkRoot + 'PRIMER_RIGHT_4_END_STABILITY" target="p3p_help">3\' Stab:</a> ' + primerEndStability;
+    } else {
+      if (("PRIMER_INTERNAL_" + nr + "_REVERSE_COMPLEMENTED" in res) &&
+          (res["PRIMER_INTERNAL_" + nr + "_REVERSE_COMPLEMENTED"] == 1)) {
+        retHTML += '<a href="' + linkRoot + 'PRIMER_INTERNAL_4_REVERSE_COMPLEMENTED" target="p3p_help">RevComp</a> ';
+      }
+    }
+    retHTML += '</td>\n';
     retHTML += '    <td class="p3p_pair_box_cell_s"><a href="' + linkRoot;
     retHTML += 'PRIMER_RIGHT_4_PENALTY" target="p3p_help">Penalty:</a> ' + primerPenalty + '</td>\n';
     retHTML += '  </tr>\n';
