@@ -880,6 +880,10 @@ function processResData(){
   else if (results["PRIMER_TASK"] == "pick_sequencing_primers") {
     returnHTML += createResultsPrimerList(results, -2);
   } 
+  // Primer Lists do not highlight primers in sequenceprint
+  else if (results["PRIMER_TASK"] == "pick_primer_list") {
+    returnHTML += createResultsPrimerList(results, -1);
+  } 
   // The regular output
   else {
     returnHTML += createResultsPrimerList(results, -2);
@@ -1696,9 +1700,9 @@ function createResultsPrimerList (res, printSeqStyle) {
     retHTML += '<h2 class="primer3plus_left_primer" style="padding-left: 15px">Left Primers:</h2>\n';
     retHTML += divLongList(res,"LEFT");
   }
-  if (res.hasOwnProperty("PRIMER_INTERNAL_OLIGO_0_SEQUENCE")) {
+  if (res.hasOwnProperty("PRIMER_INTERNAL_0_SEQUENCE")) {
     retHTML += '<h2 class="primer3plus_internal_oligo" style="padding-left: 15px">Internal Oligos:</h2>\n';
-    retHTML += divLongList(res,"INTERNAL_OLIGO");
+    retHTML += divLongList(res,"INTERNAL");
   }
   if (res.hasOwnProperty("PRIMER_RIGHT_0_SEQUENCE")) {
     retHTML += '<h2 class="primer3plus_right_primer" style="padding-left: 15px">Right Primers:</h2>\n';
@@ -1742,7 +1746,13 @@ function divLongList (res, primerType) {
   retHTML += '    <td class="p3p_cell_long_list_r"><a href="' + linkRoot + 'PRIMER_RIGHT_4_SELF_ANY' + thAdd + '">Any</a></td>\n';
   retHTML += '    <td class="p3p_cell_long_list_r"><a href="' + linkRoot + 'PRIMER_RIGHT_4_SELF_END' + thAdd + '">End</a></td>\n';
   retHTML += '    <td class="p3p_cell_long_list_r"><a href="' + linkRoot + 'PRIMER_RIGHT_4_TEMPLATE_MISPRIMING' + thAdd + '">TB</a></td>\n';
-  retHTML += '    <td class="p3p_cell_long_list_r"><a href="' + linkRoot + 'PRIMER_RIGHT_4_END_STABILITY">3\' Stab</a></td>\n';
+  retHTML += '    <td class="p3p_cell_long_list_r">'
+  if (primerType != "INTERNAL") {
+    retHTML += '<a href="' + linkRoot + 'PRIMER_RIGHT_4_END_STABILITY">3\' Stab</a>';
+  } else {
+    retHTML += '<a href="' + linkRoot + 'PRIMER_INTERNAL_4_REVERSE_COMPLEMENTED" target="p3p_help">Rev</a> ';
+  }
+  retHTML += '</td>\n';
   retHTML += '    <td class="p3p_cell_long_list_r"><a href="' + linkRoot + 'PRIMER_RIGHT_4_PENALTY">Penalty</a></td>\n';
   retHTML += '  </tr>\n';
   var counter = 0;
@@ -1765,7 +1775,16 @@ function divLongList (res, primerType) {
       primerTemplateBinding = Number.parseFloat(res["PRIMER_" + primerType + "_" + counter + "_TEMPLATE_MISPRIMING" + thTmAdd]).toFixed(1);
     }
     retHTML += '    <td class="p3p_cell_long_list_r">' + primerTemplateBinding + '</td>\n';
-    retHTML += '    <td class="p3p_cell_long_list_r">' + Number.parseFloat(res["PRIMER_" + primerType + "_" + counter + "_END_STABILITY"]).toFixed(1) + '</td>\n';
+    retHTML += '    <td class="p3p_cell_long_list_r">';
+    if (primerType != "INTERNAL") {
+      retHTML += Number.parseFloat(res["PRIMER_" + primerType + "_" + counter + "_END_STABILITY"]).toFixed(1);
+    } else {
+      if (("PRIMER_INTERNAL_" + counter + "_REVERSE_COMPLEMENTED" in res) &&
+          (res["PRIMER_INTERNAL_" + counter + "_REVERSE_COMPLEMENTED"] == 1)) {
+        retHTML += 'Rev';
+      }
+    }
+    retHTML += '</td>\n';
     retHTML += '    <td class="p3p_cell_long_list_r">' + Number.parseFloat(res["PRIMER_" + primerType + "_" + counter + "_PENALTY"]).toFixed(3) + '</td>\n';
     retHTML += '  </tr>\n';
     counter++;
