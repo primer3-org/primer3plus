@@ -144,8 +144,23 @@ function runPrimer3() {
   cleanRegions();
   var seq = getHtmlTagValue("SEQUENCE_TEMPLATE");
   if (seq.length > 10000) {
-    add_message("err","Primer3Plus requires a sequence length of < 10000 bp.");
-    return;
+    if (seq.length < 100000) {
+      var incl = getHtmlTagValue("SEQUENCE_INCLUDED_REGION");
+      if (incl == "") {
+        add_message("err","Primer3Plus requires a sequence length or an INCLUDED_REGION of < 10000 bp.");
+        return;
+      }
+      var incl_list = incl.split(',');
+      if (incl_list.length != 2) {
+        add_message("err","Primer3Plus requires a sequence length or an INCLUDED_REGION of < 10000 bp.");
+        return;
+      }
+      var incl_len = incl_list[1];
+      if (incl_len > 10000) {
+        add_message("err","Primer3Plus requires a sequence length or an INCLUDED_REGION of < 10000 bp.");
+        return;
+      }
+    }
   }
   del_all_messages ();
   document.getElementById('P3P_RESULTS_BOX').innerHTML = "";
@@ -411,12 +426,27 @@ function showGenomeBrowserButtons() {
   if (el == null) {
     return;
   }
-  if (exons == "") {
+  if ((exons == "") || (exons == "-999")) {
     if (window.gb_exons != "") {
       exons = window.gb_exons;
     }
   }
   if (exons != "") {
+    var dButton = document.getElementById('P3P_ACTION_GB_LOAD_SINGLE_EXON');
+    if (dButton !== null) {
+      var i;
+      for(i = dButton.options.length - 1; i >= 0; i--) {
+        dButton.remove(i);
+      }
+      var exonList = exons.split(',');
+      for (i = 0; i < exonList.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = exonList[i];
+        opt.innerHTML = "Exon " + (i + 1) + ": " + exonList[i] + " ";
+        dButton.appendChild(opt);
+      }
+      dButton.addEventListener('change', loadOrfSingleExon);
+    }
     el.style.display = "inline";
   } else {
     el.style.display = "none";
@@ -527,6 +557,12 @@ function loadOrfGenome() {
     exons = eleExon.value;
     eleExon.value = "-999";
   }
+  if ((exons == "") || (exons == "-999")) {
+    if (window.gb_exons != "") {
+      exons = window.gb_exons;
+    }
+  }
+
   if ((exons != "") || (exons != "-999")) {
     var exonList = exons.split(',');
     var exonSeq = "";
@@ -570,6 +606,46 @@ function loadOrfGenome() {
   createSeqWithDeco(-1);
 }
 
+function loadOrfSingleExon() {
+  var sequence = getHtmlTagValue('P3P_GB_RAW_SEQUENCE');
+  loadOrfGenome();
+  var dButton = document.getElementById('P3P_ACTION_GB_LOAD_SINGLE_EXON');
+  var value = dButton.value;
+  var curExon = value.split('-');
+  if (curExon.length != 2) {
+    return;
+  }
+  var seq_len = sequence.length;
+  var pos = parseInt(curExon[0]);
+  var len = parseInt(curExon[1]);
+  if (len > 9000) {
+    return;
+  }
+  if (len > seq_len) {
+    return;
+  }
+  var eleTar = document.getElementById('SEQUENCE_TARGET');
+  if (eleTar !== null) {
+    eleTar.value = value.replace(/-/g, ",");
+  }
+  if (seq_len > 9000) {
+    var rest = parseInt((9000 - len) / 2);
+    var start = pos - rest;
+    if (start < 1) {
+      start = 0;
+    }
+    var end = pos + len + rest;
+    if (end > seq_len - 1) {
+      end = seq_len - 1;
+    }
+
+    var eleIncl = document.getElementById('SEQUENCE_INCLUDED_REGION');
+    if (eleIncl !== null) {
+      eleIncl.value = start + "," + (end - start);
+    }
+  }
+}
+
 function initRunPrimer3() {
   var pButton = document.getElementById('P3P_ACTION_RUN_PRIMER3');
   if (pButton !== null) {
@@ -586,6 +662,18 @@ function initRunPrimer3() {
   var cButton = document.getElementById('P3P_ACTION_GB_LOAD_GENOME');
   if (cButton !== null) {
     cButton.addEventListener('click', loadOrfGenome);
+  }
+  var dButton = document.getElementById('P3P_ACTION_GB_LOAD_SINGLE_EXON');
+  var i;
+  for(i = dButton.options.length - 1; i >= 0; i--) {
+    dButton.remove(i);
+  }
+  var opt = document.createElement('option');
+  opt.value = 0;
+  opt.innerHTML = "No Exons loaded!";
+  dButton.appendChild(opt);
+  if (dButton !== null) {
+    dButton.addEventListener('change', loadOrfSingleExon);
   }
 }
 
@@ -1541,6 +1629,10 @@ function createHTMLsequence(res, primerNr) {
   var format = seq.replace(/\w/g, "N");
   var firstBase = parseInt(res["PRIMER_FIRST_BASE_INDEX"]);
   var targets;
+  if (res.hasOwnProperty("SEQUENCE_INCLUDED_REGION") &&
+      (res["SEQUENCE_INCLUDED_REGION"] != "")) {
+    format = addRegion(format,res["SEQUENCE_INCLUDED_REGION"],firstBase,"I");
+  }
   if (res.hasOwnProperty("SEQUENCE_EXCLUDED_REGION") &&
       (res["SEQUENCE_EXCLUDED_REGION"] != "")) {
     targets = res["SEQUENCE_EXCLUDED_REGION"].split(' ');
@@ -1555,10 +1647,6 @@ function createHTMLsequence(res, primerNr) {
       format = addRegion(format,targets[i],firstBase,"T");
     }
   }
-  if (res.hasOwnProperty("SEQUENCE_INCLUDED_REGION") &&
-      (res["SEQUENCE_INCLUDED_REGION"] != "")) {
-    format = addRegion(format,res["SEQUENCE_INCLUDED_REGION"],firstBase,"I");
-  } 
   // Add Primers if needed
   if (primerNr >= 0) {
     // Add only one primer pair e.g. Detection
