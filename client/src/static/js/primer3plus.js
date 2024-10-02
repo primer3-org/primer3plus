@@ -1987,6 +1987,7 @@ function initElements(){
   initSelectionFeature();
   initExplainSeqRegions();
   initLoadSetFile();
+  initLoadAllFile();
   init_message_buttons();
   initDebug();
   init_primer3_versions();
@@ -2676,6 +2677,28 @@ function runLoadSetFile(f) {
     add_message("err","Error opening file");
   }
 }
+
+function initLoadAllFile() {
+  var pButton = document.getElementById('P3P_SELECT_ALL_FILE');
+  if (pButton !== null) {
+    pButton.addEventListener('change', runLoadAllFile, false);
+  }
+}
+function runLoadAllFile(f) {
+  var file = f.target.files[0];
+  if (file) { // && file.type.match("text/*")) {
+    var reader = new FileReader();
+    reader.onload = function(event) {
+      var txt = event.target.result;
+      loadP3File("file", txt);
+    }
+    reader.readAsText(file);
+    document.getElementById("P3P_SELECT_ALL_FILE").value = "";
+  } else {
+    add_message("err","Error opening file");
+  }
+}
+
 function loadP3File(limit,txt) {
   currSet = {};	
   txt = txt.replace(/\r\n/g, "\n");
@@ -2747,6 +2770,7 @@ function loadP3File(limit,txt) {
     processResData();
   } else {
     showTaskSelection();
+    showGenomeBrowserButtons();
   }
 }
 function initLoadCompareFunct() {
