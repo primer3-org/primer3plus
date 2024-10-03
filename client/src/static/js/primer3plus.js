@@ -196,6 +196,7 @@ function runPrimer3() {
               results[pair[0]]=fileLines[i].split(/=(.+)/)[1];
             }
           }
+          selectedPrimerPair = 0;
           calcP3PResultAdditions();
           processResData();
       }
