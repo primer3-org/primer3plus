@@ -162,6 +162,11 @@ function runPrimer3() {
       }
     }
   }
+  var saltCorr = getHtmlTagValue("PRIMER_SALT_CORRECTIONS");
+  if (saltCorr == 2) {
+    document.getElementById('PRIMER_ANNEALING_TEMP').value = 0.0;
+  }
+
   del_all_messages ();
   document.getElementById('P3P_RESULTS_BOX').innerHTML = "";
   var res = document.getElementById('P3P_SEL_TAB_RESULTS');
