@@ -373,11 +373,24 @@ function checkForUUID() {
             if (res.data.upfile	!= "") {
               loadP3File("silent",res.data.upfile);
               var sequence = getHtmlTagValue('SEQUENCE_TEMPLATE');
-              var exons = getHtmlTagValue('P3P_GB_EXONS');
-              window.gb_exons = exons;
+              var exonEle = document.getElementById('P3P_GB_EXONS');
+              if (pageElement !== null) {
+                window.gb_exons = pocGenomeBrowserCleanORF(exonEle.value);
+                setHtmlTagValue('P3P_GB_EXONS', window.gb_exons);
+                setHtmlTagValue('PRIMER_FIRST_BASE_INDEX', '0');
+              } else {
+                window.gb_exons = "";
+              }
               var orientation = getHtmlTagValue('P3P_GB_ORIENTATION');
-              var eleSeq = document.getElementById('SEQUENCE_TEMPLATE');
-              if (exons != "") {
+              var orientEle = document.getElementById('OUT_GB_ORIENTATION');
+              if (orientEle !== null) {
+                if (orientation == "+") {
+                  orientEle.innerHTML = "ORF is in forward";
+                } else {
+                  orientEle.innerHTML = "ORF is in reverse";
+                }
+              }
+              if (exonEle.value != "") {
                 var pageElement = document.getElementById('P3P_GB_RAW_SEQUENCE');
                 if (pageElement !== null) {
                   pageElement.value = sequence;
@@ -445,10 +458,19 @@ function showGenomeBrowserButtons() {
         dButton.remove(i);
       }
       var exonList = exons.split(',');
+      var opt1 = document.createElement('option');
+      opt1.value = 0;
+      opt1.innerHTML = "Choose Exon";
+      dButton.appendChild(opt1);
+      var orientation = getHtmlTagValue('P3P_GB_ORIENTATION');
       for (i = 0; i < exonList.length; i++) {
         var opt = document.createElement('option');
         opt.value = exonList[i];
-        opt.innerHTML = "Exon " + (i + 1) + ": " + exonList[i] + " ";
+        if (orientation == "+") {
+          opt.innerHTML = "Exon " + (i + 1) + ": " + exonList[i] + " ";
+        } else {
+          opt.innerHTML = "Exon " + (exonList.length - i) + ": " + exonList[i] + " ";
+        }
         dButton.appendChild(opt);
       }
       dButton.addEventListener('change', loadOrfSingleExon);
@@ -457,6 +479,49 @@ function showGenomeBrowserButtons() {
   } else {
     el.style.display = "none";
   }
+}
+
+function pocGenomeBrowserCleanORF(exons) {
+  var retExons = "";
+  if (exons != "") {
+    var exonList = exons.split(',');
+    var lastPos = Infinity;
+    var lastStart = 0;
+    var printed = 1;
+    var sumLen = 0;
+
+    for (var i = 0; i < exonList.length; i++) {
+      if (exonList[i] == "") {
+        continue;
+      }
+      var curExon = exonList[i].split('-');
+      if (curExon.length != 2) {
+        continue;
+      }
+      var start = parseInt(curExon[0]);
+      var end = parseInt(curExon[0]) + parseInt(curExon[1]);
+      var len = parseInt(curExon[1]);
+      if (sumLen == 0) {
+        lastStart = start;
+      }
+      if (lastPos - start < 0) {
+        if (retExons != "") {
+          retExons += ",";
+        }
+        retExons += lastStart + "-" + sumLen;
+        lastStart = start;
+        sumLen = len;
+      } else {
+        sumLen += len;
+      }
+      lastPos = end;
+    }
+    if (retExons != "") {
+      retExons += ",";
+    }
+    retExons += lastStart + "-" + sumLen;
+  }
+  return retExons;
 }
 
 function pocGenomeBrowserORF(sel) {
@@ -480,7 +545,6 @@ function pocGenomeBrowserORF(sel) {
     var exonList = exons.split(',');
     var exonSeq = "";
     var exonBound = [];
-    var lastPos = 0;
     for (var i = 0; i < exonList.length; i++) {
       if (exonList[i] == "") {
         continue;
@@ -490,32 +554,16 @@ function pocGenomeBrowserORF(sel) {
         continue;
       }
       exonSeq += sequence.substring(parseInt(curExon[0]), parseInt(curExon[0]) + parseInt(curExon[1]));
-      if (lastPos + 5 < parseInt(curExon[0])) {
-        lastPos = parseInt(curExon[0]) + parseInt(curExon[1]);
-        exonBound.push(exonSeq.length + 1);
-      }
-    }
-    if (exonBound.length > 1) {
-      exonBound.pop();
+      exonBound.push(exonSeq.length);
     }
 
-    if (orientation == "-") {
-      if (eleSeq !== null) {
-        eleSeq.value = reverseComplement(exonSeq);
-      }
-      exonBound.reverse();
-      for (var i = 0; i < exonBound.length; i++) {
-        exonBound[i] = exonSeq.length - exonBound[i] + 2;
-      }
-    } else {
-      if (eleSeq !== null) {
-        eleSeq.value = exonSeq;
-      }
+    if (eleSeq !== null) {
+      eleSeq.value = exonSeq;
     }
 
     var overString = "";
     var tarString = "";
-    for (var i = 0; i < exonBound.length; i++) {
+    for (var i = 0; i < exonBound.length - 1; i++) {
       overString += exonBound[i] + " ";
       tarString += (exonBound[i] - 1) + ",2 ";
     }
@@ -558,16 +606,8 @@ function loadOrfGenome() {
   var sequence = getHtmlTagValue('P3P_GB_RAW_SEQUENCE');
   var eleSeq = document.getElementById('SEQUENCE_TEMPLATE');
   var eleExon = document.getElementById('P3P_GB_EXONS');
-  var exons = "";
-  if (eleExon !== null) {
-    exons = eleExon.value;
-    eleExon.value = "-999";
-  }
-  if ((exons == "") || (exons == "-999")) {
-    if (window.gb_exons != "") {
-      exons = window.gb_exons;
-    }
-  }
+  eleExon.value = "-999";
+  var exons = window.gb_exons;
 
   if ((exons != "") || (exons != "-999")) {
     var exonList = exons.split(',');
@@ -587,7 +627,7 @@ function loadOrfGenome() {
       }
     }
     if (sequence.length - 1 > lastPos) {
-      exonSeq += sequence.substring(lastPos, sequence.length - 1).toLowerCase();
+      exonSeq += sequence.substring(lastPos, sequence.length).toLowerCase();
     }
     sequence = exonSeq;
   if (eleSeq !== null) {
@@ -614,13 +654,13 @@ function loadOrfGenome() {
 
 function loadOrfSingleExon() {
   var sequence = getHtmlTagValue('P3P_GB_RAW_SEQUENCE');
-  loadOrfGenome();
   var dButton = document.getElementById('P3P_ACTION_GB_LOAD_SINGLE_EXON');
   var value = dButton.value;
   var curExon = value.split('-');
   if (curExon.length != 2) {
     return;
   }
+  loadOrfGenome();
   var seq_len = sequence.length;
   var pos = parseInt(curExon[0]);
   var len = parseInt(curExon[1]);
@@ -650,6 +690,7 @@ function loadOrfSingleExon() {
       eleIncl.value = start + "," + (end - start);
     }
   }
+  createSeqWithDeco(-1);
 }
 
 function initRunPrimer3() {
@@ -676,8 +717,12 @@ function initRunPrimer3() {
   }
   var opt = document.createElement('option');
   opt.value = 0;
-  opt.innerHTML = "No Exons loaded!";
+  opt.innerHTML = "Choose Exon";
   dButton.appendChild(opt);
+  var opt2 = document.createElement('option');
+  opt2.value = 0;
+  opt2.innerHTML = "No Exons loaded!";
+  dButton.appendChild(opt2);
   if (dButton !== null) {
     dButton.addEventListener('change', loadOrfSingleExon);
   }
