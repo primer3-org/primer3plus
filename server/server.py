@@ -328,11 +328,11 @@ def runp3():
                                                     realStart += 1
                                                     realEnd += 1
                                                 bedtxt += gb_chrom[0] + '\t'
-                                                bedtxt += str(gb_start_pos + realStart - 1) + '\t'
-                                                bedtxt += str(gb_start_pos + realEnd - 1)
+                                                bedtxt += str(gb_start_pos + realStart) + '\t'
+                                                bedtxt += str(gb_start_pos + realEnd)
                                                 bedtxt += '\tLeft_Primer_' + str(p_num + 1) + '\t0\t+\t';
-                                                bedtxt += str(gb_start_pos + realStart - 1) + '\t'
-                                                bedtxt += str(gb_start_pos + realEnd - 1)
+                                                bedtxt += str(gb_start_pos + realStart) + '\t'
+                                                bedtxt += str(gb_start_pos + realEnd)
                                                 bedtxt += '\t204,204,255\n';
                                     if 'PRIMER_INTERNAL_NUM_RETURNED' in allOutData:
                                         int_prim = int(allOutData['PRIMER_INTERNAL_NUM_RETURNED'])
@@ -360,11 +360,11 @@ def runp3():
                                                     realStart += 1
                                                     realEnd += 1
                                                 bedtxt += gb_chrom[0] + '\t'
-                                                bedtxt += str(gb_start_pos + realStart - 1) + '\t'
-                                                bedtxt += str(gb_start_pos + realEnd - 1)
+                                                bedtxt += str(gb_start_pos + realStart) + '\t'
+                                                bedtxt += str(gb_start_pos + realEnd)
                                                 bedtxt += '\tInternal_Primer_' + str(p_num + 1) + '\t0\t+\t';
-                                                bedtxt += str(gb_start_pos + realStart - 1) + '\t'
-                                                bedtxt += str(gb_start_pos + realEnd - 1)
+                                                bedtxt += str(gb_start_pos + realStart) + '\t'
+                                                bedtxt += str(gb_start_pos + realEnd)
                                                 bedtxt += '\t0,0,0\n';
                                     if 'PRIMER_RIGHT_NUM_RETURNED' in allOutData:
                                         right_prim = int(allOutData['PRIMER_RIGHT_NUM_RETURNED'])
@@ -392,11 +392,11 @@ def runp3():
                                                     realStart += 1
                                                     realEnd += 1
                                                 bedtxt += gb_chrom[0] + '\t'
-                                                bedtxt += str(gb_start_pos + realStart - 1) + '\t'
-                                                bedtxt += str(gb_start_pos + realEnd - 1)
+                                                bedtxt += str(gb_start_pos + realStart) + '\t'
+                                                bedtxt += str(gb_start_pos + realEnd)
                                                 bedtxt += '\tRight_Primer_' + str(p_num + 1) + '\t0\t+\t';
-                                                bedtxt += str(gb_start_pos + realStart - 1) + '\t'
-                                                bedtxt += str(gb_start_pos + realEnd - 1)
+                                                bedtxt += str(gb_start_pos + realStart) + '\t'
+                                                bedtxt += str(gb_start_pos + realEnd)
                                                 bedtxt += '\t250,240,75\n';
                                     with open(bedfile, "w") as bed:
                                         bed.write(bedtxt)
