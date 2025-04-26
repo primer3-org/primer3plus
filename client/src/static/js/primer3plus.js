@@ -655,39 +655,41 @@ function loadOrfGenome() {
 function loadOrfSingleExon() {
   var sequence = getHtmlTagValue('P3P_GB_RAW_SEQUENCE');
   var dButton = document.getElementById('P3P_ACTION_GB_LOAD_SINGLE_EXON');
-  var value = dButton.value;
-  var curExon = value.split('-');
-  if (curExon.length != 2) {
-    return;
-  }
-  loadOrfGenome();
-  var seq_len = sequence.length;
-  var pos = parseInt(curExon[0]);
-  var len = parseInt(curExon[1]);
-  if (len > 9000) {
-    return;
-  }
-  if (len > seq_len) {
-    return;
-  }
-  var eleTar = document.getElementById('SEQUENCE_TARGET');
-  if (eleTar !== null) {
-    eleTar.value = value.replace(/-/g, ",");
-  }
-  if (seq_len > 9000) {
-    var rest = parseInt((9000 - len) / 2);
-    var start = pos - rest;
-    if (start < 1) {
-      start = 0;
+  if (dButton !== null) {
+    var value = dButton.value;
+    var curExon = value.split('-');
+    if (curExon.length != 2) {
+      return;
     }
-    var end = pos + len + rest;
-    if (end > seq_len - 1) {
-      end = seq_len - 1;
+    loadOrfGenome();
+    var seq_len = sequence.length;
+    var pos = parseInt(curExon[0]);
+    var len = parseInt(curExon[1]);
+    if (len > 9000) {
+      return;
     }
+    if (len > seq_len) {
+      return;
+    }
+    var eleTar = document.getElementById('SEQUENCE_TARGET');
+    if (eleTar !== null) {
+      eleTar.value = value.replace(/-/g, ",");
+    }
+    if (seq_len > 9000) {
+      var rest = parseInt((9000 - len) / 2);
+      var start = pos - rest;
+      if (start < 1) {
+        start = 0;
+      }
+      var end = pos + len + rest;
+      if (end > seq_len - 1) {
+        end = seq_len - 1;
+      }
 
-    var eleIncl = document.getElementById('SEQUENCE_INCLUDED_REGION');
-    if (eleIncl !== null) {
-      eleIncl.value = start + "," + (end - start);
+      var eleIncl = document.getElementById('SEQUENCE_INCLUDED_REGION');
+      if (eleIncl !== null) {
+        eleIncl.value = start + "," + (end - start);
+      }
     }
   }
   createSeqWithDeco(-1);
@@ -711,20 +713,22 @@ function initRunPrimer3() {
     cButton.addEventListener('click', loadOrfGenome);
   }
   var dButton = document.getElementById('P3P_ACTION_GB_LOAD_SINGLE_EXON');
-  var i;
-  for(i = dButton.options.length - 1; i >= 0; i--) {
-    dButton.remove(i);
-  }
-  var opt = document.createElement('option');
-  opt.value = 0;
-  opt.innerHTML = "Choose Exon";
-  dButton.appendChild(opt);
-  var opt2 = document.createElement('option');
-  opt2.value = 0;
-  opt2.innerHTML = "No Exons loaded!";
-  dButton.appendChild(opt2);
   if (dButton !== null) {
-    dButton.addEventListener('change', loadOrfSingleExon);
+    var i;
+    for(i = dButton.options.length - 1; i >= 0; i--) {
+      dButton.remove(i);
+    }
+    var opt = document.createElement('option');
+    opt.value = 0;
+    opt.innerHTML = "Choose Exon";
+    dButton.appendChild(opt);
+    var opt2 = document.createElement('option');
+    opt2.value = 0;
+    opt2.innerHTML = "No Exons loaded!";
+    dButton.appendChild(opt2);
+    if (dButton !== null) {
+      dButton.addEventListener('change', loadOrfSingleExon);
+    }
   }
 }
 
@@ -2944,6 +2948,10 @@ function initLoadCompareFunct() {
   if (btRunComp !== null) {
     btRunComp.addEventListener('click', runCompFiles);
   }
+  var btRunConv = document.getElementById('P3P_ACTION_RUN_CONVERT_OLD');
+  if (btRunConv !== null) {
+    btRunConv.addEventListener('click', runConvertFile);
+  }
 }
 function runLoadCompFile1(f) {
   var file = f.target.files[0];
@@ -3118,6 +3126,45 @@ function runCompFiles() {
     ret += samesame;
   } 
   document.getElementById('P3P_RESULTS_BOX').innerHTML = ret;
+}
+
+function runConvertFile() {
+  var dict = getCompareHash();
+  var remTags = ["PRIMER_TASK", "SCRIPT_PRINT_INPUT", "SCRIPT_FIX_PRIMER_END", "SCRIPT_CONTAINS_JAVA_SCRIPT", 
+                 "SCRIPT_SEQUENCING_REVERSE", "SCRIPT_DETECTION_USE_PRODUCT_SIZE", "SCRIPT_DETECTION_PRODUCT_MIN_SIZE",
+                 "SCRIPT_DETECTION_PRODUCT_OPT_SIZE", "SCRIPT_DETECTION_PRODUCT_MAX_SIZE", "SERVER_PARAMETER_FILE"]
+  ret = ""
+  if (Object.keys(compFile1).length != 0) {
+    for (var tag in compFile1) {
+      if (remTags.includes(tag)) {
+        continue;
+      }
+      if (tag == "SCRIPT_TASK") {
+        task = "generic"
+        if (compFile1[tag] == "Cloning") {
+          task = "pick_cloning_primers"
+        }
+        if (compFile1[tag] == "Sequencing") {
+          task = "pick_sequencing_primers"
+        }
+        if (compFile1[tag] == "Primer_List") {
+          task = "pick_primer_list"
+        }
+        if (compFile1[tag] == "Primer_Check") {
+          task = "check_primers"
+        }
+        ret += "PRIMER_TASK=" + task + "\n";
+      } else {
+        if (tag in dict) {
+          ret += dict[tag];
+        } else {
+          ret += tag;
+        }
+        ret += "=" + compFile1[tag] + "\n";
+      }
+    }
+    saveFile('Primer3Plus_Settings.txt',ret);
+  }
 }
 
 // Functions to load the sequence and settings files
@@ -3807,5 +3854,82 @@ function runLoadExample() {
   setHTMLParameters(defSet);
   setHtmlTagValue("SEQUENCE_ID", "Medicago Lyk3");
   setHtmlTagValue("SEQUENCE_TEMPLATE", seq);
+}
+
+function getCompareHash() {
+  var dict = {"PRIMER_SEQUENCE_ID": "SEQUENCE_ID",
+              "MARKER_NAME": "SEQUENCE_ID",
+              "SEQUENCE": "SEQUENCE_TEMPLATE",
+              "INCLUDED_REGION": "SEQUENCE_INCLUDED_REGION",
+              "TARGET": "SEQUENCE_TARGET",
+              "EXCLUDED_REGION": "SEQUENCE_EXCLUDED_REGION",
+              "PRIMER_INTERNAL_OLIGO_EXCLUDED_REGION": "SEQUENCE_INTERNAL_EXCLUDED_REGION",
+              "PRIMER_LEFT_INPUT": "SEQUENCE_PRIMER",
+              "PRIMER_INTERNAL_OLIGO_INPUT": "SEQUENCE_INTERNAL_OLIGO",
+              "PRIMER_RIGHT_INPUT": "SEQUENCE_PRIMER_REVCOMP",
+              "PRIMER_START_CODON_POSITION": "SEQUENCE_START_CODON_POSITION",
+              "PRIMER_SEQUENCE_QUALITY": "SEQUENCE_QUALITY",
+              "PRIMER_DEFAULT_PRODUCT": "PRIMER_PRODUCT_SIZE_RANGE",
+              "PRIMER_INTERNAL_OLIGO_MIN_SIZE": "PRIMER_INTERNAL_MIN_SIZE",
+              "PRIMER_DEFAULT_SIZE": "PRIMER_OPT_SIZE",
+              "PRIMER_INTERNAL_OLIGO_OPT_SIZE": "PRIMER_INTERNAL_OPT_SIZE",
+              "PRIMER_INTERNAL_OLIGO_MAX_SIZE": "PRIMER_INTERNAL_MAX_SIZE",
+              "PRIMER_IO_WT_SIZE_LT": "PRIMER_INTERNAL_WT_SIZE_LT",
+              "PRIMER_IO_WT_SIZE_GT": "PRIMER_INTERNAL_WT_SIZE_GT",
+              "PRIMER_INTERNAL_OLIGO_MIN_GC": "PRIMER_INTERNAL_MIN_GC",
+              "PRIMER_INTERNAL_OLIGO_OPT_GC_PERCENT": "PRIMER_INTERNAL_OPT_GC_PERCENT",
+              "PRIMER_INTERNAL_OLIGO_MAX_GC": "PRIMER_INTERNAL_MAX_GC",
+              "PRIMER_IO_WT_GC_PERCENT_LT": "PRIMER_INTERNAL_WT_GC_PERCENT_LT",
+              "PRIMER_IO_WT_GC_PERCENT_GT": "PRIMER_INTERNAL_WT_GC_PERCENT_GT",
+              "PRIMER_INTERNAL_OLIGO_MIN_TM": "PRIMER_INTERNAL_MIN_TM",
+              "PRIMER_INTERNAL_OLIGO_OPT_TM": "PRIMER_INTERNAL_OPT_TM",
+              "PRIMER_INTERNAL_OLIGO_MAX_TM": "PRIMER_INTERNAL_MAX_TM",
+              "PRIMER_MAX_DIFF_TM": "PRIMER_PAIR_MAX_DIFF_TM",
+              "PRIMER_IO_WT_TM_LT": "PRIMER_INTERNAL_WT_TM_LT",
+              "PRIMER_IO_WT_TM_GT": "PRIMER_INTERNAL_WT_TM_GT",
+              "PRIMER_TM_SANTALUCIA": "PRIMER_TM_FORMULA",
+              "PRIMER_SALT_CONC": "PRIMER_SALT_MONOVALENT",
+              "PRIMER_INTERNAL_OLIGO_SALT_CONC": "PRIMER_INTERNAL_SALT_MONOVALENT",
+              "PRIMER_DIVALENT_CONC": "PRIMER_SALT_DIVALENT",
+              "PRIMER_INTERNAL_OLIGO_DIVALENT_CONC": "PRIMER_INTERNAL_SALT_DIVALENT",
+              "PRIMER_INTERNAL_OLIGO_DNTP_CONC": "PRIMER_INTERNAL_DNTP_CONC",
+              "PRIMER_INTERNAL_OLIGO_DNA_CONC": "PRIMER_INTERNAL_DNA_CONC",
+              "PRIMER_SELF_ANY": "PRIMER_MAX_SELF_ANY",
+              "PRIMER_INTERNAL_OLIGO_SELF_ANY": "PRIMER_INTERNAL_MAX_SELF_ANY",
+              "PRIMER_WT_COMPL_ANY": "PRIMER_WT_SELF_ANY",
+              "PRIMER_IO_WT_COMPL_ANY": "PRIMER_INTERNAL_WT_SELF_ANY",
+              "PRIMER_SELF_END": "PRIMER_MAX_SELF_END",
+              "PRIMER_INTERNAL_OLIGO_SELF_END": "PRIMER_INTERNAL_MAX_SELF_END",
+              "PRIMER_WT_COMPL_END": "PRIMER_WT_SELF_END",
+              "PRIMER_IO_WT_COMPL_END": "PRIMER_INTERNAL_WT_SELF_END",
+              "PRIMER_NUM_NS_ACCEPTED": "PRIMER_MAX_NS_ACCEPTED",
+              "PRIMER_INTERNAL_OLIGO_NUM_NS": "PRIMER_INTERNAL_MAX_NS_ACCEPTED",
+              "PRIMER_IO_WT_NUM_NS": "PRIMER_INTERNAL_WT_NUM_NS",
+              "PRIMER_INTERNAL_OLIGO_MAX_POLY_X": "PRIMER_INTERNAL_MAX_POLY_X",
+              "PRIMER_INTERNAL_OLIGO_MISHYB_LIBRARY": "PRIMER_INTERNAL_MISHYB_LIBRARY",
+              "PRIMER_MAX_MISPRIMING": "PRIMER_MAX_LIBRARY_MISPRIMING",
+              "PRIMER_INTERNAL_OLIGO_MAX_MISHYB": "PRIMER_INTERNAL_MAX_LIBRARY_MISHYB",
+              "PRIMER_PAIR_MAX_MISPRIMING": "PRIMER_PAIR_MAX_LIBRARY_MISPRIMING",
+              "PRIMER_WT_REP_SIM": "PRIMER_WT_LIBRARY_MISPRIMING",
+              "PRIMER_IO_WT_REP_SIM": "PRIMER_INTERNAL_WT_LIBRARY_MISHYB",
+              "PRIMER_PAIR_WT_REP_SIM": "PRIMER_PAIR_WT_LIBRARY_MISPRIMING",
+              "PRIMER_INTERNAL_OLIGO_MIN_QUALITY": "PRIMER_INTERNAL_MIN_QUALITY",
+              "PRIMER_IO_WT_SEQ_QUAL": "PRIMER_INTERNAL_WT_SEQ_QUAL",
+              "PRIMER_IO_WT_END_QUAL": "PRIMER_INTERNAL_WT_END_QUAL",
+              "PRIMER_FILE_FLAG": "P3_FILE_FLAG",
+              "PRIMER_COMMENT": "P3_COMMENT",
+              "COMMENT": "P3_COMMENT",
+              "PRIMER_NAME_ACRONYM_LEFT": "P3P_PRIMER_NAME_ACRONYM_LEFT",
+              "PRIMER_NAME_ACRONYM_INTERNAL_OLIGO": "P3P_PRIMER_NAME_ACRONYM_INTERNAL",
+              "PRIMER_NAME_ACRONYM_RIGHT": "P3P_PRIMER_NAME_ACRONYM_RIGHT",
+              "PRIMER_NAME_ACRONYM_SPACER": "P3P_PRIMER_NAME_ACRONYM_SPACER",
+              "SCRIPT_SEQUENCING_LEAD": "PRIMER_SEQUENCING_LEAD",
+              "SCRIPT_SEQUENCING_SPACING": "PRIMER_SEQUENCING_SPACING",
+              "SCRIPT_SEQUENCING_INTERVAL": "PRIMER_SEQUENCING_INTERVAL",
+              "SCRIPT_SEQUENCING_ACCURACY": "PRIMER_SEQUENCING_ACCURACY",
+              "SCRIPT_DETECTION_PICK_LEFT": "PRIMER_PICK_LEFT_PRIMER",
+              "SCRIPT_DETECTION_PICK_HYB_PROBE": "PRIMER_PICK_INTERNAL_OLIGO",
+              "SCRIPT_DETECTION_PICK_RIGHT": "PRIMER_PICK_RIGHT_PRIMER"};
+  return dict;
 }
 
